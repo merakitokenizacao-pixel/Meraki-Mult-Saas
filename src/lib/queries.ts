@@ -19,6 +19,15 @@ export async function getLeads(): Promise<Lead[]> {
   return (data ?? []) as Lead[];
 }
 
+// Atualiza campos de um lead (nao_lidas, ia_pausada, etc.). Lança em erro.
+export async function updateLead(
+  id: string,
+  fields: Record<string, unknown>
+): Promise<void> {
+  const { error } = await supabase.from("leads").update(fields).eq("id", id);
+  if (error) throw error;
+}
+
 export async function getLeadById(id: string): Promise<Lead | null> {
   const { data, error } = await supabase
     .from("leads")

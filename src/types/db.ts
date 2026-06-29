@@ -30,6 +30,12 @@ export interface Lead {
   aceita_campanha: boolean | null;
   ultima_interacao: string | null;
   criado_em: string;
+  // Campos opcionais lidos/escritos pelas Conversas (podem não existir no banco;
+  // o legacy os lê defensivamente e o n8n preenche alguns).
+  temperatura?: string | null;
+  tags?: string | string[] | null;
+  pausada_em?: string | null;
+  motivo_pausa?: string | null;
 }
 
 export interface Conversa {

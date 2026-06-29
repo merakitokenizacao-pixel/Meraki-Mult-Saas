@@ -1,5 +1,5 @@
-import { PagePlaceholder } from "@/components/page-placeholder";
+import { Conversas } from "@/components/conversas/conversas";
 
 export default function ConversasPage() {
-  return <PagePlaceholder title="Conversas" etapa="Etapa 4" />;
+  return <Conversas />;
 }

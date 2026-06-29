@@ -10,7 +10,17 @@ VoraX é um CRM (SaaS) para clínicas de estética. Hoje atende a clínica **LIN
 - **Etapa 1 (Camada de dados e helpers) — CONCLUÍDA.** Tipos das 5 tabelas em `src/types/db.ts`; queries reutilizáveis em `src/lib/queries.ts`; helpers puros em `src/lib/format.ts` e `src/lib/date.ts`; componentes `Avatar` e `StatusBadge`; `showToast` como wrapper do sonner (`src/lib/toast.ts`). Validado: helpers com asserts (12/12) e leitura real de `leads` no Supabase.
 - **Etapa 2 (Visão geral / dashboard) — CONCLUÍDA.** Tela `/` em `src/components/dashboard/*`: header com saudação por horário + filtro de período, 4 KPIs, clientes recentes, funil e os 2 gráficos Chart.js (doughnut de serviços, linha de novos clientes/dia). Tema integrado via context (`ThemeProvider`) — os gráficos recalculam cores ao alternar tema. `npm run build` passa.
 - **Etapa 3 (Clientes / leads) — CONCLUÍDA.** Tela `/clientes` em `src/components/clientes/*`: busca por nome/telefone + filtro de período, tabela de leads e modal de detalhe (dados do lead + agendamentos + prévia da conversa). O clique nos "Clientes recentes" do dashboard agora também abre o modal. `npm run build` passa; validado via HTTP.
-- Próxima: **Etapa 4 — Conversas** (ver `PLANO_MIGRACAO.md`).
+- **Etapa 4 (Conversas) — CONCLUÍDA.** Tela `/conversas` em `src/components/conversas/*`: inbox 3 colunas (lista · chat · perfil), abas Tudo/IA/Humano/Inativo com contagem, ordenação por última mensagem, badge de não-lidas (zera ao abrir via `update nao_lidas=0`), chat com mensagens agrupadas por dia, toggle de pausa da IA, envio otimista de mensagem (webhook n8n) com auto-pausa da IA, e painel de detalhes do cliente. `npm run build` passa; validado via HTTP.
+- Próxima: **Etapa 5 — Agenda** (ver `PLANO_MIGRACAO.md`).
+
+### Conversas (Etapa 4)
+- `src/components/conversas/`: `conversas.tsx` (container com todo o estado e ações), `inbox-list.tsx` (`renderConversaList`/abas), `chat-panel.tsx` (`loadConversas`/`enviarMensagemCRM`/`toggleIA`), `details-panel.tsx` (`renderConversaDetails`).
+- Helpers puros em `src/lib/conversa.ts`: `isLeadPaused`, `isLeadInativo` (>30 dias), `getTemp` (score→tier), `getLTV`, `getIASummary`, `getTags`, `getChannelIcon`, `getLastMsgPreview`, `lastMsgInfo` (ordenação), `formatDayLabel`.
+- **Badge de não-lidas**: zera no cache local + persiste `update nao_lidas=0` ao abrir a conversa (não bloqueia a UI). Ordenação do inbox por timestamp da última mensagem (cache de `conversas`), igual ao WhatsApp.
+- **toggleIA / auto-pausa**: ao enviar mensagem pelo CRM, se a IA estiver ativa ela é pausada antes do envio (`ia_pausada=true`, `pausada_por='humano'`...). O envio vai para o **webhook do n8n** (`src/lib/n8n.ts`), configurável por `NEXT_PUBLIC_N8N_WEBHOOK_ENVIAR_MSG` (com default = URL do legacy). Render otimista: bolha "enviando…" → "enviado ✓"/"falhou ⚠".
+- **Tipos**: `Lead` ganhou campos opcionais que o legacy lê/escreve defensivamente (`temperatura`, `tags`, `pausada_em`, `motivo_pausa`) — podem não existir no banco ainda. Mutação `updateLead(id, fields)` em `queries.ts`.
+- **CSS**: keyframes `pulse-dot` ajustado para a versão por opacidade (no legacy, a 2ª definição com mesmo nome vence globalmente — vale para o dot da sidebar e o da IA). CSS completo das Conversas portado para `globals.css`.
+- Sem realtime/auto-refresh (herdado do legacy; ver pendências). Mensagem enviada aparece otimista; a versão persistida virá do n8n no próximo open da conversa.
 
 ### Clientes (Etapa 3)
 - `src/components/clientes/`: `clientes.tsx` (container: fetch `getLeads`, estado de busca/período, seleção do lead), `leads-table.tsx` (`renderLeadsTable`), `lead-modal.tsx` (`openLeadModal`).

@@ -49,7 +49,7 @@ Ao reiniciar o `next dev`, se a porta 3000 aparecer "in use", há um processo `n
 - Estrutura em `src/components/dashboard/`: `dashboard.tsx` (container: fetch `getLeads`+`getAgendamentos`, estado de período e saudação), `metrics-grid.tsx`, `recent-leads.tsx`, `funnel.tsx`, `service-chart.tsx`, `timeline-chart.tsx`.
 - **Tema dos gráficos**: `ThemeProvider` (`src/components/theme-provider.tsx`) virou a fonte única do tema (substituiu `lib/use-theme.ts`, removido). O toggle vive na topbar; os gráficos consomem o context e releem as CSS vars (`getChartStyle` em `src/lib/chart.ts`) ao trocar de tema.
 - **Charts SSR**: `ServiceChart`/`TimelineChart` só renderizam após `mounted` (gate) para não acessar `document`/`getComputedStyle` no servidor.
-- **Paridade de "Consultas agendadas"**: o arquivo legacy conta **leads com `status === 'agendado'`** no período (não linhas de `agendamentos`). Migrei o que o arquivo faz, conforme a regra "seguir o legacy". (A pendência no topo deste arquivo descreve um ajuste futuro pretendido, ainda não presente no legacy.) Idem "Receita estimada": R$ 0,00 enquanto `agendamentos.valor` vier vazio.
+- **"Consultas agendadas" — AJUSTADO (jun/2026), diverge do legacy de propósito.** Agora conta **linhas de `agendamentos`** no período (cada marcação = 1), excluindo `cancelado`, filtrando por **`agendamentos.criado_em`** (quando a consulta foi MARCADA), não por `data_agendamento`. Intenção: "quantas consultas foram agendadas neste período". A **"Receita estimada"** usa o MESMO conjunto (mesmo filtro `criado_em`, sem cancelados, com `valor`) para receita e contagem baterem. `agendamentos.criado_em` existe no banco (`timestamptz`, `default now()`, `NOT NULL`, 100% preenchido). A **"Taxa de conversão"** NÃO mudou: continua sendo de *leads* (`agendado`+`convertido`)/total de leads. Receita segue R$ 0,00 enquanto `agendamentos.valor` vier vazio (n8n).
 - **Pendência local**: os itens de "Clientes recentes" ainda não abrem o modal de lead (não há clique) — isso entra na Etapa 3 junto com `openLeadModal`.
 
 ### Camada de dados (Etapa 1)
@@ -132,7 +132,7 @@ RLS liberado para anon/authenticated (single-tenant). Não alterar schema sem ne
 
 ## Pendências conhecidas (NÃO são bugs da migração; herdadas do legacy)
 - "Receita estimada" mostra R$ 0,00 porque `agendamentos.valor` vem vazio (o n8n não preenche). Migrar como está; resolver depois.
-- "Consultas agendadas": no legacy foi ajustado pra contar linhas de `agendamentos` (não leads). Decisão pendente de mostrar agendamentos FUTUROS. Migrar o comportamento atual do legacy; ajuste futuro fica pra depois.
+- ~~"Consultas agendadas"~~ **RESOLVIDO (jun/2026):** agora conta linhas de `agendamentos` (não leads), por `criado_em`, sem cancelados; "Receita estimada" usa o mesmo filtro. Ver detalhe na seção "Dashboard (Etapa 2)".
 - Inbox não tem realtime/auto-refresh ainda (badge ao vivo). Migrar sem realtime; adicionar depois com Supabase Realtime.
 
 ## Como manter este arquivo

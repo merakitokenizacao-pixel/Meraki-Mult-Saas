@@ -56,6 +56,7 @@ export interface Agendamento {
   origem: string | null;
   valor: number | null;
   profissional: string | null;
+  criado_em: string; // quando a consulta foi MARCADA (default now() no banco)
 }
 
 // Agendamento com o lead embutido (join usado na Agenda).

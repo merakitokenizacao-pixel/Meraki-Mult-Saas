@@ -13,16 +13,22 @@ export function MetricsGrid({
 }) {
   const filtered = filterByDate(leads, "criado_em", period);
   const total = filtered.length;
-  const agendados = filtered.filter((l) => l.status === "agendado").length;
+  // Taxa de conversão é sobre LEADS (clientes que avançaram), não sobre consultas.
+  const leadsAgendados = filtered.filter((l) => l.status === "agendado").length;
   const convertidos = filtered.filter((l) => l.status === "convertido").length;
-  const taxa = total > 0 ? Math.round(((agendados + convertidos) / total) * 100) : 0;
+  const taxa =
+    total > 0 ? Math.round(((leadsAgendados + convertidos) / total) * 100) : 0;
 
+  // "Consultas agendadas" e "Receita estimada" usam o MESMO conjunto:
+  // agendamentos do período por criado_em (quando foi MARCADA), sem cancelados.
   const agendsPeriodo =
     period === "tudo"
       ? agendamentos
-      : filterByDate(agendamentos, "data_agendamento", period);
-  const receita = agendsPeriodo
-    .filter((a) => a.status !== "cancelado" && a.valor)
+      : filterByDate(agendamentos, "criado_em", period);
+  const naoCancelados = agendsPeriodo.filter((a) => a.status !== "cancelado");
+  const consultasAgendadas = naoCancelados.length;
+  const receita = naoCancelados
+    .filter((a) => a.valor)
     .reduce((sum, a) => sum + parseFloat(String(a.valor ?? 0)), 0);
   const receitaFmt =
     receita > 0
@@ -41,7 +47,7 @@ export function MetricsGrid({
       <div className="metric-card">
         <div className="metric-label">Consultas agendadas</div>
         <div className="metric-value" style={{ color: "var(--vx-green)" }}>
-          {agendados}
+          {consultasAgendadas}
         </div>
         <div className="metric-divider" />
         <div className="metric-sub up">clientes confirmados</div>

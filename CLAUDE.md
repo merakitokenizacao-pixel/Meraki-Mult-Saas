@@ -7,7 +7,14 @@ VoraX é um CRM (SaaS) para clínicas de estética. Hoje atende a clínica **LIN
 
 ## Estado da migração
 - **Etapa 0 (Fundação) — CONCLUÍDA.** Next.js 16 (App Router) + React 19 + TypeScript + **Tailwind v4** + shadcn/ui + Supabase. Layout base (sidebar luxo, topbar, nav mobile), tema claro/escuro e as 5 rotas (placeholders) no ar. `npm run build` passa.
-- Próxima: **Etapa 1 — Camada de dados e helpers** (ver `PLANO_MIGRACAO.md`).
+- **Etapa 1 (Camada de dados e helpers) — CONCLUÍDA.** Tipos das 5 tabelas em `src/types/db.ts`; queries reutilizáveis em `src/lib/queries.ts`; helpers puros em `src/lib/format.ts` e `src/lib/date.ts`; componentes `Avatar` e `StatusBadge`; `showToast` como wrapper do sonner (`src/lib/toast.ts`). Validado: helpers com asserts (12/12) e leitura real de `leads` no Supabase.
+- Próxima: **Etapa 2 — Visão geral (dashboard)** (ver `PLANO_MIGRACAO.md`).
+
+### Camada de dados (Etapa 1)
+- **Tipos** (`src/types/db.ts`): `Lead`, `Conversa`, `Agendamento` (+ `AgendamentoComLead` para o join da Agenda), `Campanha`, `CampanhaEnvio`. Status como unions com fallback de string (`Loose<>`), pois o n8n pode gravar valores fora da lista.
+- **Queries** (`src/lib/queries.ts`): `getLeads`, `getLeadById`, `getLeadsParaCampanha`, `getAgendamentos`, `getAgendamentosComLead`, `getAgendamentosByLead`, `getConversas`, `getConversasByLead`, `getCampanhas`. Espelham as queries do legacy (mesmas ordenações/joins) e lançam em erro.
+- **Helpers** (`src/lib/format.ts`): `getInitials`, `getAvatarColors`/`AVATAR_PALETTE`, `fmtDate`, `getRelativeTime`, `limparServico`, `formatTelefone`, `statusBadgeClass`. (`src/lib/date.ts`): `getDateRange`, `filterByDate`. Portados 1:1 do legacy.
+- **Componentes** (substituem os geradores de HTML do legacy): `Avatar` (`renderAvatar` — foto com fallback p/ iniciais) e `StatusBadge` (`badgeHtml`). CSS de `.avatar`/`.badge*`/`.loading`/`.spinner`/`.empty` portado para `globals.css`.
 
 ### Decisões de arquitetura (Etapa 0)
 - **Navegação por rotas reais do App Router** (não SPA com `showPage`): `/` (Visão geral), `/clientes`, `/conversas`, `/agenda`, `/campanhas`. O `AppShell` (`src/components/app-shell.tsx`) é o chrome comum; o item ativo vem de `usePathname`. Config das telas em `src/lib/nav.ts`.

@@ -531,3 +531,103 @@
     display: none;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   COMPONENTES COMPARTILHADOS — avatar, badges, loading/empty
+   Portados do legacy (var(--X) → var(--vx-X)).
+   ══════════════════════════════════════════════════════════════ */
+.avatar {
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.badge {
+  font-size: 9px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  flex-shrink: 0;
+}
+.badge-novo {
+  background: var(--vx-blue-bg);
+  color: var(--vx-blue);
+}
+.badge-agendado {
+  background: var(--vx-gold-light);
+  color: var(--vx-gold);
+}
+.badge-convertido,
+.badge-realizado {
+  background: var(--vx-green-bg);
+  color: var(--vx-green);
+}
+.badge-cancelado {
+  background: var(--vx-red-bg);
+  color: var(--vx-red);
+}
+.badge-confirmado {
+  background: var(--vx-purple-bg);
+  color: var(--vx-purple);
+}
+.badge-pendente {
+  background: var(--vx-amber-bg);
+  color: var(--vx-amber);
+}
+.badge-enviando {
+  background: var(--vx-amber-bg);
+  color: var(--vx-amber);
+}
+.badge-concluida {
+  background: var(--vx-green-bg);
+  color: var(--vx-green);
+}
+.badge-rascunho {
+  background: var(--vx-surface3);
+  color: var(--vx-muted);
+}
+.badge-pausada {
+  background: var(--vx-blue-bg);
+  color: var(--vx-blue);
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  color: var(--vx-muted);
+  gap: 10px;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+}
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid var(--vx-border2);
+  border-top-color: var(--vx-accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.empty {
+  text-align: center;
+  padding: 3rem;
+  color: var(--vx-muted);
+  font-size: 13px;
+}
+.empty-icon {
+  font-size: 28px;
+  margin-bottom: 10px;
+  opacity: 0.25;
+  display: block;
+}

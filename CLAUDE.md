@@ -5,6 +5,20 @@ VoraX é um CRM (SaaS) para clínicas de estética. Hoje atende a clínica **LIN
 
 **Estado atual:** este projeto é uma MIGRAÇÃO de um protótipo single-file (`index.html`, ~2200 linhas de HTML+CSS+JS puro) para Next.js estruturado. O arquivo original está em `/legacy/index.html` como referência fiel. **Objetivo da migração: reproduzir o sistema EXATAMENTE como está hoje (mesmas telas, mesmas funções, mesma estética), só que organizado em Next.js + TypeScript.** Não inventar features novas, não redesenhar. Paridade visual e funcional total com o legacy.
 
+## Estado da migração
+- **Etapa 0 (Fundação) — CONCLUÍDA.** Next.js 16 (App Router) + React 19 + TypeScript + **Tailwind v4** + shadcn/ui + Supabase. Layout base (sidebar luxo, topbar, nav mobile), tema claro/escuro e as 5 rotas (placeholders) no ar. `npm run build` passa.
+- Próxima: **Etapa 1 — Camada de dados e helpers** (ver `PLANO_MIGRACAO.md`).
+
+### Decisões de arquitetura (Etapa 0)
+- **Navegação por rotas reais do App Router** (não SPA com `showPage`): `/` (Visão geral), `/clientes`, `/conversas`, `/agenda`, `/campanhas`. O `AppShell` (`src/components/app-shell.tsx`) é o chrome comum; o item ativo vem de `usePathname`. Config das telas em `src/lib/nav.ts`.
+- **Tailwind v4 (config CSS-first via `@theme`)**, não há `tailwind.config.ts`. Tokens em `src/app/globals.css`.
+- **Design tokens da marca sob prefixo `--vx-*`** (ex.: `--vx-surface`, `--vx-accent`) para não colidir com os tokens semânticos do shadcn. Expostos como utilitários Tailwind: `bg-vx-surface`, `text-vx-accent`, `border-vx-border2`, etc. Os tokens do shadcn (`--background`, `--primary`, `--border`, `--muted`, `--accent`…) **derivam** da paleta `--vx-*`, então os componentes shadcn já saem na estética bege/dourado.
+- **Tema** acionado por `data-theme="dark"` no `<html>` (igual ao legacy). Persistido em `localStorage` (`vorax-theme`); script anti-flash no `<head>` (`layout.tsx`); toggle em `src/lib/use-theme.ts`. O `dark:` do Tailwind responde a `data-theme` via `@custom-variant`.
+- **Fontes** via `next/font/google` em `layout.tsx`: Cormorant Garamond (`--font-cormorant`, serif/títulos), Jost (`--font-jost`, texto), JetBrains Mono (`--font-jetbrains`, mono).
+- **CSS do chrome** (sidebar/topbar/nav mobile) portado fielmente do legacy para `globals.css` (com `var(--X)` → `var(--vx-X)`). Os componentes das telas (próximas etapas) usam Tailwind/shadcn.
+- **Supabase**: cliente em `src/lib/supabase.ts`; credenciais em `.env.local` (gitignored; `.env.example` versionado). A anon key foi extraída do legacy.
+- O arquivo legacy foi renomeado de `index.html 80.html` para `legacy/index.html` (batendo com a doc).
+
 ## Stack
 - **Next.js (App Router) + React + TypeScript**
 - **Tailwind CSS** para estilo (replicar os design tokens abaixo)

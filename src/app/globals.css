@@ -1,0 +1,533 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+/* Tema escuro acionado por [data-theme="dark"] no <html> (igual ao legacy) */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+@theme inline {
+  /* Fontes do legacy: Cormorant (serif/títulos), Jost (texto), JetBrains (mono) */
+  --font-sans: var(--font-jost);
+  --font-serif: var(--font-cormorant);
+  --font-mono: var(--font-jetbrains);
+  --font-heading: var(--font-cormorant);
+
+  /* ── Tokens semânticos do shadcn (derivam da paleta VoraX) ── */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+
+  /* ── Paleta da marca VoraX (utilitários: bg-vx-surface, text-vx-accent, …) ── */
+  --color-vx-bg: var(--vx-bg);
+  --color-vx-surface: var(--vx-surface);
+  --color-vx-surface2: var(--vx-surface2);
+  --color-vx-surface3: var(--vx-surface3);
+  --color-vx-border: var(--vx-border);
+  --color-vx-border2: var(--vx-border2);
+  --color-vx-text: var(--vx-text);
+  --color-vx-text2: var(--vx-text2);
+  --color-vx-muted: var(--vx-muted);
+  --color-vx-accent: var(--vx-accent);
+  --color-vx-accent2: var(--vx-accent2);
+  --color-vx-accent-light: var(--vx-accent-light);
+  --color-vx-gold: var(--vx-gold);
+  --color-vx-gold-light: var(--vx-gold-light);
+  --color-vx-green: var(--vx-green);
+  --color-vx-green-bg: var(--vx-green-bg);
+  --color-vx-amber: var(--vx-amber);
+  --color-vx-amber-bg: var(--vx-amber-bg);
+  --color-vx-red: var(--vx-red);
+  --color-vx-red-bg: var(--vx-red-bg);
+  --color-vx-blue: var(--vx-blue);
+  --color-vx-blue-bg: var(--vx-blue-bg);
+  --color-vx-purple: var(--vx-purple);
+  --color-vx-purple-bg: var(--vx-purple-bg);
+
+  /* Raios e sombras do legacy */
+  --radius-vx-sm: var(--vx-radius-sm);
+  --radius-vx: var(--vx-radius);
+  --radius-vx-lg: var(--vx-radius-lg);
+  --shadow-vx-sm: var(--vx-shadow-sm);
+  --shadow-vx-md: var(--vx-shadow-md);
+  --shadow-vx-lg: var(--vx-shadow-lg);
+}
+
+/* ── TEMA CLARO (:root) — valores extraídos do legacy ── */
+:root {
+  /* Paleta VoraX */
+  --vx-bg: #f8f6f2;
+  --vx-surface: #ffffff;
+  --vx-surface2: #f2efe9;
+  --vx-surface3: #e8e4dc;
+  --vx-border: #e0dbd2;
+  --vx-border2: #c8c2b8;
+  --vx-text: #1a1814;
+  --vx-text2: #3d3930;
+  --vx-muted: #8a8478;
+  --vx-accent: #9b7d5a;
+  --vx-accent2: #7a6244;
+  --vx-accent-light: #f5ede0;
+  --vx-gold: #b8955a;
+  --vx-gold-light: #f7f0e4;
+  --vx-green: #3a6b4f;
+  --vx-green-bg: #e8f4ed;
+  --vx-amber: #b5600a;
+  --vx-amber-bg: #fdf0e0;
+  --vx-red: #b03030;
+  --vx-red-bg: #fce8e8;
+  --vx-blue: #2a5278;
+  --vx-blue-bg: #e8f0f8;
+  --vx-purple: #5c4fa0;
+  --vx-purple-bg: #eeebf8;
+  --vx-shadow-sm: 0 1px 3px rgba(26, 24, 20, 0.05);
+  --vx-shadow-md: 0 6px 20px rgba(26, 24, 20, 0.07);
+  --vx-shadow-lg: 0 16px 48px rgba(26, 24, 20, 0.1);
+  --vx-radius: 12px;
+  --vx-radius-sm: 8px;
+  --vx-radius-lg: 18px;
+  --vx-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* shadcn ← VoraX */
+  --radius: 0.75rem; /* 12px */
+  --background: var(--vx-bg);
+  --foreground: var(--vx-text);
+  --card: var(--vx-surface);
+  --card-foreground: var(--vx-text);
+  --popover: var(--vx-surface);
+  --popover-foreground: var(--vx-text);
+  --primary: var(--vx-accent2);
+  --primary-foreground: #ffffff;
+  --secondary: var(--vx-surface2);
+  --secondary-foreground: var(--vx-text);
+  --muted: var(--vx-surface2);
+  --muted-foreground: var(--vx-muted);
+  --accent: var(--vx-accent-light);
+  --accent-foreground: var(--vx-accent);
+  --destructive: var(--vx-red);
+  --border: var(--vx-border);
+  --input: var(--vx-border);
+  --ring: var(--vx-accent);
+  --chart-1: var(--vx-accent);
+  --chart-2: var(--vx-gold);
+  --chart-3: var(--vx-green);
+  --chart-4: var(--vx-blue);
+  --chart-5: var(--vx-purple);
+  --sidebar: var(--vx-surface);
+  --sidebar-foreground: var(--vx-text);
+  --sidebar-primary: var(--vx-accent2);
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: var(--vx-accent-light);
+  --sidebar-accent-foreground: var(--vx-accent);
+  --sidebar-border: var(--vx-border);
+  --sidebar-ring: var(--vx-accent);
+}
+
+/* ── TEMA ESCURO ([data-theme="dark"]) — valores do legacy ── */
+[data-theme="dark"] {
+  --vx-bg: #111009;
+  --vx-surface: #1a1814;
+  --vx-surface2: #222018;
+  --vx-surface3: #2e2b22;
+  --vx-border: #38352a;
+  --vx-border2: #4a4638;
+  --vx-text: #f0ece4;
+  --vx-text2: #c4bfb4;
+  --vx-muted: #8a8478;
+  --vx-accent: #c8a07a;
+  --vx-accent2: #d4b08a;
+  --vx-accent-light: #2a2218;
+  --vx-gold: #c8a060;
+  --vx-gold-light: #261f10;
+  --vx-green: #5ab87a;
+  --vx-green-bg: #182a20;
+  --vx-amber: #e89040;
+  --vx-amber-bg: #28200a;
+  --vx-red: #e05050;
+  --vx-red-bg: #281010;
+  --vx-blue: #60a0d0;
+  --vx-blue-bg: #101e2e;
+  --vx-purple: #9080d0;
+  --vx-purple-bg: #1a1630;
+  --vx-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --vx-shadow-md: 0 6px 20px rgba(0, 0, 0, 0.4);
+  --vx-shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.5);
+
+  /* Ajustes de contraste shadcn no escuro (btn-primary usa texto escuro) */
+  --primary: var(--vx-accent);
+  --primary-foreground: #1a1814;
+  --sidebar-primary: var(--vx-accent);
+  --sidebar-primary-foreground: #1a1814;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-jost), sans-serif;
+    font-size: 14px;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   CHROME DA APLICAÇÃO — sidebar, topbar e nav mobile
+   Portado fielmente do legacy (var(--X) → var(--vx-X)).
+   ══════════════════════════════════════════════════════════════ */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--vx-border2);
+  border-radius: 2px;
+}
+
+.layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ── SIDEBAR LUXO ── */
+.sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  background: linear-gradient(180deg, #1a1510 0%, #0f0d09 100%);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+  z-index: 40;
+}
+.sidebar::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(184, 149, 90, 0.6), transparent);
+}
+[data-theme="dark"] .sidebar {
+  background: linear-gradient(180deg, #0d0b08 0%, #080706 100%);
+}
+
+.sidebar-logo {
+  padding: 2rem 1.75rem 1.75rem;
+  border-bottom: 1px solid rgba(184, 149, 90, 0.12);
+}
+.sidebar-logo .logo-mark {
+  font-family: var(--font-cormorant), serif;
+  font-size: 28px;
+  font-weight: 300;
+  color: #f0ece4;
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+.sidebar-logo .logo-mark em {
+  font-style: italic;
+  color: var(--vx-gold);
+}
+
+.nav-section {
+  font-size: 8px;
+  color: rgba(184, 149, 90, 0.35);
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 1.5rem 1.75rem 0.5rem;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 1.75rem;
+  color: rgba(240, 236, 228, 0.35);
+  cursor: pointer;
+  transition: all var(--vx-transition);
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  margin: 1px 0.75rem;
+  border-radius: 10px;
+  position: relative;
+  text-decoration: none;
+}
+.nav-item:hover {
+  background: rgba(184, 149, 90, 0.08);
+  color: rgba(240, 236, 228, 0.75);
+}
+.nav-item.active {
+  background: rgba(184, 149, 90, 0.1);
+  color: #f0ece4;
+}
+.nav-item.active::before {
+  content: "";
+  position: absolute;
+  left: -12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2px;
+  height: 22px;
+  background: var(--vx-gold);
+  border-radius: 0 2px 2px 0;
+  box-shadow: 0 0 8px rgba(184, 149, 90, 0.4);
+}
+.nav-icon {
+  font-size: 15px;
+  width: 20px;
+  text-align: center;
+  opacity: 0.5;
+}
+.nav-item.active .nav-icon {
+  opacity: 1;
+}
+.nav-badge {
+  font-size: 9px;
+  font-weight: 600;
+  background: var(--vx-gold);
+  color: #fff;
+  padding: 2px 7px;
+  border-radius: 10px;
+  margin-left: auto;
+  letter-spacing: 0.05em;
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 1.25rem 1.75rem;
+  border-top: 1px solid rgba(184, 149, 90, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.sidebar-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #4ade80;
+  box-shadow: 0 0 8px #4ade8066;
+  flex-shrink: 0;
+  animation: pulse-dot 2.5s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%,
+  100% {
+    box-shadow: 0 0 8px #4ade8066;
+  }
+  50% {
+    box-shadow: 0 0 14px #4ade80aa;
+  }
+}
+.sidebar-status-text {
+  font-size: 10px;
+  color: rgba(240, 236, 228, 0.25);
+  letter-spacing: 0.05em;
+}
+
+/* ── MAIN / TOPBAR ── */
+.main {
+  margin-left: 260px;
+  flex: 1;
+  min-width: 0;
+}
+.topbar {
+  height: 64px;
+  border-bottom: 1px solid var(--vx-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2.5rem;
+  background: var(--vx-surface);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  transition: background var(--vx-transition), border-color var(--vx-transition);
+}
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.topbar-title {
+  font-family: var(--font-cormorant), serif;
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--vx-text);
+  letter-spacing: 0.02em;
+}
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.topbar-date {
+  font-size: 11px;
+  color: var(--vx-muted);
+  font-family: var(--font-jetbrains), monospace;
+  background: var(--vx-surface2);
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--vx-border);
+}
+.theme-toggle {
+  background: var(--vx-surface2);
+  border: 1px solid var(--vx-border);
+  color: var(--vx-muted);
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--vx-transition);
+}
+.theme-toggle:hover {
+  background: var(--vx-surface3);
+  color: var(--vx-text);
+}
+
+.content {
+  padding: 2.5rem 2.5rem;
+}
+
+/* ── MOBILE NAV ── */
+.bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--vx-surface);
+  border-top: 1px solid var(--vx-border);
+  z-index: 50;
+  padding: 8px 0 env(safe-area-inset-bottom, 8px);
+}
+.bottom-nav-inner {
+  display: flex;
+  justify-content: space-around;
+}
+.bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 4px 12px;
+  cursor: pointer;
+  color: var(--vx-muted);
+  font-size: 10px;
+  font-weight: 500;
+  transition: color var(--vx-transition);
+  letter-spacing: 0.04em;
+  text-decoration: none;
+}
+.bottom-nav-item .bn-icon {
+  font-size: 18px;
+}
+.bottom-nav-item.active {
+  color: var(--vx-accent);
+}
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--vx-muted);
+  cursor: pointer;
+  font-size: 22px;
+  padding: 4px;
+}
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(2px);
+  z-index: 39;
+}
+.sidebar-overlay.open {
+  display: block;
+}
+
+/* Tablet / narrow desktop */
+@media (max-width: 1100px) {
+  .sidebar {
+    width: 220px;
+  }
+  .main {
+    margin-left: 220px;
+  }
+  .content {
+    padding: 1.75rem;
+  }
+}
+
+@media (max-width: 860px) {
+  .content {
+    padding: 1.5rem;
+  }
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .sidebar {
+    transform: translateX(-100%);
+    z-index: 40;
+    width: 260px;
+  }
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  .main {
+    margin-left: 0;
+  }
+  .content {
+    padding: 1.25rem;
+    padding-bottom: 80px;
+  }
+  .bottom-nav {
+    display: block;
+  }
+  .hamburger {
+    display: block;
+  }
+  .topbar-date {
+    display: none;
+  }
+}

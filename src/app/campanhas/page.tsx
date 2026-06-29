@@ -1,5 +1,5 @@
-import { PagePlaceholder } from "@/components/page-placeholder";
+import { Campanhas } from "@/components/campanhas/campanhas";
 
 export default function CampanhasPage() {
-  return <PagePlaceholder title="Campanhas" etapa="Etapa 6" />;
+  return <Campanhas />;
 }

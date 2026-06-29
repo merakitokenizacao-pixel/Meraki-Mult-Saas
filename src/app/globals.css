@@ -2175,3 +2175,117 @@ select.form-input {
   border-radius: 50%;
   background: var(--vx-red);
 }
+
+/* ══════════════════════════════════════════════════════════════
+   CAMPANHAS — lista com progresso + modal compositor
+   Portado do legacy (var(--X) → var(--vx-X)).
+   ══════════════════════════════════════════════════════════════ */
+.camp-list {
+  display: flex;
+  flex-direction: column;
+}
+.camp-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  border-radius: var(--vx-radius-sm);
+  transition: background var(--vx-transition);
+  border-bottom: 1px solid var(--vx-border);
+}
+.camp-row:last-child {
+  border-bottom: none;
+}
+.camp-row:hover {
+  background: var(--vx-surface2);
+}
+.camp-main {
+  flex: 1;
+  min-width: 0;
+}
+.camp-name {
+  font-size: 14px;
+  color: var(--vx-text);
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+.camp-meta {
+  font-size: 11px;
+  color: var(--vx-muted);
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.camp-progress-wrap {
+  width: 170px;
+  flex-shrink: 0;
+}
+.camp-progress-track {
+  height: 6px;
+  background: var(--vx-surface3);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 5px;
+}
+.camp-progress-fill {
+  height: 100%;
+  background: var(--vx-gold);
+  border-radius: 6px;
+  transition: width 0.4s;
+}
+.camp-progress-label {
+  font-size: 10px;
+  color: var(--vx-muted);
+  font-family: var(--font-jetbrains), monospace;
+}
+.camp-empty {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--vx-muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+.camp-count-box {
+  background: var(--vx-gold-light);
+  border: 1px solid rgba(200, 160, 96, 0.25);
+  border-radius: var(--vx-radius-sm);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.camp-count-num {
+  font-family: var(--font-cormorant), serif;
+  font-size: 30px;
+  color: var(--vx-gold);
+  line-height: 1;
+}
+.camp-count-label {
+  font-size: 11px;
+  color: var(--vx-text2);
+  margin-top: 2px;
+}
+.camp-preview {
+  background: var(--vx-surface2);
+  border: 1px solid var(--vx-border);
+  border-radius: var(--vx-radius-sm);
+  padding: 14px;
+  font-size: 13px;
+  color: var(--vx-text2);
+  line-height: 1.6;
+  white-space: pre-wrap;
+  min-height: 40px;
+}
+.camp-note {
+  font-size: 11px;
+  color: var(--vx-muted);
+  margin-top: 7px;
+  line-height: 1.5;
+}
+@media (max-width: 640px) {
+  .camp-progress-wrap {
+    width: 110px;
+  }
+}

@@ -133,3 +133,44 @@ export async function getCampanhas(): Promise<Campanha[]> {
   if (error) throw error;
   return (data ?? []) as Campanha[];
 }
+
+export async function createCampanha(fields: {
+  nome: string;
+  mensagem: string;
+  publico: string;
+  status: string;
+  total: number;
+  enviados: number;
+}): Promise<Campanha> {
+  const { data, error } = await supabase
+    .from("campanhas")
+    .insert(fields)
+    .select()
+    .single();
+  if (error || !data) throw error ?? new Error("Falha ao criar campanha");
+  return data as Campanha;
+}
+
+export async function insertCampanhaEnvios(
+  lote: Array<{
+    campanha_id: string;
+    lead_id: string;
+    telefone: string;
+    nome: string | null;
+    status: string;
+  }>
+): Promise<void> {
+  const { error } = await supabase.from("campanha_envios").insert(lote);
+  if (error) throw error;
+}
+
+export async function updateCampanhaTotal(
+  id: string,
+  total: number
+): Promise<void> {
+  const { error } = await supabase
+    .from("campanhas")
+    .update({ total })
+    .eq("id", id);
+  if (error) throw error;
+}

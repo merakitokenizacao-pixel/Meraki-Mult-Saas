@@ -12,7 +12,13 @@ VoraX é um CRM (SaaS) para clínicas de estética. Hoje atende a clínica **LIN
 - **Etapa 3 (Clientes / leads) — CONCLUÍDA.** Tela `/clientes` em `src/components/clientes/*`: busca por nome/telefone + filtro de período, tabela de leads e modal de detalhe (dados do lead + agendamentos + prévia da conversa). O clique nos "Clientes recentes" do dashboard agora também abre o modal. `npm run build` passa; validado via HTTP.
 - **Etapa 4 (Conversas) — CONCLUÍDA.** Tela `/conversas` em `src/components/conversas/*`: inbox 3 colunas (lista · chat · perfil), abas Tudo/IA/Humano/Inativo com contagem, ordenação por última mensagem, badge de não-lidas (zera ao abrir via `update nao_lidas=0`), chat com mensagens agrupadas por dia, toggle de pausa da IA, envio otimista de mensagem (webhook n8n) com auto-pausa da IA, e painel de detalhes do cliente. `npm run build` passa; validado via HTTP.
 - **Etapa 5 (Agenda) — CONCLUÍDA.** Tela `/agenda` em `src/components/agenda/*`: grade semanal (08–20h × 7 dias) com navegação de semanas, eventos posicionados por horário/minuto, linha do horário atual, modal de novo agendamento (clique numa célula ou "+ Novo") e modal de edição (status + exclusão). `npm run build` passa; validado via HTTP.
-- Próxima: **Etapa 6 — Campanhas** (ver `PLANO_MIGRACAO.md`).
+- **Etapa 6 (Campanhas) — CONCLUÍDA.** Tela `/campanhas` em `src/components/campanhas/*`: lista de campanhas com barra de progresso e modal compositor (nome, público, contador ao vivo, mensagem com `{nome}`, prévia). Ao criar, insere a campanha e enfileira `campanha_envios` em lotes de 500 (não dispara envio — isso é do n8n). `npm run build` passa; validado via HTTP.
+- Próxima: **Etapa 7 — Polimento e deploy** (ver `PLANO_MIGRACAO.md`).
+
+### Campanhas (Etapa 6)
+- `src/components/campanhas/`: `campanhas.tsx` (lista + progresso, `loadCampanhas`/`campBadge`), `campanha-modal.tsx` (`openCampanhaModal`/`atualizarPublico`/`atualizarPreview`/`criarCampanha`). Helpers em `src/lib/campanha.ts` (`publicoLabel`, `campBadge`, `filtrarPublico`).
+- **Compositor**: contador de destinatários ao vivo (`filtrarPublico` respeita opt-out `aceita_campanha`, exige telefone e aplica o público todos/inativos_30/inativos_60), prévia trocando `{nome}` pelo 1º nome de um lead real.
+- **Criar e enfileirar**: `createCampanha` (status `enviando`) + `insertCampanhaEnvios` em lotes de 500 + `updateCampanhaTotal` se houver falha parcial (em `queries.ts`). O **envio real é do n8n**; o front só enfileira.
 
 ### Agenda (Etapa 5)
 - `src/components/agenda/`: `agenda.tsx` (container: fetch `getAgendamentosComLead`+`getLeads`, estado de semana, modais), `week-grid.tsx` (`renderWeekAgenda`+`renderEventsOnGrid`), `new-agend-modal.tsx` (`quickAgendamento`/`salvarAgendamento`), `edit-agend-modal.tsx` (`openEditAgendamento`/`updateAgendStatus`/excluir). Helpers em `src/lib/agenda.ts`.

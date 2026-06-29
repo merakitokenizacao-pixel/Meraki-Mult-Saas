@@ -1,20 +1,32 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
+// Tema compartilhado por context: replica o toggleTheme do legacy (data-theme no
+// <html> + localStorage) e permite que os gráficos reajam à troca de tema.
 type Theme = "light" | "dark";
 const STORAGE_KEY = "vorax-theme";
 
-// Replica o toggleTheme do legacy: alterna data-theme no <html> e persiste no localStorage.
-export function useTheme() {
+const ThemeContext = createContext<{ theme: Theme; toggleTheme: () => void }>({
+  theme: "light",
+  toggleTheme: () => {},
+});
+
+export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>("light");
 
   useEffect(() => {
-    const current =
+    setTheme(
       document.documentElement.getAttribute("data-theme") === "dark"
         ? "dark"
-        : "light";
-    setTheme(current);
+        : "light"
+    );
   }, []);
 
   const toggleTheme = useCallback(() => {
@@ -32,5 +44,11 @@ export function useTheme() {
     });
   }, []);
 
-  return { theme, toggleTheme };
+  return (
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  );
 }
+
+export const useTheme = () => useContext(ThemeContext);

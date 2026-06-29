@@ -1,5 +1,5 @@
-import { PagePlaceholder } from "@/components/page-placeholder";
+import { Dashboard } from "@/components/dashboard/dashboard";
 
 export default function DashboardPage() {
-  return <PagePlaceholder title="Visão geral" etapa="Etapa 2" />;
+  return <Dashboard />;
 }

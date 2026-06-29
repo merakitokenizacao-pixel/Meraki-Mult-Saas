@@ -8,7 +8,15 @@ VoraX é um CRM (SaaS) para clínicas de estética. Hoje atende a clínica **LIN
 ## Estado da migração
 - **Etapa 0 (Fundação) — CONCLUÍDA.** Next.js 16 (App Router) + React 19 + TypeScript + **Tailwind v4** + shadcn/ui + Supabase. Layout base (sidebar luxo, topbar, nav mobile), tema claro/escuro e as 5 rotas (placeholders) no ar. `npm run build` passa.
 - **Etapa 1 (Camada de dados e helpers) — CONCLUÍDA.** Tipos das 5 tabelas em `src/types/db.ts`; queries reutilizáveis em `src/lib/queries.ts`; helpers puros em `src/lib/format.ts` e `src/lib/date.ts`; componentes `Avatar` e `StatusBadge`; `showToast` como wrapper do sonner (`src/lib/toast.ts`). Validado: helpers com asserts (12/12) e leitura real de `leads` no Supabase.
-- Próxima: **Etapa 2 — Visão geral (dashboard)** (ver `PLANO_MIGRACAO.md`).
+- **Etapa 2 (Visão geral / dashboard) — CONCLUÍDA.** Tela `/` em `src/components/dashboard/*`: header com saudação por horário + filtro de período, 4 KPIs, clientes recentes, funil e os 2 gráficos Chart.js (doughnut de serviços, linha de novos clientes/dia). Tema integrado via context (`ThemeProvider`) — os gráficos recalculam cores ao alternar tema. `npm run build` passa.
+- Próxima: **Etapa 3 — Clientes (leads)** (ver `PLANO_MIGRACAO.md`).
+
+### Dashboard (Etapa 2)
+- Estrutura em `src/components/dashboard/`: `dashboard.tsx` (container: fetch `getLeads`+`getAgendamentos`, estado de período e saudação), `metrics-grid.tsx`, `recent-leads.tsx`, `funnel.tsx`, `service-chart.tsx`, `timeline-chart.tsx`.
+- **Tema dos gráficos**: `ThemeProvider` (`src/components/theme-provider.tsx`) virou a fonte única do tema (substituiu `lib/use-theme.ts`, removido). O toggle vive na topbar; os gráficos consomem o context e releem as CSS vars (`getChartStyle` em `src/lib/chart.ts`) ao trocar de tema.
+- **Charts SSR**: `ServiceChart`/`TimelineChart` só renderizam após `mounted` (gate) para não acessar `document`/`getComputedStyle` no servidor.
+- **Paridade de "Consultas agendadas"**: o arquivo legacy conta **leads com `status === 'agendado'`** no período (não linhas de `agendamentos`). Migrei o que o arquivo faz, conforme a regra "seguir o legacy". (A pendência no topo deste arquivo descreve um ajuste futuro pretendido, ainda não presente no legacy.) Idem "Receita estimada": R$ 0,00 enquanto `agendamentos.valor` vier vazio.
+- **Pendência local**: os itens de "Clientes recentes" ainda não abrem o modal de lead (não há clique) — isso entra na Etapa 3 junto com `openLeadModal`.
 
 ### Camada de dados (Etapa 1)
 - **Tipos** (`src/types/db.ts`): `Lead`, `Conversa`, `Agendamento` (+ `AgendamentoComLead` para o join da Agenda), `Campanha`, `CampanhaEnvio`. Status como unions com fallback de string (`Loose<>`), pois o n8n pode gravar valores fora da lista.

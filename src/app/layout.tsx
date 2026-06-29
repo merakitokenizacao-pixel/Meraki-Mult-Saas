@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Cormorant_Garamond, Jost, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { AppShell } from "@/components/app-shell";
+import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 
 const cormorant = Cormorant_Garamond({
@@ -46,8 +47,10 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body className="antialiased">
-        <AppShell>{children}</AppShell>
-        <Toaster />
+        <ThemeProvider>
+          <AppShell>{children}</AppShell>
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );

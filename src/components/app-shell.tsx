@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { NAV_ITEMS, titleForPath } from "@/lib/nav";
-import { useTheme } from "@/lib/use-theme";
+import { useTheme } from "@/components/theme-provider";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { toggleTheme } = useTheme();
+  const { theme, toggleTheme } = useTheme();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [currentDate, setCurrentDate] = useState("");
 
@@ -80,7 +80,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 onClick={toggleTheme}
                 title="Alternar tema"
               >
-                ☽
+                {theme === "dark" ? "☀" : "☽"}
               </button>
             </div>
           </div>

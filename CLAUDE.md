@@ -1,0 +1,76 @@
+# VoraX — CRM para clínicas de estética
+
+## O que é
+VoraX é um CRM (SaaS) para clínicas de estética. Hoje atende a clínica **LINS Estética** (Brasília). O sistema mostra leads/clientes captados pelo WhatsApp, conversas, agenda, campanhas e métricas. Um agente de IA chamado **Laura** atende os clientes no WhatsApp (isso roda fora deste repositório, no n8n) e grava tudo no mesmo banco Supabase que este front lê.
+
+**Estado atual:** este projeto é uma MIGRAÇÃO de um protótipo single-file (`index.html`, ~2200 linhas de HTML+CSS+JS puro) para Next.js estruturado. O arquivo original está em `/legacy/index.html` como referência fiel. **Objetivo da migração: reproduzir o sistema EXATAMENTE como está hoje (mesmas telas, mesmas funções, mesma estética), só que organizado em Next.js + TypeScript.** Não inventar features novas, não redesenhar. Paridade visual e funcional total com o legacy.
+
+## Stack
+- **Next.js (App Router) + React + TypeScript**
+- **Tailwind CSS** para estilo (replicar os design tokens abaixo)
+- **shadcn/ui** para componentes base (botões, modais, tabelas, selects)
+- **Supabase** (já existente, não migrar o banco) via `@supabase/supabase-js`
+- **Chart.js** (já usado no legacy para os gráficos do dashboard)
+- Deploy na **Vercel** (push no GitHub publica)
+
+## Princípios deste projeto
+- Single-tenant por enquanto (só a LINS). Estruturar de forma que dê pra evoluir pra multi-clínica depois, mas NÃO implementar multi-tenant agora.
+- Paridade com o legacy acima de tudo. Em caso de dúvida de comportamento, abrir `/legacy/index.html` e seguir o que ele faz.
+- Componentes pequenos e reutilizáveis. Nada de arquivos gigantes.
+- Tema claro/escuro: o legacy tem os dois, manter.
+- Português do Brasil em toda a UI.
+
+## Design tokens (copiar exatamente do legacy)
+Fontes (Google Fonts): **Cormorant Garamond** (títulos/serif), **Jost** (texto/sans), **JetBrains Mono** (mono).
+
+Tema claro:
+- bg #f8f6f2 · surface #ffffff · surface2 #f2efe9 · surface3 #e8e4dc
+- border #e0dbd2 · border2 #c8c2b8 · text #1a1814 · text2 #3d3930
+- accent #9b7d5a · accent2 #7a6244 · accent-light #f5ede0
+- gold #b8955a · gold-light #f7f0e4
+- green #3a6b4f · green-bg #e8f4ed · amber #b5600a · amber-bg #fdf0e0 · blue #2a5278 · blue-bg #e8f0f8
+
+Tema escuro:
+- bg #111009 · surface #1a1814 · surface2 #222018 · surface3 #2e2b22
+- border #38352a · border2 #4a4638 · text #f0ece4 · text2 #c4bfb4
+- accent #c8a07a · accent2 #d4b08a (demais cores: extrair do bloco `[data-theme="dark"]` do legacy)
+
+Paleta bege/dourado, estética sofisticada e calma. Os valores completos (incluindo os que não estão listados aqui) devem ser extraídos das variáveis CSS `:root` e `[data-theme="dark"]` no `/legacy/index.html`.
+
+## As 5 telas (paridade obrigatória com o legacy)
+1. **Visão geral** (dashboard) — KPIs (Clientes captados, Consultas agendadas, Taxa de conversão, Receita estimada), filtro de período (Hoje/Ontem/Semana/Mês/Tudo), clientes recentes, funil de conversão, gráficos (serviços, timeline). Funções legacy: `loadDashboard`, `renderDashboardMetrics`, `renderServiceChart`, `renderTimelineChart`.
+2. **Clientes** (leads) — tabela de leads com filtro, modal de detalhe. Funções: `renderLeadsTable`, `applyLeadsFilter`, `openLeadModal`.
+3. **Conversas** — inbox de 3 colunas (lista / chat / perfil), abas (Tudo/IA/Humano/Inativo), badge de não-lidas, envio de mensagem, toggle de pausa da IA. Funções: `loadConversaLeads`, `renderConversaList`, `loadConversas`, `enviarMensagemCRM`, `toggleIA`, `renderConversaDetails`. (Detalhes importantes: ordenação por última mensagem; badge de não-lidas zera ao abrir via `update nao_lidas=0`.)
+4. **Agenda** — visão semanal em grade, navegação de semanas, eventos posicionados na grade, modal de novo agendamento. Funções: `loadAgendamentos`, `renderWeekAgenda`, `renderEventsOnGrid`, `quickAgendamento`.
+5. **Campanhas** — lista de campanhas com progresso, modal compositor (público, contador ao vivo, prévia). Funções: `loadCampanhas`, `openCampanhaModal`, `criarCampanha`.
+
+Helpers compartilhados no legacy (virar utils/components): `renderAvatar`, `getInitials`, `badgeHtml`, `formatTelefone`, `fmtDate`, `getRelativeTime`, `getDateRange`, `filterByDate`, `showToast`, `showPage`, `toggleTheme`, `limparServico`.
+
+## Banco de dados (Supabase — JÁ EXISTE, não recriar)
+URL do projeto: `https://sflpxenfyewefzwizimf.supabase.co` (a anon key vai em variável de ambiente, ver abaixo).
+Timezone do projeto: America/Sao_Paulo.
+
+Tabelas (5):
+- **leads** — chave de negócio é `telefone` (único, usado como chave de upsert pelo n8n). Campos usados pelo front: `id`, `nome`, `telefone`, `status` (novo/agendado/convertido/...), `canal`, `origem`, `foto_url`, `nao_lidas`, `ia_pausada`, `pausada_por`, `resumo_ia`, `score_ia`, `aceita_campanha`, `ultima_interacao`, `criado_em`.
+- **conversas** — histórico de mensagens. Campos: `id`, `lead_id` (FK), `mensagem`, `origem` ('cliente' | 'agente' | 'humano'), `enviado_em`.
+- **agendamentos** — Campos: `id`, `lead_id` (FK), `servico`, `data_agendamento`, `duracao_min`, `status` (pendente/confirmado/cancelado/realizado), `origem`, `valor` (existe na tabela; hoje vem vazio porque o n8n ainda não preenche — a "Receita estimada" depende disso).
+- **campanhas** — `id`, `nome`, `mensagem`, `publico`, `status` (rascunho/enviando/concluida/pausada), `total`, `enviados`, datas.
+- **campanha_envios** — fila: `id`, `campanha_id` (FK), `lead_id` (FK), `telefone`, `nome`, `status`, unique(campanha_id, lead_id).
+
+RLS liberado para anon/authenticated (single-tenant). Não alterar schema sem necessidade; se precisar, registrar aqui e gerar migration.
+
+## Variáveis de ambiente (.env.local)
+- `NEXT_PUBLIC_SUPABASE_URL` = a URL acima
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` = a anon key (pegar no painel do Supabase; NUNCA commitar a service_role key)
+
+## O que NÃO está neste repositório
+- O agente Laura, o FAQ, o Agente Agenda, os fluxos: tudo isso vive no **n8n** (nuvem), não aqui. Este front só LÊ e ESCREVE no Supabase. Não tentar implementar o agente aqui.
+- Mudanças de prompt/fluxo do agente são feitas fora deste projeto.
+
+## Pendências conhecidas (NÃO são bugs da migração; herdadas do legacy)
+- "Receita estimada" mostra R$ 0,00 porque `agendamentos.valor` vem vazio (o n8n não preenche). Migrar como está; resolver depois.
+- "Consultas agendadas": no legacy foi ajustado pra contar linhas de `agendamentos` (não leads). Decisão pendente de mostrar agendamentos FUTUROS. Migrar o comportamento atual do legacy; ajuste futuro fica pra depois.
+- Inbox não tem realtime/auto-refresh ainda (badge ao vivo). Migrar sem realtime; adicionar depois com Supabase Realtime.
+
+## Como manter este arquivo
+Ao concluir uma etapa de migração ou tomar uma decisão de arquitetura, ATUALIZE este CLAUDE.md (seção de estado e pendências). Este arquivo é a memória do projeto; mantê-lo curado evita perda de contexto entre sessões.

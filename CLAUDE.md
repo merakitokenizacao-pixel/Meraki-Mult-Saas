@@ -11,7 +11,14 @@ VoraX é um CRM (SaaS) para clínicas de estética. Hoje atende a clínica **LIN
 - **Etapa 2 (Visão geral / dashboard) — CONCLUÍDA.** Tela `/` em `src/components/dashboard/*`: header com saudação por horário + filtro de período, 4 KPIs, clientes recentes, funil e os 2 gráficos Chart.js (doughnut de serviços, linha de novos clientes/dia). Tema integrado via context (`ThemeProvider`) — os gráficos recalculam cores ao alternar tema. `npm run build` passa.
 - **Etapa 3 (Clientes / leads) — CONCLUÍDA.** Tela `/clientes` em `src/components/clientes/*`: busca por nome/telefone + filtro de período, tabela de leads e modal de detalhe (dados do lead + agendamentos + prévia da conversa). O clique nos "Clientes recentes" do dashboard agora também abre o modal. `npm run build` passa; validado via HTTP.
 - **Etapa 4 (Conversas) — CONCLUÍDA.** Tela `/conversas` em `src/components/conversas/*`: inbox 3 colunas (lista · chat · perfil), abas Tudo/IA/Humano/Inativo com contagem, ordenação por última mensagem, badge de não-lidas (zera ao abrir via `update nao_lidas=0`), chat com mensagens agrupadas por dia, toggle de pausa da IA, envio otimista de mensagem (webhook n8n) com auto-pausa da IA, e painel de detalhes do cliente. `npm run build` passa; validado via HTTP.
-- Próxima: **Etapa 5 — Agenda** (ver `PLANO_MIGRACAO.md`).
+- **Etapa 5 (Agenda) — CONCLUÍDA.** Tela `/agenda` em `src/components/agenda/*`: grade semanal (08–20h × 7 dias) com navegação de semanas, eventos posicionados por horário/minuto, linha do horário atual, modal de novo agendamento (clique numa célula ou "+ Novo") e modal de edição (status + exclusão). `npm run build` passa; validado via HTTP.
+- Próxima: **Etapa 6 — Campanhas** (ver `PLANO_MIGRACAO.md`).
+
+### Agenda (Etapa 5)
+- `src/components/agenda/`: `agenda.tsx` (container: fetch `getAgendamentosComLead`+`getLeads`, estado de semana, modais), `week-grid.tsx` (`renderWeekAgenda`+`renderEventsOnGrid`), `new-agend-modal.tsx` (`quickAgendamento`/`salvarAgendamento`), `edit-agend-modal.tsx` (`openEditAgendamento`/`updateAgendStatus`/excluir). Helpers em `src/lib/agenda.ts`.
+- **Eventos na grade**: em vez de `querySelector`+`appendChild` (legacy), o `WeekGrid` agrupa os eventos por célula `dateStr|hora` (useMemo) e renderiza dentro de cada `.agenda-cell` posicionado por `top`/`height`. Mesma lógica de dia/hora/minuto e a `agenda-now-line`.
+- **Gate de loading**: a grade só renderiza depois do fetch (estado `loading`), evitando acessar `new Date()` no SSR e mismatch de hidratação (a linha do "agora" depende do horário).
+- **Mutações** em `queries.ts`: `insertAgendamento`, `updateAgendamentoStatus`, `deleteAgendamento`. Ao salvar, o lead vira `status='agendado'` (como no legacy). Reabre/recarrega via `getAgendamentosComLead`.
 
 ### Conversas (Etapa 4)
 - `src/components/conversas/`: `conversas.tsx` (container com todo o estado e ações), `inbox-list.tsx` (`renderConversaList`/abas), `chat-panel.tsx` (`loadConversas`/`enviarMensagemCRM`/`toggleIA`), `details-panel.tsx` (`renderConversaDetails`).

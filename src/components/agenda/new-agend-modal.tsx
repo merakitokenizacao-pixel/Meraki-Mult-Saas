@@ -1,0 +1,167 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { Modal } from "@/components/modal";
+import { insertAgendamento, updateLead } from "@/lib/queries";
+import { showToast } from "@/lib/toast";
+import type { Lead } from "@/types/db";
+
+const SERVICOS = [
+  "Limpeza de pele",
+  "Botox",
+  "Peeling",
+  "Drenagem linfatica",
+  "Preenchimento",
+  "Microagulhamento",
+  "Depilacao a laser",
+  "Outro",
+];
+
+// quickAgendamento / openNewAgendamento / salvarAgendamento.
+export function NewAgendModal({
+  open,
+  onClose,
+  leads,
+  prefill,
+  onCreated,
+}: {
+  open: boolean;
+  onClose: () => void;
+  leads: Lead[];
+  prefill: { data: string; hora: string };
+  onCreated: () => void;
+}) {
+  const [leadId, setLeadId] = useState("");
+  const [servico, setServico] = useState("");
+  const [data, setData] = useState("");
+  const [hora, setHora] = useState("");
+  const [status, setStatus] = useState("pendente");
+  const [msg, setMsg] = useState<{ text: string; color: string }>({
+    text: "",
+    color: "var(--vx-muted)",
+  });
+
+  // Aplica o prefill (data/hora) ao abrir.
+  useEffect(() => {
+    if (open) {
+      setData(prefill.data);
+      setHora(prefill.hora);
+      setMsg({ text: "", color: "var(--vx-muted)" });
+    }
+  }, [open, prefill.data, prefill.hora]);
+
+  async function salvar() {
+    if (!leadId || !servico || !data || !hora) {
+      setMsg({ text: "Preencha todos os campos!", color: "var(--vx-red)" });
+      return;
+    }
+    setMsg({ text: "Salvando...", color: "var(--vx-muted)" });
+    try {
+      await insertAgendamento({
+        lead_id: leadId,
+        servico,
+        data_agendamento: data + "T" + hora + ":00",
+        status,
+      });
+      await updateLead(leadId, { status: "agendado" });
+      setMsg({ text: "Agendamento salvo!", color: "var(--vx-green)" });
+      showToast("Agendamento criado com sucesso", "success");
+      setTimeout(() => {
+        onClose();
+        onCreated();
+      }, 1000);
+    } catch (err) {
+      setMsg({ text: "Erro: " + (err as Error).message, color: "var(--vx-red)" });
+    }
+  }
+
+  return (
+    <Modal open={open} onClose={onClose} width={460}>
+      <div
+        style={{
+          fontFamily: "var(--font-cormorant), serif",
+          fontSize: 22,
+          fontWeight: 300,
+          marginBottom: "1.25rem",
+          letterSpacing: "0.02em",
+        }}
+      >
+        Novo agendamento
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        <div>
+          <label className="form-label">Cliente</label>
+          <select
+            className="form-input"
+            value={leadId}
+            onChange={(e) => setLeadId(e.target.value)}
+          >
+            <option value="">Selecione um cliente...</option>
+            {leads.map((l) => (
+              <option value={l.id} key={l.id}>
+                {l.nome || l.telefone}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className="form-label">Servico</label>
+          <select
+            className="form-input"
+            value={servico}
+            onChange={(e) => setServico(e.target.value)}
+          >
+            <option value="">Selecione o servico...</option>
+            {SERVICOS.map((s) => (
+              <option key={s}>{s}</option>
+            ))}
+          </select>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+          <div>
+            <label className="form-label">Data</label>
+            <input
+              type="date"
+              className="form-input"
+              value={data}
+              onChange={(e) => setData(e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="form-label">Horario</label>
+            <input
+              type="time"
+              className="form-input"
+              value={hora}
+              onChange={(e) => setHora(e.target.value)}
+            />
+          </div>
+        </div>
+        <div>
+          <label className="form-label">Status</label>
+          <select
+            className="form-input"
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+          >
+            <option value="pendente">Pendente</option>
+            <option value="confirmado">Confirmado</option>
+          </select>
+        </div>
+        <button className="btn-primary" style={{ marginTop: 4 }} onClick={salvar}>
+          Salvar agendamento
+        </button>
+        <div
+          style={{
+            fontSize: 12,
+            textAlign: "center",
+            minHeight: 16,
+            color: msg.color,
+          }}
+        >
+          {msg.text}
+        </div>
+      </div>
+    </Modal>
+  );
+}

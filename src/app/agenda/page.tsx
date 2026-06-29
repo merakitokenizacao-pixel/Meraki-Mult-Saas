@@ -1,5 +1,5 @@
-import { PagePlaceholder } from "@/components/page-placeholder";
+import { Agenda } from "@/components/agenda/agenda";
 
 export default function AgendaPage() {
-  return <PagePlaceholder title="Agenda" etapa="Etapa 5" />;
+  return <Agenda />;
 }

@@ -67,6 +67,32 @@ export async function getAgendamentosComLead(): Promise<AgendamentoComLead[]> {
   return (data ?? []) as AgendamentoComLead[];
 }
 
+export async function insertAgendamento(fields: {
+  lead_id: string;
+  servico: string;
+  data_agendamento: string;
+  status: string;
+}): Promise<void> {
+  const { error } = await supabase.from("agendamentos").insert(fields);
+  if (error) throw error;
+}
+
+export async function updateAgendamentoStatus(
+  id: string,
+  status: string
+): Promise<void> {
+  const { error } = await supabase
+    .from("agendamentos")
+    .update({ status })
+    .eq("id", id);
+  if (error) throw error;
+}
+
+export async function deleteAgendamento(id: string): Promise<void> {
+  const { error } = await supabase.from("agendamentos").delete().eq("id", id);
+  if (error) throw error;
+}
+
 export async function getAgendamentosByLead(
   leadId: string
 ): Promise<Agendamento[]> {

@@ -9,6 +9,7 @@ import { RecentLeads } from "@/components/dashboard/recent-leads";
 import { Funnel } from "@/components/dashboard/funnel";
 import { ServiceChart } from "@/components/dashboard/service-chart";
 import { TimelineChart } from "@/components/dashboard/timeline-chart";
+import { LeadModal } from "@/components/clientes/lead-modal";
 import type { Agendamento, Lead } from "@/types/db";
 
 const PERIODS: ReadonlyArray<[string, string]> = [
@@ -34,6 +35,7 @@ export function Dashboard() {
   const [greeting, setGreeting] = useState<{ prefix: string; word: string } | null>(
     null
   );
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
 
   useEffect(() => {
     const h = new Date().getHours();
@@ -106,7 +108,11 @@ export function Dashboard() {
               Ver todos →
             </Link>
           </div>
-          {loading ? <Spinner /> : <RecentLeads leads={leads} />}
+          {loading ? (
+            <Spinner />
+          ) : (
+            <RecentLeads leads={leads} onLeadClick={setSelectedLead} />
+          )}
         </div>
         <div className="card">
           <div className="card-header">
@@ -135,6 +141,8 @@ export function Dashboard() {
           <TimelineChart leads={loading ? [] : leads} />
         </div>
       </div>
+
+      <LeadModal lead={selectedLead} onClose={() => setSelectedLead(null)} />
     </div>
   );
 }

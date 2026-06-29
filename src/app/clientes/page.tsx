@@ -1,5 +1,5 @@
-import { PagePlaceholder } from "@/components/page-placeholder";
+import { Clientes } from "@/components/clientes/clientes";
 
 export default function ClientesPage() {
-  return <PagePlaceholder title="Clientes" etapa="Etapa 3" />;
+  return <Clientes />;
 }

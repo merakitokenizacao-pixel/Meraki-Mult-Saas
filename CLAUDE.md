@@ -9,7 +9,18 @@ VoraX é um CRM (SaaS) para clínicas de estética. Hoje atende a clínica **LIN
 - **Etapa 0 (Fundação) — CONCLUÍDA.** Next.js 16 (App Router) + React 19 + TypeScript + **Tailwind v4** + shadcn/ui + Supabase. Layout base (sidebar luxo, topbar, nav mobile), tema claro/escuro e as 5 rotas (placeholders) no ar. `npm run build` passa.
 - **Etapa 1 (Camada de dados e helpers) — CONCLUÍDA.** Tipos das 5 tabelas em `src/types/db.ts`; queries reutilizáveis em `src/lib/queries.ts`; helpers puros em `src/lib/format.ts` e `src/lib/date.ts`; componentes `Avatar` e `StatusBadge`; `showToast` como wrapper do sonner (`src/lib/toast.ts`). Validado: helpers com asserts (12/12) e leitura real de `leads` no Supabase.
 - **Etapa 2 (Visão geral / dashboard) — CONCLUÍDA.** Tela `/` em `src/components/dashboard/*`: header com saudação por horário + filtro de período, 4 KPIs, clientes recentes, funil e os 2 gráficos Chart.js (doughnut de serviços, linha de novos clientes/dia). Tema integrado via context (`ThemeProvider`) — os gráficos recalculam cores ao alternar tema. `npm run build` passa.
-- Próxima: **Etapa 3 — Clientes (leads)** (ver `PLANO_MIGRACAO.md`).
+- **Etapa 3 (Clientes / leads) — CONCLUÍDA.** Tela `/clientes` em `src/components/clientes/*`: busca por nome/telefone + filtro de período, tabela de leads e modal de detalhe (dados do lead + agendamentos + prévia da conversa). O clique nos "Clientes recentes" do dashboard agora também abre o modal. `npm run build` passa; validado via HTTP.
+- Próxima: **Etapa 4 — Conversas** (ver `PLANO_MIGRACAO.md`).
+
+### Clientes (Etapa 3)
+- `src/components/clientes/`: `clientes.tsx` (container: fetch `getLeads`, estado de busca/período, seleção do lead), `leads-table.tsx` (`renderLeadsTable`), `lead-modal.tsx` (`openLeadModal`).
+- **Modal próprio em vez do shadcn Dialog**: o modal do legacy tem layout/anim próprios (overlay com blur, `slideUp`, botão `modal-close` quadrado). Para paridade pixel-a-pixel criei `src/components/modal.tsx` (overlay + ESC + clique-fora + scroll lock), reutilizável nos modais de Agenda/Campanhas. CSS `.modal*` portado para `globals.css`.
+- **Tabela em markup nativo** (não shadcn Table) com CSS do legacy escopado em `.table-wrap` — mesmo motivo de paridade. Filtro replica `applyLeadsFilter` (data + busca; telefone e canal exibidos crus, como no legacy).
+- Portado também para `globals.css`: `.search-bar`, tabela, `.modal*`, subconjunto de bolhas `.msg-*` (o restante das Conversas vem na Etapa 4) e keyframes `fadeIn`/`slideUp`.
+- **Pendência local**: o badge de contagem na nav lateral ("Clientes", `leads-count-badge` do legacy, = nº de leads de hoje) ainda não foi implementado — depende de estado compartilhado entre rotas; fica para depois.
+
+### Nota de operação (Windows + dev server)
+Ao reiniciar o `next dev`, se a porta 3000 aparecer "in use", há um processo `next` órfão (no Windows, `kill`/encerrar o `npm` não derruba o filho `node`). Ele pode servir CSS **defasado** do cache do Turbopack (foi o que quebrou visualmente a Etapa 2 até reiniciar limpo). Resolver com `taskkill /PID <pid> /T /F` na árvore e, se necessário, apagar `.next` antes de subir. Sempre dar **hard refresh** (Ctrl+Shift+R) no navegador após mudanças de CSS.
 
 ### Dashboard (Etapa 2)
 - Estrutura em `src/components/dashboard/`: `dashboard.tsx` (container: fetch `getLeads`+`getAgendamentos`, estado de período e saudação), `metrics-grid.tsx`, `recent-leads.tsx`, `funnel.tsx`, `service-chart.tsx`, `timeline-chart.tsx`.

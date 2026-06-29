@@ -4,7 +4,13 @@ import { fmtDate } from "@/lib/format";
 import type { Lead } from "@/types/db";
 
 // Replica o bloco "Clientes recentes" do loadDashboard: os 6 primeiros leads.
-export function RecentLeads({ leads }: { leads: Lead[] }) {
+export function RecentLeads({
+  leads,
+  onLeadClick,
+}: {
+  leads: Lead[];
+  onLeadClick: (lead: Lead) => void;
+}) {
   const recent = leads.slice(0, 6);
 
   if (recent.length === 0) {
@@ -19,7 +25,7 @@ export function RecentLeads({ leads }: { leads: Lead[] }) {
   return (
     <div className="lead-list">
       {recent.map((l) => (
-        <div className="lead-item" key={l.id}>
+        <div className="lead-item" key={l.id} onClick={() => onLeadClick(l)}>
           <Avatar nome={l.nome} fotoUrl={l.foto_url} />
           <div className="lead-info">
             <div className="lead-name">{l.nome || l.telefone}</div>

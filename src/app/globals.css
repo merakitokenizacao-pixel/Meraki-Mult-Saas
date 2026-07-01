@@ -696,46 +696,31 @@
 }
 .metric-card {
   background: var(--vx-surface);
+  /* Elevação em vez de borda dura: hairline discreta + sombra suave (flutua) */
   border: 1px solid var(--vx-border);
   border-radius: var(--vx-radius-lg);
-  padding: 1.75rem;
-  transition: all var(--vx-transition);
-  position: relative;
-  overflow: hidden;
-}
-.metric-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--vx-gold), transparent);
-  opacity: 0;
-  transition: opacity var(--vx-transition);
+  padding: 2.25rem 2rem;
+  box-shadow: var(--vx-shadow-md);
+  transition: box-shadow var(--vx-transition), transform var(--vx-transition);
 }
 .metric-card:hover {
-  box-shadow: var(--vx-shadow-md);
+  box-shadow: var(--vx-shadow-lg);
   transform: translateY(-2px);
-  border-color: var(--vx-border2);
-}
-.metric-card:hover::before {
-  opacity: 0.6;
 }
 .metric-label {
-  font-size: 9px;
-  color: var(--vx-muted);
-  font-weight: 500;
+  font-size: 10px;
+  color: var(--vx-text2);
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.18em;
-  margin-bottom: 14px;
+  letter-spacing: 0.14em;
+  margin-bottom: 18px;
 }
 .metric-value {
   font-family: var(--font-cormorant), serif;
-  font-size: 44px;
+  font-size: 46px;
   font-weight: 300;
   line-height: 1;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   color: var(--vx-text);
   letter-spacing: -1px;
 }
@@ -743,7 +728,7 @@
   width: 24px;
   height: 1px;
   background: var(--vx-gold);
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   opacity: 0.5;
 }
 .metric-sub {

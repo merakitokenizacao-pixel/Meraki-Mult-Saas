@@ -217,11 +217,12 @@
 .layout {
   display: flex;
   min-height: 100vh;
+  --vx-sidebar-w: 260px; /* largura da sidebar; muda ao colapsar */
 }
 
 /* ── SIDEBAR LUXO ── */
 .sidebar {
-  width: 260px;
+  width: var(--vx-sidebar-w, 260px);
   flex-shrink: 0;
   background: linear-gradient(180deg, #1a1510 0%, #0f0d09 100%);
   display: flex;
@@ -231,7 +232,7 @@
   top: 0;
   left: 0;
   overflow: hidden;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, width 0.3s ease;
   z-index: 40;
 }
 .sidebar::before {
@@ -248,8 +249,33 @@
 }
 
 .sidebar-logo {
-  padding: 2rem 1.75rem 1.75rem;
+  padding: 2rem 1.5rem 1.75rem;
   border-bottom: 1px solid rgba(184, 149, 90, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+/* Botão de recolher/expandir a sidebar */
+.sidebar-toggle {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: rgba(184, 149, 90, 0.08);
+  border: 1px solid rgba(184, 149, 90, 0.15);
+  color: rgba(240, 236, 228, 0.55);
+  cursor: pointer;
+  transition: all var(--vx-transition);
+}
+.sidebar-toggle:hover {
+  color: var(--vx-gold);
+  background: rgba(184, 149, 90, 0.16);
+  border-color: rgba(184, 149, 90, 0.4);
 }
 .sidebar-logo .logo-mark {
   font-family: var(--font-cormorant), serif;
@@ -368,9 +394,10 @@
 
 /* ── MAIN / TOPBAR ── */
 .main {
-  margin-left: 260px;
+  margin-left: var(--vx-sidebar-w, 260px);
   flex: 1;
   min-width: 0;
+  transition: margin-left 0.3s ease;
 }
 .topbar {
   height: 64px;
@@ -491,13 +518,66 @@
   display: block;
 }
 
+/* ── Sidebar colapsada (só desktop; no mobile ela é slide-over) ── */
+@media (min-width: 641px) {
+  .layout.collapsed {
+    --vx-sidebar-w: 72px;
+  }
+  .layout.collapsed .sidebar {
+    overflow: visible;
+  }
+  .layout.collapsed .sidebar-logo {
+    flex-direction: column;
+    gap: 12px;
+    padding: 1.5rem 0;
+    justify-content: center;
+  }
+  .layout.collapsed .nav-section,
+  .layout.collapsed .nav-label,
+  .layout.collapsed .sidebar-status-text {
+    display: none;
+  }
+  .layout.collapsed .nav-item {
+    justify-content: center;
+    margin: 1px 0.5rem;
+    padding-left: 0;
+    padding-right: 0;
+    gap: 0;
+  }
+  .layout.collapsed .sidebar-footer {
+    justify-content: center;
+    padding: 1.25rem 0;
+  }
+  /* Tooltip com o nome do item ao passar o mouse (no estado colapsado) */
+  .layout.collapsed .nav-item::after {
+    content: attr(data-label);
+    position: absolute;
+    left: calc(100% + 14px);
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--vx-surface);
+    color: var(--vx-text);
+    border: 1px solid var(--vx-border);
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+    box-shadow: var(--vx-shadow-md);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--vx-transition);
+    z-index: 60;
+  }
+  .layout.collapsed .nav-item:hover::after {
+    opacity: 1;
+  }
+}
+
 /* Tablet / narrow desktop */
 @media (max-width: 1100px) {
-  .sidebar {
-    width: 220px;
-  }
-  .main {
-    margin-left: 220px;
+  .layout {
+    --vx-sidebar-w: 220px;
   }
   .content {
     padding: 1.75rem;
@@ -534,6 +614,9 @@
     display: block;
   }
   .topbar-date {
+    display: none;
+  }
+  .sidebar-toggle {
     display: none;
   }
 }

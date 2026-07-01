@@ -46,15 +46,19 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </div>
           </div>
           <span className="nav-section">Principal</span>
-          {NAV_ITEMS.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`nav-item${isActive(item.href) ? " active" : ""}`}
-            >
-              <span className="nav-icon">{item.icon}</span> {item.label}
-            </Link>
-          ))}
+          {NAV_ITEMS.map((item) => {
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`nav-item${isActive(item.href) ? " active" : ""}`}
+              >
+                <Icon className="nav-icon" size={20} strokeWidth={1.5} />
+                {item.label}
+              </Link>
+            );
+          })}
           <div className="sidebar-footer">
             <div className="sidebar-status-dot" />
             <span className="sidebar-status-text">Laura ativa</span>
@@ -91,16 +95,19 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
       <nav className="bottom-nav">
         <div className="bottom-nav-inner">
-          {NAV_ITEMS.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`bottom-nav-item${isActive(item.href) ? " active" : ""}`}
-            >
-              <span className="bn-icon">{item.icon}</span>
-              {item.label}
-            </Link>
-          ))}
+          {NAV_ITEMS.map((item) => {
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`bottom-nav-item${isActive(item.href) ? " active" : ""}`}
+              >
+                <Icon className="bn-icon" size={20} strokeWidth={1.5} />
+                {item.label}
+              </Link>
+            );
+          })}
         </div>
       </nav>
     </>

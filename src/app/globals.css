@@ -309,10 +309,16 @@
   box-shadow: 0 0 8px rgba(184, 149, 90, 0.4);
 }
 .nav-icon {
-  font-size: 15px;
   width: 20px;
-  text-align: center;
-  opacity: 0.5;
+  height: 20px;
+  flex-shrink: 0;
+  /* Line icon dourado, discreto no normal e cheio no ativo (segue o tema via --vx-accent) */
+  color: var(--vx-accent);
+  opacity: 0.4;
+  transition: opacity var(--vx-transition), color var(--vx-transition);
+}
+.nav-item:hover .nav-icon {
+  opacity: 0.7;
 }
 .nav-item.active .nav-icon {
   opacity: 1;

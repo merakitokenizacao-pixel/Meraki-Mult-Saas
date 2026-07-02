@@ -46,18 +46,11 @@ VoraX é um CRM (SaaS) para clínicas de estética. Hoje atende a clínica **LIN
 Ao reiniciar o `next dev`, se a porta 3000 aparecer "in use", há um processo `next` órfão (no Windows, `kill`/encerrar o `npm` não derruba o filho `node`). Ele pode servir CSS **defasado** do cache do Turbopack (foi o que quebrou visualmente a Etapa 2 até reiniciar limpo). Resolver com `taskkill /PID <pid> /T /F` na árvore e, se necessário, apagar `.next` antes de subir. Sempre dar **hard refresh** (Ctrl+Shift+R) no navegador após mudanças de CSS.
 
 ### Dashboard (Etapa 2)
-- Estrutura em `src/components/dashboard/`: `dashboard.tsx` (container: fetch `getLeads`+`getAgendamentosComLead`, saudação), `metrics-grid.tsx`, `proximos-agendamentos.tsx`, `funnel.tsx`, `service-chart.tsx`, `timeline-chart.tsx`. Fetch em 2 round-trips (leads + agendamentos com join de lead); todos os KPIs e a lista de próximos são derivados em memória desses dois conjuntos (que o funil/gráficos já precisam), evitando queries extras.
+- Estrutura em `src/components/dashboard/`: `dashboard.tsx` (container: fetch `getLeads`+`getAgendamentos`, estado de período e saudação), `metrics-grid.tsx`, `recent-leads.tsx`, `funnel.tsx`, `service-chart.tsx`, `timeline-chart.tsx`.
 - **Tema dos gráficos**: `ThemeProvider` (`src/components/theme-provider.tsx`) virou a fonte única do tema (substituiu `lib/use-theme.ts`, removido). O toggle vive na topbar; os gráficos consomem o context e releem as CSS vars (`getChartStyle` em `src/lib/chart.ts`) ao trocar de tema.
 - **Charts SSR**: `ServiceChart`/`TimelineChart` só renderizam após `mounted` (gate) para não acessar `document`/`getComputedStyle` no servidor.
-- **KPIs REFORMULADOS (jul/2026)** — `metrics-grid.tsx`, 5 cards, todos **absolutos** (não dependem de filtro):
-  - **Total de pacientes** = nº de linhas em `leads`.
-  - **Novos este mês** = leads com `criado_em` no mês corrente (`filterByDate(leads,'criado_em','mes')`).
-  - **Ativos** = leads com ≥1 agendamento `status='realizado'` cujo `data_agendamento` está nos últimos 90 dias (`now - 90d`); contagem de `lead_id` distintos.
-  - **Inativos** = `total − ativos` (garante `ativos + inativos = total`; inclui quem nunca teve realizado).
-  - **Taxa de retorno** = leads com **2+** realizados ÷ leads com **1+** realizado × 100; `0%` se denominador 0; 1 casa decimal (`toFixed(1)`).
-- **Filtro de período REMOVIDO (jul/2026)**: como os 5 KPIs são absolutos, o filtro Hoje/Ontem/… não tinha efeito e foi retirado do header. Funil e gráficos seguem sobre o conjunto completo (funil não filtrado; timeline = últimos 7 dias fixos).
-- **Painel "Próximos agendamentos"** (`proximos-agendamentos.tsx`) no lugar do antigo "Clientes recentes": agendamentos com `data_agendamento >= início de hoje`, `status != 'cancelado'`, ordem crescente, até 6, com nome (join), data/hora e serviço; header com link "Ver agenda →" (`/agenda`); estado vazio "Nenhum agendamento futuro". **Sempre futuro**, independente de tudo.
-- Grid de KPIs: `repeat(5)` no desktop → `repeat(3)` (≤1100px) → `repeat(2)` (≤860/640px).
+- **"Consultas agendadas" — AJUSTADO (jun/2026), diverge do legacy de propósito.** Agora conta **linhas de `agendamentos`** no período (cada marcação = 1), excluindo `cancelado`, filtrando por **`agendamentos.criado_em`** (quando a consulta foi MARCADA), não por `data_agendamento`. Intenção: "quantas consultas foram agendadas neste período". A **"Receita estimada"** usa o MESMO conjunto (mesmo filtro `criado_em`, sem cancelados, com `valor`) para receita e contagem baterem. `agendamentos.criado_em` existe no banco (`timestamptz`, `default now()`, `NOT NULL`, 100% preenchido). A **"Taxa de conversão"** NÃO mudou: continua sendo de *leads* (`agendado`+`convertido`)/total de leads. Receita segue R$ 0,00 enquanto `agendamentos.valor` vier vazio (n8n).
+- **Pendência local**: os itens de "Clientes recentes" ainda não abrem o modal de lead (não há clique) — isso entra na Etapa 3 junto com `openLeadModal`.
 
 ### Camada de dados (Etapa 1)
 - **Tipos** (`src/types/db.ts`): `Lead`, `Conversa`, `Agendamento` (+ `AgendamentoComLead` para o join da Agenda), `Campanha`, `CampanhaEnvio`. Status como unions com fallback de string (`Loose<>`), pois o n8n pode gravar valores fora da lista.
@@ -140,7 +133,8 @@ RLS liberado para anon/authenticated (single-tenant). Não alterar schema sem ne
 - Mudanças de prompt/fluxo do agente são feitas fora deste projeto.
 
 ## Pendências conhecidas (NÃO são bugs da migração; herdadas do legacy)
-- ~~"Receita estimada" / "Consultas agendadas"~~ **OBSOLETO (jul/2026):** esses KPIs foram **removidos** na reformulação do dashboard (ver "Dashboard (Etapa 2)"). Os 5 KPIs atuais (Total/Novos/Ativos/Inativos/Taxa de retorno) não usam `valor`, então a pendência de `agendamentos.valor` vazio não afeta mais o dashboard.
+- "Receita estimada" mostra R$ 0,00 porque `agendamentos.valor` vem vazio (o n8n não preenche). Migrar como está; resolver depois.
+- ~~"Consultas agendadas"~~ **RESOLVIDO (jun/2026):** agora conta linhas de `agendamentos` (não leads), por `criado_em`, sem cancelados; "Receita estimada" usa o mesmo filtro. Ver detalhe na seção "Dashboard (Etapa 2)".
 - Inbox não tem realtime/auto-refresh ainda (badge ao vivo). Migrar sem realtime; adicionar depois com Supabase Realtime.
 
 ## Como manter este arquivo

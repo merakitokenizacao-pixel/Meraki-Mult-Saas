@@ -2,23 +2,14 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { getAgendamentos, getLeads } from "@/lib/queries";
+import { getAgendamentosComLead, getLeads } from "@/lib/queries";
 import { showToast } from "@/lib/toast";
 import { MetricsGrid } from "@/components/dashboard/metrics-grid";
-import { RecentLeads } from "@/components/dashboard/recent-leads";
+import { ProximosAgendamentos } from "@/components/dashboard/proximos-agendamentos";
 import { Funnel } from "@/components/dashboard/funnel";
 import { ServiceChart } from "@/components/dashboard/service-chart";
 import { TimelineChart } from "@/components/dashboard/timeline-chart";
-import { LeadModal } from "@/components/clientes/lead-modal";
-import type { Agendamento, Lead } from "@/types/db";
-
-const PERIODS: ReadonlyArray<[string, string]> = [
-  ["hoje", "Hoje"],
-  ["ontem", "Ontem"],
-  ["semana", "Semana"],
-  ["mes", "Mês"],
-  ["tudo", "Tudo"],
-];
+import type { AgendamentoComLead, Lead } from "@/types/db";
 
 function Spinner() {
   return (
@@ -30,12 +21,10 @@ function Spinner() {
 
 export function Dashboard() {
   const [leads, setLeads] = useState<Lead[] | null>(null);
-  const [agendamentos, setAgendamentos] = useState<Agendamento[]>([]);
-  const [period, setPeriod] = useState("hoje");
+  const [agendamentos, setAgendamentos] = useState<AgendamentoComLead[]>([]);
   const [greeting, setGreeting] = useState<{ prefix: string; word: string } | null>(
     null
   );
-  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
 
   useEffect(() => {
     const h = new Date().getHours();
@@ -49,7 +38,10 @@ export function Dashboard() {
 
     (async () => {
       try {
-        const [l, a] = await Promise.all([getLeads(), getAgendamentos()]);
+        // Dois fetches: leads (funil/timeline/KPIs) e agendamentos com lead
+        // (serviços/funil/KPIs de retenção/próximos). Tudo derivado em memória
+        // a partir desses dois conjuntos — evita round-trips extras.
+        const [l, a] = await Promise.all([getLeads(), getAgendamentosComLead()]);
         setLeads(l);
         setAgendamentos(a);
       } catch {
@@ -72,46 +64,35 @@ export function Dashboard() {
                 {greeting.prefix} <em>{greeting.word}</em>
               </>
             ) : (
-              " "
+              " "
             )}
           </div>
           <div className="dash-subtitle">Visão geral · VoraX</div>
         </div>
-        <div className="filter-bar">
-          {PERIODS.map(([value, label]) => (
-            <button
-              key={value}
-              className={`filter-btn${period === value ? " active" : ""}`}
-              onClick={() => setPeriod(value)}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
       </div>
 
-      {/* Métricas */}
+      {/* KPIs */}
       {loading ? (
         <div className="metrics-grid">
           <Spinner />
         </div>
       ) : (
-        <MetricsGrid leads={leads} agendamentos={agendamentos} period={period} />
+        <MetricsGrid leads={leads} agendamentos={agendamentos} />
       )}
 
-      {/* Clientes recentes + Funil */}
+      {/* Próximos agendamentos + Funil */}
       <div className="section-grid">
         <div className="card">
           <div className="card-header">
-            <span className="card-title">Clientes recentes</span>
-            <Link href="/clientes" className="card-action">
-              Ver todos →
+            <span className="card-title">Próximos agendamentos</span>
+            <Link href="/agenda" className="card-action">
+              Ver agenda →
             </Link>
           </div>
           {loading ? (
             <Spinner />
           ) : (
-            <RecentLeads leads={leads} onLeadClick={setSelectedLead} />
+            <ProximosAgendamentos agendamentos={agendamentos} />
           )}
         </div>
         <div className="card">
@@ -141,8 +122,6 @@ export function Dashboard() {
           <TimelineChart leads={loading ? [] : leads} />
         </div>
       </div>
-
-      <LeadModal lead={selectedLead} onClose={() => setSelectedLead(null)} />
     </div>
   );
 }

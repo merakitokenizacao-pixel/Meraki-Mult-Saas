@@ -1,76 +1,83 @@
 import { filterByDate } from "@/lib/date";
-import type { Lead, Agendamento } from "@/types/db";
+import type { Agendamento, Lead } from "@/types/db";
 
-// Replica renderDashboardMetrics: 4 KPIs reagindo ao período selecionado.
+// KPIs da Visão geral (todos absolutos — não dependem de filtro de período):
+// - Total de pacientes: nº de leads.
+// - Novos este mês: leads com criado_em no mês corrente.
+// - Ativos: leads com >=1 agendamento 'realizado' cujo data_agendamento está nos últimos 90 dias.
+// - Inativos: total - ativos (ativos + inativos = total).
+// - Taxa de retorno: leads com 2+ realizados / leads com 1+ realizado (0% se denom=0), 1 casa decimal.
 export function MetricsGrid({
   leads,
   agendamentos,
-  period,
 }: {
   leads: Lead[];
   agendamentos: Agendamento[];
-  period: string;
 }) {
-  const filtered = filterByDate(leads, "criado_em", period);
-  const total = filtered.length;
-  // Taxa de conversão é sobre LEADS (clientes que avançaram), não sobre consultas.
-  const leadsAgendados = filtered.filter((l) => l.status === "agendado").length;
-  const convertidos = filtered.filter((l) => l.status === "convertido").length;
-  const taxa =
-    total > 0 ? Math.round(((leadsAgendados + convertidos) / total) * 100) : 0;
+  const total = leads.length;
+  const novosMes = filterByDate(leads, "criado_em", "mes").length;
 
-  // "Consultas agendadas" e "Receita estimada" usam o MESMO conjunto:
-  // agendamentos do período por criado_em (quando foi MARCADA), sem cancelados.
-  const agendsPeriodo =
-    period === "tudo"
-      ? agendamentos
-      : filterByDate(agendamentos, "criado_em", period);
-  const naoCancelados = agendsPeriodo.filter((a) => a.status !== "cancelado");
-  const consultasAgendadas = naoCancelados.length;
-  const receita = naoCancelados
-    .filter((a) => a.valor)
-    .reduce((sum, a) => sum + parseFloat(String(a.valor ?? 0)), 0);
-  const receitaFmt =
-    receita > 0
-      ? receita.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
-      : "R$ 0,00";
-  const receitaSize = receita >= 10000 ? "28px" : receita >= 1000 ? "34px" : "44px";
+  const realizados = agendamentos.filter((a) => a.status === "realizado");
+
+  // Ativos: distinct lead_id com realizado nos últimos 90 dias.
+  const limite90 = Date.now() - 90 * 86400000;
+  const ativosSet = new Set(
+    realizados
+      .filter(
+        (a) => a.data_agendamento && new Date(a.data_agendamento).getTime() >= limite90
+      )
+      .map((a) => a.lead_id)
+  );
+  const ativos = ativosSet.size;
+  const inativos = total - ativos;
+
+  // Taxa de retorno: (leads com 2+ realizados) / (leads com 1+ realizado) * 100.
+  const realizadosPorLead = new Map<string, number>();
+  for (const a of realizados) {
+    realizadosPorLead.set(a.lead_id, (realizadosPorLead.get(a.lead_id) ?? 0) + 1);
+  }
+  const com1mais = realizadosPorLead.size;
+  let com2mais = 0;
+  for (const c of realizadosPorLead.values()) if (c >= 2) com2mais++;
+  const retorno = com1mais > 0 ? (com2mais / com1mais) * 100 : 0;
+  const retornoTxt = retorno.toFixed(1);
 
   return (
     <div className="metrics-grid">
       <div className="metric-card">
-        <div className="metric-label">Clientes captados</div>
+        <div className="metric-label">Total de pacientes</div>
         <div className="metric-value">{total}</div>
         <div className="metric-divider" />
-        <div className="metric-sub">via WhatsApp</div>
+        <div className="metric-sub">na base</div>
       </div>
       <div className="metric-card">
-        <div className="metric-label">Consultas agendadas</div>
+        <div className="metric-label">Novos este mês</div>
+        <div className="metric-value">{novosMes}</div>
+        <div className="metric-divider" />
+        <div className="metric-sub">novos cadastros</div>
+      </div>
+      <div className="metric-card">
+        <div className="metric-label">Ativos</div>
         <div className="metric-value" style={{ color: "var(--vx-green)" }}>
-          {consultasAgendadas}
+          {ativos}
         </div>
         <div className="metric-divider" />
-        <div className="metric-sub up">clientes confirmados</div>
+        <div className="metric-sub">realizado ≤ 90 dias</div>
       </div>
       <div className="metric-card">
-        <div className="metric-label">Taxa de conversão</div>
-        <div className="metric-value" style={{ color: "var(--vx-amber)" }}>
-          {taxa}
+        <div className="metric-label">Inativos</div>
+        <div className="metric-value">{inativos}</div>
+        <div className="metric-divider" />
+        <div className="metric-sub">sem retorno recente</div>
+      </div>
+      <div className="metric-card">
+        <div className="metric-label">Taxa de retorno</div>
+        <div className="metric-value" style={{ color: "var(--vx-accent)" }}>
+          {retornoTxt}
           <span style={{ fontSize: "24px", opacity: 0.6 }}>%</span>
         </div>
         <div className="metric-divider" />
-        <div className="metric-sub">do total de clientes</div>
-      </div>
-      <div className="metric-card">
-        <div className="metric-label">Receita estimada</div>
-        <div
-          className="metric-value"
-          style={{ color: "var(--vx-accent)", fontSize: receitaSize }}
-        >
-          {receitaFmt}
-        </div>
-        <div className="metric-divider" />
-        <div className="metric-sub up">em agendamentos</div>
+        <div className="metric-sub">voltam após a 1ª visita</div>
       </div>
     </div>
   );

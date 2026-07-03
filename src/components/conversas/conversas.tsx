@@ -35,6 +35,12 @@ export function Conversas() {
   const [chatLoading, setChatLoading] = useState(false);
   const [pendingMsgs, setPendingMsgs] = useState<PendingMsg[]>([]);
   const [sending, setSending] = useState(false);
+  const [panelOpen, setPanelOpen] = useState(false);
+
+  // Painel do cliente aberto por padrão em telas largas (>= 1440px).
+  useEffect(() => {
+    setPanelOpen(window.innerWidth >= 1440);
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -210,38 +216,77 @@ export function Conversas() {
 
   return (
     <div className="page-fade">
-      {/* Esqueleto do novo layout (Entrega 1): container único elevado,
-          cantos rounded-2xl, borda sutil. As 3 zonas seguem funcionais;
-          o polimento interno de cada uma vem nas Entregas 2–4. */}
       <div
-        className="grid min-h-0 overflow-hidden rounded-2xl border border-vx-border bg-vx-surface"
-        style={{
-          height: "calc(100vh - 140px)",
-          gridTemplateColumns: "340px minmax(0, 1fr) 340px",
-          boxShadow: "var(--vx-shadow-md)",
-        }}
+        className={`grid min-h-0 grid-cols-1 grid-rows-[minmax(0,1fr)] overflow-hidden rounded-2xl border border-vx-border bg-vx-surface ${
+          panelOpen
+            ? "lg:grid-cols-[340px_minmax(0,1fr)_360px]"
+            : "lg:grid-cols-[340px_minmax(0,1fr)]"
+        }`}
+        style={{ height: "calc(100vh - 140px)", boxShadow: "var(--vx-shadow-md)" }}
       >
-        <InboxList
-          leads={orderedLeads}
-          conversas={conversas}
-          tab={tab}
-          counts={counts}
-          currentLeadId={currentLeadId}
-          loading={loading}
-          onSelectTab={setTab}
-          onSelectLead={openConversa}
-        />
-        <ChatPanel
-          lead={currentLead}
-          messages={chatMessages}
-          chatLoading={chatLoading}
-          pendingMsgs={pendingMsgs}
-          sending={sending}
-          onSend={enviarMensagem}
-          onToggleIA={toggleIA}
-        />
-        <DetailsPanel lead={currentLead} agendamentos={agendamentos} />
+        {/* Inbox — some no mobile quando uma conversa está aberta */}
+        <div className={`min-h-0 ${currentLeadId ? "hidden lg:block" : "block"}`}>
+          <InboxList
+            leads={orderedLeads}
+            conversas={conversas}
+            tab={tab}
+            counts={counts}
+            currentLeadId={currentLeadId}
+            loading={loading}
+            onSelectTab={setTab}
+            onSelectLead={openConversa}
+          />
+        </div>
+
+        {/* Chat — no mobile aparece só quando há conversa selecionada */}
+        <div className={`min-h-0 ${currentLeadId ? "block" : "hidden lg:block"}`}>
+          <ChatPanel
+            lead={currentLead}
+            messages={chatMessages}
+            chatLoading={chatLoading}
+            pendingMsgs={pendingMsgs}
+            sending={sending}
+            panelOpen={panelOpen}
+            onSend={enviarMensagem}
+            onToggleIA={toggleIA}
+            onTogglePanel={() => setPanelOpen((o) => !o)}
+            onBack={() => setCurrentLeadId(null)}
+          />
+        </div>
+
+        {/* Painel do cliente — coluna no desktop */}
+        {panelOpen && (
+          <div className="hidden min-h-0 lg:block">
+            <DetailsPanel
+              lead={currentLead}
+              agendamentos={agendamentos}
+              loading={loading}
+              onClose={() => setPanelOpen(false)}
+            />
+          </div>
+        )}
       </div>
+
+      {/* Painel do cliente — drawer no mobile */}
+      {panelOpen && (
+        <div className="fixed inset-0 z-40 lg:hidden">
+          <div
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+            onClick={() => setPanelOpen(false)}
+          />
+          <aside
+            className="absolute right-0 top-0 h-full w-[85%] max-w-sm"
+            style={{ boxShadow: "var(--vx-shadow-lg)" }}
+          >
+            <DetailsPanel
+              lead={currentLead}
+              agendamentos={agendamentos}
+              loading={loading}
+              onClose={() => setPanelOpen(false)}
+            />
+          </aside>
+        </div>
+      )}
     </div>
   );
 }

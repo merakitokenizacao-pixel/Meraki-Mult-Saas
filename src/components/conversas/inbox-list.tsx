@@ -6,6 +6,7 @@ import { Avatar } from "@/components/avatar";
 import { StatusBadge } from "@/components/status-badge";
 import { getRelativeTime } from "@/lib/format";
 import { getLastMsgPreview, lastMsgInfo } from "@/lib/conversa";
+import { InboxSkeleton } from "@/components/conversas/skeletons";
 import type { Conversa, Lead } from "@/types/db";
 
 export type InboxTab = "tudo" | "ia" | "humano" | "inativo";
@@ -100,9 +101,7 @@ export function InboxList({
       {/* Lista */}
       <div className="min-h-0 flex-1 overflow-y-auto border-t border-vx-border">
         {loading ? (
-          <div className="loading">
-            <div className="spinner" />
-          </div>
+          <InboxSkeleton />
         ) : filtered.length === 0 ? (
           <div className="flex h-full flex-col items-center justify-center gap-3 px-6 text-center">
             <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-vx-border bg-vx-surface2">

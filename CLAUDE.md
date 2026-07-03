@@ -32,8 +32,16 @@ VoraX é um CRM (SaaS) para clínicas de estética. Hoje atende a clínica **LIN
 - **Badge de não-lidas**: zera no cache local + persiste `update nao_lidas=0` ao abrir a conversa (não bloqueia a UI). Ordenação do inbox por timestamp da última mensagem (cache de `conversas`), igual ao WhatsApp.
 - **toggleIA / auto-pausa**: ao enviar mensagem pelo CRM, se a IA estiver ativa ela é pausada antes do envio (`ia_pausada=true`, `pausada_por='humano'`...). O envio vai para o **webhook do n8n** (`src/lib/n8n.ts`), configurável por `NEXT_PUBLIC_N8N_WEBHOOK_ENVIAR_MSG` (com default = URL do legacy). Render otimista: bolha "enviando…" → "enviado ✓"/"falhou ⚠".
 - **Tipos**: `Lead` ganhou campos opcionais que o legacy lê/escreve defensivamente (`temperatura`, `tags`, `pausada_em`, `motivo_pausa`) — podem não existir no banco ainda. Mutação `updateLead(id, fields)` em `queries.ts`.
-- **CSS**: keyframes `pulse-dot` ajustado para a versão por opacidade (no legacy, a 2ª definição com mesmo nome vence globalmente — vale para o dot da sidebar e o da IA). CSS completo das Conversas portado para `globals.css`.
+- **CSS**: keyframes `pulse-dot` ajustado para a versão por opacidade (no legacy, a 2ª definição com mesmo nome vence globalmente — vale para o dot da sidebar e o da IA).
 - Sem realtime/auto-refresh (herdado do legacy; ver pendências). Mensagem enviada aparece otimista; a versão persistida virá do n8n no próximo open da conversa.
+
+#### Redesign visual (jul/2026, inspirado no DataCraze) — SÓ apresentação
+Reestruturação da camada visual das Conversas (queries/mutations, pausa da IA e webhook **inalterados**). Rompe a paridade com o legacy **nesta tela de propósito**. As outras 4 telas seguem iguais.
+- **4 zonas**: (1) *nav rail* = a **sidebar global entra colapsada** em `/conversas` (72px, ícones+tooltips+ativo dourado), via `railCollapsed` no `AppShell` (toggle escondido na rota); (2) Inbox ~340px; (3) Chat (protagonista, ocupa o resto); (4) Painel do cliente **colapsável**.
+- **Componentes reescritos em Tailwind v4 + tokens `--vx-*`** (claro/escuro): `inbox-list.tsx` (busca client-side por nome/telefone, chips com contador, cards respirados com divisor sutil, empty state), `chat-panel.tsx` (header ~64px, bolhas ≤65% diferenciando cliente/IA/humano, separadores HOJE/ONTEM, composer em pill, empty "Conversas"), `details-panel.tsx` (painel com header + fechar). Ícones do `lucide-react`. Skeletons em `skeletons.tsx`.
+- **Painel colapsável**: estado `panelOpen` no container (default aberto ≥1440px), botão `PanelRight` no header do chat. Desktop = 3ª coluna do grid (`lg:grid-cols-[340px_minmax(0,1fr)_360px]`); quando fechado o chat expande (`lg:grid-cols-[340px_minmax(0,1fr)]`).
+- **Responsivo <1024px (`lg`)**: master-detail — inbox e chat empilham (lista → chat em tela cheia com botão **voltar** que limpa `currentLeadId`); o painel vira **drawer** (overlay fixo à direita). Feito com classes condicionais por `currentLeadId` + breakpoint `lg`.
+- **CSS antigo removido**: o bloco "CONVERSAS — inbox 3 colunas" foi apagado do `globals.css` (incluindo a regra que escondia o painel <1100px). O subconjunto `.msg-*` que o **modal de Clientes** usa permanece (fica na seção Clientes).
 
 ### Clientes (Etapa 3)
 - `src/components/clientes/`: `clientes.tsx` (container: fetch `getLeads`, estado de busca/período, seleção do lead), `leads-table.tsx` (`renderLeadsTable`), `lead-modal.tsx` (`openLeadModal`).

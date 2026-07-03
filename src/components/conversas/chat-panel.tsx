@@ -2,17 +2,20 @@
 
 import { useEffect, useRef, useState } from "react";
 import {
+  ArrowLeft,
   Bot,
   Lock,
   MessageCircle,
   Mic,
   MoreVertical,
+  PanelRight,
   Paperclip,
   Send,
   UserRound,
 } from "lucide-react";
 import { Avatar } from "@/components/avatar";
 import { formatDayLabel, getTemp, isLeadPaused } from "@/lib/conversa";
+import { ChatSkeleton } from "@/components/conversas/skeletons";
 import type { Conversa, Lead } from "@/types/db";
 import type { PendingMsg } from "@/components/conversas/conversas";
 
@@ -40,16 +43,22 @@ export function ChatPanel({
   chatLoading,
   pendingMsgs,
   sending,
+  panelOpen,
   onSend,
   onToggleIA,
+  onTogglePanel,
+  onBack,
 }: {
   lead: Lead | null;
   messages: Conversa[];
   chatLoading: boolean;
   pendingMsgs: PendingMsg[];
   sending: boolean;
+  panelOpen: boolean;
   onSend: (text: string) => Promise<boolean>;
   onToggleIA: () => void;
+  onTogglePanel: () => void;
+  onBack: () => void;
 }) {
   const [input, setInput] = useState("");
   const messagesRef = useRef<HTMLDivElement>(null);
@@ -119,6 +128,15 @@ export function ChatPanel({
       <div className="flex h-16 shrink-0 items-center justify-between gap-4 border-b border-vx-border bg-vx-surface px-6">
         <div className="flex min-w-0 items-center gap-3">
           {lead && (
+            <button
+              onClick={onBack}
+              aria-label="Voltar"
+              className="grid h-8 w-8 shrink-0 place-items-center rounded-lg text-vx-muted transition-colors hover:bg-vx-surface2 hover:text-vx-text lg:hidden"
+            >
+              <ArrowLeft size={18} />
+            </button>
+          )}
+          {lead && (
             <Avatar nome={lead.nome} fotoUrl={lead.foto_url} size={40} fontSize={12} />
           )}
           <div className="min-w-0">
@@ -166,6 +184,19 @@ export function ChatPanel({
               {paused ? "IA PAUSADA" : "IA ATIVA"}
             </button>
             <button
+              onClick={onTogglePanel}
+              aria-label={panelOpen ? "Fechar detalhes" : "Abrir detalhes"}
+              aria-pressed={panelOpen}
+              title="Detalhes do cliente"
+              className={`grid h-8 w-8 place-items-center rounded-lg border transition-colors ${
+                panelOpen
+                  ? "border-vx-accent bg-vx-accent-light text-vx-accent"
+                  : "border-vx-border bg-vx-surface2 text-vx-muted hover:border-vx-accent hover:text-vx-text"
+              }`}
+            >
+              <PanelRight size={16} />
+            </button>
+            <button
               title="Opções"
               aria-label="Opções"
               className="grid h-8 w-8 place-items-center rounded-lg border border-vx-border bg-vx-surface2 text-vx-muted transition-colors hover:border-vx-accent hover:text-vx-text"
@@ -200,9 +231,7 @@ export function ChatPanel({
             </div>
           </div>
         ) : chatLoading ? (
-          <div className="loading">
-            <div className="spinner" />
-          </div>
+          <ChatSkeleton />
         ) : messages.length === 0 && pendingMsgs.length === 0 ? (
           <div className="flex h-full flex-col items-center justify-center gap-3 text-center text-vx-muted">
             <MessageCircle size={28} strokeWidth={1.5} className="opacity-30" />

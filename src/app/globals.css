@@ -217,7 +217,7 @@
 .layout {
   display: flex;
   min-height: 100vh;
-  --vx-sidebar-w: 260px; /* largura da sidebar; muda ao colapsar */
+  --vx-sidebar-w: 236px; /* largura da sidebar; muda ao colapsar */
 }
 
 /* ── SIDEBAR LUXO ── */
@@ -521,7 +521,7 @@
 /* ── Sidebar colapsada (só desktop; no mobile ela é slide-over) ── */
 @media (min-width: 641px) {
   .layout.collapsed {
-    --vx-sidebar-w: 72px;
+    --vx-sidebar-w: 64px;
   }
   .layout.collapsed .sidebar {
     overflow: visible;
@@ -577,7 +577,7 @@
 /* Tablet / narrow desktop */
 @media (max-width: 1100px) {
   .layout {
-    --vx-sidebar-w: 220px;
+    --vx-sidebar-w: 208px;
   }
   .content {
     padding: 1.75rem;

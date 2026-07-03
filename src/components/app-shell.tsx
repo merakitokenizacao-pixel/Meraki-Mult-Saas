@@ -11,7 +11,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [collapsed, setCollapsed] = useState(false);
+  // Inicia colapsada já no primeiro paint quando a rota for /conversas (sem flash)
+  const [collapsed, setCollapsed] = useState(() =>
+    pathname.startsWith("/conversas")
+  );
   const [currentDate, setCurrentDate] = useState("");
 
   // Data na topbar — mesmo formato do legacy
@@ -31,12 +34,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     setSidebarOpen(false);
   }, [pathname]);
 
+  // Ao entrar em /conversas a sidebar entra colapsada (vira o "nav rail" do
+  // redesign); o toggle continua disponível para expandir se o usuário quiser.
+  useEffect(() => {
+    if (pathname.startsWith("/conversas")) setCollapsed(true);
+  }, [pathname]);
+
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 
-  // Em /conversas a sidebar entra colapsada (vira o "nav rail" do redesign).
   const isConversas = pathname.startsWith("/conversas");
-  const railCollapsed = collapsed || isConversas;
 
   return (
     <>
@@ -44,11 +51,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         className={`sidebar-overlay${sidebarOpen ? " open" : ""}`}
         onClick={() => setSidebarOpen(false)}
       />
-      <div className={`layout${railCollapsed ? " collapsed" : ""}`}>
+      <div className={`layout${collapsed ? " collapsed" : ""}`}>
         <aside className={`sidebar${sidebarOpen ? " open" : ""}`} id="sidebar">
           <div className="sidebar-logo">
             <div className="logo-mark">
-              {railCollapsed ? (
+              {collapsed ? (
                 "V"
               ) : (
                 <>
@@ -56,21 +63,18 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 </>
               )}
             </div>
-            {/* Na rota de conversas o rail fica fixo (colapsado) — sem toggle */}
-            {!isConversas && (
-              <button
-                className="sidebar-toggle"
-                onClick={() => setCollapsed((c) => !c)}
-                aria-label={collapsed ? "Expandir menu" : "Recolher menu"}
-                title={collapsed ? "Expandir menu" : "Recolher menu"}
-              >
-                {collapsed ? (
-                  <ChevronsRight size={16} strokeWidth={2} />
-                ) : (
-                  <ChevronsLeft size={16} strokeWidth={2} />
-                )}
-              </button>
-            )}
+            <button
+              className="sidebar-toggle"
+              onClick={() => setCollapsed((c) => !c)}
+              aria-label={collapsed ? "Expandir menu" : "Recolher menu"}
+              title={collapsed ? "Expandir menu" : "Recolher menu"}
+            >
+              {collapsed ? (
+                <ChevronsRight size={16} strokeWidth={2} />
+              ) : (
+                <ChevronsLeft size={16} strokeWidth={2} />
+              )}
+            </button>
           </div>
           <span className="nav-section">Principal</span>
           {NAV_ITEMS.map((item) => {

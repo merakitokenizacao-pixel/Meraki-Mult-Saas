@@ -1678,3 +1678,19 @@ select.form-input {
     width: 110px;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   CONVERSAS full-bleed: a rota /conversas ocupa a tela toda
+   ══════════════════════════════════════════════════════════════ */
+.content.content-flush {
+  padding: 0;
+}
+/* Preenche a altura abaixo da topbar (64px). No mobile desconta a bottom-nav. */
+.conversas-fill {
+  height: calc(100vh - 64px);
+}
+@media (max-width: 640px) {
+  .conversas-fill {
+    height: calc(100vh - 64px - 68px);
+  }
+}

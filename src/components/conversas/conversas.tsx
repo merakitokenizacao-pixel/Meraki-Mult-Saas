@@ -217,12 +217,11 @@ export function Conversas() {
   return (
     <div className="page-fade">
       <div
-        className={`grid min-h-0 grid-cols-1 grid-rows-[minmax(0,1fr)] overflow-hidden rounded-2xl border border-vx-border bg-vx-surface ${
+        className={`conversas-fill grid min-h-0 grid-cols-1 grid-rows-[minmax(0,1fr)] overflow-hidden bg-vx-surface ${
           panelOpen
             ? "lg:grid-cols-[340px_minmax(0,1fr)_360px]"
             : "lg:grid-cols-[340px_minmax(0,1fr)]"
         }`}
-        style={{ height: "calc(100vh - 140px)", boxShadow: "var(--vx-shadow-md)" }}
       >
         {/* Inbox — some no mobile quando uma conversa está aberta */}
         <div className={`min-h-0 ${currentLeadId ? "hidden lg:block" : "block"}`}>

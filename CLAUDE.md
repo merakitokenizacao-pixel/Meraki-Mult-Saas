@@ -42,6 +42,7 @@ Reestruturação da camada visual das Conversas (queries/mutations, pausa da IA 
 - **Painel colapsável**: estado `panelOpen` no container (default aberto ≥1440px), botão `PanelRight` no header do chat. Desktop = 3ª coluna do grid (`lg:grid-cols-[340px_minmax(0,1fr)_360px]`); quando fechado o chat expande (`lg:grid-cols-[340px_minmax(0,1fr)]`).
 - **Responsivo <1024px (`lg`)**: master-detail — inbox e chat empilham (lista → chat em tela cheia com botão **voltar** que limpa `currentLeadId`); o painel vira **drawer** (overlay fixo à direita). Feito com classes condicionais por `currentLeadId` + breakpoint `lg`.
 - **CSS antigo removido**: o bloco "CONVERSAS — inbox 3 colunas" foi apagado do `globals.css` (incluindo a regra que escondia o painel <1100px). O subconjunto `.msg-*` que o **modal de Clientes** usa permanece (fica na seção Clientes).
+- **Full-bleed (jul/2026)**: `/conversas` ocupa a tela toda. O `AppShell` aplica `content-flush` (`.content{padding:0}`) só nessa rota; o container usa `.conversas-fill` (`height: calc(100vh - 64px)`, e `- 132px` no mobile p/ descontar a bottom-nav) e perdeu arredondado/borda/sombra externos — dividers ficam só entre as colunas.
 
 ### Clientes (Etapa 3)
 - `src/components/clientes/`: `clientes.tsx` (container: fetch `getLeads`, estado de busca/período, seleção do lead), `leads-table.tsx` (`renderLeadsTable`), `lead-modal.tsx` (`openLeadModal`).

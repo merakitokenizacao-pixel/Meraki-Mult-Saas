@@ -118,7 +118,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </div>
           </div>
 
-          <div className="content">{children}</div>
+          <div className={`content${isConversas ? " content-flush" : ""}`}>
+            {children}
+          </div>
         </main>
       </div>
 

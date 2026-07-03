@@ -34,17 +34,21 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 
+  // Em /conversas a sidebar entra colapsada (vira o "nav rail" do redesign).
+  const isConversas = pathname.startsWith("/conversas");
+  const railCollapsed = collapsed || isConversas;
+
   return (
     <>
       <div
         className={`sidebar-overlay${sidebarOpen ? " open" : ""}`}
         onClick={() => setSidebarOpen(false)}
       />
-      <div className={`layout${collapsed ? " collapsed" : ""}`}>
+      <div className={`layout${railCollapsed ? " collapsed" : ""}`}>
         <aside className={`sidebar${sidebarOpen ? " open" : ""}`} id="sidebar">
           <div className="sidebar-logo">
             <div className="logo-mark">
-              {collapsed ? (
+              {railCollapsed ? (
                 "V"
               ) : (
                 <>
@@ -52,18 +56,21 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 </>
               )}
             </div>
-            <button
-              className="sidebar-toggle"
-              onClick={() => setCollapsed((c) => !c)}
-              aria-label={collapsed ? "Expandir menu" : "Recolher menu"}
-              title={collapsed ? "Expandir menu" : "Recolher menu"}
-            >
-              {collapsed ? (
-                <ChevronsRight size={16} strokeWidth={2} />
-              ) : (
-                <ChevronsLeft size={16} strokeWidth={2} />
-              )}
-            </button>
+            {/* Na rota de conversas o rail fica fixo (colapsado) — sem toggle */}
+            {!isConversas && (
+              <button
+                className="sidebar-toggle"
+                onClick={() => setCollapsed((c) => !c)}
+                aria-label={collapsed ? "Expandir menu" : "Recolher menu"}
+                title={collapsed ? "Expandir menu" : "Recolher menu"}
+              >
+                {collapsed ? (
+                  <ChevronsRight size={16} strokeWidth={2} />
+                ) : (
+                  <ChevronsLeft size={16} strokeWidth={2} />
+                )}
+              </button>
+            )}
           </div>
           <span className="nav-section">Principal</span>
           {NAV_ITEMS.map((item) => {

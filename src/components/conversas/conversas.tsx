@@ -210,7 +210,17 @@ export function Conversas() {
 
   return (
     <div className="page-fade">
-      <div className="conversa-layout">
+      {/* Esqueleto do novo layout (Entrega 1): container único elevado,
+          cantos rounded-2xl, borda sutil. As 3 zonas seguem funcionais;
+          o polimento interno de cada uma vem nas Entregas 2–4. */}
+      <div
+        className="grid min-h-0 overflow-hidden rounded-2xl border border-vx-border bg-vx-surface"
+        style={{
+          height: "calc(100vh - 140px)",
+          gridTemplateColumns: "340px minmax(0, 1fr) 340px",
+          boxShadow: "var(--vx-shadow-md)",
+        }}
+      >
         <InboxList
           leads={orderedLeads}
           conversas={conversas}

@@ -67,6 +67,12 @@ Ao reiniciar o `next dev`, se a porta 3000 aparecer "in use", há um processo `n
 - **Helpers** (`src/lib/format.ts`): `getInitials`, `getAvatarColors`/`AVATAR_PALETTE`, `fmtDate`, `getRelativeTime`, `limparServico`, `formatTelefone`, `statusBadgeClass`. (`src/lib/date.ts`): `getDateRange`, `filterByDate`. Portados 1:1 do legacy.
 - **Componentes** (substituem os geradores de HTML do legacy): `Avatar` (`renderAvatar` — foto com fallback p/ iniciais) e `StatusBadge` (`badgeHtml`). CSS de `.avatar`/`.badge*`/`.loading`/`.spinner`/`.empty` portado para `globals.css`.
 
+### Camada de dados com cache (React Query, jul/2026 — em migração incremental)
+- **Motivo**: cada tela fazia `useState + useEffect(fetch on mount)`, refazendo os mesmos `select` a cada navegação, sem cache. Adotamos **TanStack Query** por cima das queries existentes (não altera `queries.ts` nem o Supabase).
+- `QueryProvider` (`src/components/query-provider.tsx`) no `layout.tsx` (envolve `ThemeProvider`): `staleTime` 30s (navegar não refaz fetch), `refetchOnWindowFocus:false`, `retry:1`, e **toast de erro global** via `QueryCache.onError` (some o try/catch por tela).
+- Hooks em `src/lib/hooks.ts`: `useLeads`, `useAgendamentos` (queryKeys `['leads']`, `['agendamentos']`). Mais hooks conforme as telas migram.
+- **Status**: **Dashboard migrado (piloto)** — usa `useLeads()/useAgendamentos()`, `loading = leadsQuery.isPending`. As demais telas (Clientes/Conversas/Agenda/Campanhas) ainda usam o padrão antigo; migrar uma de cada vez. Destrava o **realtime** do inbox depois (invalidar cache via `supabase.channel`).
+
 ### Decisões de arquitetura (Etapa 0)
 - **Navegação por rotas reais do App Router** (não SPA com `showPage`): `/` (Visão geral), `/clientes`, `/conversas`, `/agenda`, `/campanhas`. O `AppShell` (`src/components/app-shell.tsx`) é o chrome comum; o item ativo vem de `usePathname`. Config das telas em `src/lib/nav.ts`.
 - **Tailwind v4 (config CSS-first via `@theme`)**, não há `tailwind.config.ts`. Tokens em `src/app/globals.css`.

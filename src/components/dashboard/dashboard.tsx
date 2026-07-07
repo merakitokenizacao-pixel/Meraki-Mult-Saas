@@ -2,15 +2,14 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { getAgendamentos, getLeads } from "@/lib/queries";
-import { showToast } from "@/lib/toast";
+import { useAgendamentos, useLeads } from "@/lib/hooks";
 import { MetricsGrid } from "@/components/dashboard/metrics-grid";
 import { RecentLeads } from "@/components/dashboard/recent-leads";
 import { Funnel } from "@/components/dashboard/funnel";
 import { ServiceChart } from "@/components/dashboard/service-chart";
 import { TimelineChart } from "@/components/dashboard/timeline-chart";
 import { LeadModal } from "@/components/clientes/lead-modal";
-import type { Agendamento, Lead } from "@/types/db";
+import type { Lead } from "@/types/db";
 
 const PERIODS: ReadonlyArray<[string, string]> = [
   ["hoje", "Hoje"],
@@ -29,8 +28,12 @@ function Spinner() {
 }
 
 export function Dashboard() {
-  const [leads, setLeads] = useState<Lead[] | null>(null);
-  const [agendamentos, setAgendamentos] = useState<Agendamento[]>([]);
+  const leadsQuery = useLeads();
+  const agendamentosQuery = useAgendamentos();
+  const leads = leadsQuery.data ?? [];
+  const agendamentos = agendamentosQuery.data ?? [];
+  const loading = leadsQuery.isPending;
+
   const [period, setPeriod] = useState("hoje");
   const [greeting, setGreeting] = useState<{ prefix: string; word: string } | null>(
     null
@@ -46,20 +49,7 @@ export function Dashboard() {
           ? { prefix: "Boa", word: "tarde" }
           : { prefix: "Boa", word: "noite" }
     );
-
-    (async () => {
-      try {
-        const [l, a] = await Promise.all([getLeads(), getAgendamentos()]);
-        setLeads(l);
-        setAgendamentos(a);
-      } catch {
-        setLeads([]);
-        showToast("Erro ao carregar o dashboard.", "error");
-      }
-    })();
   }, []);
-
-  const loading = leads === null;
 
   return (
     <div className="page-fade">

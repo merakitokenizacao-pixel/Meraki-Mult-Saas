@@ -4,6 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import {
   getAgendamentos,
   getAgendamentosComLead,
+  getCampanhas,
+  getConversas,
   getLeads,
 } from "@/lib/queries";
 
@@ -24,4 +26,12 @@ export function useAgendamentosComLead() {
     queryKey: ["agendamentos", "com-lead"],
     queryFn: getAgendamentosComLead,
   });
+}
+
+export function useConversas() {
+  return useQuery({ queryKey: ["conversas"], queryFn: getConversas });
+}
+
+export function useCampanhas() {
+  return useQuery({ queryKey: ["campanhas"], queryFn: getCampanhas });
 }

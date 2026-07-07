@@ -1,30 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { getCampanhas } from "@/lib/queries";
+import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useCampanhas } from "@/lib/hooks";
 import { campBadge, publicoLabel } from "@/lib/campanha";
 import { fmtDate } from "@/lib/format";
 import { CampanhaModal } from "@/components/campanhas/campanha-modal";
-import type { Campanha } from "@/types/db";
 
 export function Campanhas() {
-  const [campanhas, setCampanhas] = useState<Campanha[] | null>(null);
-  const [erro, setErro] = useState(false);
+  const qc = useQueryClient();
+  const campanhasQuery = useCampanhas();
+  const campanhas = campanhasQuery.data ?? [];
   const [modalOpen, setModalOpen] = useState(false);
 
-  async function load() {
-    try {
-      setErro(false);
-      setCampanhas(await getCampanhas());
-    } catch {
-      setErro(true);
-      setCampanhas([]);
-    }
-  }
-
-  useEffect(() => {
-    load();
-  }, []);
+  const refresh = () => qc.invalidateQueries({ queryKey: ["campanhas"] });
 
   return (
     <div className="page-fade">
@@ -55,11 +44,11 @@ export function Campanhas() {
       </div>
 
       <div className="card" style={{ padding: "0.5rem" }}>
-        {campanhas === null ? (
+        {campanhasQuery.isPending ? (
           <div className="loading">
             <div className="spinner" /> Carregando...
           </div>
-        ) : erro ? (
+        ) : campanhasQuery.isError ? (
           <div className="camp-empty">Erro ao carregar campanhas.</div>
         ) : campanhas.length === 0 ? (
           <div className="camp-empty">
@@ -105,7 +94,7 @@ export function Campanhas() {
       <CampanhaModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
-        onCreated={load}
+        onCreated={refresh}
       />
     </div>
   );

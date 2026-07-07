@@ -1,21 +1,17 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import {
-  getAgendamentos,
-  getConversas,
-  getConversasByLead,
-  getLeadById,
-  getLeads,
-  updateLead,
-} from "@/lib/queries";
+import { useQueryClient } from "@tanstack/react-query";
+import { getConversasByLead, getLeadById, updateLead } from "@/lib/queries";
+import { useAgendamentos, useConversas, useLeads } from "@/lib/hooks";
+import { supabase } from "@/lib/supabase";
 import { isLeadInativo, isLeadPaused, lastMsgInfo } from "@/lib/conversa";
 import { enviarMensagemWebhook } from "@/lib/n8n";
 import { showToast } from "@/lib/toast";
 import { InboxList, type InboxTab } from "@/components/conversas/inbox-list";
 import { ChatPanel } from "@/components/conversas/chat-panel";
 import { DetailsPanel } from "@/components/conversas/details-panel";
-import type { Agendamento, Conversa, Lead } from "@/types/db";
+import type { Conversa, Lead } from "@/types/db";
 
 export type PendingMsg = {
   id: string;
@@ -25,10 +21,23 @@ export type PendingMsg = {
 };
 
 export function Conversas() {
-  const [leads, setLeads] = useState<Lead[]>([]);
-  const [conversas, setConversas] = useState<Conversa[]>([]);
-  const [agendamentos, setAgendamentos] = useState<Agendamento[]>([]);
-  const [loading, setLoading] = useState(true);
+  const qc = useQueryClient();
+  const leadsQuery = useLeads();
+  const conversasQuery = useConversas();
+  const agendamentosQuery = useAgendamentos();
+  const leads = leadsQuery.data ?? [];
+  const conversas = conversasQuery.data ?? [];
+  const agendamentos = agendamentosQuery.data ?? [];
+  const loading = leadsQuery.isPending || conversasQuery.isPending;
+
+  // Mutações otimistas escrevem direto no cache (mesmas keys das outras telas),
+  // então a UI reflete na hora e a fonte de verdade continua única. Como as
+  // ações já usam a forma updater `set(prev => ...)`, o corpo delas não muda.
+  const setLeads = (fn: (prev: Lead[]) => Lead[]) =>
+    qc.setQueryData<Lead[]>(["leads"], (prev) => fn(prev ?? []));
+  const setConversas = (fn: (prev: Conversa[]) => Conversa[]) =>
+    qc.setQueryData<Conversa[]>(["conversas"], (prev) => fn(prev ?? []));
+
   const [tab, setTab] = useState<InboxTab>("tudo");
   const [currentLeadId, setCurrentLeadId] = useState<string | null>(null);
   const [chatMessages, setChatMessages] = useState<Conversa[]>([]);
@@ -42,24 +51,27 @@ export function Conversas() {
     setPanelOpen(window.innerWidth >= 1440);
   }, []);
 
+  // Gancho de realtime: quando o n8n/cliente grava em `conversas` ou `leads`,
+  // invalida o cache e a lista atualiza sozinha. Fica inerte até habilitar
+  // Realtime nessas tabelas no Supabase (publicação supabase_realtime).
   useEffect(() => {
-    (async () => {
-      try {
-        const [l, a, c] = await Promise.all([
-          getLeads(),
-          getAgendamentos(),
-          getConversas(),
-        ]);
-        setLeads(l);
-        setAgendamentos(a);
-        setConversas(c);
-      } catch {
-        showToast("Erro ao carregar as conversas.", "error");
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, []);
+    const channel = supabase
+      .channel("conversas-crm")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "conversas" },
+        () => qc.invalidateQueries({ queryKey: ["conversas"] })
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "leads" },
+        () => qc.invalidateQueries({ queryKey: ["leads"] })
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [qc]);
 
   const currentLead = useMemo(
     () => leads.find((l) => l.id === currentLeadId) ?? null,

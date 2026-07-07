@@ -73,7 +73,7 @@ Ao reiniciar o `next dev`, se a porta 3000 aparecer "in use", há um processo `n
 - Hooks em `src/lib/hooks.ts`: `useLeads`, `useAgendamentos`, `useAgendamentosComLead` (key `['agendamentos','com-lead']`), `useConversas`, `useCampanhas`. queryKeys dos agendamentos compartilham o prefixo `['agendamentos']` (invalidar o prefixo pega lista com/sem join).
 - **Status: as 5 telas migradas.** Dashboard/Clientes usam `useLeads`; Agenda usa `useAgendamentosComLead`+`useLeads`; Conversas usa `useLeads`+`useConversas`+`useAgendamentos`; Campanhas usa `useCampanhas`. Após mutações, as telas chamam `qc.invalidateQueries` (ex.: Agenda invalida `['agendamentos']`+`['leads']`).
 - **Mutações otimistas (Conversas)**: `setLeads`/`setConversas` foram redefinidos como `qc.setQueryData(['leads'|'conversas'], updater)` — o corpo das ações (`openConversa`/`toggleIA`/`enviarMensagem`) não mudou (já usavam a forma `set(prev => ...)`). Fonte única no cache.
-- **Realtime (gancho pronto, inativo)**: `conversas.tsx` tem um `supabase.channel('conversas-crm')` que invalida `['conversas']`/`['leads']` em `postgres_changes`. **Só ativa quando as tabelas entrarem na publicação `supabase_realtime`** (hoje vazia) — habilitar no painel do Supabase ou via `ALTER PUBLICATION supabase_realtime ADD TABLE conversas, leads;`.
+- **Realtime — ATIVO (jul/2026)**: `conversas.tsx` tem um `supabase.channel('conversas-crm')` que invalida `['conversas']`/`['leads']` em `postgres_changes`. As tabelas `conversas` e `leads` foram adicionadas à publicação `supabase_realtime` (migration `enable_realtime_conversas_leads`), então o inbox **atualiza sozinho** quando o n8n/cliente grava. (RLS liberado p/ anon, então o cliente do browser recebe os eventos.)
 
 ### Decisões de arquitetura (Etapa 0)
 - **Navegação por rotas reais do App Router** (não SPA com `showPage`): `/` (Visão geral), `/clientes`, `/conversas`, `/agenda`, `/campanhas`. O `AppShell` (`src/components/app-shell.tsx`) é o chrome comum; o item ativo vem de `usePathname`. Config das telas em `src/lib/nav.ts`.
@@ -152,7 +152,7 @@ RLS liberado para anon/authenticated (single-tenant). Não alterar schema sem ne
 ## Pendências conhecidas (NÃO são bugs da migração; herdadas do legacy)
 - "Receita estimada" mostra R$ 0,00 porque `agendamentos.valor` vem vazio (o n8n não preenche). Migrar como está; resolver depois.
 - ~~"Consultas agendadas"~~ **RESOLVIDO (jun/2026):** agora conta linhas de `agendamentos` (não leads), por `criado_em`, sem cancelados; "Receita estimada" usa o mesmo filtro. Ver detalhe na seção "Dashboard (Etapa 2)".
-- Inbox não tem realtime/auto-refresh ainda (badge ao vivo). Migrar sem realtime; adicionar depois com Supabase Realtime.
+- ~~Inbox não tem realtime~~ **RESOLVIDO (jul/2026):** Supabase Realtime ativo em `conversas`/`leads` + invalidação do cache React Query no `conversas.tsx`. Ver "Camada de dados com cache".
 
 ## Como manter este arquivo
 Ao concluir uma etapa de migração ou tomar uma decisão de arquitetura, ATUALIZE este CLAUDE.md (seção de estado e pendências). Este arquivo é a memória do projeto; mantê-lo curado evita perda de contexto entre sessões.

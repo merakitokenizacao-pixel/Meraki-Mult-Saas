@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { filterByDate } from "@/lib/date";
-import { getLeads } from "@/lib/queries";
-import { showToast } from "@/lib/toast";
+import { useLeads } from "@/lib/hooks";
 import { LeadsTable } from "@/components/clientes/leads-table";
 import { LeadModal } from "@/components/clientes/lead-modal";
 import type { Lead } from "@/types/db";
@@ -17,21 +16,11 @@ const PERIODS: ReadonlyArray<[string, string]> = [
 ];
 
 export function Clientes() {
-  const [allLeads, setAllLeads] = useState<Lead[] | null>(null);
+  const leadsQuery = useLeads();
+  const allLeads = leadsQuery.data ?? null;
   const [query, setQuery] = useState("");
   const [period, setPeriod] = useState("hoje");
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        setAllLeads(await getLeads());
-      } catch {
-        setAllLeads([]);
-        showToast("Erro ao carregar os clientes.", "error");
-      }
-    })();
-  }, []);
 
   // applyLeadsFilter: filtra por período e depois por busca (nome/telefone).
   const filtered = useMemo(() => {
@@ -85,7 +74,7 @@ export function Clientes() {
         <div className="table-wrap">
           <LeadsTable
             leads={filtered}
-            loading={allLeads === null}
+            loading={leadsQuery.isPending}
             onRowClick={setSelectedLead}
           />
         </div>

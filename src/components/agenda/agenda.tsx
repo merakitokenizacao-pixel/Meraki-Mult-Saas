@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { getAgendamentosComLead, getLeads } from "@/lib/queries";
-import { showToast } from "@/lib/toast";
+import { useMemo, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useAgendamentosComLead, useLeads } from "@/lib/hooks";
 import {
   dateKey,
   getStartOfWeek,
@@ -12,12 +12,16 @@ import {
 import { WeekGrid } from "@/components/agenda/week-grid";
 import { NewAgendModal } from "@/components/agenda/new-agend-modal";
 import { EditAgendModal } from "@/components/agenda/edit-agend-modal";
-import type { AgendamentoComLead, Lead } from "@/types/db";
+import type { AgendamentoComLead } from "@/types/db";
 
 export function Agenda() {
-  const [agendamentos, setAgendamentos] = useState<AgendamentoComLead[]>([]);
-  const [leads, setLeads] = useState<Lead[]>([]);
-  const [loading, setLoading] = useState(true);
+  const qc = useQueryClient();
+  const agendQuery = useAgendamentosComLead();
+  const leadsQuery = useLeads();
+  const agendamentos = agendQuery.data ?? [];
+  const leads = leadsQuery.data ?? [];
+  const loading = agendQuery.isPending;
+
   const [weekStart, setWeekStart] = useState<Date>(() =>
     getStartOfWeek(new Date())
   );
@@ -25,21 +29,13 @@ export function Agenda() {
   const [prefill, setPrefill] = useState({ data: "", hora: "" });
   const [editAgend, setEditAgend] = useState<AgendamentoComLead | null>(null);
 
-  async function load() {
-    try {
-      const [a, l] = await Promise.all([getAgendamentosComLead(), getLeads()]);
-      setAgendamentos(a);
-      setLeads(l);
-    } catch {
-      showToast("Erro ao carregar a agenda.", "error");
-    } finally {
-      setLoading(false);
-    }
+  // Recarrega após criar/editar/excluir: invalida os agendamentos (prefixo,
+  // pega a lista com e sem join) e os leads (o novo agendamento marca o lead
+  // como "agendado").
+  function refresh() {
+    qc.invalidateQueries({ queryKey: ["agendamentos"] });
+    qc.invalidateQueries({ queryKey: ["leads"] });
   }
-
-  useEffect(() => {
-    load();
-  }, []);
 
   const label = useMemo(() => monthLabel(getWeekDays(weekStart)), [weekStart]);
 
@@ -110,13 +106,13 @@ export function Agenda() {
         onClose={() => setNewOpen(false)}
         leads={leads}
         prefill={prefill}
-        onCreated={load}
+        onCreated={refresh}
       />
       <EditAgendModal
         agend={editAgend}
         allAgendamentos={agendamentos}
         onClose={() => setEditAgend(null)}
-        onChanged={load}
+        onChanged={refresh}
       />
     </div>
   );

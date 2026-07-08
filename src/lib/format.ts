@@ -32,17 +32,19 @@ export function fmtDate(iso?: string | null): string {
   if (!iso) return "—";
   const d = new Date(iso);
   const now = new Date();
-  const diff = now.getTime() - d.getTime();
-  if (diff < 86400000)
-    return (
-      "Hoje, " +
-      d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
-    );
-  if (diff < 172800000)
-    return (
-      "Ontem, " +
-      d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
-    );
+  // Dia de calendário (não janela de 24h): "Hoje" = mesmo dia; "Ontem" = dia
+  // anterior. Evita rotular como "Hoje" algo de ontem à noite ainda dentro de 24h.
+  const startToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const startD = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const dayDiff = Math.round(
+    (startToday.getTime() - startD.getTime()) / 86400000
+  );
+  const time = d.toLocaleTimeString("pt-BR", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+  if (dayDiff === 0) return "Hoje, " + time;
+  if (dayDiff === 1) return "Ontem, " + time;
   return d.toLocaleDateString("pt-BR", { day: "2-digit", month: "short" });
 }
 

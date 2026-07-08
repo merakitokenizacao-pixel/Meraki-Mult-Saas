@@ -114,6 +114,17 @@ export async function getConversas(): Promise<Conversa[]> {
   return (data ?? []) as Conversa[];
 }
 
+// Última mensagem por lead (view no banco). O inbox só precisa disso para
+// preview/ordenação — evita puxar TODAS as mensagens (que o PostgREST corta
+// em 1000 e quebraria previews conforme a base cresce).
+export async function getUltimaConversaPorLead(): Promise<Conversa[]> {
+  const { data, error } = await supabase
+    .from("conversa_ultima_por_lead")
+    .select("*");
+  if (error) throw error;
+  return (data ?? []) as Conversa[];
+}
+
 export async function getConversasByLead(leadId: string): Promise<Conversa[]> {
   const { data, error } = await supabase
     .from("conversas")

@@ -5,8 +5,8 @@ import {
   getAgendamentos,
   getAgendamentosComLead,
   getCampanhas,
-  getConversas,
   getLeads,
+  getUltimaConversaPorLead,
 } from "@/lib/queries";
 
 // Hooks de dados com cache (React Query). Envolvem as queries do Supabase
@@ -28,8 +28,13 @@ export function useAgendamentosComLead() {
   });
 }
 
+// Inbox: usa a última mensagem por lead (view), não todas as mensagens.
+// queryKey ['conversas'] mantida (push otimista e realtime já usam essa key).
 export function useConversas() {
-  return useQuery({ queryKey: ["conversas"], queryFn: getConversas });
+  return useQuery({
+    queryKey: ["conversas"],
+    queryFn: getUltimaConversaPorLead,
+  });
 }
 
 export function useCampanhas() {

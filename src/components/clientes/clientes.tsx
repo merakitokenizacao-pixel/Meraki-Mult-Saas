@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { filterByDate } from "@/lib/date";
 import { useLeads } from "@/lib/hooks";
+import { DateFilter } from "@/components/date-filter";
 import { LeadsTable } from "@/components/clientes/leads-table";
 import { LeadModal } from "@/components/clientes/lead-modal";
 import { NewLeadModal } from "@/components/clientes/new-lead-modal";
@@ -61,17 +62,7 @@ export function Clientes() {
             onChange={(e) => setQuery(e.target.value)}
           />
         </div>
-        <div className="filter-bar">
-          {PERIODS.map(([value, label]) => (
-            <button
-              key={value}
-              className={`filter-btn${period === value ? " active" : ""}`}
-              onClick={() => setPeriod(value)}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
+        <DateFilter value={period} options={PERIODS} onChange={setPeriod} />
         <button className="btn-primary" onClick={() => setNewOpen(true)}>
           + Novo cliente
         </button>

@@ -5,6 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { getConversasByLead, getLeadById, updateLead } from "@/lib/queries";
 import { useAgendamentos, useConversas, useLeads } from "@/lib/hooks";
 import { supabase } from "@/lib/supabase";
+import { matchesPeriod } from "@/lib/date";
 import { isLeadInativo, isLeadPaused, lastMsgInfo } from "@/lib/conversa";
 import { enviarMensagemWebhook } from "@/lib/n8n";
 import { showToast } from "@/lib/toast";
@@ -39,6 +40,7 @@ export function Conversas() {
     qc.setQueryData<Conversa[]>(["conversas"], (prev) => fn(prev ?? []));
 
   const [tab, setTab] = useState<InboxTab>("tudo");
+  const [period, setPeriod] = useState("tudo");
   const [currentLeadId, setCurrentLeadId] = useState<string | null>(null);
   const [chatMessages, setChatMessages] = useState<Conversa[]>([]);
   const [chatLoading, setChatLoading] = useState(false);
@@ -85,16 +87,21 @@ export function Conversas() {
     return { tudo: leads.length, ia, humano, inativo };
   }, [leads]);
 
-  // filterByInboxTab + ordenação por última mensagem (estilo WhatsApp).
+  // filterByInboxTab + filtro de período (por ÚLTIMA ATIVIDADE) + ordenação.
   const orderedLeads = useMemo(() => {
     let f = leads;
     if (tab === "ia") f = leads.filter((l) => !isLeadPaused(l) && !isLeadInativo(l));
     else if (tab === "humano") f = leads.filter(isLeadPaused);
     else if (tab === "inativo") f = leads.filter(isLeadInativo);
+    if (period !== "tudo") {
+      f = f.filter((l) =>
+        matchesPeriod(lastMsgInfo(l, conversas).raw, period)
+      );
+    }
     return [...f].sort(
       (a, b) => lastMsgInfo(b, conversas).ts - lastMsgInfo(a, conversas).ts
     );
-  }, [leads, tab, conversas]);
+  }, [leads, tab, conversas, period]);
 
   async function openConversa(leadId: string) {
     setCurrentLeadId(leadId);
@@ -242,9 +249,11 @@ export function Conversas() {
             conversas={conversas}
             tab={tab}
             counts={counts}
+            period={period}
             currentLeadId={currentLeadId}
             loading={loading}
             onSelectTab={setTab}
+            onSelectPeriod={setPeriod}
             onSelectLead={openConversa}
           />
         </div>

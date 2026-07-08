@@ -35,6 +35,19 @@ export function getDateRange(period: string): DateRange | null {
   }
 }
 
+// Uma data (ISO) cai no período? "tudo"/desconhecido → sempre true.
+// Normaliza para meio-dia local (como o legacy), usando a parte de data do ISO.
+export function matchesPeriod(
+  value: string | null | undefined,
+  period: string
+): boolean {
+  const range = getDateRange(period);
+  if (!range) return true;
+  if (!value) return false;
+  const d = new Date(value.toString().split("T")[0] + "T12:00:00");
+  return d >= range.from && d < range.to;
+}
+
 // Filtra itens cujo campo de data cai no período (normaliza para meio-dia, como o legacy).
 export function filterByDate<T>(
   items: T[],

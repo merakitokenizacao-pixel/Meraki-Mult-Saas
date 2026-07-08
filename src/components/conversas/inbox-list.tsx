@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Search, MessagesSquare } from "lucide-react";
 import { Avatar } from "@/components/avatar";
+import { DateFilter } from "@/components/date-filter";
 import { getRelativeTime } from "@/lib/format";
 import { getLastMsgPreview, lastMsgInfo } from "@/lib/conversa";
 import { InboxSkeleton } from "@/components/conversas/skeletons";
@@ -17,23 +18,36 @@ const TABS: ReadonlyArray<[InboxTab, string]> = [
   ["inativo", "Inativo"],
 ];
 
+// Filtro por última atividade da conversa (não por criação do lead).
+const PERIODS: ReadonlyArray<[string, string]> = [
+  ["tudo", "Tudo"],
+  ["hoje", "Hoje"],
+  ["ontem", "Ontem"],
+  ["semana", "Semana"],
+  ["mes", "Mês"],
+];
+
 export function InboxList({
   leads,
   conversas,
   tab,
   counts,
+  period,
   currentLeadId,
   loading,
   onSelectTab,
+  onSelectPeriod,
   onSelectLead,
 }: {
   leads: Lead[];
   conversas: Conversa[];
   tab: InboxTab;
   counts: Record<InboxTab, number>;
+  period: string;
   currentLeadId: string | null;
   loading: boolean;
   onSelectTab: (t: InboxTab) => void;
+  onSelectPeriod: (p: string) => void;
   onSelectLead: (id: string) => void;
 }) {
   const [query, setQuery] = useState("");
@@ -63,9 +77,16 @@ export function InboxList({
         </label>
 
         <div className="flex flex-col gap-3">
-          <h2 className="font-serif text-[22px] font-medium leading-none text-vx-text">
-            Inbox
-          </h2>
+          <div className="flex items-center justify-between gap-2">
+            <h2 className="font-serif text-[22px] font-medium leading-none text-vx-text">
+              Inbox
+            </h2>
+            <DateFilter
+              value={period}
+              options={PERIODS}
+              onChange={onSelectPeriod}
+            />
+          </div>
           <div className="flex flex-wrap items-center gap-1.5">
             {TABS.map(([value, label]) => {
               const active = tab === value;

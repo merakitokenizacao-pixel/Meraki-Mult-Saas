@@ -1,10 +1,12 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { filterByDate } from "@/lib/date";
 import { useLeads } from "@/lib/hooks";
 import { LeadsTable } from "@/components/clientes/leads-table";
 import { LeadModal } from "@/components/clientes/lead-modal";
+import { NewLeadModal } from "@/components/clientes/new-lead-modal";
 import type { Lead } from "@/types/db";
 
 const PERIODS: ReadonlyArray<[string, string]> = [
@@ -16,11 +18,13 @@ const PERIODS: ReadonlyArray<[string, string]> = [
 ];
 
 export function Clientes() {
+  const qc = useQueryClient();
   const leadsQuery = useLeads();
   const allLeads = leadsQuery.data ?? null;
   const [query, setQuery] = useState("");
   const [period, setPeriod] = useState("hoje");
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+  const [newOpen, setNewOpen] = useState(false);
 
   // applyLeadsFilter: filtra por período e depois por busca (nome/telefone).
   const filtered = useMemo(() => {
@@ -68,6 +72,9 @@ export function Clientes() {
             </button>
           ))}
         </div>
+        <button className="btn-primary" onClick={() => setNewOpen(true)}>
+          + Novo cliente
+        </button>
       </div>
 
       <div className="card">
@@ -81,6 +88,11 @@ export function Clientes() {
       </div>
 
       <LeadModal lead={selectedLead} onClose={() => setSelectedLead(null)} />
+      <NewLeadModal
+        open={newOpen}
+        onClose={() => setNewOpen(false)}
+        onCreated={() => qc.invalidateQueries({ queryKey: ["leads"] })}
+      />
     </div>
   );
 }

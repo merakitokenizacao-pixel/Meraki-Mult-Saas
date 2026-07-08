@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { Search, MessagesSquare } from "lucide-react";
 import { Avatar } from "@/components/avatar";
-import { StatusBadge } from "@/components/status-badge";
 import { getRelativeTime } from "@/lib/format";
 import { getLastMsgPreview, lastMsgInfo } from "@/lib/conversa";
 import { InboxSkeleton } from "@/components/conversas/skeletons";
@@ -139,7 +138,6 @@ export function InboxList({
                     </span>
                   </div>
                   <div className="mt-1 flex min-w-0 items-center gap-2">
-                    <StatusBadge status={l.status} />
                     <span className="truncate text-[12px] text-vx-muted">
                       {preview.text}
                     </span>

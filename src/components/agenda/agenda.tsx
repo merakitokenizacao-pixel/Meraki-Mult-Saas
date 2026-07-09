@@ -12,7 +12,18 @@ import {
 import { WeekGrid } from "@/components/agenda/week-grid";
 import { NewAgendModal } from "@/components/agenda/new-agend-modal";
 import { EditAgendModal } from "@/components/agenda/edit-agend-modal";
+import { DateFilter } from "@/components/date-filter";
+import { filterByDate } from "@/lib/date";
 import type { AgendamentoComLead } from "@/types/db";
+
+// Filtro de período por DATA DO AGENDAMENTO (mesma lógica de data das outras telas).
+const PERIODS: ReadonlyArray<[string, string]> = [
+  ["tudo", "Tudo"],
+  ["hoje", "Hoje"],
+  ["ontem", "Ontem"],
+  ["semana", "Semana"],
+  ["mes", "Mês"],
+];
 
 export function Agenda() {
   const qc = useQueryClient();
@@ -25,9 +36,17 @@ export function Agenda() {
   const [weekStart, setWeekStart] = useState<Date>(() =>
     getStartOfWeek(new Date())
   );
+  const [period, setPeriod] = useState("tudo");
   const [newOpen, setNewOpen] = useState(false);
   const [prefill, setPrefill] = useState({ data: "", hora: "" });
   const [editAgend, setEditAgend] = useState<AgendamentoComLead | null>(null);
+
+  // Filtra a grade por data do agendamento (mesma lógica das outras telas).
+  // Só a grade é filtrada; o modal de edição segue com a lista completa (contagens).
+  const agendamentosGrade = useMemo(
+    () => filterByDate(agendamentos, "data_agendamento", period),
+    [agendamentos, period]
+  );
 
   // Recarrega após criar/editar/excluir: invalida os agendamentos (prefixo,
   // pega a lista com e sem join) e os leads (o novo agendamento marca o lead
@@ -81,9 +100,16 @@ export function Agenda() {
           </button>
           <div className="agenda-month">{label}</div>
         </div>
-        <button className="btn-primary" onClick={openNewAgendamento}>
-          + Novo
-        </button>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <DateFilter
+            value={period}
+            options={PERIODS}
+            onChange={setPeriod}
+          />
+          <button className="btn-primary" onClick={openNewAgendamento}>
+            + Novo
+          </button>
+        </div>
       </div>
 
       <div className="card" style={{ padding: 0, overflow: "hidden" }}>
@@ -94,7 +120,7 @@ export function Agenda() {
         ) : (
           <WeekGrid
             weekStart={weekStart}
-            agendamentos={agendamentos}
+            agendamentos={agendamentosGrade}
             onCellClick={quickAgendamento}
             onEventClick={setEditAgend}
           />

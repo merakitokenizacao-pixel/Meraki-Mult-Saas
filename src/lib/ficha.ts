@@ -72,10 +72,7 @@ export const PERGUNTAS: readonly Pergunta[] = [
   { key: "foliculite", label: "Costuma ter foliculite (pelos encravados)?" },
   { key: "gestante", label: "Está gestante?" },
   { key: "problema_hormonal", label: "Tem algum problema hormonal?" },
-  {
-    key: "pelos_loiros_brancos",
-    label: "Os pelos da área são loiros ou brancos?",
-  },
+  { key: "pelos_loiros_brancos", label: "Tem pelos loiros e brancos?" },
   {
     key: "tatuagem",
     label: "Tem tatuagem na área do procedimento?",

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Modal } from "@/components/modal";
+import { LeadCombobox } from "@/components/lead-combobox";
 import { insertAgendamento, updateLead } from "@/lib/queries";
 import { showToast } from "@/lib/toast";
 import type { Lead } from "@/types/db";
@@ -41,9 +42,12 @@ export function NewAgendModal({
     color: "var(--vx-muted)",
   });
 
-  // Aplica o prefill (data/hora) ao abrir.
+  // Aplica o prefill (data/hora) e zera o formulário ao abrir.
   useEffect(() => {
     if (open) {
+      setLeadId("");
+      setServico("");
+      setStatus("pendente");
       setData(prefill.data);
       setHora(prefill.hora);
       setMsg({ text: "", color: "var(--vx-muted)" });
@@ -91,18 +95,7 @@ export function NewAgendModal({
       <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
         <div>
           <label className="form-label">Cliente</label>
-          <select
-            className="form-input"
-            value={leadId}
-            onChange={(e) => setLeadId(e.target.value)}
-          >
-            <option value="">Selecione um cliente...</option>
-            {leads.map((l) => (
-              <option value={l.id} key={l.id}>
-                {l.nome || l.telefone}
-              </option>
-            ))}
-          </select>
+          <LeadCombobox leads={leads} value={leadId} onChange={setLeadId} />
         </div>
         <div>
           <label className="form-label">Servico</label>

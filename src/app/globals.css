@@ -1854,3 +1854,110 @@ select.form-input {
   color: var(--vx-muted);
   padding: 0 6px;
 }
+
+/* ── Combobox de cliente com busca (LeadCombobox) ── */
+.lead-combo {
+  position: relative;
+}
+.lead-combo-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: text;
+}
+.lead-combo-control:focus-within {
+  border-color: var(--vx-accent);
+  background: var(--vx-surface);
+  box-shadow: 0 0 0 3px rgba(155, 125, 90, 0.08);
+}
+.lead-combo-icon {
+  color: var(--vx-muted);
+  flex-shrink: 0;
+}
+.lead-combo-control input {
+  flex: 1;
+  min-width: 0;
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--vx-text);
+  font-size: 13px;
+  font-family: var(--font-jost), sans-serif;
+}
+.lead-combo-control input::placeholder {
+  color: var(--vx-muted);
+}
+.lead-combo-clear {
+  display: flex;
+  background: none;
+  border: none;
+  color: var(--vx-muted);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: color var(--vx-transition);
+}
+.lead-combo-clear:hover {
+  color: var(--vx-text);
+}
+.lead-combo-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 40;
+  max-height: 240px;
+  overflow-y: auto;
+  background: var(--vx-surface);
+  border: 1px solid var(--vx-border);
+  border-radius: var(--vx-radius-sm);
+  box-shadow: var(--vx-shadow-md);
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  animation: fadeIn 0.15s ease;
+}
+.lead-combo-item {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  text-align: left;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-family: var(--font-jost), sans-serif;
+  transition: background var(--vx-transition);
+}
+.lead-combo-item:hover {
+  background: var(--vx-surface2);
+}
+.lead-combo-item.active {
+  background: var(--vx-accent-light);
+}
+.lead-combo-item .nome {
+  font-size: 13px;
+  color: var(--vx-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.lead-combo-item.active .nome {
+  color: var(--vx-accent);
+  font-weight: 600;
+}
+.lead-combo-item .tel {
+  font-size: 11px;
+  color: var(--vx-muted);
+  font-family: var(--font-jetbrains), monospace;
+  flex-shrink: 0;
+}
+.lead-combo-empty,
+.lead-combo-hint {
+  padding: 10px;
+  font-size: 12px;
+  color: var(--vx-muted);
+  text-align: center;
+}

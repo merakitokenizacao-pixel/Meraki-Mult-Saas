@@ -251,3 +251,56 @@ export function formatDataNascimento(iso: string): string {
   const [a, m, d] = iso.split("-");
   return `${d}/${m}/${a}`;
 }
+
+// ── Visão do painel (Entrega 2) ─────────────────────────────────────────────
+
+export type FichaTone = "amber" | "green" | "red" | "red-strong";
+
+// Badge de status da ficha para a equipe. Contraindicação é o caso mais grave
+// (vermelho forte); demais alertas = vermelho; sem alerta = verde; não
+// preenchida = âmbar.
+export function fichaStatusVisual(
+  status: string,
+  alertas: string[] | null | undefined
+): { label: string; tone: FichaTone } {
+  if (status === "pendente") return { label: "Ficha pendente", tone: "amber" };
+  const lista = alertas ?? [];
+  const contra = lista.some(isContraindicacao);
+  const revisada = status === "revisada";
+  if (contra) {
+    return {
+      label: revisada ? "Contraindicação · revisada" : "Contraindicação",
+      tone: "red-strong",
+    };
+  }
+  if (lista.length > 0) {
+    return {
+      label: revisada ? "Com alertas · revisada" : "Ficha com alertas",
+      tone: "red",
+    };
+  }
+  return { label: revisada ? "Ficha revisada" : "Ficha preenchida", tone: "green" };
+}
+
+// Respostas em linhas legíveis (pergunta pt-BR + resposta), na ordem do form.
+// O detalhe do "sim" entra junto da resposta (ex.: "Sim — Roacutan").
+export function linhasRespostas(
+  r: FichaRespostas
+): { label: string; valor: string }[] {
+  const linhas: { label: string; valor: string }[] = [
+    { label: "Nome", valor: r.nome },
+    { label: "Data de nascimento", valor: formatDataNascimento(r.data_nascimento) },
+  ];
+  for (const p of PERGUNTAS) {
+    const v = r[p.key] as boolean;
+    let valor = v ? "Sim" : "Não";
+    if (v && p.detalhe) {
+      const dv = r[p.detalhe.key];
+      if (dv !== undefined && dv !== null && String(dv).trim().length > 0) {
+        valor += p.detalhe.tipo === "number" ? ` — ${dv} dias` : ` — ${dv}`;
+      }
+    }
+    linhas.push({ label: p.label, valor });
+  }
+  return linhas;
+}

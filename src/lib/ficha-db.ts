@@ -3,6 +3,61 @@ import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { calcularAlertas } from "@/lib/ficha";
 import type { FichaRespostas, FichaStatus } from "@/types/db";
 
+// ── Lado do painel (Entrega 2) ──────────────────────────────────────────────
+// ATENÇÃO: estas funções servem a rotas SEM autenticação (o app não tem login).
+// Elas expõem dado de saúde no mesmo nível que leads/conversas já ficam hoje.
+// Dívida registrada para a Etapa 7 (login + RLS por clínica). Ver CLAUDE.md.
+
+export type FichaPainel = {
+  id: string;
+  status: FichaStatus;
+  tipo: string;
+  alertas: string[];
+  respostas: FichaRespostas | null;
+  criadoEm: string;
+  dataAgendamento: string | null;
+};
+
+/** Todas as fichas de um lead (mais recentes primeiro). Normalmente 0 ou 1. */
+export async function getFichasByLead(leadId: string): Promise<FichaPainel[]> {
+  const db = getSupabaseAdmin();
+  const { data, error } = await db
+    .from("fichas_avaliacao")
+    .select("id, status, tipo, alertas, respostas, criado_em, agendamento_id")
+    .eq("lead_id", leadId)
+    .order("criado_em", { ascending: false });
+
+  if (error) throw error;
+
+  const out: FichaPainel[] = [];
+  for (const f of data ?? []) {
+    out.push({
+      id: f.id,
+      status: f.status as FichaStatus,
+      tipo: f.tipo,
+      alertas: f.alertas ?? [],
+      respostas: (f.respostas as FichaRespostas | null) ?? null,
+      criadoEm: f.criado_em,
+      dataAgendamento: await getDataAgendamento(f.agendamento_id),
+    });
+  }
+  return out;
+}
+
+/** preenchida → revisada. Idempotente: revisar de novo afeta 0 linhas. */
+export async function revisarFicha(fichaId: string): Promise<boolean> {
+  const db = getSupabaseAdmin();
+  const { data, error } = await db
+    .from("fichas_avaliacao")
+    .update({ status: "revisada" })
+    .eq("id", fichaId)
+    .eq("status", "preenchida")
+    .select("id");
+
+  if (error) throw error;
+  return (data?.length ?? 0) > 0;
+}
+
 // Acesso à tabela `fichas_avaliacao` (RLS ligada, sem policies → service role).
 // Regra de LGPD deste módulo: as RESPOSTAS nunca sobem para a página pública,
 // e nada de conteúdo de ficha vai para log.

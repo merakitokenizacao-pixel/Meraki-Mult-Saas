@@ -6,6 +6,7 @@ import { Avatar } from "@/components/avatar";
 import { StatusBadge } from "@/components/status-badge";
 import { fmtDate } from "@/lib/format";
 import { getAgendamentosByLead, getConversasByLead } from "@/lib/queries";
+import { FichaSection } from "@/components/painel/ficha-section";
 import type { Agendamento, Conversa, Lead } from "@/types/db";
 
 // Replica openLeadModal: detalhe do lead + agendamentos + prévia da conversa.
@@ -158,6 +159,8 @@ export function LeadModal({
               Nenhum agendamento
             </div>
           )}
+
+          <FichaSection leadId={lead.id} />
 
           <div className="modal-section">Conversa ({convs.length} msgs)</div>
           <div

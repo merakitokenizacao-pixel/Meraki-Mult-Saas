@@ -1969,3 +1969,38 @@ select.form-input {
   gap: 6px;
   border-radius: 8px;
 }
+
+/* ========================================================================
+   FICHA DE AVALIAÇÃO — página pública (/ficha/[token])
+   Paleta própria (--f-*), injetada em (publico)/layout.tsx a partir de
+   CLINICA.cores. NÃO usa os tokens --vx-*: a ficha não segue o tema do
+   painel, então continua clara mesmo se a dona abrir o link no navegador
+   dela com o tema escuro salvo.
+   ======================================================================== */
+.ficha-root {
+  min-height: 100dvh;
+  background: var(--f-bg);
+  color: var(--f-text);
+  font-family: var(--font-jost), system-ui, sans-serif;
+}
+
+/* Campo condicional: 0fr → 1fr anima a altura sem medir nada em JS. */
+.ficha-reveal {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows 0.28s ease, opacity 0.2s ease;
+}
+.ficha-reveal > * {
+  overflow: hidden;
+  min-height: 0;
+}
+.ficha-reveal.open {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ficha-reveal {
+    transition: none;
+  }
+}

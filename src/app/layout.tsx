@@ -1,10 +1,6 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Jost, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import { AppShell } from "@/components/app-shell";
-import { QueryProvider } from "@/components/query-provider";
-import { ThemeProvider } from "@/components/theme-provider";
-import { Toaster } from "@/components/ui/sonner";
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
@@ -33,6 +29,10 @@ export const metadata: Metadata = {
 // Aplica o tema salvo antes da pintura, evitando flash (replica o toggleTheme do legacy)
 const themeScript = `(function(){try{var t=localStorage.getItem('vorax-theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}})();`;
 
+// Root layout enxuto de propósito: só o que é global a TODA rota.
+// O chrome do painel (sidebar/topbar/providers) vive em `(painel)/layout.tsx`,
+// para que as rotas públicas — ex.: /ficha/[token], aberta por pacientes —
+// não herdem nada do CRM. Ver CLAUDE.md, "Rotas públicas".
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -47,14 +47,7 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
-      <body className="antialiased">
-        <QueryProvider>
-          <ThemeProvider>
-            <AppShell>{children}</AppShell>
-            <Toaster />
-          </ThemeProvider>
-        </QueryProvider>
-      </body>
+      <body className="antialiased">{children}</body>
     </html>
   );
 }

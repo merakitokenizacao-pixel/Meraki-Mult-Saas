@@ -83,3 +83,44 @@ export interface CampanhaEnvio {
   nome: string | null;
   status: EnvioStatus;
 }
+
+// ── fichas_avaliacao ────────────────────────────────────────────────────────
+// Dado de saúde: só trafega server-side (RLS ligada, sem policies).
+export type FichaStatus = Loose<"pendente" | "preenchida" | "revisada">;
+
+// Chaves gravadas no jsonb `respostas` — contrato com o n8n, não renomear.
+export interface FichaRespostas {
+  nome: string;
+  data_nascimento: string; // YYYY-MM-DD
+  dermatite_alergia: boolean;
+  dermatite_alergia_detalhe?: string;
+  medicamento: boolean;
+  medicamento_qual?: string;
+  doenca_autoimune: boolean;
+  bronzeamento: boolean;
+  bronzeamento_dias?: number;
+  foliculite: boolean;
+  gestante: boolean;
+  problema_hormonal: boolean;
+  pelos_loiros_brancos: boolean;
+  tatuagem: boolean;
+  tatuagem_onde?: string;
+  laser_antes: boolean;
+  laser_antes_tempo?: string;
+  uso_acido: boolean;
+  uso_acido_qual?: string;
+  melasma: boolean;
+  marcapasso: boolean;
+}
+
+export interface FichaAvaliacao {
+  id: string; // é o token do link público
+  lead_id: string | null;
+  agendamento_id: string | null;
+  tipo: Loose<"laser">;
+  respostas: FichaRespostas | null;
+  alertas: string[] | null;
+  status: FichaStatus;
+  criado_em: string;
+  preenchida_em: string | null;
+}

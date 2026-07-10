@@ -255,6 +255,10 @@ export function Conversas() {
             onSelectTab={setTab}
             onSelectPeriod={setPeriod}
             onSelectLead={openConversa}
+            onRefresh={() => {
+              qc.invalidateQueries({ queryKey: ["conversas"] });
+              qc.invalidateQueries({ queryKey: ["leads"] });
+            }}
           />
         </div>
 

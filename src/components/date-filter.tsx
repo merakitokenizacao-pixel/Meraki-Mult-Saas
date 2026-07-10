@@ -9,10 +9,12 @@ export function DateFilter({
   value,
   options,
   onChange,
+  compact = false,
 }: {
   value: string;
   options: ReadonlyArray<readonly [string, string]>;
   onChange: (v: string) => void;
+  compact?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -38,7 +40,7 @@ export function DateFilter({
     <div className="date-filter" ref={ref}>
       <button
         type="button"
-        className={`date-filter-trigger${open ? " open" : ""}`}
+        className={`date-filter-trigger${compact ? " compact" : ""}${open ? " open" : ""}`}
         onClick={() => setOpen((o) => !o)}
         aria-haspopup="listbox"
         aria-expanded={open}

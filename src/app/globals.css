@@ -1685,13 +1685,13 @@ select.form-input {
 .content.content-flush {
   padding: 0;
 }
-/* Preenche a altura abaixo da topbar (64px). No mobile desconta a bottom-nav. */
+/* Sem topbar nessa rota: ocupa a tela toda. No mobile desconta a bottom-nav. */
 .conversas-fill {
-  height: calc(100vh - 64px);
+  height: 100vh;
 }
 @media (max-width: 640px) {
   .conversas-fill {
-    height: calc(100vh - 64px - 68px);
+    height: calc(100vh - 68px);
   }
 }
 
@@ -1960,4 +1960,12 @@ select.form-input {
   font-size: 12px;
   color: var(--vx-muted);
   text-align: center;
+}
+
+/* Variante compacta do DateFilter (header do inbox) */
+.date-filter-trigger.compact {
+  padding: 5px 10px;
+  font-size: 11px;
+  gap: 6px;
+  border-radius: 8px;
 }

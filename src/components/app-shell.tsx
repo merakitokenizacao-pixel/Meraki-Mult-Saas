@@ -99,28 +99,31 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </aside>
 
         <main className="main">
-          <div className="topbar">
-            <div className="topbar-left">
-              <button
-                className="hamburger"
-                onClick={() => setSidebarOpen((o) => !o)}
-                aria-label="Menu"
-              >
-                ☰
-              </button>
-              <span className="topbar-title">{titleForPath(pathname)}</span>
+          {/* Em /conversas a tela é inteira: sem topbar (título, data e tema) */}
+          {!isConversas && (
+            <div className="topbar">
+              <div className="topbar-left">
+                <button
+                  className="hamburger"
+                  onClick={() => setSidebarOpen((o) => !o)}
+                  aria-label="Menu"
+                >
+                  ☰
+                </button>
+                <span className="topbar-title">{titleForPath(pathname)}</span>
+              </div>
+              <div className="topbar-right">
+                <span className="topbar-date">{currentDate}</span>
+                <button
+                  className="theme-toggle"
+                  onClick={toggleTheme}
+                  title="Alternar tema"
+                >
+                  {theme === "dark" ? "☀" : "☽"}
+                </button>
+              </div>
             </div>
-            <div className="topbar-right">
-              <span className="topbar-date">{currentDate}</span>
-              <button
-                className="theme-toggle"
-                onClick={toggleTheme}
-                title="Alternar tema"
-              >
-                {theme === "dark" ? "☀" : "☽"}
-              </button>
-            </div>
-          </div>
+          )}
 
           <div className={`content${isConversas ? " content-flush" : ""}`}>
             {children}

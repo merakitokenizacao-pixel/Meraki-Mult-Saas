@@ -50,3 +50,44 @@ export const HOURS: number[] = Array.from(
 export function dateKey(d: Date): string {
   return d.toISOString().split("T")[0];
 }
+
+// ── Visões Dia / Mês (seletor de visão do calendário) ──
+
+// Meia-noite do dia de `date` (âncora da visão de Dia).
+export function startOfDay(date: Date): Date {
+  const d = new Date(date);
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+export function sameDay(a: Date, b: Date): boolean {
+  return (
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate()
+  );
+}
+
+// "10 de julho de 2026" (visão de Dia).
+export function dayLabel(d: Date): string {
+  return `${d.getDate()} de ${MESES[d.getMonth()]} de ${d.getFullYear()}`;
+}
+
+// "julho de 2026" (visão de Mês).
+export function monthYearLabel(d: Date): string {
+  return `${MESES[d.getMonth()]} de ${d.getFullYear()}`;
+}
+
+// 42 dias (6 semanas) cobrindo o mês de `ref`, começando no domingo
+// anterior/igual ao dia 1 — para a grade da visão de Mês.
+export function getMonthMatrix(ref: Date): Date[] {
+  const first = new Date(ref.getFullYear(), ref.getMonth(), 1);
+  const start = getStartOfWeek(first);
+  const days: Date[] = [];
+  for (let i = 0; i < 42; i++) {
+    const d = new Date(start);
+    d.setDate(d.getDate() + i);
+    days.push(d);
+  }
+  return days;
+}

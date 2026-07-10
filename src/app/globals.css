@@ -1761,3 +1761,96 @@ select.form-input {
   color: var(--vx-accent);
   font-weight: 600;
 }
+
+/* ── Visão de Mês (calendário) ── */
+.agenda-month-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  border-top: 1px solid var(--vx-border);
+  border-left: 1px solid var(--vx-border);
+}
+.agenda-mday-head {
+  padding: 10px 8px;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--vx-muted);
+  background: var(--vx-surface);
+  border-right: 1px solid var(--vx-border);
+  border-bottom: 1px solid var(--vx-border);
+}
+.agenda-mcell {
+  min-height: 104px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  cursor: pointer;
+  border-right: 1px solid var(--vx-border);
+  border-bottom: 1px solid var(--vx-border);
+  transition: background var(--vx-transition);
+}
+.agenda-mcell:hover {
+  background: var(--vx-surface2);
+}
+.agenda-mcell.out {
+  background: var(--vx-bg);
+}
+.agenda-mday-num {
+  font-family: var(--font-jetbrains), monospace;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--vx-text);
+}
+.agenda-mcell.out .agenda-mday-num {
+  color: var(--vx-muted);
+  opacity: 0.5;
+}
+.agenda-mcell.today .agenda-mday-num {
+  color: var(--vx-accent);
+  font-weight: 700;
+}
+.agenda-mevents {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.agenda-mevent {
+  font-size: 10px;
+  line-height: 1.4;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border-left: 2px solid var(--vx-accent);
+  background: var(--vx-accent-light);
+  color: var(--vx-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+.agenda-mevent.pendente {
+  background: var(--vx-amber-bg);
+  border-left-color: var(--vx-amber);
+}
+.agenda-mevent.confirmado {
+  background: var(--vx-purple-bg);
+  border-left-color: var(--vx-purple);
+}
+.agenda-mevent.realizado {
+  background: var(--vx-green-bg);
+  border-left-color: var(--vx-green);
+}
+.agenda-mevent.cancelado {
+  background: var(--vx-red-bg);
+  border-left-color: var(--vx-red);
+  opacity: 0.6;
+  text-decoration: line-through;
+}
+.agenda-mmore {
+  font-size: 10px;
+  color: var(--vx-muted);
+  padding: 0 6px;
+}

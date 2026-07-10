@@ -2,15 +2,7 @@
 
 import { Fragment, useMemo } from "react";
 import { limparServico } from "@/lib/format";
-import {
-  CELL_H,
-  HOURS,
-  HOUR_END,
-  HOUR_START,
-  WEEKDAYS,
-  dateKey,
-  getWeekDays,
-} from "@/lib/agenda";
+import { CELL_H, HOURS, HOUR_END, HOUR_START, WEEKDAYS, dateKey } from "@/lib/agenda";
 import type { AgendamentoComLead } from "@/types/db";
 
 type PositionedEvent = {
@@ -22,48 +14,48 @@ type PositionedEvent = {
   servico: string;
 };
 
-// renderWeekAgenda + renderEventsOnGrid: monta a grade e posiciona os eventos.
-export function WeekGrid({
-  weekStart,
+// Grade de horários (hora × dias) que serve tanto para a visão de Semana
+// (7 dias) quanto de Dia (1 dia). Recebe a lista de dias a exibir.
+export function TimeGrid({
+  days,
   agendamentos,
   onCellClick,
   onEventClick,
 }: {
-  weekStart: Date;
+  days: Date[];
   agendamentos: AgendamentoComLead[];
   onCellClick: (dateStr: string, hour: number) => void;
   onEventClick: (agend: AgendamentoComLead) => void;
 }) {
-  const weekDays = useMemo(() => getWeekDays(weekStart), [weekStart]);
   const todayStr = new Date().toDateString();
+  const single = days.length === 1;
 
   // Mapa "dateStr|hour" -> eventos posicionados.
   const eventsByCell = useMemo(() => {
     const map = new Map<string, PositionedEvent[]>();
-    const weekStartMs = weekDays[0].getTime();
-    const weekEndMs = new Date(weekDays[6]).setHours(23, 59, 59, 999);
+    const startMs = days[0].getTime();
+    const endMs = new Date(days[days.length - 1]).setHours(23, 59, 59, 999);
 
     for (const a of agendamentos) {
       if (!a.data_agendamento) continue;
       const t = new Date(a.data_agendamento).getTime();
-      if (t < weekStartMs || t > weekEndMs) continue;
+      if (t < startMs || t > endMs) continue;
 
       const dt = new Date(a.data_agendamento);
       const dayIdx = Math.floor(
-        (new Date(a.data_agendamento).setHours(0, 0, 0, 0) - weekStartMs) /
-          86400000
+        (new Date(a.data_agendamento).setHours(0, 0, 0, 0) - startMs) / 86400000
       );
-      if (dayIdx < 0 || dayIdx > 6) continue;
+      if (dayIdx < 0 || dayIdx > days.length - 1) continue;
 
       const hour = dt.getHours();
       const minute = dt.getMinutes();
       if (hour < HOUR_START || hour > HOUR_END) continue;
 
-      const key = dateKey(weekDays[dayIdx]) + "|" + hour;
+      const key = dateKey(days[dayIdx]) + "|" + hour;
       const positioned: PositionedEvent = {
         agend: a,
         top: (minute / 60) * CELL_H,
-        height: (60 / 60) * CELL_H - 4,
+        height: CELL_H - 4,
         time: dt.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }),
         nome: a.leads?.nome || "Cliente",
         servico: limparServico(a.servico),
@@ -73,25 +65,32 @@ export function WeekGrid({
       else map.set(key, [positioned]);
     }
     return map;
-  }, [agendamentos, weekDays]);
+  }, [agendamentos, days]);
 
   // Linha do horário atual.
   const nowLine = useMemo(() => {
     const now = new Date();
-    const idx = weekDays.findIndex((d) => d.toDateString() === now.toDateString());
+    const idx = days.findIndex((d) => d.toDateString() === now.toDateString());
     if (idx < 0 || now.getHours() < HOUR_START || now.getHours() > HOUR_END)
       return null;
     return {
-      key: dateKey(weekDays[idx]) + "|" + now.getHours(),
+      key: dateKey(days[idx]) + "|" + now.getHours(),
       top: (now.getMinutes() / 60) * CELL_H,
     };
-  }, [weekDays]);
+  }, [days]);
 
   return (
     <div className="agenda-grid-wrap">
-      <div className="agenda-grid">
+      <div
+        className="agenda-grid"
+        style={{
+          gridTemplateColumns: `60px repeat(${days.length}, minmax(${single ? "0" : "120px"}, 1fr))`,
+          width: single ? "100%" : undefined,
+          minWidth: single ? 0 : 900,
+        }}
+      >
         <div className="agenda-corner" />
-        {weekDays.map((d) => {
+        {days.map((d) => {
           const isToday = d.toDateString() === todayStr;
           return (
             <div
@@ -109,7 +108,7 @@ export function WeekGrid({
             <div className="agenda-hour">
               <span>{String(h).padStart(2, "0")}:00</span>
             </div>
-            {weekDays.map((d) => {
+            {days.map((d) => {
               const isToday = d.toDateString() === todayStr;
               const ds = dateKey(d);
               const cellKey = ds + "|" + h;

@@ -74,11 +74,17 @@ export function FichaForm({
     setErros({});
     setFase({ t: "enviando" });
 
+    // Rede da cliente pode ser ruim: aborta em 20s pra não ficar preso em
+    // "Enviando…" para sempre — vira o erro de conexão com opção de retentar.
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 20_000);
+
     try {
       const res = await fetch(`/api/ficha/${token}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(parsed.data),
+        signal: ctrl.signal,
       });
 
       if (res.ok) {
@@ -101,6 +107,8 @@ export function FichaForm({
       setErroEnvio(
         "Não conseguimos enviar. Verifique sua conexão e tente novamente."
       );
+    } finally {
+      clearTimeout(timer);
     }
   }
 

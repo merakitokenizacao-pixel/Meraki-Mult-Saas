@@ -6,6 +6,7 @@ import {
   getAgendamentosComLead,
   getCampanhas,
   getLeads,
+  getProximasVisitas,
   getUltimaConversaPorLead,
 } from "@/lib/queries";
 
@@ -25,6 +26,15 @@ export function useAgendamentosComLead() {
   return useQuery({
     queryKey: ["agendamentos", "com-lead"],
     queryFn: getAgendamentosComLead,
+  });
+}
+
+// Próxima visita futura por lead (derivada de agendamentos). Compartilha o
+// prefixo ["agendamentos"], então invalidar agendamentos também a atualiza.
+export function useProximasVisitas() {
+  return useQuery({
+    queryKey: ["agendamentos", "proximas-visitas"],
+    queryFn: getProximasVisitas,
   });
 }
 

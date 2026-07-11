@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { filterByDate } from "@/lib/date";
-import { useLeads } from "@/lib/hooks";
+import { useLeads, useProximasVisitas } from "@/lib/hooks";
 import { DateFilter } from "@/components/date-filter";
 import { LeadsTable } from "@/components/clientes/leads-table";
 import { LeadModal } from "@/components/clientes/lead-modal";
@@ -21,7 +21,14 @@ const PERIODS: ReadonlyArray<[string, string]> = [
 export function Clientes() {
   const qc = useQueryClient();
   const leadsQuery = useLeads();
+  const proximasQuery = useProximasVisitas();
   const allLeads = leadsQuery.data ?? null;
+
+  // Map lead_id → próxima visita (uma passada; lookup O(1) na tabela).
+  const proximasVisitas = useMemo(
+    () => new Map((proximasQuery.data ?? []).map((v) => [v.lead_id, v])),
+    [proximasQuery.data]
+  );
   const [query, setQuery] = useState("");
   const [period, setPeriod] = useState("hoje");
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
@@ -72,6 +79,7 @@ export function Clientes() {
         <div className="table-wrap">
           <LeadsTable
             leads={filtered}
+            proximasVisitas={proximasVisitas}
             loading={leadsQuery.isPending}
             onRowClick={setSelectedLead}
           />

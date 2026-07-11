@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Modal } from "@/components/modal";
 import { Avatar } from "@/components/avatar";
 import { StatusBadge } from "@/components/status-badge";
+import { LeadStatusBadge } from "@/components/lead-status-badge";
 import { fmtDate } from "@/lib/format";
 import { getAgendamentosByLead, getConversasByLead } from "@/lib/queries";
 import { FichaSection } from "@/components/painel/ficha-section";
@@ -67,7 +68,7 @@ export function LeadModal({
               <div className="modal-name">{lead.nome || "—"}</div>
               <div className="modal-phone">{lead.telefone}</div>
             </div>
-            <StatusBadge status={lead.status} />
+            <LeadStatusBadge status={lead.status} />
           </div>
 
           <div

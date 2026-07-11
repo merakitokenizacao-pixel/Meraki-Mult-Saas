@@ -64,6 +64,34 @@ export async function getLeadsParaCampanha(): Promise<LeadParaCampanha[]> {
 }
 
 // ── Agendamentos ──
+// Próxima visita por lead: 1 query com o filtro no banco (>= agora, não
+// cancelado), ordenada por data asc; reduzida a 1 linha por lead (a mais
+// próxima). Sem N+1 por linha da lista. `now()` é o instante da requisição.
+export type ProximaVisita = {
+  lead_id: string;
+  data_agendamento: string;
+  servico: string | null;
+};
+export async function getProximasVisitas(): Promise<ProximaVisita[]> {
+  const nowIso = new Date().toISOString();
+  const { data, error } = await supabase
+    .from("agendamentos")
+    .select("lead_id, data_agendamento, servico")
+    .gte("data_agendamento", nowIso)
+    .neq("status", "cancelado")
+    .order("data_agendamento", { ascending: true });
+  if (error) throw error;
+
+  const vistos = new Set<string>();
+  const proximas: ProximaVisita[] = [];
+  for (const a of (data ?? []) as ProximaVisita[]) {
+    if (!a.lead_id || vistos.has(a.lead_id)) continue; // 1ª ocorrência = mais próxima
+    vistos.add(a.lead_id);
+    proximas.push(a);
+  }
+  return proximas;
+}
+
 export async function getAgendamentos(): Promise<Agendamento[]> {
   const { data, error } = await supabase.from("agendamentos").select("*");
   if (error) throw error;

@@ -48,6 +48,29 @@ export function matchesPeriod(
   return d >= range.from && d < range.to;
 }
 
+// "24/07, 17h" (ou "24/07, 17h30" quando há minutos), no fuso da clínica.
+// Usado na coluna "Próxima visita" e no painel Detalhes.
+export function formatProximaVisita(iso: string | null | undefined): string {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  const tz = "America/Sao_Paulo";
+  const data = new Intl.DateTimeFormat("pt-BR", {
+    timeZone: tz,
+    day: "2-digit",
+    month: "2-digit",
+  }).format(d);
+  const hm = new Intl.DateTimeFormat("pt-BR", {
+    timeZone: tz,
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).format(d);
+  const [h, m] = hm.split(":");
+  const hora = m === "00" ? `${Number(h)}h` : `${Number(h)}h${m}`;
+  return `${data}, ${hora}`;
+}
+
 // Filtra itens cujo campo de data cai no período (normaliza para meio-dia, como o legacy).
 export function filterByDate<T>(
   items: T[],

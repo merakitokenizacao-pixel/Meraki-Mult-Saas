@@ -647,6 +647,19 @@
   background: var(--vx-blue-bg);
   color: var(--vx-blue);
 }
+/* Ciclo de vida do lead (LeadStatusBadge). Ver lib/status.ts. */
+.badge-lead-novo {
+  background: var(--vx-blue-bg);
+  color: var(--vx-blue);
+}
+.badge-lead-cliente {
+  background: var(--vx-green-bg);
+  color: var(--vx-green);
+}
+.badge-lead-inativo {
+  background: var(--vx-surface3);
+  color: var(--vx-muted);
+}
 .badge-agendado {
   background: var(--vx-gold-light);
   color: var(--vx-gold);

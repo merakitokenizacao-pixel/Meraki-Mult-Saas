@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Modal } from "@/components/modal";
 import { LeadCombobox } from "@/components/lead-combobox";
 import { insertAgendamento } from "@/lib/queries";
 import { showToast } from "@/lib/toast";
-import type { Lead } from "@/types/db";
+import { podeAgendar } from "@/lib/agenda-regras";
+import type { AgendamentoComLead, Lead } from "@/types/db";
 
 const SERVICOS = [
   "Limpeza de pele",
@@ -23,12 +24,14 @@ export function NewAgendModal({
   open,
   onClose,
   leads,
+  agendamentos,
   prefill,
   onCreated,
 }: {
   open: boolean;
   onClose: () => void;
   leads: Lead[];
+  agendamentos: AgendamentoComLead[];
   prefill: { data: string; hora: string };
   onCreated: () => void;
 }) {
@@ -54,9 +57,24 @@ export function NewAgendModal({
     }
   }, [open, prefill.data, prefill.hora]);
 
+  // Checagem de capacidade ao vivo: reage a data/hora escolhidas e avisa ANTES
+  // de a pessoa tentar salvar. Regras em lib/agenda-regras.ts.
+  const checagem = useMemo(
+    () => (data && hora ? podeAgendar(agendamentos, data, hora) : null),
+    [agendamentos, data, hora]
+  );
+  const bloqueado = checagem !== null && !checagem.ok;
+
   async function salvar() {
     if (!leadId || !servico || !data || !hora) {
       setMsg({ text: "Preencha todos os campos!", color: "var(--vx-red)" });
+      return;
+    }
+    // Revalida no submit: o horário pode ter lotado enquanto o modal estava
+    // aberto (outra pessoa marcando, ou a Laura pelo WhatsApp).
+    const check = podeAgendar(agendamentos, data, hora);
+    if (!check.ok) {
+      setMsg({ text: check.motivo ?? "Horário indisponível.", color: "var(--vx-red)" });
       return;
     }
     setMsg({ text: "Salvando...", color: "var(--vx-muted)" });
@@ -146,7 +164,47 @@ export function NewAgendModal({
             <option value="confirmado">Confirmado</option>
           </select>
         </div>
-        <button className="btn-primary" style={{ marginTop: 4 }} onClick={salvar}>
+        {/* Aviso de capacidade: por que esse horário não pode receber marcação */}
+        {bloqueado && (
+          <div
+            style={{
+              display: "flex",
+              gap: 8,
+              alignItems: "flex-start",
+              padding: "10px 12px",
+              borderRadius: 10,
+              background: "var(--vx-red-bg)",
+              color: "var(--vx-red)",
+              fontSize: 12.5,
+              lineHeight: 1.4,
+            }}
+          >
+            <span aria-hidden>⚠</span>
+            <span>{checagem?.motivo}</span>
+          </div>
+        )}
+        {!bloqueado && checagem?.ok && (
+          <div
+            style={{
+              fontSize: 12,
+              color: "var(--vx-green)",
+              textAlign: "center",
+            }}
+          >
+            Horário disponível
+          </div>
+        )}
+
+        <button
+          className="btn-primary"
+          style={{
+            marginTop: 4,
+            opacity: bloqueado ? 0.5 : 1,
+            cursor: bloqueado ? "not-allowed" : "pointer",
+          }}
+          disabled={bloqueado}
+          onClick={salvar}
+        >
           Salvar agendamento
         </button>
         <div

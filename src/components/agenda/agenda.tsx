@@ -135,6 +135,7 @@ export function Agenda() {
         open={newOpen}
         onClose={() => setNewOpen(false)}
         leads={leads}
+        agendamentos={agendamentos}
         prefill={prefill}
         onCreated={refresh}
       />

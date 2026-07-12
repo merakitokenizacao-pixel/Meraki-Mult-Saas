@@ -1482,6 +1482,55 @@ select.form-input {
 .agenda-cell.today {
   background: rgba(155, 125, 90, 0.03);
 }
+
+/* Capacidade da clínica (lib/agenda-regras.ts).
+   .fechado = a clínica não atende nessa hora (pós-graduação da segunda,
+   almoço, sábado à tarde, domingo). .lotado = todas as profissionais ocupadas.
+   Nenhum dos dois abre o modal de novo agendamento. */
+.agenda-cell.fechado {
+  cursor: not-allowed;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 5px,
+    var(--vx-surface3) 5px,
+    var(--vx-surface3) 6px
+  );
+}
+.agenda-cell.fechado:hover {
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 5px,
+    var(--vx-surface3) 5px,
+    var(--vx-surface3) 6px
+  );
+}
+.agenda-cell.lotado {
+  cursor: not-allowed;
+  background: var(--vx-red-bg);
+}
+.agenda-cell.lotado:hover {
+  background: var(--vx-red-bg);
+}
+/* Contador de vagas — some quando a hora está vazia (grade limpa). */
+.agenda-vagas {
+  position: absolute;
+  top: 2px;
+  right: 4px;
+  z-index: 1;
+  font-family: var(--font-jetbrains), monospace;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--vx-muted);
+  pointer-events: none;
+}
+.agenda-cell.lotado .agenda-vagas {
+  color: var(--vx-red);
+  font-weight: 700;
+}
+
 .agenda-event {
   position: absolute;
   left: 3px;

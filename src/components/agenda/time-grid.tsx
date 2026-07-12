@@ -3,6 +3,7 @@
 import { Fragment, useMemo } from "react";
 import { limparServico } from "@/lib/format";
 import { CELL_H, HOURS, HOUR_END, HOUR_START, WEEKDAYS, dateKey } from "@/lib/agenda";
+import { vagasEm } from "@/lib/agenda-regras";
 import type { AgendamentoComLead } from "@/types/db";
 
 type PositionedEvent = {
@@ -113,12 +114,33 @@ export function TimeGrid({
               const ds = dateKey(d);
               const cellKey = ds + "|" + h;
               const events = eventsByCell.get(cellKey) || [];
+
+              // Capacidade da clínica nessa hora (regras em lib/agenda-regras).
+              const v = vagasEm(agendamentos, d, h);
+              const estado = v.fechado ? " fechado" : v.lotado ? " lotado" : "";
+              const titulo = v.fechado
+                ? (v.motivo ?? "Fechado")
+                : v.lotado
+                  ? `Cheio — as ${v.capacidade} profissionais já estão ocupadas`
+                  : `${v.livres} de ${v.capacidade} ${v.capacidade === 1 ? "vaga livre" : "vagas livres"}`;
+
               return (
                 <div
-                  className={`agenda-cell${isToday ? " today" : ""}`}
+                  className={`agenda-cell${isToday ? " today" : ""}${estado}`}
                   key={ds}
-                  onClick={() => onCellClick(ds, h)}
+                  title={titulo}
+                  aria-disabled={v.fechado || v.lotado}
+                  onClick={() => {
+                    if (v.fechado || v.lotado) return; // não abre o modal
+                    onCellClick(ds, h);
+                  }}
                 >
+                  {/* Vagas: só quando já há alguém marcado (célula vazia fica limpa) */}
+                  {!v.fechado && v.ocupadas > 0 && (
+                    <span className="agenda-vagas">
+                      {v.lotado ? "cheio" : `${v.livres}/${v.capacidade}`}
+                    </span>
+                  )}
                   {events.map((ev) => (
                     <div
                       key={ev.agend.id}

@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { ChevronsLeft, ChevronsRight } from "lucide-react";
 import { NAV_ITEMS, titleForPath } from "@/lib/nav";
 import { useTheme } from "@/components/theme-provider";
+import { LogoutButton } from "@/components/auth/logout-button";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -96,6 +97,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <div className="sidebar-status-dot" />
             <span className="sidebar-status-text">Laura ativa</span>
           </div>
+          <LogoutButton collapsed={collapsed} />
         </aside>
 
         <main className="main">

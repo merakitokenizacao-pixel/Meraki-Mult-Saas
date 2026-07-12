@@ -384,6 +384,37 @@
   flex-shrink: 0;
   animation: pulse-dot 2.5s ease-in-out infinite;
 }
+
+/* Sair — mesma anatomia dos .nav-item (a sidebar é sempre escura). */
+.sidebar-logout {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 0.7rem 1.75rem 1.1rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  color: rgba(240, 236, 228, 0.45);
+  transition: color var(--vx-transition);
+}
+.sidebar-logout:hover {
+  color: rgba(240, 236, 228, 0.85);
+}
+.sidebar-logout .nav-icon {
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+.sidebar-logout:hover .nav-icon {
+  opacity: 0.9;
+}
+.layout.collapsed .sidebar-logout {
+  justify-content: center;
+  padding-left: 0;
+  padding-right: 0;
+}
 @keyframes pulse-dot {
   0%,
   100% {

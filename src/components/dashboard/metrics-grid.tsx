@@ -1,4 +1,5 @@
 import { filterByDate } from "@/lib/date";
+import { leadStatusDisplay } from "@/lib/status";
 import type { Lead, Agendamento } from "@/types/db";
 
 // Replica renderDashboardMetrics: 4 KPIs reagindo ao período selecionado.
@@ -13,11 +14,14 @@ export function MetricsGrid({
 }) {
   const filtered = filterByDate(leads, "criado_em", period);
   const total = filtered.length;
-  // Taxa de conversão é sobre LEADS (clientes que avançaram), não sobre consultas.
-  const leadsAgendados = filtered.filter((l) => l.status === "agendado").length;
-  const convertidos = filtered.filter((l) => l.status === "convertido").length;
-  const taxa =
-    total > 0 ? Math.round(((leadsAgendados + convertidos) / total) * 100) : 0;
+  // Taxa de conversão = leads que viraram CLIENTE (novo modelo de ciclo de
+  // vida). Usa o mapeamento único (status.ts), então `cliente` e o legado
+  // `convertido` contam juntos. "agendado" NÃO é mais conversão (virou estado
+  // transitório; "tem horário" é derivado de agendamentos). Ver CLAUDE.md.
+  const convertidos = filtered.filter(
+    (l) => leadStatusDisplay(l.status).variant === "cliente"
+  ).length;
+  const taxa = total > 0 ? Math.round((convertidos / total) * 100) : 0;
 
   // "Consultas agendadas" e "Receita estimada" usam o MESMO conjunto:
   // agendamentos do período por criado_em (quando foi MARCADA), sem cancelados.

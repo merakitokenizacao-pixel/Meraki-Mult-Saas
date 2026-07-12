@@ -39,15 +39,28 @@ export function capacidadeEm(date: Date, hora: number): number {
   return CAPACIDADE[date.getDay()]?.[hora] ?? 0;
 }
 
-/** Por que a hora está fechada (null = está aberta). Texto para a equipe. */
+/** Por que a hora está fechada (null = está aberta). Texto para a equipe.
+ *  A ordem importa: o sábado é checado ANTES do almoço, senão o sábado à
+ *  tarde viraria dois blocos ("Almoço" às 12h + "Só de manhã" às 13h) em vez
+ *  de um só. */
 export function motivoFechado(date: Date, hora: number): string | null {
   if (capacidadeEm(date, hora) > 0) return null;
   const dow = date.getDay();
   if (dow === 0) return "Fechado aos domingos";
+  if (dow === 6) return "Sábado: só atendemos de manhã";
   if (hora === 12) return "Horário de almoço";
   if (dow === 1 && hora < 12) return "Segunda de manhã: pós-graduação";
-  if (dow === 6) return "Sábado: só atendemos de manhã";
   return "Fora do horário de atendimento";
+}
+
+/** Rótulo curto p/ escrever DENTRO da célula (o motivo completo fica no tooltip). */
+export function rotuloFechado(date: Date, hora: number): string {
+  const dow = date.getDay();
+  if (dow === 0) return "Fechado";
+  if (dow === 6) return "Só de manhã";
+  if (hora === 12) return "Almoço";
+  if (dow === 1 && hora < 12) return "Pós-graduação";
+  return "Fechado";
 }
 
 // Shape mínimo que as funções precisam de um agendamento.

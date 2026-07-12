@@ -103,6 +103,9 @@
   --vx-amber-bg: #fdf0e0;
   --vx-red: #b03030;
   --vx-red-bg: #fce8e8;
+  /* Agenda: hora em que a clínica não atende (fundo + listras). */
+  --vx-fechado-bg: rgba(26, 24, 20, 0.045);
+  --vx-fechado-stripe: rgba(26, 24, 20, 0.07);
   --vx-blue: #2a5278;
   --vx-blue-bg: #e8f0f8;
   --vx-purple: #5c4fa0;
@@ -172,6 +175,10 @@
   --vx-amber-bg: #28200a;
   --vx-red: #e05050;
   --vx-red-bg: #281010;
+  /* No escuro, "fechado" ESCURECE a célula (o fundo já é escuro, então
+     clarear leria como disponível). As listras clareiam de leve pra dar textura. */
+  --vx-fechado-bg: rgba(0, 0, 0, 0.32);
+  --vx-fechado-stripe: rgba(240, 236, 228, 0.04);
   --vx-blue: #60a0d0;
   --vx-blue-bg: #101e2e;
   --vx-purple: #9080d0;
@@ -1487,23 +1494,17 @@ select.form-input {
    .fechado = a clínica não atende nessa hora (pós-graduação da segunda,
    almoço, sábado à tarde, domingo). .lotado = todas as profissionais ocupadas.
    Nenhum dos dois abre o modal de novo agendamento. */
-.agenda-cell.fechado {
-  cursor: not-allowed;
-  background: repeating-linear-gradient(
-    45deg,
-    transparent,
-    transparent 5px,
-    var(--vx-surface3) 5px,
-    var(--vx-surface3) 6px
-  );
-}
+/* Vem DEPOIS de .today de propósito: mesma especificidade, então o estado
+   "fechado" vence o destaque do dia atual. */
+.agenda-cell.fechado,
+.agenda-cell.fechado.today,
 .agenda-cell.fechado:hover {
-  background: repeating-linear-gradient(
+  cursor: not-allowed;
+  background-color: var(--vx-fechado-bg);
+  background-image: repeating-linear-gradient(
     45deg,
-    transparent,
-    transparent 5px,
-    var(--vx-surface3) 5px,
-    var(--vx-surface3) 6px
+    transparent 0 6px,
+    var(--vx-fechado-stripe) 6px 7px
   );
 }
 .agenda-cell.lotado {
@@ -1513,6 +1514,23 @@ select.form-input {
 .agenda-cell.lotado:hover {
   background: var(--vx-red-bg);
 }
+/* Motivo do bloqueio, escrito uma vez por bloco (não em toda célula). */
+.agenda-fechado-label {
+  position: absolute;
+  top: 5px;
+  left: 6px;
+  right: 6px;
+  z-index: 1;
+  font-size: 8.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--vx-muted);
+  opacity: 0.75;
+  line-height: 1.2;
+  pointer-events: none;
+}
+
 /* Contador de vagas — some quando a hora está vazia (grade limpa). */
 .agenda-vagas {
   position: absolute;

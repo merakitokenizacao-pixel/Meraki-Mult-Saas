@@ -3,7 +3,7 @@
 import { Fragment, useMemo } from "react";
 import { limparServico } from "@/lib/format";
 import { CELL_H, HOURS, HOUR_END, HOUR_START, WEEKDAYS, dateKey } from "@/lib/agenda";
-import { vagasEm } from "@/lib/agenda-regras";
+import { motivoFechado, rotuloFechado, vagasEm } from "@/lib/agenda-regras";
 import type { AgendamentoComLead } from "@/types/db";
 
 type PositionedEvent = {
@@ -124,6 +124,12 @@ export function TimeGrid({
                   ? `Cheio — as ${v.capacidade} profissionais já estão ocupadas`
                   : `${v.livres} de ${v.capacidade} ${v.capacidade === 1 ? "vaga livre" : "vagas livres"}`;
 
+              // O rótulo aparece UMA vez por bloco fechado (na primeira hora em
+              // que o motivo muda), senão "Pós-graduação" se repetiria 4×.
+              const motivoAnterior =
+                h > HOUR_START ? motivoFechado(d, h - 1) : null;
+              const abreBloco = v.fechado && v.motivo !== motivoAnterior;
+
               return (
                 <div
                   className={`agenda-cell${isToday ? " today" : ""}${estado}`}
@@ -135,6 +141,12 @@ export function TimeGrid({
                     onCellClick(ds, h);
                   }}
                 >
+                  {/* Motivo do bloqueio — uma vez por bloco, não por célula */}
+                  {abreBloco && (
+                    <span className="agenda-fechado-label">
+                      {rotuloFechado(d, h)}
+                    </span>
+                  )}
                   {/* Vagas: só quando já há alguém marcado (célula vazia fica limpa) */}
                   {!v.fechado && v.ocupadas > 0 && (
                     <span className="agenda-vagas">

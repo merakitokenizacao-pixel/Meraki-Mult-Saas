@@ -1,6 +1,11 @@
 import type { Lead, Agendamento } from "@/types/db";
 
-// Replica o funil do loadDashboard (sobre TODOS os leads, não filtrado por período).
+// Funil de conversão. Todos os passos são DERIVADOS de `agendamentos` e
+// contam LEADS (não linhas de agendamento), formando subconjuntos aninhados:
+//   todos ⊇ com agendamento ⊇ não-cancelado ⊇ realizado
+// Antes, "Engajados" e "Agendados" liam `leads.status` ('novo'/'agendado') —
+// valores que o novo modelo de ciclo de vida não grava mais, então os passos
+// zeravam. "Tem horário" nunca foi ciclo de vida: é derivado. Ver CLAUDE.md.
 export function Funnel({
   leads,
   agendamentos,
@@ -9,16 +14,38 @@ export function Funnel({
   agendamentos: Agendamento[];
 }) {
   const total = leads.length;
-  const engajados = leads.filter((l) => l.status !== "novo").length;
-  const agendados = leads.filter((l) => l.status === "agendado").length;
-  const realizados = agendamentos.filter((a) => a.status === "realizado").length;
+
+  const leadsCom = new Set<string>();
+  const leadsNaoCancelado = new Set<string>();
+  const leadsRealizado = new Set<string>();
+  for (const a of agendamentos) {
+    if (!a.lead_id) continue;
+    leadsCom.add(a.lead_id);
+    if (a.status !== "cancelado") leadsNaoCancelado.add(a.lead_id);
+    if (a.status === "realizado") leadsRealizado.add(a.lead_id);
+  }
 
   const pct = (n: number) => (total ? Math.round((n / total) * 100) : 0);
   const steps = [
     { label: "Clientes", count: total, pct: 100, color: "var(--vx-blue)" },
-    { label: "Engajados", count: engajados, pct: pct(engajados), color: "var(--vx-accent)" },
-    { label: "Agendados", count: agendados, pct: pct(agendados), color: "var(--vx-gold)" },
-    { label: "Realizados", count: realizados, pct: pct(realizados), color: "var(--vx-green)" },
+    {
+      label: "Engajados",
+      count: leadsCom.size,
+      pct: pct(leadsCom.size),
+      color: "var(--vx-accent)",
+    },
+    {
+      label: "Agendados",
+      count: leadsNaoCancelado.size,
+      pct: pct(leadsNaoCancelado.size),
+      color: "var(--vx-gold)",
+    },
+    {
+      label: "Realizados",
+      count: leadsRealizado.size,
+      pct: pct(leadsRealizado.size),
+      color: "var(--vx-green)",
+    },
   ];
 
   return (

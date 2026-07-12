@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Modal } from "@/components/modal";
 import { LeadCombobox } from "@/components/lead-combobox";
-import { insertAgendamento, updateLead } from "@/lib/queries";
+import { insertAgendamento } from "@/lib/queries";
 import { showToast } from "@/lib/toast";
 import type { Lead } from "@/types/db";
 
@@ -67,7 +67,12 @@ export function NewAgendModal({
         data_agendamento: data + "T" + hora + ":00",
         status,
       });
-      await updateLead(leadId, { status: "agendado" });
+      // NÃO escrever leads.status aqui. "Tem horário marcado" é DERIVADO de
+      // `agendamentos` (ver coluna "Próxima visita"), não é ciclo de vida.
+      // O writer antigo (`status: "agendado"`) rebaixava um `cliente` de volta
+      // para `agendado` toda vez que ele marcava uma nova sessão — foi o que
+      // aconteceu com um cliente real de 5 procedimentos. Quem promove o lead
+      // é o TRIGGER do banco, quando um agendamento vira 'realizado'.
       setMsg({ text: "Agendamento salvo!", color: "var(--vx-green)" });
       showToast("Agendamento criado com sucesso", "success");
       setTimeout(() => {

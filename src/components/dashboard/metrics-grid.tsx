@@ -14,14 +14,21 @@ export function MetricsGrid({
 }) {
   const filtered = filterByDate(leads, "criado_em", period);
   const total = filtered.length;
-  // Taxa de conversão = leads que viraram CLIENTE (novo modelo de ciclo de
-  // vida). Usa o mapeamento único (status.ts), então `cliente` e o legado
-  // `convertido` contam juntos. "agendado" NÃO é mais conversão (virou estado
-  // transitório; "tem horário" é derivado de agendamentos). Ver CLAUDE.md.
-  const convertidos = filtered.filter(
+
+  // Taxa de conversão = leads que viraram CLIENTE, sobre a base TODA — de
+  // propósito NÃO reage ao período (por isso usa `leads`, não `filtered`).
+  // Conversão é métrica lenta: o lead entra hoje e só vira cliente semanas
+  // depois, quando faz o procedimento (o trigger do banco promove). Filtrada
+  // por "Hoje", ela daria 0% quase todo dia — um card morto. Bate com o
+  // subtítulo do card: "do total de clientes".
+  // O mapeamento único (status.ts) faz `cliente` e o legado `convertido`
+  // contarem juntos. "agendado" NÃO é conversão: virou estado transitório e
+  // "tem horário" agora é derivado de `agendamentos`.
+  const convertidos = leads.filter(
     (l) => leadStatusDisplay(l.status).variant === "cliente"
   ).length;
-  const taxa = total > 0 ? Math.round((convertidos / total) * 100) : 0;
+  const taxa =
+    leads.length > 0 ? Math.round((convertidos / leads.length) * 100) : 0;
 
   // "Consultas agendadas" e "Receita estimada" usam o MESMO conjunto:
   // agendamentos do período por criado_em (quando foi MARCADA), sem cancelados.

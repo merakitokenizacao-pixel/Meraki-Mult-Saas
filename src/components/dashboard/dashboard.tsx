@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useAgendamentos, useLeads } from "@/lib/hooks";
+import { useAgendamentos, useAgendamentosComLead, useLeads } from "@/lib/hooks";
 import { MetricsGrid } from "@/components/dashboard/metrics-grid";
-import { RecentLeads } from "@/components/dashboard/recent-leads";
+import { ProximosAgendamentos } from "@/components/dashboard/proximos-agendamentos";
 import { Funnel } from "@/components/dashboard/funnel";
 import { ServiceChart } from "@/components/dashboard/service-chart";
 import { TimelineChart } from "@/components/dashboard/timeline-chart";
@@ -30,8 +30,10 @@ function Spinner() {
 export function Dashboard() {
   const leadsQuery = useLeads();
   const agendamentosQuery = useAgendamentos();
+  const agendComLeadQuery = useAgendamentosComLead();
   const leads = leadsQuery.data ?? [];
   const agendamentos = agendamentosQuery.data ?? [];
+  const agendComLead = agendComLeadQuery.data ?? [];
   const loading = leadsQuery.isPending;
 
   const [period, setPeriod] = useState("hoje");
@@ -89,19 +91,24 @@ export function Dashboard() {
         <MetricsGrid leads={leads} agendamentos={agendamentos} period={period} />
       )}
 
-      {/* Clientes recentes + Funil */}
+      {/* Próximos agendamentos + Funil */}
       <div className="section-grid">
         <div className="card">
           <div className="card-header">
-            <span className="card-title">Clientes recentes</span>
-            <Link href="/clientes" className="card-action">
-              Ver todos →
+            <span className="card-title">Próximos agendamentos</span>
+            <Link href="/agenda" className="card-action">
+              Ver agenda →
             </Link>
           </div>
-          {loading ? (
+          {loading || agendComLeadQuery.isPending ? (
             <Spinner />
           ) : (
-            <RecentLeads leads={leads} onLeadClick={setSelectedLead} />
+            <ProximosAgendamentos
+              agendamentos={agendComLead}
+              onLeadClick={(leadId) =>
+                setSelectedLead(leads.find((l) => l.id === leadId) ?? null)
+              }
+            />
           )}
         </div>
         <div className="card">

@@ -2,11 +2,15 @@
 
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { CalendarClock, Loader2, TriangleAlert } from "lucide-react";
+import { CalendarClock, Loader2, Pencil, Plus, TriangleAlert } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { showToast } from "@/lib/toast";
 import { EditorEscala } from "@/components/configuracoes/editor-escala";
 import { Bloqueios } from "@/components/configuracoes/bloqueios";
+import {
+  ProfissionalModal,
+  type ProfissionalEdit,
+} from "@/components/configuracoes/profissional-modal";
 import { DIAS_GRADE, resumoDia, type Faixa } from "@/lib/escala";
 
 type Profissional = { id: string; nome: string; cor: string; ativo: boolean };
@@ -36,8 +40,15 @@ export function SecaoProfissionais() {
     queryFn: getProfissionais,
   });
   const [editando, setEditando] = useState<Profissional | null>(null);
+  // Cadastro/edição da profissional em si (nome e cor). `null` + aberto = nova.
+  const [cadastro, setCadastro] = useState<ProfissionalEdit>(null);
+  const [cadastroAberto, setCadastroAberto] = useState(false);
 
-  const recarregar = () => qc.invalidateQueries({ queryKey: ["profissionais"] });
+  function recarregar() {
+    qc.invalidateQueries({ queryKey: ["profissionais"] });
+    // A capacidade da agenda muda junto (nova profissional, escala editada…).
+    qc.invalidateQueries({ queryKey: ["agendamentos"] });
+  }
 
   async function alternarAtivo(p: Profissional) {
     const { error } = await supabase
@@ -90,6 +101,31 @@ export function SecaoProfissionais() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+      {/* Cadastrar nova profissional */}
+      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+        <button
+          className="btn-primary"
+          onClick={() => {
+            setCadastro(null);
+            setCadastroAberto(true);
+          }}
+          style={{ display: "inline-flex", alignItems: "center", gap: 6 }}
+        >
+          <Plus size={15} strokeWidth={2} /> Nova profissional
+        </button>
+      </div>
+
+      {profissionais.length === 0 && (
+        <div className="config-card">
+          <p style={{ fontSize: 13, color: "var(--vx-muted)", margin: 0, lineHeight: 1.55 }}>
+            Nenhuma profissional cadastrada. Enquanto não houver nenhuma com
+            escala, a agenda usa o <strong>comportamento antigo</strong> (uma
+            marcação por horário) — cadastre a equipe para a capacidade real
+            entrar no ar.
+          </p>
+        </div>
+      )}
+
       {profissionais.map((p) => {
         const minhas = faixasDe(p.id);
         return (
@@ -102,6 +138,17 @@ export function SecaoProfissionais() {
               </span>
 
               <div style={{ marginLeft: "auto", display: "flex", gap: 8 }}>
+                <button
+                  className="btn-ghost"
+                  onClick={() => {
+                    setCadastro({ id: p.id, nome: p.nome, cor: p.cor });
+                    setCadastroAberto(true);
+                  }}
+                  title="Nome e cor"
+                  style={{ display: "inline-flex", alignItems: "center", gap: 6 }}
+                >
+                  <Pencil size={13} strokeWidth={1.8} /> Editar
+                </button>
                 <button className="btn-ghost" onClick={() => alternarAtivo(p)}>
                   {p.ativo ? "Desativar" : "Reativar"}
                 </button>
@@ -114,6 +161,20 @@ export function SecaoProfissionais() {
                 </button>
               </div>
             </div>
+
+            {minhas.length === 0 && p.ativo && (
+              <p
+                style={{
+                  fontSize: 12.5,
+                  color: "var(--vx-amber)",
+                  margin: "0 0 12px",
+                  lineHeight: 1.5,
+                }}
+              >
+                Sem escala montada — ela ainda <strong>não conta</strong> na
+                capacidade da agenda. Clique em “Editar escala”.
+              </p>
+            )}
 
             <div className="prof-escala">
               {DIAS_GRADE.map((d) => {
@@ -153,6 +214,13 @@ export function SecaoProfissionais() {
         profissional={editando}
         faixasIniciais={editando ? faixasDe(editando.id) : []}
         onClose={() => setEditando(null)}
+        onSalvo={recarregar}
+      />
+
+      <ProfissionalModal
+        aberto={cadastroAberto}
+        profissional={cadastro}
+        onClose={() => setCadastroAberto(false)}
         onSalvo={recarregar}
       />
     </div>

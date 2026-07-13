@@ -2588,3 +2588,27 @@ select.form-input {
   background: var(--vx-red-bg);
   color: var(--vx-red);
 }
+
+/* ── Seletor de cor da profissional ── */
+.cor-grid {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.cor-opcao {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 2px solid transparent;
+  border-radius: 9px;
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.cor-opcao:hover {
+  transform: scale(1.08);
+}
+.cor-opcao.active {
+  box-shadow: 0 0 0 2px var(--vx-surface), 0 0 0 4px var(--vx-text2);
+}

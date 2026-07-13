@@ -63,6 +63,68 @@ export async function getLeadsParaCampanha(): Promise<LeadParaCampanha[]> {
   return (data ?? []) as LeadParaCampanha[];
 }
 
+// ── Disponibilidade da agenda (FONTE ÚNICA: o banco) ──
+// A capacidade de cada horário é DERIVADA das profissionais e da escala delas
+// (`profissionais` + `profissional_horarios` + `profissional_bloqueios`), via a
+// função `agenda_slots`. É a MESMA função que o trigger usa e que as tools da
+// Laura vão usar — então CRM e agente nunca divergem. Ver AGENTE.md.
+//
+// Isto SUBSTITUI o `lib/agenda-regras.ts` (grade hardcoded em TS), que virou
+// só o fallback dentro do SQL, para o caso de a escala estar vazia.
+export type SlotAgenda = {
+  data: string; // "2026-07-24"
+  hora: number; // 8..20
+  capacidade: number;
+  ocupadas: number;
+  livres: number;
+  fechado: boolean;
+  codigo: string; // vocabulário do AGENTE.md (DISPONIVEL, ALMOCO_REPASSAR_HUMANO…)
+  motivo: string;
+};
+
+export async function getAgendaSlots(
+  de: string,
+  ate: string
+): Promise<SlotAgenda[]> {
+  const { data, error } = await supabase.rpc("agenda_slots", {
+    p_de: de,
+    p_ate: ate,
+  });
+  if (error) throw error;
+  return (data ?? []) as SlotAgenda[];
+}
+
+/** Checa UM horário (usado antes de salvar um agendamento). */
+export async function checarHorario(
+  inicioIso: string,
+  duracaoMin = 60
+): Promise<{
+  ok: boolean;
+  codigo: string;
+  motivo: string;
+  capacidade: number;
+  ocupadas: number;
+  livres: number;
+}> {
+  const { data, error } = await supabase.rpc("agenda_checar", {
+    p_inicio: inicioIso,
+    p_duracao_min: duracaoMin,
+  });
+  if (error) throw error;
+  // A função devolve UMA linha.
+  const r = (data ?? [])[0];
+  return (
+    r ?? {
+      ok: false,
+      codigo: "ERRO",
+      motivo: "Não foi possível checar o horário.",
+      capacidade: 0,
+      ocupadas: 0,
+      livres: 0,
+    }
+  );
+}
+
 // ── Agendamentos ──
 // Próxima visita por lead: 1 query com o filtro no banco (>= agora, não
 // cancelado), ordenada por data asc; reduzida a 1 linha por lead (a mais

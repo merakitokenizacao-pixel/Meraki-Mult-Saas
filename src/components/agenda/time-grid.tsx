@@ -3,7 +3,8 @@
 import { Fragment, useMemo } from "react";
 import { limparServico } from "@/lib/format";
 import { CELL_H, HOURS, HOUR_END, HOUR_START, WEEKDAYS, dateKey } from "@/lib/agenda";
-import { motivoFechado, rotuloFechado, vagasEm } from "@/lib/agenda-regras";
+import { rotuloDoCodigo } from "@/lib/agenda-regras";
+import type { SlotAgenda } from "@/lib/queries";
 import type { AgendamentoComLead } from "@/types/db";
 
 type PositionedEvent = {
@@ -16,15 +17,21 @@ type PositionedEvent = {
 };
 
 // Grade de horários (hora × dias) que serve tanto para a visão de Semana
-// (7 dias) quanto de Dia (1 dia). Recebe a lista de dias a exibir.
+// (7 dias) quanto de Dia (1 dia).
+//
+// A capacidade de cada célula NÃO é calculada aqui: vem pronta do banco
+// (`agenda_slots`), derivada da escala das profissionais. Mesma fonte que o
+// trigger e as tools da Laura usam — ver lib/agenda-regras.ts.
 export function TimeGrid({
   days,
   agendamentos,
+  slots,
   onCellClick,
   onEventClick,
 }: {
   days: Date[];
   agendamentos: AgendamentoComLead[];
+  slots: Map<string, SlotAgenda>; // chave: "2026-07-24|14"
   onCellClick: (dateStr: string, hour: number) => void;
   onEventClick: (agend: AgendamentoComLead) => void;
 }) {
@@ -115,42 +122,52 @@ export function TimeGrid({
               const cellKey = ds + "|" + h;
               const events = eventsByCell.get(cellKey) || [];
 
-              // Capacidade da clínica nessa hora (regras em lib/agenda-regras).
-              const v = vagasEm(agendamentos, d, h);
-              const estado = v.fechado ? " fechado" : v.lotado ? " lotado" : "";
-              const titulo = v.fechado
-                ? (v.motivo ?? "Fechado")
-                : v.lotado
-                  ? `Cheio — as ${v.capacidade} profissionais já estão ocupadas`
-                  : `${v.livres} de ${v.capacidade} ${v.capacidade === 1 ? "vaga livre" : "vagas livres"}`;
+              // Disponibilidade vinda do banco. Enquanto os slots não chegam,
+              // a célula fica neutra (nem fechada, nem lotada) — não inventamos
+              // capacidade no cliente.
+              const slot = slots.get(cellKey);
+              const fechado = slot?.fechado ?? false;
+              const lotado = !!slot && !slot.fechado && slot.livres <= 0;
+              const estado = fechado ? " fechado" : lotado ? " lotado" : "";
 
-              // O rótulo aparece UMA vez por bloco fechado (na primeira hora em
-              // que o motivo muda), senão "Pós-graduação" se repetiria 4×.
-              const motivoAnterior =
-                h > HOUR_START ? motivoFechado(d, h - 1) : null;
-              const abreBloco = v.fechado && v.motivo !== motivoAnterior;
+              const titulo = !slot
+                ? undefined
+                : fechado
+                  ? slot.motivo
+                  : lotado
+                    ? `Cheio — as ${slot.capacidade} profissionais já estão ocupadas`
+                    : `${slot.livres} de ${slot.capacidade} ${slot.capacidade === 1 ? "vaga livre" : "vagas livres"}`;
+
+              // O rótulo do bloqueio aparece UMA vez por bloco (na hora em que
+              // o motivo muda), senão "Almoço"/"Pós-graduação" se repetiria.
+              const anterior =
+                h > HOUR_START ? slots.get(ds + "|" + (h - 1)) : undefined;
+              const abreBloco =
+                fechado &&
+                (h === HOUR_START ||
+                  !anterior?.fechado ||
+                  anterior.codigo !== slot?.codigo);
 
               return (
                 <div
                   className={`agenda-cell${isToday ? " today" : ""}${estado}`}
                   key={ds}
                   title={titulo}
-                  aria-disabled={v.fechado || v.lotado}
+                  aria-disabled={fechado || lotado}
                   onClick={() => {
-                    if (v.fechado || v.lotado) return; // não abre o modal
+                    if (fechado || lotado) return; // não abre o modal
                     onCellClick(ds, h);
                   }}
                 >
-                  {/* Motivo do bloqueio — uma vez por bloco, não por célula */}
-                  {abreBloco && (
+                  {abreBloco && slot && (
                     <span className="agenda-fechado-label">
-                      {rotuloFechado(d, h)}
+                      {rotuloDoCodigo(slot.codigo)}
                     </span>
                   )}
                   {/* Vagas: só quando já há alguém marcado (célula vazia fica limpa) */}
-                  {!v.fechado && v.ocupadas > 0 && (
+                  {slot && !fechado && slot.ocupadas > 0 && (
                     <span className="agenda-vagas">
-                      {v.lotado ? "cheio" : `${v.livres}/${v.capacidade}`}
+                      {lotado ? "cheio" : `${slot.livres}/${slot.capacidade}`}
                     </span>
                   )}
                   {events.map((ev) => (

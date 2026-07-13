@@ -2517,3 +2517,74 @@ select.form-input {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* ── Folgas e férias (profissional_bloqueios) ── */
+.bloqueio-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px;
+  margin-bottom: 14px;
+  border: 1px solid var(--vx-border);
+  border-radius: 12px;
+  background: var(--vx-surface2);
+}
+.bloqueio-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--vx-text2);
+  cursor: pointer;
+}
+.bloqueio-check input {
+  width: 15px;
+  height: 15px;
+  accent-color: var(--vx-accent);
+  cursor: pointer;
+}
+.bloqueio-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.bloqueio-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--vx-surface2);
+}
+.bloqueio-quando {
+  font-size: 13px;
+  color: var(--vx-text);
+}
+.bloqueio-faixa {
+  margin-left: 8px;
+  font-family: var(--font-jetbrains), monospace;
+  font-size: 11px;
+  color: var(--vx-muted);
+}
+.bloqueio-motivo {
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--vx-muted);
+}
+.bloqueio-remover {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 8px;
+  background: none;
+  color: var(--vx-muted);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background var(--vx-transition), color var(--vx-transition);
+}
+.bloqueio-remover:hover {
+  background: var(--vx-red-bg);
+  color: var(--vx-red);
+}

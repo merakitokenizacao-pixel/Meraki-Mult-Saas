@@ -2,7 +2,8 @@
 
 import { useMemo, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { useAgendamentosComLead, useLeads } from "@/lib/hooks";
+import { useAgendaSlots, useAgendamentosComLead, useLeads } from "@/lib/hooks";
+import type { SlotAgenda } from "@/lib/queries";
 import {
   dateKey,
   dayLabel,
@@ -52,6 +53,18 @@ export function Agenda() {
       view === "dia" ? [startOfDay(refDate)] : getWeekDays(getStartOfWeek(refDate)),
     [view, refDate]
   );
+
+  // Disponibilidade do período visível, DERIVADA DA ESCALA das profissionais
+  // (função `agenda_slots` no banco). Antes isso era calculado no cliente por
+  // uma grade hardcoded em TypeScript — que divergia do que a Laura usava.
+  const de = dateKey(days[0]);
+  const ate = dateKey(days[days.length - 1]);
+  const slotsQuery = useAgendaSlots(de, ate);
+  const slots = useMemo(() => {
+    const m = new Map<string, SlotAgenda>();
+    for (const s of slotsQuery.data ?? []) m.set(`${s.data}|${s.hora}`, s);
+    return m;
+  }, [slotsQuery.data]);
 
   const label = useMemo(() => {
     if (view === "dia") return dayLabel(refDate);
@@ -125,6 +138,7 @@ export function Agenda() {
           <TimeGrid
             days={days}
             agendamentos={agendamentos}
+            slots={slots}
             onCellClick={quickAgendamento}
             onEventClick={setEditAgend}
           />
@@ -135,7 +149,6 @@ export function Agenda() {
         open={newOpen}
         onClose={() => setNewOpen(false)}
         leads={leads}
-        agendamentos={agendamentos}
         prefill={prefill}
         onCreated={refresh}
       />

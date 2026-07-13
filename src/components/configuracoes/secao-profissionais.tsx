@@ -6,6 +6,7 @@ import { CalendarClock, Loader2, TriangleAlert } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { showToast } from "@/lib/toast";
 import { EditorEscala } from "@/components/configuracoes/editor-escala";
+import { Bloqueios } from "@/components/configuracoes/bloqueios";
 import { DIAS_GRADE, resumoDia, type Faixa } from "@/lib/escala";
 
 type Profissional = { id: string; nome: string; cor: string; ativo: boolean };
@@ -144,6 +145,9 @@ export function SecaoProfissionais() {
           </div>
         );
       })}
+
+      {/* Folgas e férias: exceções pontuais por cima da escala semanal */}
+      <Bloqueios profissionais={profissionais} />
 
       <EditorEscala
         profissional={editando}

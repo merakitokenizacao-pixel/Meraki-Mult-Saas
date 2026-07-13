@@ -2,6 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import {
+  getAgendaSlots,
   getAgendamentos,
   getAgendamentosComLead,
   getCampanhas,
@@ -35,6 +36,17 @@ export function useProximasVisitas() {
   return useQuery({
     queryKey: ["agendamentos", "proximas-visitas"],
     queryFn: getProximasVisitas,
+  });
+}
+
+// Disponibilidade da agenda vinda do BANCO (capacidade derivada da escala das
+// profissionais). Compartilha o prefixo ["agendamentos"], então marcar/cancelar
+// atualiza a grade; e a key inclui o período visível.
+export function useAgendaSlots(de: string, ate: string) {
+  return useQuery({
+    queryKey: ["agendamentos", "slots", de, ate],
+    queryFn: () => getAgendaSlots(de, ate),
+    enabled: Boolean(de && ate),
   });
 }
 

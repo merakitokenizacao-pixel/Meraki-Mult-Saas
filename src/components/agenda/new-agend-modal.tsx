@@ -1,12 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Modal } from "@/components/modal";
 import { LeadCombobox } from "@/components/lead-combobox";
-import { insertAgendamento } from "@/lib/queries";
+import { checarHorario, insertAgendamento } from "@/lib/queries";
 import { showToast } from "@/lib/toast";
-import { podeAgendar } from "@/lib/agenda-regras";
-import type { AgendamentoComLead, Lead } from "@/types/db";
+import type { Lead } from "@/types/db";
 
 const SERVICOS = [
   "Limpeza de pele",
@@ -24,14 +23,12 @@ export function NewAgendModal({
   open,
   onClose,
   leads,
-  agendamentos,
   prefill,
   onCreated,
 }: {
   open: boolean;
   onClose: () => void;
   leads: Lead[];
-  agendamentos: AgendamentoComLead[];
   prefill: { data: string; hora: string };
   onCreated: () => void;
 }) {
@@ -57,12 +54,37 @@ export function NewAgendModal({
     }
   }, [open, prefill.data, prefill.hora]);
 
-  // Checagem de capacidade ao vivo: reage a data/hora escolhidas e avisa ANTES
-  // de a pessoa tentar salvar. Regras em lib/agenda-regras.ts.
-  const checagem = useMemo(
-    () => (data && hora ? podeAgendar(agendamentos, data, hora) : null),
-    [agendamentos, data, hora]
+  // Checagem de capacidade ao vivo, feita PELO BANCO (`agenda_checar`) — a
+  // mesma função que a Laura vai consultar e que o trigger usa. Não existe
+  // mais uma cópia das regras no cliente: capacidade vem da escala das
+  // profissionais (Configurações → Profissionais).
+  const [checagem, setChecagem] = useState<{ ok: boolean; motivo: string } | null>(
+    null
   );
+  const [checando, setChecando] = useState(false);
+
+  useEffect(() => {
+    if (!open || !data || !hora) {
+      setChecagem(null);
+      return;
+    }
+    let ativo = true;
+    setChecando(true);
+    checarHorario(`${data}T${hora}:00`)
+      .then((r) => {
+        if (ativo) setChecagem({ ok: r.ok, motivo: r.motivo });
+      })
+      .catch(() => {
+        if (ativo) setChecagem(null); // erro de rede: não trava o salvar
+      })
+      .finally(() => {
+        if (ativo) setChecando(false);
+      });
+    return () => {
+      ativo = false;
+    };
+  }, [open, data, hora]);
+
   const bloqueado = checagem !== null && !checagem.ok;
 
   async function salvar() {
@@ -70,11 +92,13 @@ export function NewAgendModal({
       setMsg({ text: "Preencha todos os campos!", color: "var(--vx-red)" });
       return;
     }
-    // Revalida no submit: o horário pode ter lotado enquanto o modal estava
-    // aberto (outra pessoa marcando, ou a Laura pelo WhatsApp).
-    const check = podeAgendar(agendamentos, data, hora);
+    // Revalida no submit: o horário pode ter lotado com o modal aberto (outra
+    // pessoa marcando, ou a Laura pelo WhatsApp).
+    setMsg({ text: "Conferindo o horário...", color: "var(--vx-muted)" });
+    const check = await checarHorario(`${data}T${hora}:00`);
     if (!check.ok) {
-      setMsg({ text: check.motivo ?? "Horário indisponível.", color: "var(--vx-red)" });
+      setMsg({ text: check.motivo, color: "var(--vx-red)" });
+      setChecagem({ ok: false, motivo: check.motivo });
       return;
     }
     setMsg({ text: "Salvando...", color: "var(--vx-muted)" });
@@ -192,6 +216,13 @@ export function NewAgendModal({
             }}
           >
             Horário disponível
+          </div>
+        )}
+        {checando && (
+          <div
+            style={{ fontSize: 12, color: "var(--vx-muted)", textAlign: "center" }}
+          >
+            Conferindo disponibilidade…
           </div>
         )}
 

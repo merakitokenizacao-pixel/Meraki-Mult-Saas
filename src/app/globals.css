@@ -2088,7 +2088,7 @@ select.form-input {
    ======================================================================== */
 .config-layout {
   display: grid;
-  grid-template-columns: 232px minmax(0, 1fr);
+  grid-template-columns: 196px minmax(0, 1fr);
   gap: 0;
 }
 @media (max-width: 900px) {
@@ -2115,30 +2115,43 @@ select.form-input {
     padding-bottom: 4px;
   }
 }
+/* Linhas justas e ícone pequeno: a sub-nav é índice, não protagonista. */
 .config-nav-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
+  gap: 9px;
+  padding: 7px 10px;
   border: none;
-  border-radius: 10px;
+  border-radius: 7px;
   background: none;
   cursor: pointer;
   font-family: inherit;
-  font-size: 13px;
+  font-size: 12.5px;
+  line-height: 1.3;
   color: var(--vx-text2);
   text-align: left;
   white-space: nowrap;
   transition: background var(--vx-transition), color var(--vx-transition);
 }
+.config-nav-item svg {
+  flex-shrink: 0;
+  opacity: 0.75;
+}
 .config-nav-item:hover {
   background: var(--vx-surface2);
   color: var(--vx-text);
 }
+.config-nav-item:hover svg {
+  opacity: 1;
+}
 .config-nav-item.active {
-  background: var(--vx-accent-light);
-  color: var(--vx-accent);
+  background: var(--vx-surface2);
+  color: var(--vx-text);
   font-weight: 600;
+}
+.config-nav-item.active svg {
+  opacity: 1;
+  color: var(--vx-accent);
 }
 
 /* Divisória entre a sub-navegação e a seção aberta */

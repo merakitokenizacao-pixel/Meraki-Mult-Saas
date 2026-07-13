@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Palette, UserCog, Users2, type LucideIcon } from "lucide-react";
+import { CalendarClock, Palette, UserCog, type LucideIcon } from "lucide-react";
 import { SecaoAparencia } from "@/components/configuracoes/secao-aparencia";
 import { SecaoConta } from "@/components/configuracoes/secao-conta";
 import { SecaoProfissionais } from "@/components/configuracoes/secao-profissionais";
@@ -16,9 +16,10 @@ const SECOES: ReadonlyArray<{
 }> = [
   {
     id: "profissionais",
-    label: "Profissionais e escala",
-    descricao: "Quem atende, em que horários — é daqui que sai a capacidade da agenda",
-    icon: Users2,
+    label: "Horários de trabalho",
+    descricao:
+      "Quem atende, em que horários — é daqui que sai a capacidade da agenda",
+    icon: CalendarClock,
   },
   {
     id: "aparencia",
@@ -28,7 +29,7 @@ const SECOES: ReadonlyArray<{
   },
   {
     id: "conta",
-    label: "Conta",
+    label: "Minha conta",
     descricao: "Seu acesso ao sistema",
     icon: UserCog,
   },
@@ -53,7 +54,7 @@ export function Configuracoes() {
               className={`config-nav-item${ativo ? " active" : ""}`}
               aria-current={ativo ? "page" : undefined}
             >
-              <Icon size={17} strokeWidth={1.5} />
+              <Icon size={15} strokeWidth={1.5} />
               <span>{s.label}</span>
             </button>
           );

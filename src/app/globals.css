@@ -2115,3 +2115,273 @@ select.form-input {
     transition: none;
   }
 }
+
+/* ========================================================================
+   CONFIGURAÇÕES — sub-navegação + seções
+   ======================================================================== */
+.config-layout {
+  display: grid;
+  grid-template-columns: 232px minmax(0, 1fr);
+  gap: 28px;
+  align-items: start;
+}
+@media (max-width: 900px) {
+  .config-layout {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+}
+
+.config-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  position: sticky;
+  top: 0;
+}
+@media (max-width: 900px) {
+  .config-nav {
+    flex-direction: row;
+    overflow-x: auto;
+    position: static;
+    padding-bottom: 4px;
+  }
+}
+.config-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 10px;
+  background: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--vx-text2);
+  text-align: left;
+  white-space: nowrap;
+  transition: background var(--vx-transition), color var(--vx-transition);
+}
+.config-nav-item:hover {
+  background: var(--vx-surface2);
+  color: var(--vx-text);
+}
+.config-nav-item.active {
+  background: var(--vx-accent-light);
+  color: var(--vx-accent);
+  font-weight: 600;
+}
+
+.config-header {
+  margin-bottom: 18px;
+}
+.config-title {
+  font-family: var(--font-cormorant), serif;
+  font-size: 26px;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  color: var(--vx-text);
+}
+.config-subtitle {
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--vx-muted);
+}
+
+.config-card {
+  background: var(--vx-surface);
+  border: 1px solid var(--vx-border);
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: var(--vx-shadow-sm);
+}
+.config-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+@media (max-width: 640px) {
+  .config-grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+.config-nota {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--vx-border);
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--vx-muted);
+}
+.config-linha {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.config-linha-icone {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: var(--vx-surface2);
+  color: var(--vx-accent);
+  flex-shrink: 0;
+}
+.config-linha-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--vx-muted);
+}
+.config-linha-valor {
+  margin-top: 2px;
+  font-size: 14px;
+  color: var(--vx-text);
+}
+
+/* ── Aparência: cartões de tema com miniatura ── */
+.tema-opcao {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid var(--vx-border);
+  border-radius: 12px;
+  background: var(--vx-surface);
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  transition: border-color var(--vx-transition), box-shadow var(--vx-transition);
+}
+.tema-opcao:hover {
+  border-color: var(--vx-border2);
+}
+.tema-opcao.active {
+  border-color: var(--vx-accent);
+  box-shadow: 0 0 0 1px var(--vx-accent);
+}
+.tema-preview {
+  height: 96px;
+  border: 1px solid;
+  border-radius: 8px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  overflow: hidden;
+}
+.tema-preview-bar,
+.tema-preview-card {
+  border: 1px solid;
+  border-radius: 5px;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.tema-preview-card {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 5px;
+  flex: 1;
+}
+.tema-preview-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.tema-preview-line {
+  height: 4px;
+  border-radius: 2px;
+  flex: 1;
+}
+.tema-preview-line.short {
+  flex: none;
+  width: 40%;
+}
+.tema-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.tema-nome {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--vx-text);
+}
+.tema-check {
+  margin-left: auto;
+  color: var(--vx-accent);
+}
+.tema-desc {
+  font-size: 12px;
+  color: var(--vx-muted);
+}
+
+/* ── Profissionais: cabeçalho + grade da escala ── */
+.prof-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.prof-cor {
+  width: 12px;
+  height: 12px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+.prof-nome {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--vx-text);
+}
+.prof-escala {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+.prof-dia {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 6px;
+  border-radius: 9px;
+  background: var(--vx-surface2);
+  text-align: center;
+}
+.prof-dia.folga {
+  background: transparent;
+  border: 1px dashed var(--vx-border);
+}
+.prof-dia-nome {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--vx-muted);
+}
+.prof-dia-faixa {
+  font-family: var(--font-jetbrains), monospace;
+  font-size: 10.5px;
+  font-weight: 500;
+  color: var(--vx-text);
+}
+.prof-dia-faixa.vazio {
+  color: var(--vx-muted);
+  opacity: 0.5;
+}
+
+/* Configurações no rodapé da sidebar (fora da lista de operação) */
+.nav-item.nav-item-footer {
+  padding-top: 0.7rem;
+  padding-bottom: 0.7rem;
+  margin-top: 0;
+}

@@ -4,6 +4,7 @@ import {
   MessageCircle,
   CalendarDays,
   Send,
+  Settings,
   type LucideIcon,
 } from "lucide-react";
 
@@ -24,10 +25,21 @@ export const NAV_ITEMS: NavItem[] = [
   { href: "/campanhas", label: "Campanhas", icon: Send, title: "Campanhas" },
 ];
 
+// Configurações fica no RODAPÉ da sidebar, separada das 5 telas de operação
+// (é onde se ajusta o sistema, não onde se trabalha). Mesmo lugar do DataCraze.
+export const SETTINGS_ITEM: NavItem = {
+  href: "/configuracoes",
+  label: "Configurações",
+  icon: Settings,
+  title: "Configurações",
+};
+
+const TODOS = [...NAV_ITEMS, SETTINGS_ITEM];
+
 export function titleForPath(pathname: string): string {
-  const exact = NAV_ITEMS.find((i) => i.href === pathname);
+  const exact = TODOS.find((i) => i.href === pathname);
   if (exact) return exact.title;
-  const nested = NAV_ITEMS.filter((i) => i.href !== "/").find((i) =>
+  const nested = TODOS.filter((i) => i.href !== "/").find((i) =>
     pathname.startsWith(i.href)
   );
   return nested?.title ?? "Visão geral";

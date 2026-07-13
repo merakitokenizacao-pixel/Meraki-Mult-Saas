@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronsLeft, ChevronsRight } from "lucide-react";
-import { NAV_ITEMS, titleForPath } from "@/lib/nav";
+import { NAV_ITEMS, SETTINGS_ITEM, titleForPath } from "@/lib/nav";
 import { useTheme } from "@/components/theme-provider";
 import { LogoutButton } from "@/components/auth/logout-button";
 
@@ -97,6 +97,19 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <div className="sidebar-status-dot" />
             <span className="sidebar-status-text">Laura ativa</span>
           </div>
+
+          {/* Configurações: fora da lista de operação, junto do Sair. */}
+          <Link
+            href={SETTINGS_ITEM.href}
+            className={`nav-item nav-item-footer${
+              isActive(SETTINGS_ITEM.href) ? " active" : ""
+            }`}
+            aria-label={SETTINGS_ITEM.label}
+            data-label={SETTINGS_ITEM.label}
+          >
+            <SETTINGS_ITEM.icon className="nav-icon" size={20} strokeWidth={1.5} />
+            <span className="nav-label">{SETTINGS_ITEM.label}</span>
+          </Link>
           <LogoutButton collapsed={collapsed} />
         </aside>
 

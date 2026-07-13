@@ -442,7 +442,6 @@
   border-bottom: 1px solid var(--vx-border);
   display: flex;
   align-items: center;
-  justify-content: space-between;
   padding: 0 2.5rem;
   background: var(--vx-surface);
   position: sticky;
@@ -462,38 +461,9 @@
   color: var(--vx-text);
   letter-spacing: 0.02em;
 }
-.topbar-right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.topbar-date {
-  font-size: 11px;
-  color: var(--vx-muted);
-  font-family: var(--font-jetbrains), monospace;
-  background: var(--vx-surface2);
-  padding: 5px 12px;
-  border-radius: 20px;
-  border: 1px solid var(--vx-border);
-}
-.theme-toggle {
-  background: var(--vx-surface2);
-  border: 1px solid var(--vx-border);
-  color: var(--vx-muted);
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  cursor: pointer;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all var(--vx-transition);
-}
-.theme-toggle:hover {
-  background: var(--vx-surface3);
-  color: var(--vx-text);
-}
+/* .topbar-right / .topbar-date / .theme-toggle foram REMOVIDOS: a data e o
+   botão de tema saíram da topbar. O tema agora mora em Configurações →
+   Aparência, e a data não valia o espaço. Sobra só o título. */
 
 .content {
   padding: 2.5rem 2.5rem;
@@ -650,9 +620,6 @@
   }
   .hamburger {
     display: block;
-  }
-  .topbar-date {
-    display: none;
   }
   .sidebar-toggle {
     display: none;
@@ -2122,8 +2089,7 @@ select.form-input {
 .config-layout {
   display: grid;
   grid-template-columns: 232px minmax(0, 1fr);
-  gap: 28px;
-  align-items: start;
+  gap: 0;
 }
 @media (max-width: 900px) {
   .config-layout {
@@ -2138,6 +2104,8 @@ select.form-input {
   gap: 2px;
   position: sticky;
   top: 0;
+  align-self: start;
+  padding-right: 20px;
 }
 @media (max-width: 900px) {
   .config-nav {
@@ -2171,6 +2139,22 @@ select.form-input {
   background: var(--vx-accent-light);
   color: var(--vx-accent);
   font-weight: 600;
+}
+
+/* Divisória entre a sub-navegação e a seção aberta */
+.config-content {
+  border-left: 1px solid var(--vx-border);
+  padding-left: 30px;
+  min-height: 60vh;
+}
+@media (max-width: 900px) {
+  .config-content {
+    border-left: none;
+    padding-left: 0;
+    padding-top: 18px;
+    border-top: 1px solid var(--vx-border);
+    min-height: 0;
+  }
 }
 
 .config-header {

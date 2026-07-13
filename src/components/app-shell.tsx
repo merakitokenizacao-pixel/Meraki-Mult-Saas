@@ -5,30 +5,15 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronsLeft, ChevronsRight } from "lucide-react";
 import { NAV_ITEMS, SETTINGS_ITEM, titleForPath } from "@/lib/nav";
-import { useTheme } from "@/components/theme-provider";
 import { LogoutButton } from "@/components/auth/logout-button";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { theme, toggleTheme } = useTheme();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   // Inicia colapsada já no primeiro paint quando a rota for /conversas (sem flash)
   const [collapsed, setCollapsed] = useState(() =>
     pathname.startsWith("/conversas")
   );
-  const [currentDate, setCurrentDate] = useState("");
-
-  // Data na topbar — mesmo formato do legacy
-  useEffect(() => {
-    setCurrentDate(
-      new Date().toLocaleDateString("pt-BR", {
-        weekday: "short",
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-      })
-    );
-  }, []);
 
   // Fecha o menu mobile ao trocar de rota
   useEffect(() => {
@@ -114,7 +99,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </aside>
 
         <main className="main">
-          {/* Em /conversas a tela é inteira: sem topbar (título, data e tema) */}
+          {/* Em /conversas a tela é inteira: sem topbar.
+              A data e o toggle de tema saíram da topbar — o tema agora mora em
+              Configurações → Aparência, e a data não valia o espaço que ocupava.
+              Sobra só o título (e o hambúrguer no mobile). */}
           {!isConversas && (
             <div className="topbar">
               <div className="topbar-left">
@@ -126,16 +114,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   ☰
                 </button>
                 <span className="topbar-title">{titleForPath(pathname)}</span>
-              </div>
-              <div className="topbar-right">
-                <span className="topbar-date">{currentDate}</span>
-                <button
-                  className="theme-toggle"
-                  onClick={toggleTheme}
-                  title="Alternar tema"
-                >
-                  {theme === "dark" ? "☀" : "☽"}
-                </button>
               </div>
             </div>
           )}

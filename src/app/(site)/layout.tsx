@@ -11,8 +11,11 @@ export const metadata: Metadata = {
 };
 
 // Roda ANTES da pintura: se a abertura já foi vista nesta sessão, marca o
-// <html> e o CSS esconde a tela escura na hora. Sem isso, quem volta pisca o
-// fundo escuro por um quadro. Mesmo truque do script anti-flash do tema.
+// <html> e o CSS esconde a tela escura na hora — sem isso, quem volta pisca o
+// fundo escuro por um quadro (mesmo truque do anti-flash do tema).
+//
+// Enquanto `SEMPRE = true` em abertura.tsx, a chave nunca é gravada, então
+// este script não faz nada — mas fica pronto para quando a flag mudar.
 const scriptAbertura = `(function(){try{if(sessionStorage.getItem('vorax-abertura')==='1'){document.documentElement.setAttribute('data-abertura','vista');window.__voraxAberturaVista=true;}}catch(e){}})();`;
 
 // Site institucional. Não herda NADA do painel: nem globals.css, nem os

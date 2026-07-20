@@ -13,6 +13,14 @@ import { MarcaSvg } from "@/components/site/marca-svg";
 /** id compartilhado: é ele que faz o logo VOAR da abertura para o header. */
 export const MARCA_LAYOUT_ID = "vorax-marca";
 
+/**
+ * `true`  → a abertura roda em TODA visita (é o que está valendo).
+ * `false` → roda só uma vez por sessão (guarda em sessionStorage).
+ *
+ * Trocar aqui é o único passo: o resto do fluxo já respeita a flag.
+ */
+const SEMPRE = true;
+
 const CHAVE = "vorax-abertura";
 // A última letra (X) começa em 4×0,13s e leva 1,15s → termina em ~1,67s.
 // Mais um respiro para a marca cheia ser lida antes de voar pro header.
@@ -33,11 +41,12 @@ export function Abertura({ children }: { children: ReactNode }) {
   const [pronta, setPronta] = useState(false);
 
   useEffect(() => {
-    // Já viu nesta sessão (ou pediu menos movimento) → entra direto.
+    // Entra direto se: já viu nesta sessão (quando SEMPRE=false) ou o sistema
+    // pediu menos movimento (acessibilidade — respeitado mesmo com SEMPRE).
     const jaViu =
+      !SEMPRE &&
       typeof window !== "undefined" &&
-      (window.__voraxAberturaVista ||
-        sessionStorage.getItem(CHAVE) === "1");
+      (window.__voraxAberturaVista || sessionStorage.getItem(CHAVE) === "1");
 
     if (jaViu || semMovimento) {
       setPronta(true);
@@ -50,10 +59,12 @@ export function Abertura({ children }: { children: ReactNode }) {
 
     const t = setTimeout(() => {
       setPronta(true);
-      try {
-        sessionStorage.setItem(CHAVE, "1");
-      } catch {
-        /* modo anônimo com storage bloqueado: só não memoriza */
+      if (!SEMPRE) {
+        try {
+          sessionStorage.setItem(CHAVE, "1");
+        } catch {
+          /* modo anônimo com storage bloqueado: só não memoriza */
+        }
       }
       document.body.style.overflow = overflowAntes;
     }, DURACAO_MS);

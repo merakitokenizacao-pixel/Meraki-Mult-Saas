@@ -79,6 +79,10 @@ Reestruturação da camada visual das Conversas (queries/mutations, pausa da IA 
 ### Nota de operação (Windows + dev server)
 Ao reiniciar o `next dev`, se a porta 3000 aparecer "in use", há um processo `next` órfão (no Windows, `kill`/encerrar o `npm` não derruba o filho `node`). Ele pode servir CSS **defasado** do cache do Turbopack (foi o que quebrou visualmente a Etapa 2 até reiniciar limpo). Resolver com `taskkill /PID <pid> /T /F` na árvore e, se necessário, apagar `.next` antes de subir. Sempre dar **hard refresh** (Ctrl+Shift+R) no navegador após mudanças de CSS.
 
+**Como DIAGNOSTICAR** (a armadilha já mordeu 2×, e as duas vezes o código estava certo): baixe o CSS que o dev está servindo e procure a regra nova nele —
+`curl -s localhost:3000/ | grep -oE '/_next/static/chunks/[^"]*\.css'` e então `curl -s localhost:3000<arquivo> | grep 'sua-regra'`.
+Se o **hash do nome do arquivo não mudou** depois de você editar o CSS, é cache: o fonte está certo e o servidor está velho. `taskkill //IM node.exe //F` mata os órfãos; se o `rm -rf .next` reclamar "Directory not empty", é porque ainda há `node` segurando o arquivo — mate primeiro, apague depois.
+
 ### Dashboard (Etapa 2)
 - Estrutura em `src/components/dashboard/`: `dashboard.tsx` (container: fetch `getLeads`+`getAgendamentos`, estado de período e saudação), `metrics-grid.tsx`, `recent-leads.tsx`, `funnel.tsx`, `service-chart.tsx`, `timeline-chart.tsx`.
 - **Tema dos gráficos**: `ThemeProvider` (`src/components/theme-provider.tsx`) virou a fonte única do tema (substituiu `lib/use-theme.ts`, removido). O toggle vive na topbar; os gráficos consomem o context e releem as CSS vars (`getChartStyle` em `src/lib/chart.ts`) ao trocar de tema.

@@ -563,7 +563,9 @@
   z-index: 100;
   display: grid;
   place-items: center;
-  background: #0f1c2b; /* azul-petróleo profundo, contraponto ao site claro */
+  /* O MESMO gradiente da sidebar do painel (globals.css .sidebar) — marrom
+     quente, não o azul da referência. A abertura é a nossa marca. */
+  background: linear-gradient(180deg, #1a1510 0%, #0f0d09 100%);
 }
 
 /* Some ANTES da pintura para quem já viu (o script inline em layout.tsx marca
@@ -573,7 +575,7 @@ html[data-abertura="vista"] .s-abertura {
 }
 
 .s-marca-traco {
-  stroke: #f7f4ee;
+  stroke: #f0ece4;
   stroke-width: 0.9;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -601,7 +603,7 @@ html[data-abertura="vista"] .s-abertura {
 /* Linha fina que cresce sob a marca enquanto ela se desenha */
 .s-abertura-linha {
   height: 1px;
-  background: linear-gradient(90deg, transparent, #d9bd91, transparent);
+  background: linear-gradient(90deg, transparent, #b8955a, transparent);
   animation: s-linha 1.9s cubic-bezier(0.65, 0, 0.35, 1) forwards;
   transform-origin: center;
 }

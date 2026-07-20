@@ -77,7 +77,7 @@ export function Abertura({ children }: { children: ReactNode }) {
           >
             <div className="flex flex-col items-center gap-6">
               <motion.div layoutId={MARCA_LAYOUT_ID}>
-                <MarcaSvg desenhando className="w-[min(62vw,300px)]" />
+                <MarcaSvg desenhando claro className="w-[min(62vw,300px)]" />
               </motion.div>
               <div className="s-abertura-linha w-[min(46vw,220px)]" />
             </div>

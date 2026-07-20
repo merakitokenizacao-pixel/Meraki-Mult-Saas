@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import "../globals.css";
 import { CLINICA, clinicaCssVars } from "@/lib/clinica";
 
 // Metadados neutros: sem "VoraX", sem indexação.

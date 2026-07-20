@@ -18,7 +18,14 @@ export type NavItem = {
 };
 
 export const NAV_ITEMS: NavItem[] = [
-  { href: "/", label: "Visão geral", icon: LayoutDashboard, title: "Visão geral" },
+  // A raiz `/` é o SITE institucional — a Visão geral do painel vive em
+  // /visao-geral desde que o site nasceu.
+  {
+    href: "/visao-geral",
+    label: "Visão geral",
+    icon: LayoutDashboard,
+    title: "Visão geral",
+  },
   { href: "/clientes", label: "Clientes", icon: Users, title: "Clientes" },
   { href: "/conversas", label: "Conversas", icon: MessageCircle, title: "Conversas" },
   { href: "/agenda", label: "Agenda", icon: CalendarDays, title: "Agenda" },

@@ -26,8 +26,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     if (pathname.startsWith("/conversas")) setCollapsed(true);
   }, [pathname]);
 
-  const isActive = (href: string) =>
-    href === "/" ? pathname === "/" : pathname.startsWith(href);
+  // Nenhum item aponta mais para a raiz (ela é o site institucional), então
+  // basta o prefixo.
+  const isActive = (href: string) => pathname.startsWith(href);
 
   const isConversas = pathname.startsWith("/conversas");
 

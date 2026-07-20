@@ -18,7 +18,8 @@ function mensagemErro(codigo: string | undefined): string {
 export function LoginForm() {
   const router = useRouter();
   const params = useSearchParams();
-  const proximo = params.get("proximo") || "/";
+  // Depois de entrar vai para o painel — a raiz agora é o site institucional.
+  const proximo = params.get("proximo") || "/visao-geral";
 
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");

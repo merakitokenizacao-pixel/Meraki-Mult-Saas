@@ -1,15 +1,25 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
-// Rotas abertas ao público (a paciente NÃO tem conta):
-//   /login          — a própria tela de entrada
-//   /ficha/*        — a ficha de avaliação que a cliente preenche
+// Rotas abertas ao público:
+//   /login          — a tela de entrada do CRM
+//   /ficha/*        — a ficha de avaliação que a paciente preenche (sem conta)
 //   /api/ficha/*    — o submit dessa ficha
 // Todo o resto é o CRM e exige sessão. Em especial /api/painel/*, que devolve
-// dado de saúde e hoje está aberto — é o buraco que este middleware fecha.
+// dado de saúde — é o buraco que este middleware fecha.
 const PUBLICAS = ["/login", "/ficha", "/api/ficha"];
 
+// Site institucional: rotas EXATAS, sem prefixo. `/` precisa ser tratada aqui
+// porque a regra de prefixo abaixo ("/" + "/") não casaria com nada, e sem isso
+// a landing responderia 307 para o login — invisível para prospects e para o
+// Google. Lista de EXATAS (não prefixo) para não abrir nada além do previsto.
+const SITE = new Set(["/", "/privacidade"]);
+
+// Para onde vai quem já está logado (a raiz agora é o site institucional).
+const HOME_PAINEL = "/visao-geral";
+
 function ehPublica(pathname: string): boolean {
+  if (SITE.has(pathname)) return true;
   return PUBLICAS.some((p) => pathname === p || pathname.startsWith(p + "/"));
 }
 
@@ -59,10 +69,10 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Já logado abrindo /login → vai direto pro painel.
+  // Já logado abrindo /login → vai direto pro painel (não para o site).
   if (user && pathname === "/login") {
     const url = request.nextUrl.clone();
-    url.pathname = "/";
+    url.pathname = HOME_PAINEL;
     url.search = "";
     return NextResponse.redirect(url);
   }

@@ -1,0 +1,262 @@
+/* =============================================================================
+   SITE INSTITUCIONAL — folha de estilo PRÓPRIA
+   =============================================================================
+   Não importa o globals.css do painel: a landing não deve baixar o CSS do CRM
+   nem ser afetada pelo tema escuro que a dona tenha salvo no navegador.
+   Tokens sob o prefixo --s-* (site), sem colisão com os --vx-* (painel) nem
+   com os --f-* (ficha da paciente).
+   ============================================================================= */
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-jost);
+  --font-serif: var(--font-cormorant);
+  --font-mono: var(--font-jetbrains);
+
+  --color-s-bg: var(--s-bg);
+  --color-s-surface: var(--s-surface);
+  --color-s-ink: var(--s-ink);
+  --color-s-ink2: var(--s-ink2);
+  --color-s-muted: var(--s-muted);
+  --color-s-line: var(--s-line);
+  --color-s-gold: var(--s-gold);
+  --color-s-gold2: var(--s-gold2);
+  --color-s-soft: var(--s-soft);
+}
+
+:root {
+  /* Base quente, quase branca — muito respiro, como pede a referência */
+  --s-bg: #fbfaf7;
+  --s-surface: #ffffff;
+  --s-ink: #14120f;
+  --s-ink2: #4a4640;
+  --s-muted: #8a847c;
+  --s-line: #e9e5dd;
+
+  /* Dourado da marca VoraX */
+  --s-gold: #9b7d5a;
+  --s-gold2: #b8955a;
+  --s-soft: #f6efe4;
+
+  /* Verdes do WhatsApp — usados só dentro do mockup de celular */
+  --s-wa-green: #25d366;
+  --s-wa-bubble: #d9fdd3;
+  --s-wa-header: #1f2c33;
+  --s-wa-bg: #0b141a;
+}
+
+.site-root {
+  background: var(--s-bg);
+  color: var(--s-ink);
+  font-family: var(--font-jost), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip; /* os blooms de gradiente não podem gerar scroll lateral */
+}
+
+/* Rolagem suave nas âncoras, respeitando quem pediu menos movimento */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Compensa o header fixo ao pular para uma seção */
+.site-root [id] {
+  scroll-margin-top: 88px;
+}
+
+/* ── Tipografia de display ────────────────────────────────────────────────── */
+.s-display {
+  font-family: var(--font-cormorant), Georgia, serif;
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  line-height: 1.04;
+  text-wrap: balance;
+}
+.s-eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--s-gold);
+}
+
+/* ── Botões ───────────────────────────────────────────────────────────────── */
+.s-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1;
+  padding: 15px 26px;
+  white-space: nowrap;
+  transition:
+    transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.18s ease,
+    background 0.18s ease,
+    color 0.18s ease;
+}
+.s-btn-primary {
+  background: var(--s-ink);
+  color: #fff;
+  box-shadow: 0 1px 2px rgba(20, 18, 15, 0.16), 0 8px 22px -10px rgba(20, 18, 15, 0.5);
+}
+.s-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(20, 18, 15, 0.18), 0 14px 30px -12px rgba(20, 18, 15, 0.55);
+}
+.s-btn-ghost {
+  color: var(--s-ink2);
+  border: 1px solid var(--s-line);
+  background: rgba(255, 255, 255, 0.6);
+}
+.s-btn-ghost:hover {
+  border-color: var(--s-gold);
+  color: var(--s-ink);
+}
+.s-btn:focus-visible {
+  outline: 2px solid var(--s-gold);
+  outline-offset: 3px;
+}
+
+/* ── Gradiente de fundo do hero (puro CSS, sem imagem) ────────────────────── */
+.s-bloom {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(72px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Mockup de celular ────────────────────────────────────────────────────── */
+.s-phone {
+  position: relative;
+  width: 300px;
+  border-radius: 44px;
+  padding: 11px;
+  background: linear-gradient(160deg, #2c2926 0%, #14120f 42%, #23201c 100%);
+  box-shadow:
+    0 0 0 1.5px rgba(255, 255, 255, 0.09) inset,
+    0 34px 70px -24px rgba(20, 18, 15, 0.5),
+    0 10px 26px -14px rgba(20, 18, 15, 0.32);
+}
+.s-phone-screen {
+  position: relative;
+  border-radius: 34px;
+  overflow: hidden;
+  background: var(--s-wa-bg);
+  aspect-ratio: 9 / 18.6;
+  display: flex;
+  flex-direction: column;
+}
+/* Ilha do sensor */
+.s-phone-notch {
+  position: absolute;
+  top: 9px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 74px;
+  height: 20px;
+  border-radius: 999px;
+  background: #0a0a0a;
+  z-index: 5;
+}
+
+/* Papel de parede do WhatsApp: trama sutil em CSS, sem imagem */
+.s-chat {
+  flex: 1;
+  min-height: 0;
+  padding: 14px 10px 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 7px;
+  background-color: #0b141a;
+  background-image:
+    radial-gradient(rgba(255, 255, 255, 0.028) 1px, transparent 1px),
+    radial-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 26px 26px, 26px 26px;
+  background-position: 0 0, 13px 13px;
+}
+
+.s-bubble {
+  max-width: 84%;
+  padding: 7px 10px 6px;
+  border-radius: 9px;
+  font-size: 12.5px;
+  line-height: 1.42;
+  position: relative;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.22);
+  word-break: break-word;
+}
+.s-bubble-in {
+  align-self: flex-start;
+  background: #202c33;
+  color: #e9edef;
+  border-top-left-radius: 3px;
+}
+.s-bubble-out {
+  align-self: flex-end;
+  background: #005c4b;
+  color: #e9edef;
+  border-top-right-radius: 3px;
+}
+.s-bubble strong {
+  font-weight: 600;
+  color: #fff;
+}
+.s-bubble-time {
+  display: block;
+  margin-top: 2px;
+  font-size: 9.5px;
+  text-align: right;
+  color: rgba(233, 237, 239, 0.5);
+}
+
+/* Indicador de digitando */
+.s-typing {
+  align-self: flex-start;
+  display: inline-flex;
+  gap: 4px;
+  padding: 11px 12px;
+  border-radius: 9px;
+  border-top-left-radius: 3px;
+  background: #202c33;
+}
+.s-typing span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(233, 237, 239, 0.55);
+  animation: s-typing-bounce 1.25s ease-in-out infinite;
+}
+.s-typing span:nth-child(2) {
+  animation-delay: 0.16s;
+}
+.s-typing span:nth-child(3) {
+  animation-delay: 0.32s;
+}
+@keyframes s-typing-bounce {
+  0%,
+  62%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.45;
+  }
+  32% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .s-typing span {
+    animation: none;
+  }
+  .s-btn:hover {
+    transform: none;
+  }
+}

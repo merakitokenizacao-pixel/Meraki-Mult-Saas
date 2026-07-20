@@ -88,9 +88,11 @@ export function Abertura({ children }: { children: ReactNode }) {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.55, ease: [0.65, 0, 0.35, 1] }}
           >
-            <div className="flex flex-col items-center gap-6">
+            {/* Mesma textura do hero: sem o grão, o branco vira placa chapada */}
+            <div className="s-hero-grao" aria-hidden />
+            <div className="relative flex flex-col items-center gap-6">
               <motion.div layoutId={MARCA_LAYOUT_ID}>
-                <MarcaSvg desenhando claro className="w-[min(62vw,300px)]" />
+                <MarcaSvg desenhando className="w-[min(62vw,300px)]" />
               </motion.div>
               <div className="s-abertura-linha w-[min(46vw,220px)]" />
             </div>

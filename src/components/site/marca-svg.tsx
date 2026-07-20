@@ -1,34 +1,29 @@
 import { LETRAS_VORAX } from "@/components/site/letras-vorax";
 
-// A marca em SVG, fiel à do painel (.logo-mark): Cormorant 300, "Vora" em
-// creme #f0ece4 e o X em ITÁLICO, ouro #b8955a.
+// A marca em SVG, fiel à do painel (.logo-mark): Cormorant 300, com o X em
+// ITÁLICO e dourado.
 //
-// Cada letra é um <path> SEPARADO — é isso que permite desenhar UMA POR VEZ na
-// abertura (cada uma com seu animation-delay), como a referência faz. Um <text>
-// único desenharia tudo ao mesmo tempo e não pareceria escrita.
+// Cada letra é um <path> SEPARADO — é isso que permite escrever UMA POR VEZ na
+// abertura (cada uma com seu animation-delay). Um <text> único desenharia tudo
+// ao mesmo tempo e não pareceria escrita.
 //
-// `pathLength={1}` normaliza o comprimento de cada contorno para 1, então o
-// mesmo stroke-dasharray desenha qualquer letra na mesma velocidade — sem isso,
-// o X (contorno longo) demoraria muito mais que o "o".
+// `pathLength={1}` normaliza o contorno de cada letra para 1, então o mesmo
+// stroke-dasharray desenha todas na mesma velocidade — sem isso, o X (contorno
+// longo) arrastaria muito mais que o "o".
 //
-// É a MESMA peça na abertura (grande) e no header (pequena): o framer interpola
-// entre os dois pelo `layoutId`, e eles precisam ser idênticos.
+// As cores são as MESMAS na abertura e no header: agora que a abertura é clara,
+// o logo não muda de cor durante o voo — é literalmente a mesma peça do
+// primeiro ao último quadro, que é o que faz o `layoutId` funcionar sem salto.
 const ATRASO_ENTRE_LETRAS = 0.13; // s
 
 export function MarcaSvg({
   desenhando = false,
-  claro = false,
   className = "",
 }: {
-  /** Liga o desenho letra a letra (só na abertura). */
+  /** Liga a escrita letra a letra (só na abertura). */
   desenhando?: boolean;
-  /** `true` sobre fundo escuro (abertura); `false` no header claro. */
-  claro?: boolean;
   className?: string;
 }) {
-  const corTexto = claro ? "#f0ece4" : "var(--s-ink)";
-  const corX = claro ? "#b8955a" : "var(--s-gold)";
-
   return (
     <svg
       viewBox="0 0 360 96"
@@ -38,8 +33,7 @@ export function MarcaSvg({
       fill="none"
     >
       {LETRAS_VORAX.map((l, i) => {
-        const ehX = l.c === "X";
-        const cor = ehX ? corX : corTexto;
+        const cor = l.c === "X" ? "var(--s-gold)" : "var(--s-ink)";
         return (
           <path
             key={i}

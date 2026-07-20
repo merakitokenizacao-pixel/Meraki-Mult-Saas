@@ -563,9 +563,12 @@
   z-index: 100;
   display: grid;
   place-items: center;
-  /* O MESMO gradiente da sidebar do painel (globals.css .sidebar) — marrom
-     quente, não o azul da referência. A abertura é a nossa marca. */
-  background: linear-gradient(180deg, #1a1510 0%, #0f0d09 100%);
+  /* O MESMO fundo do hero — a abertura não é uma cortina escura por cima do
+     site, é o próprio começo dele. Um brilho quente atrás da marca evita que
+     vire uma placa branca chapada. */
+  background:
+    radial-gradient(58% 46% at 50% 48%, rgba(216, 190, 148, 0.22) 0%, transparent 70%),
+    #fdfcfa;
 }
 
 /* Some ANTES da pintura para quem já viu (o script inline em layout.tsx marca

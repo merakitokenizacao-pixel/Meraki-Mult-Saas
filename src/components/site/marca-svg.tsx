@@ -1,21 +1,26 @@
-// A marca em SVG, fiel à do painel (.logo-mark em globals.css):
-//   Cormorant 300 · "Vora" em creme #f0ece4 · o X em ITÁLICO, ouro #b8955a
-// O itálico do X é a assinatura da marca — sem ele não é a nossa logo.
+import { LETRAS_VORAX } from "@/components/site/letras-vorax";
+
+// A marca em SVG, fiel à do painel (.logo-mark): Cormorant 300, "Vora" em
+// creme #f0ece4 e o X em ITÁLICO, ouro #b8955a.
 //
-// É a MESMA peça usada na abertura (grande, no centro) e no header (pequena):
-// é isso que permite o logo "voar" de um lugar pro outro, porque o framer
-// interpola entre dois nós com o mesmo `layoutId` e eles precisam ser
-// visualmente idênticos.
+// Cada letra é um <path> SEPARADO — é isso que permite desenhar UMA POR VEZ na
+// abertura (cada uma com seu animation-delay), como a referência faz. Um <text>
+// único desenharia tudo ao mesmo tempo e não pareceria escrita.
 //
-// Usa <text> em vez de paths desenhados à mão porque a marca é tipográfica.
-// O traço da abertura é feito com stroke-dasharray sobre o texto — funciona
-// em SVG e evita converter a fonte em curvas.
+// `pathLength={1}` normaliza o comprimento de cada contorno para 1, então o
+// mesmo stroke-dasharray desenha qualquer letra na mesma velocidade — sem isso,
+// o X (contorno longo) demoraria muito mais que o "o".
+//
+// É a MESMA peça na abertura (grande) e no header (pequena): o framer interpola
+// entre os dois pelo `layoutId`, e eles precisam ser idênticos.
+const ATRASO_ENTRE_LETRAS = 0.13; // s
+
 export function MarcaSvg({
   desenhando = false,
   claro = false,
   className = "",
 }: {
-  /** Liga o desenho do traço (só na abertura). */
+  /** Liga o desenho letra a letra (só na abertura). */
   desenhando?: boolean;
   /** `true` sobre fundo escuro (abertura); `false` no header claro. */
   claro?: boolean;
@@ -30,24 +35,27 @@ export function MarcaSvg({
       role="img"
       aria-label="VoraX"
       className={className}
-      style={{ overflow: "visible" }}
+      fill="none"
     >
-      <text
-        x="180"
-        y="70"
-        textAnchor="middle"
-        fontFamily="var(--font-cormorant), Georgia, serif"
-        fontSize="76"
-        fontWeight="300"
-        letterSpacing="1.5"
-        className={desenhando ? "s-marca-traco" : undefined}
-        fill={corTexto}
-      >
-        Vora
-        <tspan fill={corX} fontStyle="italic">
-          X
-        </tspan>
-      </text>
+      {LETRAS_VORAX.map((l, i) => {
+        const ehX = l.c === "X";
+        const cor = ehX ? corX : corTexto;
+        return (
+          <path
+            key={i}
+            d={l.d}
+            pathLength={1}
+            fill={cor}
+            stroke={desenhando ? cor : undefined}
+            className={desenhando ? "s-marca-traco" : undefined}
+            style={
+              desenhando
+                ? { animationDelay: `${i * ATRASO_ENTRE_LETRAS}s` }
+                : undefined
+            }
+          />
+        );
+      })}
     </svg>
   );
 }

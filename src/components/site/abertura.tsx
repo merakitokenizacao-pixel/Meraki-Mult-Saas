@@ -14,7 +14,9 @@ import { MarcaSvg } from "@/components/site/marca-svg";
 export const MARCA_LAYOUT_ID = "vorax-marca";
 
 const CHAVE = "vorax-abertura";
-const DURACAO_MS = 2050; // desenho (1.75s) + respiro antes de subir
+// A última letra (X) começa em 4×0,13s e leva 1,15s → termina em ~1,67s.
+// Mais um respiro para a marca cheia ser lida antes de voar pro header.
+const DURACAO_MS = 2150;
 
 const Ctx = createContext(false);
 /** `true` quando a abertura terminou — o header só mostra a marca depois. */

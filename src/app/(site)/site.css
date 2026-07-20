@@ -575,22 +575,23 @@ html[data-abertura="vista"] .s-abertura {
 }
 
 .s-marca-traco {
-  stroke: #f0ece4;
-  stroke-width: 0.9;
+  /* pathLength=1 no <path> normaliza o contorno, então dasharray/offset são 1
+     para TODA letra — o X longo desenha na mesma velocidade que o "o". */
+  stroke-width: 0.7;
   stroke-linecap: round;
   stroke-linejoin: round;
   fill-opacity: 0;
-  stroke-dasharray: 1400;
-  stroke-dashoffset: 1400;
-  animation: s-pinta 1.75s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: s-pinta 1.15s cubic-bezier(0.65, 0, 0.35, 1) forwards;
 }
 
 @keyframes s-pinta {
   0% {
-    stroke-dashoffset: 1400;
+    stroke-dashoffset: 1;
     fill-opacity: 0;
   }
-  58% {
+  62% {
     stroke-dashoffset: 0;
     fill-opacity: 0;
   }

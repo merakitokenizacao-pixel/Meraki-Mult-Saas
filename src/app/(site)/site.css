@@ -375,3 +375,178 @@
 .s-secao-alt {
   background: #f7f5f0;
 }
+
+/* =============================================================================
+   MOCKUPS DE PRODUTO
+   =============================================================================
+   Cards claros, raio suave, sombra leve — a UI é o argumento, então ela precisa
+   parecer real sem gritar. Tudo em código: nenhum print, nenhuma imagem.
+   ============================================================================= */
+.s-mock {
+  background: #fff;
+  border: 1px solid var(--s-line);
+  border-radius: 18px;
+  box-shadow:
+    0 1px 2px rgba(20, 18, 15, 0.04),
+    0 18px 40px -24px rgba(20, 18, 15, 0.18);
+  overflow: hidden;
+}
+.s-mock-topo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--s-line);
+  background: #fcfbf9;
+}
+.s-mock-titulo {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--s-ink);
+}
+.s-mock-sub {
+  margin-left: auto;
+  font-family: var(--font-jetbrains), monospace;
+  font-size: 10px;
+  color: var(--s-muted);
+}
+
+/* ── Grade da agenda ──────────────────────────────────────────────────────── */
+.s-agenda {
+  display: grid;
+  grid-template-columns: 38px repeat(5, 1fr);
+  font-size: 10px;
+}
+.s-agenda-cab {
+  padding: 9px 4px;
+  text-align: center;
+  font-family: var(--font-jetbrains), monospace;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--s-muted);
+  border-bottom: 1px solid var(--s-line);
+}
+.s-agenda-hora {
+  padding: 0 6px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  font-family: var(--font-jetbrains), monospace;
+  font-size: 9px;
+  color: var(--s-muted);
+  border-right: 1px solid var(--s-line);
+}
+.s-agenda-cel {
+  position: relative;
+  height: 42px;
+  border-right: 1px solid var(--s-line);
+  border-bottom: 1px solid var(--s-line);
+  padding: 3px;
+}
+.s-agenda-cel:last-child {
+  border-right: none;
+}
+/* Hora fechada — hachura, igual à do painel */
+.s-agenda-cel.fechado {
+  background-color: #f4f1eb;
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent 0 5px,
+    rgba(20, 18, 15, 0.055) 5px 6px
+  );
+}
+.s-agenda-rotulo {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 7.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--s-muted);
+  text-align: center;
+  line-height: 1.2;
+  padding: 0 2px;
+}
+.s-agenda-vagas {
+  position: absolute;
+  top: 3px;
+  right: 5px;
+  font-family: var(--font-jetbrains), monospace;
+  font-size: 8px;
+  color: var(--s-muted);
+}
+.s-agenda-cel.cheio {
+  background: #fceceb;
+}
+.s-agenda-cel.cheio .s-agenda-vagas {
+  color: #a3342a;
+  font-weight: 700;
+}
+.s-agenda-ev {
+  height: 100%;
+  border-radius: 5px;
+  padding: 4px 6px;
+  font-size: 8.5px;
+  line-height: 1.25;
+  overflow: hidden;
+  border-left: 2.5px solid;
+}
+.s-agenda-ev b {
+  display: block;
+  font-weight: 600;
+}
+
+/* ── Cartão de cliente / memória ──────────────────────────────────────────── */
+.s-tag {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 10.5px;
+  font-weight: 500;
+  background: var(--s-soft);
+  color: var(--s-gold);
+}
+.s-linha-dado {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--s-line);
+  font-size: 12.5px;
+}
+.s-linha-dado:last-child {
+  border-bottom: none;
+}
+
+/* ── Alerta de contraindicação ────────────────────────────────────────────── */
+.s-alerta {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 11px 14px;
+  background: #a3342a;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.s-chip-atencao {
+  display: inline-flex;
+  border-radius: 999px;
+  padding: 3px 9px;
+  font-size: 10px;
+  font-weight: 600;
+  background: #fceceb;
+  color: #a3342a;
+}
+
+/* ── Grid de features leve ────────────────────────────────────────────────── */
+.s-feature {
+  padding: 26px 0 0;
+  border-top: 1px solid var(--s-line);
+}

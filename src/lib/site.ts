@@ -1,11 +1,18 @@
 // Constantes do site institucional (rota `/`). Nada aqui toca o CRM.
 
 /**
- * PLACEHOLDER — trocar pelo link real do WhatsApp comercial.
- * Formato: https://wa.me/55DDDNUMERO?text=mensagem%20pré-preenchida
+ * WhatsApp comercial. Formato do wa.me: só dígitos, país + DDD + número.
+ *
+ * ⚠️ O número informado (+55 61 9879-1499) tem 8 dígitos locais. Celular no
+ * Brasil tem 9 (começa com 9), então assumi o nono dígito → 61 99879-1499.
+ * Se na verdade for um fixo com WhatsApp Business, troque para
+ * "556198791499" (sem o 9 extra). CONFERIR clicando no CTA.
  */
-export const WHATSAPP_URL =
-  "https://wa.me/5561000000000?text=Ol%C3%A1!%20Quero%20a%20Laura%20na%20minha%20cl%C3%ADnica.";
+const WHATSAPP_NUMERO = "5561998791499";
+
+export const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMERO}?text=${encodeURIComponent(
+  "Olá! Quero a Laura na minha clínica."
+)}`;
 
 /** PLACEHOLDER — e-mail comercial exibido no rodapé. */
 export const EMAIL_CONTATO = "contato@vorax.solutions";

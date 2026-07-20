@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./site.css";
+import { Abertura } from "@/components/site/abertura";
 import { SiteHeader } from "@/components/site/site-header";
 
 export const metadata: Metadata = {
@@ -9,15 +10,25 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
+// Roda ANTES da pintura: se a abertura já foi vista nesta sessão, marca o
+// <html> e o CSS esconde a tela escura na hora. Sem isso, quem volta pisca o
+// fundo escuro por um quadro. Mesmo truque do script anti-flash do tema.
+const scriptAbertura = `(function(){try{if(sessionStorage.getItem('vorax-abertura')==='1'){document.documentElement.setAttribute('data-abertura','vista');window.__voraxAberturaVista=true;}}catch(e){}})();`;
+
 // Site institucional. Não herda NADA do painel: nem globals.css, nem os
 // providers, nem o script de tema. Ver `src/app/layout.tsx`.
 export default function SiteLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <div className="site-root">
-      <SiteHeader />
-      <main>{children}</main>
-    </div>
+    <>
+      <script dangerouslySetInnerHTML={{ __html: scriptAbertura }} />
+      <div className="site-root">
+        <Abertura>
+          <SiteHeader />
+          <main>{children}</main>
+        </Abertura>
+      </div>
+    </>
   );
 }

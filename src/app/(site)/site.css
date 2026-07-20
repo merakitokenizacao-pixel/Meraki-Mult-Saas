@@ -550,3 +550,85 @@
   padding: 26px 0 0;
   border-top: 1px solid var(--s-line);
 }
+
+/* =============================================================================
+   ABERTURA — o logo se desenha e depois voa pro header
+   =============================================================================
+   Mesma técnica da referência: o traço é desenhado com stroke-dasharray e só
+   DEPOIS o preenchimento aparece. Duas fases num keyframe só.
+   ============================================================================= */
+.s-abertura {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  background: #0f1c2b; /* azul-petróleo profundo, contraponto ao site claro */
+}
+
+/* Some ANTES da pintura para quem já viu (o script inline em layout.tsx marca
+   o atributo). Sem isso, quem volta pisca a tela escura. */
+html[data-abertura="vista"] .s-abertura {
+  display: none;
+}
+
+.s-marca-traco {
+  stroke: #f7f4ee;
+  stroke-width: 0.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill-opacity: 0;
+  stroke-dasharray: 1400;
+  stroke-dashoffset: 1400;
+  animation: s-pinta 1.75s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+
+@keyframes s-pinta {
+  0% {
+    stroke-dashoffset: 1400;
+    fill-opacity: 0;
+  }
+  58% {
+    stroke-dashoffset: 0;
+    fill-opacity: 0;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    fill-opacity: 1;
+  }
+}
+
+/* Linha fina que cresce sob a marca enquanto ela se desenha */
+.s-abertura-linha {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #d9bd91, transparent);
+  animation: s-linha 1.9s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+  transform-origin: center;
+}
+@keyframes s-linha {
+  0% {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+  60% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: scaleX(1);
+    opacity: 0.55;
+  }
+}
+
+/* Quem pediu menos movimento vê o logo pronto, sem desenho */
+@media (prefers-reduced-motion: reduce) {
+  .s-marca-traco {
+    animation: none;
+    stroke-dashoffset: 0;
+    fill-opacity: 1;
+  }
+  .s-abertura-linha {
+    animation: none;
+    transform: scaleX(1);
+    opacity: 0.55;
+  }
+}

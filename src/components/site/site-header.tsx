@@ -1,6 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import {
+  MARCA_LAYOUT_ID,
+  useAberturaPronta,
+} from "@/components/site/abertura";
+import { MarcaSvg } from "@/components/site/marca-svg";
 import { CTA_CURTO, WHATSAPP_URL } from "@/lib/site";
 
 // Header no formato da referência: três colunas com a MARCA NO CENTRO.
@@ -8,6 +14,9 @@ import { CTA_CURTO, WHATSAPP_URL } from "@/lib/site";
 // pílula escura. Nada de menu de âncoras — é o que deixa o topo respirar.
 export function SiteHeader() {
   const [rolou, setRolou] = useState(false);
+  // A marca só aparece aqui depois que a abertura termina — é a chegada do
+  // voo. Antes disso ela está no centro da tela, na abertura.
+  const aberturaPronta = useAberturaPronta();
 
   useEffect(() => {
     const onScroll = () => setRolou(window.scrollY > 40);
@@ -35,14 +44,21 @@ export function SiteHeader() {
           </a>
         </div>
 
-        {/* Centro — a marca */}
-        <a
-          href="#topo"
-          aria-label="VoraX — início"
-          className="justify-self-center font-[family-name:var(--font-cormorant)] text-[27px] font-light leading-none tracking-[0.02em] text-s-ink"
-        >
-          Vora<span className="text-s-gold">X</span>
-        </a>
+        {/* Centro — a marca. Reserva o espaço mesmo antes de chegar, senão o
+            header "pula" quando o logo aterrissa. */}
+        <div className="flex h-[30px] w-[108px] items-center justify-self-center">
+          {aberturaPronta && (
+            <motion.a
+              layoutId={MARCA_LAYOUT_ID}
+              href="#topo"
+              aria-label="VoraX — início"
+              className="block w-[108px] text-s-ink"
+              transition={{ duration: 0.85, ease: [0.65, 0, 0.35, 1] }}
+            >
+              <MarcaSvg className="w-full" />
+            </motion.a>
+          )}
+        </div>
 
         {/* Direita — conversão */}
         <div className="justify-self-end">

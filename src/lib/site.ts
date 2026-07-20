@@ -12,6 +12,23 @@ export const EMAIL_CONTATO = "contato@vorax.solutions";
 
 export const CTA_LABEL = "Quero a Laura na minha clínica";
 
+/**
+ * Imagem de atmosfera do hero. `null` = usa o tratamento em CSS (gradiente
+ * quente + grain + vinheta), que é o padrão hoje.
+ *
+ * Para usar uma foto: coloque o arquivo em `public/` e aponte aqui, ex.:
+ *   export const HERO_IMAGEM = "/hero.jpg";
+ *
+ * O que funciona: luz natural atravessando cortina/persiana/folhagem sobre
+ * superfície clara; tecido com luz lateral; água com ondulação. Tons quentes,
+ * pouco contraste de cor, subexposta — ela é ATMOSFERA, não protagonista.
+ * O que NÃO funciona: consultório, equipamento, pessoa posando, "rede neural".
+ */
+export const HERO_IMAGEM: string | null = null;
+
+/** Metadados editoriais do canto do hero (estilo capa de revista). */
+export const HERO_META = ["Brasília · Brasil", "MMXXVI", "Atendimento autônomo"] as const;
+
 export const SECOES = [
   { href: "#como-funciona", label: "Como funciona" },
   { href: "#recursos", label: "Recursos" },

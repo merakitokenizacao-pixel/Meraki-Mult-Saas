@@ -12,6 +12,9 @@ export const EMAIL_CONTATO = "contato@vorax.solutions";
 
 export const CTA_LABEL = "Quero a Laura na minha clínica";
 
+/** Versão curta para a pílula do header (o rótulo longo não cabe). */
+export const CTA_CURTO = "Quero a Laura";
+
 /**
  * Imagem de atmosfera do hero. `null` = usa o tratamento em CSS (gradiente
  * quente + grain + vinheta), que é o padrão hoje.
@@ -29,8 +32,6 @@ export const HERO_IMAGEM: string | null = null;
 /** Metadados editoriais do canto do hero (estilo capa de revista). */
 export const HERO_META = ["Brasília · Brasil", "MMXXVI", "Atendimento autônomo"] as const;
 
-export const SECOES = [
-  { href: "#como-funciona", label: "Como funciona" },
-  { href: "#recursos", label: "Recursos" },
-  { href: "#confianca", label: "Por que confiar" },
-] as const;
+// Sem menu de âncoras no header, de propósito: a referência mantém o topo com
+// só três elementos (Entrar · marca · CTA), e é isso que o faz respirar.
+// A navegação da página é a própria rolagem.

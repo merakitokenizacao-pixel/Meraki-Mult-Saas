@@ -262,117 +262,116 @@
 }
 
 /* =============================================================================
-   HERO EDITORIAL — atmosfera escura full-bleed
+   HERO — claro, centralizado, com ondas de luz (ref. Ailum)
    =============================================================================
-   A foto (quando existir) é ATMOSFERA: escura, quente, subexposta. Quem dá o
-   ar tecnológico é a UI nítida logo abaixo — não a imagem. Sem foto, o
-   tratamento abaixo faz o mesmo papel só com CSS.
+   Nada de foto: as ondas são SVG (ver components/site/luz-fundo.tsx). O grão
+   por cima tira o aspecto "gradiente de CSS" e dá textura de impressão.
    ============================================================================= */
 .s-hero {
   position: relative;
   isolation: isolate;
-  background: #0d0b08;
-  color: #f4f1ea;
+  background: #fdfcfa;
+  overflow: hidden;
 }
 
-/* Camada 1 — luz quente vindo de cima à esquerda, como sol filtrado */
-.s-hero-luz {
-  position: absolute;
-  inset: 0;
-  z-index: -3;
-  background:
-    radial-gradient(120% 85% at 18% -10%, rgba(212, 176, 122, 0.34) 0%, transparent 58%),
-    radial-gradient(90% 70% at 88% 12%, rgba(150, 122, 90, 0.2) 0%, transparent 62%),
-    radial-gradient(70% 60% at 50% 108%, rgba(40, 60, 52, 0.28) 0%, transparent 60%),
-    linear-gradient(175deg, #17130d 0%, #0d0b08 55%, #100d0a 100%);
-}
-
-/* Camada 2 — feixe de luz diagonal, sutil */
-.s-hero-feixe {
-  position: absolute;
-  inset: -20% -10%;
-  z-index: -2;
-  background: linear-gradient(
-    104deg,
-    transparent 34%,
-    rgba(233, 208, 168, 0.07) 44%,
-    rgba(233, 208, 168, 0.11) 50%,
-    rgba(233, 208, 168, 0.05) 56%,
-    transparent 66%
-  );
-  transform: rotate(-6deg);
-  pointer-events: none;
-}
-
-/* Camada 3 — grão de filme. É ele que tira o aspecto "gradiente de CSS". */
+/* Grão de filme — bem mais discreto que no escuro, senão suja o branco */
 .s-hero-grao {
   position: absolute;
   inset: 0;
-  z-index: -1;
-  opacity: 0.19;
-  mix-blend-mode: overlay;
+  z-index: 1;
+  opacity: 0.32;
+  mix-blend-mode: multiply;
   pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.86' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.32'/%3E%3C/svg%3E");
 }
 
-/* Vinheta — fecha as bordas e empurra o olho pro centro */
-.s-hero-vinheta {
+/* Texto vertical das bordas — a assinatura editorial da referência */
+.s-vertical {
   position: absolute;
-  inset: 0;
-  z-index: -1;
+  z-index: 3;
+  font-family: var(--font-jetbrains), monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--s-muted);
+  white-space: nowrap;
   pointer-events: none;
-  background: radial-gradient(78% 68% at 50% 45%, transparent 42%, rgba(6, 5, 4, 0.62) 100%);
+  user-select: none;
+}
+.s-vertical-esq {
+  left: 26px;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+.s-vertical-dir {
+  right: 26px;
+  writing-mode: vertical-rl;
+}
+/* Some no mobile: não há margem lateral para ele viver */
+@media (max-width: 1023px) {
+  .s-vertical {
+    display: none;
+  }
 }
 
-/* Foto opcional (HERO_IMAGEM) — entra por baixo de tudo, já tratada */
-.s-hero-foto {
-  position: absolute;
-  inset: 0;
-  z-index: -4;
-  object-fit: cover;
-  width: 100%;
-  height: 100%;
-  opacity: 0.55;
-  filter: saturate(0.72) contrast(1.06);
-}
-
-/* Metadados editoriais do rodapé do hero */
-.s-meta {
+/* Sobrelinha do hero (EDIÇÃO 2026) */
+.s-kicker {
   font-family: var(--font-jetbrains), monospace;
   font-size: 10.5px;
-  letter-spacing: 0.13em;
+  font-weight: 500;
+  letter-spacing: 0.34em;
   text-transform: uppercase;
-  color: rgba(244, 241, 234, 0.42);
+  color: var(--s-ink2);
 }
 
-/* Botão claro, para uso sobre o hero escuro */
-.s-btn-luz {
-  background: #f6f2ea;
-  color: #14120f;
-  box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.7);
+/* CTA discreto de descida: texto + círculo com seta */
+.s-descobrir {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  font-family: var(--font-jetbrains), monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--s-ink2);
+  transition: color 0.2s ease;
 }
-.s-btn-luz:hover {
-  transform: translateY(-1px);
+.s-descobrir:hover {
+  color: var(--s-ink);
+}
+.s-descobrir-circulo {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--s-line);
+  background: rgba(255, 255, 255, 0.5);
+  transition:
+    transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1),
+    border-color 0.25s ease,
+    background 0.25s ease;
+}
+.s-descobrir:hover .s-descobrir-circulo {
+  transform: translateY(3px);
+  border-color: var(--s-gold);
   background: #fff;
 }
-.s-btn-linha {
-  color: rgba(244, 241, 234, 0.9);
-  border: 1px solid rgba(244, 241, 234, 0.24);
-}
-.s-btn-linha:hover {
-  border-color: rgba(244, 241, 234, 0.55);
-  color: #fff;
+@media (prefers-reduced-motion: reduce) {
+  .s-descobrir:hover .s-descobrir-circulo {
+    transform: none;
+  }
 }
 
-/* Seções alternando branco / off-white, sem divisória — como a referência */
+/* Seções alternando branco / off-white, sem divisória */
 .s-secao {
-  padding: 96px 20px;
+  padding: 104px 20px;
 }
 @media (min-width: 768px) {
   .s-secao {
-    padding: 132px 32px;
+    padding: 148px 32px;
   }
 }
 .s-secao-alt {
-  background: #f6f4ef;
+  background: #f7f5f0;
 }

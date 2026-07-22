@@ -2609,3 +2609,235 @@ select.form-input {
 .cor-opcao.active {
   box-shadow: 0 0 0 2px var(--vx-surface), 0 0 0 4px var(--vx-text2);
 }
+
+/* ========================================================================
+   PROMOÇÕES
+   A tabela `promocoes` é lida AO VIVO pela Laura: o que se salva aqui é
+   falado ao cliente na conversa seguinte. A tela precisa deixar isso claro.
+   ======================================================================== */
+.promo-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+.promo-contador {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  font-size: 15px;
+  color: var(--vx-text);
+}
+.promo-contador-num {
+  font-family: var(--font-cormorant), serif;
+  font-size: 34px;
+  font-weight: 400;
+  line-height: 1;
+  color: var(--vx-accent);
+}
+.promo-sub {
+  margin-top: 5px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--vx-muted);
+  max-width: 46ch;
+}
+
+.promo-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+}
+.promo-card {
+  position: relative;
+  background: var(--vx-surface);
+  border: 1px solid var(--vx-border);
+  border-radius: 14px;
+  padding: 16px;
+  cursor: pointer;
+  transition: border-color var(--vx-transition), box-shadow var(--vx-transition);
+  box-shadow: var(--vx-shadow-sm);
+}
+.promo-card:hover {
+  border-color: var(--vx-border2);
+  box-shadow: var(--vx-shadow-md);
+}
+/* Vencida/desativada: presente, mas visivelmente fora do ar */
+.promo-card.fora {
+  opacity: 0.62;
+  background: var(--vx-surface2);
+}
+.promo-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+.promo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: 999px;
+  padding: 3px 9px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+.promo-titulo {
+  font-size: 14.5px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--vx-text);
+}
+.promo-valor {
+  margin-top: 5px;
+  font-family: var(--font-cormorant), serif;
+  font-size: 21px;
+  color: var(--vx-accent);
+  line-height: 1.2;
+}
+.promo-desc {
+  margin-top: 8px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--vx-text2);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.promo-meta {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--vx-border);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11.5px;
+  color: var(--vx-muted);
+}
+.promo-meta-sep {
+  opacity: 0.5;
+}
+.promo-toggle {
+  margin-top: 12px;
+  width: 100%;
+  padding: 7px;
+  border: 1px solid var(--vx-border2);
+  border-radius: 8px;
+  background: var(--vx-surface);
+  color: var(--vx-text2);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--vx-transition), color var(--vx-transition);
+}
+.promo-toggle:hover {
+  background: var(--vx-surface2);
+  color: var(--vx-text);
+}
+
+/* ── Modal ── */
+.promo-modal-titulo {
+  font-family: var(--font-cormorant), serif;
+  font-size: 22px;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+  margin-bottom: 1.25rem;
+}
+.promo-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+@media (max-width: 560px) {
+  .promo-grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+.form-dica {
+  font-size: 10.5px;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--vx-muted);
+  margin-left: 6px;
+}
+.form-erro {
+  margin-top: 5px;
+  font-size: 12px;
+  color: var(--vx-red);
+}
+
+/* Prévia do que o agente recebe — a defesa contra texto ruim */
+.promo-preview {
+  border: 1px dashed var(--vx-border2);
+  border-radius: 12px;
+  padding: 12px 14px;
+  background: var(--vx-surface2);
+}
+.promo-preview-cab {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+  color: var(--vx-accent);
+  margin-bottom: 7px;
+}
+.promo-preview-texto {
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--vx-text);
+  word-break: break-word;
+}
+
+.promo-switch {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+}
+.promo-switch input {
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  accent-color: var(--vx-accent);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.promo-switch strong {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--vx-text);
+}
+.promo-switch-dica {
+  display: block;
+  margin-top: 2px;
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--vx-muted);
+}
+
+.promo-aviso {
+  display: flex;
+  gap: 9px;
+  padding: 11px 13px;
+  border-radius: 10px;
+  background: var(--vx-amber-bg);
+  color: var(--vx-amber);
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+.promo-nota-live {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  color: var(--vx-muted);
+}

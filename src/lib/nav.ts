@@ -5,6 +5,7 @@ import {
   CalendarDays,
   Send,
   Settings,
+  Tag,
   type LucideIcon,
 } from "lucide-react";
 
@@ -30,6 +31,7 @@ export const NAV_ITEMS: NavItem[] = [
   { href: "/conversas", label: "Conversas", icon: MessageCircle, title: "Conversas" },
   { href: "/agenda", label: "Agenda", icon: CalendarDays, title: "Agenda" },
   { href: "/campanhas", label: "Campanhas", icon: Send, title: "Campanhas" },
+  { href: "/promocoes", label: "Promoções", icon: Tag, title: "Promoções" },
 ];
 
 // Configurações fica no RODAPÉ da sidebar, separada das 5 telas de operação

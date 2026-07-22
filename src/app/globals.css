@@ -2841,3 +2841,53 @@ select.form-input {
   font-size: 11.5px;
   color: var(--vx-muted);
 }
+
+/* Explicação na própria promoção vencida (a dona não a desativou — ela venceu) */
+.promo-explica {
+  margin-top: 10px;
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--vx-muted);
+  font-style: italic;
+}
+
+/* Alerta: o anúncio pago aponta para uma promoção que não está no ar */
+.promo-alerta-anuncio {
+  display: flex;
+  gap: 11px;
+  padding: 14px 16px;
+  margin-bottom: 1.25rem;
+  border-radius: 12px;
+  border: 1px solid var(--vx-amber);
+  background: var(--vx-amber-bg);
+  color: var(--vx-amber);
+}
+.promo-alerta-anuncio strong {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 700;
+  margin-bottom: 3px;
+}
+.promo-alerta-anuncio p {
+  font-size: 12.5px;
+  line-height: 1.55;
+  margin: 0;
+  max-width: 62ch;
+}
+.promo-alerta-acao {
+  margin-top: 9px;
+  padding: 6px 14px;
+  border: 1px solid var(--vx-amber);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--vx-amber);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--vx-transition), color var(--vx-transition);
+}
+.promo-alerta-acao:hover {
+  background: var(--vx-amber);
+  color: var(--vx-surface);
+}

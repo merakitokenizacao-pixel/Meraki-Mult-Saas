@@ -51,6 +51,14 @@ export function Promocoes() {
     [data, hoje]
   );
 
+  // O anúncio está apontando para uma promoção que não está mais no ar?
+  // Quem clica no anúncio pergunta por uma oferta que a Laura não pode dar.
+  const anuncioMorto = useMemo(
+    () =>
+      (data ?? []).find((p) => p.anuncio_ativo && !estaNoAr(p, hoje)) ?? null,
+    [data, hoje]
+  );
+
   const recarregar = () => qc.invalidateQueries({ queryKey: ["promocoes"] });
 
   async function alternar(p: Promocao) {
@@ -101,6 +109,33 @@ export function Promocoes() {
           <Plus size={15} strokeWidth={2} /> Nova promoção
         </button>
       </div>
+
+      {/* Alerta forte: o anúncio pago aponta para uma oferta que acabou */}
+      {anuncioMorto && (
+        <div className="promo-alerta-anuncio">
+          <TriangleAlert size={17} strokeWidth={2} style={{ flexShrink: 0, marginTop: 1 }} />
+          <div>
+            <strong>O anúncio está apontando para uma promoção fora do ar.</strong>
+            <p>
+              “{anuncioMorto.titulo}” está marcada como a promoção do anúncio,
+              mas {situacaoDe(anuncioMorto, hoje) === "vencida"
+                ? "o prazo dela já passou"
+                : "ela está desativada"}
+              . Quem clicar no anúncio vai perguntar por uma oferta que a Laura
+              não pode dar.
+            </p>
+            <button
+              className="promo-alerta-acao"
+              onClick={() => {
+                setEditando(anuncioMorto);
+                setAberto(true);
+              }}
+            >
+              Resolver agora
+            </button>
+          </div>
+        </div>
+      )}
 
       {isPending ? (
         <div className="loading">
@@ -177,15 +212,35 @@ export function Promocoes() {
                   <span>{rotuloValidade(p, hoje)}</span>
                 </div>
 
-                <button
-                  className="promo-toggle"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    alternar(p);
-                  }}
-                >
-                  {p.ativa ? "Tirar do ar" : "Reativar"}
-                </button>
+                {sit === "vencida" ? (
+                  <>
+                    <p className="promo-explica">
+                      O prazo passou — a Laura já parou de oferecer.
+                    </p>
+                    {/* Reativar não adiantaria: continuaria vencida. O que
+                        resolve é mudar a data, então o botão abre o formulário. */}
+                    <button
+                      className="promo-toggle"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setEditando(p);
+                        setAberto(true);
+                      }}
+                    >
+                      Renovar prazo
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    className="promo-toggle"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      alternar(p);
+                    }}
+                  >
+                    {p.ativa ? "Tirar do ar" : "Reativar"}
+                  </button>
+                )}
               </div>
             );
           })}

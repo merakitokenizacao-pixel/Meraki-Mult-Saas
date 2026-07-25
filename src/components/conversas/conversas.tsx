@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { getConversasByLead, getLeadById, updateLead } from "@/lib/queries";
 import { useAgendamentos, useConversas, useLeads } from "@/lib/hooks";
@@ -102,6 +103,23 @@ export function Conversas() {
       (a, b) => lastMsgInfo(b, conversas).ts - lastMsgInfo(a, conversas).ts
     );
   }, [leads, tab, conversas, period]);
+
+  // Abertura por URL: outras telas (ex.: Follow-ups) linkam para
+  // /conversas?lead=<id> para abrir direto aquele cliente. Aditivo — só reage
+  // ao parâmetro na primeira vez que ele aparece com os leads já carregados;
+  // não interfere no realtime, na pausa da IA nem no envio.
+  const searchParams = useSearchParams();
+  const leadDaUrl = searchParams.get("lead");
+  const urlJaAbriu = useRef<string | null>(null);
+  useEffect(() => {
+    if (!leadDaUrl || leads.length === 0) return;
+    if (urlJaAbriu.current === leadDaUrl) return;
+    if (leads.some((l) => l.id === leadDaUrl)) {
+      urlJaAbriu.current = leadDaUrl;
+      openConversa(leadDaUrl);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [leadDaUrl, leads]);
 
   async function openConversa(leadId: string) {
     setCurrentLeadId(leadId);

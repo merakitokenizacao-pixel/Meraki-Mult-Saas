@@ -2891,3 +2891,243 @@ select.form-input {
   background: var(--vx-amber);
   color: var(--vx-surface);
 }
+
+/* ========================================================================
+   FOLLOW-UPS (acompanhamento das retomadas da Laura) — somente leitura.
+   VETADO nunca é tratado como falha: é decisão correta do agente.
+   ======================================================================== */
+.fu-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+.fu-sub {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--vx-muted);
+  max-width: 52ch;
+}
+.fu-periodo {
+  display: inline-flex;
+  gap: 3px;
+  padding: 3px;
+  background: var(--vx-surface2);
+  border-radius: 10px;
+}
+.fu-periodo-btn {
+  padding: 6px 13px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--vx-text2);
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--vx-transition), color var(--vx-transition);
+}
+.fu-periodo-btn.ativo {
+  background: var(--vx-surface);
+  color: var(--vx-text);
+  box-shadow: var(--vx-shadow-sm);
+}
+
+.fu-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 1.5rem;
+}
+@media (max-width: 720px) {
+  .fu-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+.fu-card {
+  background: var(--vx-surface);
+  border: 1px solid var(--vx-border);
+  border-radius: 14px;
+  padding: 16px 18px;
+  box-shadow: var(--vx-shadow-sm);
+}
+.fu-card-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--vx-muted);
+}
+.fu-card-valor {
+  margin-top: 8px;
+  font-family: var(--font-cormorant), serif;
+  font-size: 34px;
+  font-weight: 400;
+  line-height: 1;
+  color: var(--vx-accent);
+}
+
+/* Tooltip do "Não enviados" */
+.fu-tip {
+  position: relative;
+  display: inline-flex;
+  color: var(--vx-muted);
+  cursor: help;
+}
+.fu-tip-bolha {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 220px;
+  padding: 9px 11px;
+  border-radius: 9px;
+  background: var(--vx-text);
+  color: var(--vx-bg);
+  font-size: 11.5px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.15s ease;
+  z-index: 20;
+  box-shadow: var(--vx-shadow-lg);
+}
+.fu-tip:hover .fu-tip-bolha,
+.fu-tip:focus .fu-tip-bolha {
+  opacity: 1;
+  visibility: visible;
+}
+
+.fu-filtros {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+.fu-chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.fu-chip {
+  padding: 5px 12px;
+  border: 1px solid var(--vx-border);
+  border-radius: 999px;
+  background: var(--vx-surface);
+  color: var(--vx-text2);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--vx-transition);
+}
+.fu-chip:hover {
+  border-color: var(--vx-border2);
+}
+.fu-chip.ativo {
+  background: var(--vx-accent-light);
+  border-color: var(--vx-accent);
+  color: var(--vx-accent);
+}
+.fu-select {
+  padding: 6px 10px;
+  border: 1px solid var(--vx-border);
+  border-radius: 8px;
+  background: var(--vx-surface);
+  color: var(--vx-text);
+  font-family: inherit;
+  font-size: 12.5px;
+  cursor: pointer;
+}
+
+.fu-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.fu-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: var(--vx-surface);
+  border: 1px solid var(--vx-border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color var(--vx-transition), box-shadow var(--vx-transition);
+}
+.fu-item:hover:not(:disabled) {
+  border-color: var(--vx-border2);
+  box-shadow: var(--vx-shadow-md);
+}
+.fu-item:disabled {
+  cursor: default;
+}
+.fu-item-topo {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.fu-item-nome {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--vx-text);
+}
+.fu-item-quando {
+  font-size: 11.5px;
+  color: var(--vx-muted);
+}
+.fu-badge {
+  margin-left: auto;
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+.fu-item-msg {
+  margin-top: 7px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--vx-text2);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.fu-item-tipo {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--vx-muted);
+  text-transform: uppercase;
+}
+
+.fu-vazio {
+  padding: 40px 32px;
+  text-align: center;
+}
+.fu-vazio-titulo {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.fu-vazio-texto {
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--vx-muted);
+  max-width: 420px;
+  margin: 0 auto;
+}

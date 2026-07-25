@@ -1,11 +1,15 @@
 import type { Lead, Agendamento } from "@/types/db";
 
-// Funil de conversão. Todos os passos são DERIVADOS de `agendamentos` e
-// contam LEADS (não linhas de agendamento), formando subconjuntos aninhados:
-//   todos ⊇ com agendamento ⊇ não-cancelado ⊇ realizado
-// Antes, "Engajados" e "Agendados" liam `leads.status` ('novo'/'agendado') —
-// valores que o novo modelo de ciclo de vida não grava mais, então os passos
-// zeravam. "Tem horário" nunca foi ciclo de vida: é derivado. Ver CLAUDE.md.
+// Funil de conversão. Conta PESSOAS (leads distintos), não linhas de
+// agendamento — um funil narrowing só faz sentido por gente: um cliente que
+// fez 10 sessões é 1 pessoa que compareceu, não 10. Por isso "Compareceram"
+// (39) é menor que o total de agendamentos realizados (76): os clientes
+// repetem. Para o VOLUME de procedimentos, ver o card "Consultas agendadas".
+//
+// Três estágios ANINHADOS e distintos:
+//   todos os leads  ⊇  agendaram (não-cancelado)  ⊇  compareceram (realizado)
+// O antigo "Engajados" (tem qualquer agendamento, mesmo cancelado) saiu:
+// ficava idêntico a "Agendaram" e não representava um estágio real.
 export function Funnel({
   leads,
   agendamentos,
@@ -15,35 +19,27 @@ export function Funnel({
 }) {
   const total = leads.length;
 
-  const leadsCom = new Set<string>();
-  const leadsNaoCancelado = new Set<string>();
-  const leadsRealizado = new Set<string>();
+  const leadsAgendaram = new Set<string>();
+  const leadsCompareceram = new Set<string>();
   for (const a of agendamentos) {
     if (!a.lead_id) continue;
-    leadsCom.add(a.lead_id);
-    if (a.status !== "cancelado") leadsNaoCancelado.add(a.lead_id);
-    if (a.status === "realizado") leadsRealizado.add(a.lead_id);
+    if (a.status !== "cancelado") leadsAgendaram.add(a.lead_id);
+    if (a.status === "realizado") leadsCompareceram.add(a.lead_id);
   }
 
   const pct = (n: number) => (total ? Math.round((n / total) * 100) : 0);
   const steps = [
     { label: "Clientes", count: total, pct: 100, color: "var(--vx-blue)" },
     {
-      label: "Engajados",
-      count: leadsCom.size,
-      pct: pct(leadsCom.size),
-      color: "var(--vx-accent)",
-    },
-    {
-      label: "Agendados",
-      count: leadsNaoCancelado.size,
-      pct: pct(leadsNaoCancelado.size),
+      label: "Agendaram",
+      count: leadsAgendaram.size,
+      pct: pct(leadsAgendaram.size),
       color: "var(--vx-gold)",
     },
     {
-      label: "Realizados",
-      count: leadsRealizado.size,
-      pct: pct(leadsRealizado.size),
+      label: "Compareceram",
+      count: leadsCompareceram.size,
+      pct: pct(leadsCompareceram.size),
       color: "var(--vx-green)",
     },
   ];

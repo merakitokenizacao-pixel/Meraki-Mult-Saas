@@ -32,11 +32,19 @@ export function MetricsGrid({
   const taxa = temTaxa ? Math.round((agendaram / total) * 100) : 0;
 
   // "Consultas agendadas" e "Receita estimada" usam o MESMO conjunto:
-  // agendamentos do período por criado_em (quando foi MARCADA), sem cancelados.
+  // agendamentos por DATA_AGENDAMENTO (quando o atendimento ACONTECE), sem
+  // cancelados.
+  //
+  // Já foi por `criado_em` (quando a consulta foi MARCADA). Trocado em jul/2026
+  // porque a leitura operacional é a que a dona espera: num domingo — primeiro
+  // dia da semana — nada tinha sido marcado ainda, e o card mostrava "Semana: 0"
+  // enquanto havia 29 atendimentos acontecendo naquela semana. Contar por
+  // criado_em respondia "quanto a Laura captou"; o card responde agora "quanto
+  // trabalho eu tenho no período", que é o que se olha num painel de operação.
   const agendsPeriodo =
     period === "tudo"
       ? agendamentos
-      : filterByDate(agendamentos, "criado_em", period);
+      : filterByDate(agendamentos, "data_agendamento", period);
   const naoCancelados = agendsPeriodo.filter((a) => a.status !== "cancelado");
   const consultasAgendadas = naoCancelados.length;
   const receita = naoCancelados
@@ -62,7 +70,9 @@ export function MetricsGrid({
           {consultasAgendadas}
         </div>
         <div className="metric-divider" />
-        <div className="metric-sub up">clientes confirmados</div>
+        {/* O subtítulo antigo dizia "clientes confirmados" — errado em dois
+            sentidos: conta atendimentos (não pessoas) e inclui os pendentes. */}
+        <div className="metric-sub up">atendimentos no período</div>
       </div>
       <div className="metric-card">
         <div className="metric-label">Taxa de conversão</div>

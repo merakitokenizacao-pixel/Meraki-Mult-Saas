@@ -11,7 +11,7 @@ export async function listarFollowUps(): Promise<FollowUp[]> {
   const { data, error } = await db
     .from("follow_ups_resultado")
     .select(
-      "id, lead_id, nome, telefone, tipo, status, mensagem, contexto, enviado_em, primeira_resposta_em, agendou_em, resultado"
+      "id, lead_id, nome, telefone, tipo, referencia, status, mensagem, contexto, enviado_em, primeira_resposta_em, agendou_em, resultado"
     )
     .order("enviado_em", { ascending: false, nullsFirst: false });
   if (error) throw error;

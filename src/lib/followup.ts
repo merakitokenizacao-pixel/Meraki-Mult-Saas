@@ -19,7 +19,8 @@ export type FollowUp = {
   lead_id: string | null;
   nome: string | null;
   telefone: string | null;
-  tipo: string; // "retomada" | "reativacao" | "pos_atendimento" | …
+  tipo: string; // ver TIPOS abaixo
+  referencia: string | null; // o "porquê" datado do disparo (varia por tipo)
   status: string; // "enviado" | "vetado"
   mensagem: string | null; // null quando vetado
   contexto: string | null;
@@ -121,19 +122,148 @@ export const RESULTADO_TOM: Record<FollowUpResultado, Tom> = {
   vetado: "ambar",
 };
 
-// "retomada" → "Retomada". Fallback: capitaliza o que vier.
-const TIPO_LABEL: Record<string, string> = {
-  retomada: "Retomada",
-  reativacao: "Reativação",
-  pos_atendimento: "Pós-atendimento",
-};
+/**
+ * Os quatro tipos de follow-up, com o GATILHO de cada um.
+ *
+ * O gatilho não é enfeite: é o que faz a dona confiar no sistema. Sem ele, ela
+ * vê "a IA mandou mensagem pra minha cliente" e não sabe por quê. O valor cru
+ * (`laser_day`) nunca aparece na interface.
+ *
+ * Lista FIXA de propósito — a tabela comparativa mostra os quatro mesmo quando
+ * um deles não teve nenhum registro no período: dois disparam raramente (Laser
+ * Day é mensal; Retorno prometido depende da cliente prometer), e a ausência é
+ * informação, não motivo para sumir da tela.
+ */
+export const TIPOS = [
+  {
+    valor: "retomada",
+    label: "Retomada de conversa",
+    gatilho:
+      "Cliente novo perguntou sobre um procedimento e não respondeu. A IA retoma 2h depois.",
+  },
+  {
+    valor: "compromisso",
+    label: "Retorno prometido",
+    gatilho:
+      "A própria cliente disse que voltaria numa época, e essa data chegou.",
+  },
+  {
+    valor: "laser_day",
+    label: "Laser Day chegando",
+    gatilho:
+      "Faltam poucos dias para o Laser Day e a cliente tem interesse em laser.",
+  },
+  {
+    valor: "reativacao",
+    label: "Cliente sem vir",
+    gatilho:
+      "60 dias ou mais sem contato, e existe promoção vigente que combina com o que ela fazia.",
+  },
+] as const;
+
+// Chave `string` (não a união literal): o n8n pode criar um tipo novo antes de
+// a tela conhecer, e a busca precisa aceitar qualquer valor sem quebrar o build.
+const POR_VALOR = new Map<string, { label: string; gatilho: string }>(
+  TIPOS.map((t) => [t.valor, { label: t.label, gatilho: t.gatilho }])
+);
+
 export function tipoLabel(tipo: string): string {
-  return TIPO_LABEL[tipo] ?? tipo.charAt(0).toUpperCase() + tipo.slice(1);
+  // Fallback para um tipo novo que o n8n crie antes de a tela saber dele:
+  // "pos_atendimento" → "Pos atendimento". Melhor que mostrar o valor cru.
+  return (
+    POR_VALOR.get(tipo)?.label ??
+    (tipo.charAt(0).toUpperCase() + tipo.slice(1)).replace(/_/g, " ")
+  );
 }
 
-/** Tipos presentes nos dados, para montar o filtro sem chumbar a lista. */
-export function tiposPresentes(fs: FollowUp[]): string[] {
-  return [...new Set(fs.map((f) => f.tipo))].sort();
+export function tipoGatilho(tipo: string): string {
+  return POR_VALOR.get(tipo)?.gatilho ?? "";
+}
+
+const MESES = [
+  "janeiro",
+  "fevereiro",
+  "março",
+  "abril",
+  "maio",
+  "junho",
+  "julho",
+  "agosto",
+  "setembro",
+  "outubro",
+  "novembro",
+  "dezembro",
+];
+
+/**
+ * A `referencia` em português, por extenso — nunca a data crua.
+ *
+ * Cada tipo guarda uma coisa diferente ali: laser_day guarda a data do Laser
+ * Day, compromisso a data que a cliente prometeu, reativacao o mês (AAAA-MM).
+ *
+ * As datas são lidas do TEXTO, sem passar por `new Date()`: construir um Date
+ * a partir de "2026-08-29" o interpreta como UTC e, no fuso de Brasília, exibe
+ * 28/08 — um dia a menos. É o mesmo cuidado do resto do projeto.
+ */
+export function referenciaLabel(
+  tipo: string,
+  referencia: string | null | undefined
+): string {
+  const r = referencia?.trim();
+  if (!r) return "";
+
+  const dia = /^(\d{4})-(\d{2})-(\d{2})/.exec(r); // 2026-08-29[T...]
+  const mes = /^(\d{4})-(\d{2})$/.exec(r); // 2026-08
+  const nomeMes = (mm: string) => MESES[Number(mm) - 1] ?? mm;
+
+  switch (tipo) {
+    case "laser_day":
+      return dia ? `Laser Day de ${dia[3]}/${dia[2]}` : r;
+    case "compromisso":
+      return dia ? `prometeu voltar em ${dia[3]}/${dia[2]}` : r;
+    case "reativacao":
+      if (mes) return `reativação de ${nomeMes(mes[2])}`;
+      if (dia) return `reativação de ${nomeMes(dia[2])}`;
+      return r;
+    default:
+      // Tipo desconhecido: mostra o que veio, sem inventar rótulo.
+      return r;
+  }
+}
+
+/**
+ * Métricas quebradas POR TIPO — a tabela que responde "qual follow-up vale a
+ * pena manter". Devolve sempre os quatro tipos conhecidos (mesmo zerados),
+ * mais qualquer tipo novo que apareça nos dados.
+ *
+ * Substituiu a antiga `tiposPresentes`, que derivava a lista dos dados: com
+ * ela, um tipo que ainda não disparou simplesmente sumia da tela — e some
+ * exatamente a informação de que ele não rodou.
+ */
+export type LinhaTipo = {
+  tipo: string;
+  label: string;
+  gatilho: string;
+  metricas: Metricas;
+  vazio: boolean; // nenhum registro no período → mostra traço, não zero
+};
+
+export function metricasPorTipo(fs: FollowUp[]): LinhaTipo[] {
+  const conhecidos = TIPOS.map((t) => t.valor as string);
+  const extras = [...new Set(fs.map((f) => f.tipo))]
+    .filter((t) => !conhecidos.includes(t))
+    .sort();
+
+  return [...conhecidos, ...extras].map((tipo) => {
+    const doTipo = fs.filter((f) => f.tipo === tipo);
+    return {
+      tipo,
+      label: tipoLabel(tipo),
+      gatilho: tipoGatilho(tipo),
+      metricas: calcularMetricas(doTipo),
+      vazio: doTipo.length === 0,
+    };
+  });
 }
 
 // ── Ordenação ───────────────────────────────────────────────────────────────

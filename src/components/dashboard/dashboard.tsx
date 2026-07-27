@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useAgendamentos, useAgendamentosComLead, useLeads } from "@/lib/hooks";
+import { saudacaoDe } from "@/lib/date";
 import { MetricsGrid } from "@/components/dashboard/metrics-grid";
 import { ProximosAgendamentos } from "@/components/dashboard/proximos-agendamentos";
 import { Funnel } from "@/components/dashboard/funnel";
@@ -42,15 +43,14 @@ export function Dashboard() {
   );
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
 
+  // Só no cliente (evita divergência de hidratação: o servidor está em UTC).
+  // Reavalia a cada minuto porque o painel fica aberto o dia todo — sem isso,
+  // quem abriu às 17h ainda leria "Boa tarde" às 19h.
   useEffect(() => {
-    const h = new Date().getHours();
-    setGreeting(
-      h < 12
-        ? { prefix: "Bom", word: "dia" }
-        : h < 18
-          ? { prefix: "Boa", word: "tarde" }
-          : { prefix: "Boa", word: "noite" }
-    );
+    const aplicar = () => setGreeting(saudacaoDe());
+    aplicar();
+    const t = setInterval(aplicar, 60_000);
+    return () => clearInterval(t);
   }, []);
 
   return (
@@ -67,7 +67,9 @@ export function Dashboard() {
               " "
             )}
           </div>
-          <div className="dash-subtitle">Visão geral · VoraX</div>
+          <div className="dash-subtitle">
+            Visão geral do seu desempenho e atividades
+          </div>
         </div>
         <div className="filter-bar">
           {PERIODS.map(([value, label]) => (

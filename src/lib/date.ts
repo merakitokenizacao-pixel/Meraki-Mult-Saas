@@ -48,6 +48,27 @@ export function matchesPeriod(
   return d >= range.from && d < range.to;
 }
 
+/**
+ * Saudação pelo horário de quem está lendo.
+ *
+ * Usa o relógio do NAVEGADOR de propósito (não America/Sao_Paulo como o resto
+ * do projeto): cumprimentar é sobre a pessoa, não sobre a clínica — se ela
+ * abrir o painel às 22h de onde estiver, "boa noite" é o certo mesmo que em
+ * Brasília ainda seja tarde.
+ *
+ * A madrugada (0h–4h) é "boa noite", não "bom dia": às 3h da manhã ninguém
+ * cumprimenta com bom dia.
+ */
+export function saudacaoDe(agora: Date = new Date()): {
+  prefix: string;
+  word: string;
+} {
+  const h = agora.getHours();
+  if (h >= 5 && h < 12) return { prefix: "Bom", word: "dia" };
+  if (h >= 12 && h < 18) return { prefix: "Boa", word: "tarde" };
+  return { prefix: "Boa", word: "noite" }; // 18h–4h59
+}
+
 // "24/07, 17h" (ou "24/07, 17h30" quando há minutos), no fuso da clínica.
 // Usado na coluna "Próxima visita" e no painel Detalhes.
 export function formatProximaVisita(iso: string | null | undefined): string {

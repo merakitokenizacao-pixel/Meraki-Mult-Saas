@@ -3244,3 +3244,46 @@ select.form-input {
   line-height: 1.5;
   color: var(--vx-muted);
 }
+
+/* ── Visão geral: as duas LENTES de tempo ────────────────────────────────
+   Os quatro KPIs respondem a perguntas diferentes sobre o mesmo período:
+   dois são sobre QUEM CHEGOU (aquisição, por criado_em do lead) e dois sobre
+   O QUE ACONTECE (operação, por data_agendamento). Antes eram quatro cards
+   idênticos lado a lado, e o olho comparava "3 clientes captados" com "35
+   consultas" — números que não têm relação. O agrupamento é o que impede
+   essa leitura errada. */
+.metrics-dupla {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 28px;
+  margin-bottom: 2.5rem;
+}
+.metrics-lente-titulo {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--vx-muted);
+  margin-bottom: 12px;
+  padding-bottom: 9px;
+  border-bottom: 1px solid var(--vx-border);
+}
+.metrics-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+/* Em tela estreita as lentes empilham; dentro de cada uma, os dois cards
+   continuam lado a lado — é o par que precisa ser lido junto. */
+@media (max-width: 1100px) {
+  .metrics-dupla {
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+}
+@media (max-width: 560px) {
+  .metrics-grid-2 {
+    grid-template-columns: 1fr;
+  }
+}

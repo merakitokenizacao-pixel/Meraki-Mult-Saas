@@ -1,6 +1,16 @@
 import { filterByDate } from "@/lib/date";
 import type { Lead, Agendamento } from "@/types/db";
 
+// Completa o título de cada lente ("Quem chegou nesta semana"), para o cabeçalho
+// acompanhar o filtro em vez de dizer sempre "no período".
+const FRASE_PERIODO: Record<string, string> = {
+  hoje: "hoje",
+  ontem: "ontem",
+  semana: "nesta semana",
+  mes: "neste mês",
+  tudo: "no total",
+};
+
 // Replica renderDashboardMetrics: 4 KPIs reagindo ao período selecionado.
 export function MetricsGrid({
   leads,
@@ -11,6 +21,7 @@ export function MetricsGrid({
   agendamentos: Agendamento[];
   period: string;
 }) {
+  const frasePeriodo = FRASE_PERIODO[period] ?? "no período";
   const filtered = filterByDate(leads, "criado_em", period);
   const total = filtered.length;
 
@@ -57,53 +68,74 @@ export function MetricsGrid({
   const receitaSize = receita >= 10000 ? "28px" : receita >= 1000 ? "34px" : "44px";
 
   return (
-    <div className="metrics-grid">
-      <div className="metric-card">
-        <div className="metric-label">Clientes captados</div>
-        <div className="metric-value">{total}</div>
-        <div className="metric-divider" />
-        <div className="metric-sub">via WhatsApp</div>
-      </div>
-      <div className="metric-card">
-        <div className="metric-label">Consultas agendadas</div>
-        <div className="metric-value" style={{ color: "var(--vx-green)" }}>
-          {consultasAgendadas}
+    <div className="metrics-dupla">
+      {/* ── LENTE 1: quem CHEGOU no período ───────────────────────────────
+          Estes dois falam da mesma população: as pessoas captadas na janela.
+          Separados dos outros de propósito — as consultas do período foram
+          marcadas por gente que chegou semanas atrás, então comparar "3
+          clientes captados" com "35 consultas" não quer dizer nada. Antes os
+          quatro cards eram idênticos e o olho comparava o incomparável. */}
+      <section className="metrics-lente">
+        <h2 className="metrics-lente-titulo">Quem chegou {frasePeriodo}</h2>
+        <div className="metrics-grid-2">
+          <div className="metric-card">
+            <div className="metric-label">Clientes captados</div>
+            <div className="metric-value">{total}</div>
+            <div className="metric-divider" />
+            <div className="metric-sub">via WhatsApp</div>
+          </div>
+          <div className="metric-card">
+            <div className="metric-label">Taxa de conversão</div>
+            <div className="metric-value" style={{ color: "var(--vx-amber)" }}>
+              {temTaxa ? (
+                <>
+                  {taxa}
+                  <span style={{ fontSize: "24px", opacity: 0.6 }}>%</span>
+                </>
+              ) : (
+                "—"
+              )}
+            </div>
+            <div className="metric-divider" />
+            {/* A fração fica visível de propósito: numa janela curta a taxa é
+                de poucas pessoas (1 de 3 = 33%), e o número sozinho pareceria
+                mais sólido do que é. */}
+            <div className="metric-sub">
+              {temTaxa
+                ? `${agendaram} de ${total} captados agendaram`
+                : "nenhum cliente captado no período"}
+            </div>
+          </div>
         </div>
-        <div className="metric-divider" />
-        {/* O subtítulo antigo dizia "clientes confirmados" — errado em dois
-            sentidos: conta atendimentos (não pessoas) e inclui os pendentes. */}
-        <div className="metric-sub up">atendimentos no período</div>
-      </div>
-      <div className="metric-card">
-        <div className="metric-label">Taxa de conversão</div>
-        <div className="metric-value" style={{ color: "var(--vx-amber)" }}>
-          {temTaxa ? (
-            <>
-              {taxa}
-              <span style={{ fontSize: "24px", opacity: 0.6 }}>%</span>
-            </>
-          ) : (
-            "—"
-          )}
+      </section>
+
+      {/* ── LENTE 2: o que ACONTECE no período ── */}
+      <section className="metrics-lente">
+        <h2 className="metrics-lente-titulo">Atendimentos {frasePeriodo}</h2>
+        <div className="metrics-grid-2">
+          <div className="metric-card">
+            <div className="metric-label">Consultas agendadas</div>
+            <div className="metric-value" style={{ color: "var(--vx-green)" }}>
+              {consultasAgendadas}
+            </div>
+            <div className="metric-divider" />
+            {/* O subtítulo antigo dizia "clientes confirmados" — errado em dois
+                sentidos: conta atendimentos (não pessoas) e inclui os pendentes. */}
+            <div className="metric-sub up">marcados para o período</div>
+          </div>
+          <div className="metric-card">
+            <div className="metric-label">Receita estimada</div>
+            <div
+              className="metric-value"
+              style={{ color: "var(--vx-accent)", fontSize: receitaSize }}
+            >
+              {receitaFmt}
+            </div>
+            <div className="metric-divider" />
+            <div className="metric-sub up">nesses atendimentos</div>
+          </div>
         </div>
-        <div className="metric-divider" />
-        <div className="metric-sub">
-          {temTaxa
-            ? `${agendaram} de ${total} captados agendaram`
-            : "nenhum lead captado no período"}
-        </div>
-      </div>
-      <div className="metric-card">
-        <div className="metric-label">Receita estimada</div>
-        <div
-          className="metric-value"
-          style={{ color: "var(--vx-accent)", fontSize: receitaSize }}
-        >
-          {receitaFmt}
-        </div>
-        <div className="metric-divider" />
-        <div className="metric-sub up">em agendamentos</div>
-      </div>
+      </section>
     </div>
   );
 }

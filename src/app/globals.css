@@ -983,12 +983,10 @@
   margin-top: 2px;
 }
 
-/* ── Filtros (pílulas) ── */
-.filter-bar {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-}
+/* ── Filtros (pílulas) ──
+   `.filter-bar` foi removida junto com as pílulas de período da Visão geral
+   (viraram a caixinha de intervalo). `.filter-btn` FICA: os modais de Agenda e
+   Campanhas ainda usam, com wrapper próprio. */
 .filter-btn {
   background: var(--vx-surface);
   border: 1px solid var(--vx-border);

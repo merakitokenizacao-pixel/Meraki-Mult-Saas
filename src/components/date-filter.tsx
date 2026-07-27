@@ -10,15 +10,22 @@ export function DateFilter({
   options,
   onChange,
   compact = false,
+  icone,
+  rotulo,
 }: {
   value: string;
   options: ReadonlyArray<readonly [string, string]>;
   onChange: (v: string) => void;
   compact?: boolean;
+  /** Ícone antes do texto (ex.: calendário na Visão geral). */
+  icone?: React.ReactNode;
+  /** Substitui o texto do gatilho — a Visão geral mostra o intervalo de datas
+   *  em vez do nome do período. O menu continua listando os nomes. */
+  rotulo?: string;
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-  const current = options.find(([v]) => v === value)?.[1] ?? value;
+  const current = rotulo ?? options.find(([v]) => v === value)?.[1] ?? value;
 
   useEffect(() => {
     if (!open) return;
@@ -45,6 +52,7 @@ export function DateFilter({
         aria-haspopup="listbox"
         aria-expanded={open}
       >
+        {icone}
         {current}
         <ChevronDown size={14} strokeWidth={1.5} className="chev" />
       </button>

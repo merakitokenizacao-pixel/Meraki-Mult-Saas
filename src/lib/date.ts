@@ -48,6 +48,35 @@ export function matchesPeriod(
   return d >= range.from && d < range.to;
 }
 
+const MESES_CURTO = [
+  "jan", "fev", "mar", "abr", "mai", "jun",
+  "jul", "ago", "set", "out", "nov", "dez",
+];
+
+/**
+ * O intervalo do período por extenso: "26 jul – 1 ago, 2026".
+ *
+ * Mostrar a DATA (e não só "Semana") tira a ambiguidade de qual janela está no
+ * ar — principalmente na semana, que aqui começa no domingo e nem todo mundo
+ * conta assim.
+ *
+ * `getDateRange` devolve `to` EXCLUSIVO, então o último dia é `to - 1ms`; usar
+ * `to` direto mostraria um dia a mais.
+ */
+export function rotuloIntervalo(period: string): string {
+  const r = getDateRange(period);
+  if (!r) return "Todo o período";
+
+  const fim = new Date(r.to.getTime() - 1);
+  const dm = (d: Date) => `${d.getDate()} ${MESES_CURTO[d.getMonth()]}`;
+
+  // Hoje/Ontem são um dia só: "27 jul, 2026" em vez de repetir a data.
+  if (r.from.toDateString() === fim.toDateString()) {
+    return `${dm(r.from)}, ${fim.getFullYear()}`;
+  }
+  return `${dm(r.from)} – ${dm(fim)}, ${fim.getFullYear()}`;
+}
+
 /**
  * Saudação pelo horário de quem está lendo.
  *

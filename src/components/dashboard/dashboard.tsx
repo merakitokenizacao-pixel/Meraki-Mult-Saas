@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { CalendarDays } from "lucide-react";
 import { useAgendamentos, useAgendamentosComLead, useLeads } from "@/lib/hooks";
-import { saudacaoDe } from "@/lib/date";
+import { rotuloIntervalo, saudacaoDe } from "@/lib/date";
+import { DateFilter } from "@/components/date-filter";
 import { MetricsGrid } from "@/components/dashboard/metrics-grid";
 import { ProximosAgendamentos } from "@/components/dashboard/proximos-agendamentos";
 import { Funnel } from "@/components/dashboard/funnel";
@@ -42,6 +44,7 @@ export function Dashboard() {
     null
   );
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+  const [intervalo, setIntervalo] = useState<string | null>(null);
 
   // Só no cliente (evita divergência de hidratação: o servidor está em UTC).
   // Reavalia a cada minuto porque o painel fica aberto o dia todo — sem isso,
@@ -52,6 +55,13 @@ export function Dashboard() {
     const t = setInterval(aplicar, 60_000);
     return () => clearInterval(t);
   }, []);
+
+  // Idem: o intervalo depende de `new Date()`, que difere entre servidor (UTC)
+  // e navegador. Enquanto for null, a caixa mostra o nome do período — que é
+  // igual nos dois lados, então a hidratação casa.
+  useEffect(() => {
+    setIntervalo(rotuloIntervalo(period));
+  }, [period]);
 
   return (
     <div className="page-fade">
@@ -71,17 +81,15 @@ export function Dashboard() {
             Visão geral do seu desempenho e atividades
           </div>
         </div>
-        <div className="filter-bar">
-          {PERIODS.map(([value, label]) => (
-            <button
-              key={value}
-              className={`filter-btn${period === value ? " active" : ""}`}
-              onClick={() => setPeriod(value)}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
+        {/* Caixa de período: mostra o INTERVALO real, não só "Semana" — tira a
+            ambiguidade de qual janela está no ar. O menu lista os nomes. */}
+        <DateFilter
+          value={period}
+          options={PERIODS}
+          onChange={setPeriod}
+          icone={<CalendarDays size={14} strokeWidth={1.6} />}
+          rotulo={intervalo ?? undefined}
+        />
       </div>
 
       {/* Métricas */}

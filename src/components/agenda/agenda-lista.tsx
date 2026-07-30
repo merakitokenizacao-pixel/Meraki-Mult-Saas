@@ -77,7 +77,15 @@ export function AgendaLista({
         (total === 0 ? (
           <p className="ag-lista-vazio">Nenhum agendamento neste período.</p>
         ) : (
-          <div className="ag-lista-corpo">
+          <>
+            {/* Cabeçalho fora do corpo rolante: fica fixo enquanto a lista rola */}
+            <div className="ag-lista-thead">
+              <span className="ag-lista-hora">Horário</span>
+              <span className="ag-lista-th-cliente">Cliente</span>
+              <span className="ag-lista-th-servico">Procedimento</span>
+              <span className="ag-lista-th-status">Status</span>
+            </div>
+            <div className="ag-lista-corpo">
             {porDia.map(([chave, doDia]) => {
               const d = new Date(doDia[0].data_agendamento);
               return (
@@ -120,14 +128,18 @@ export function AgendaLista({
                         <span className="ag-lista-servico">
                           {limparServico(a.servico)}
                         </span>
-                        <StatusBadge status={a.status} />
+                        {/* Largura fixa para alinhar com o cabeçalho "Status" */}
+                        <span className="ag-lista-status">
+                          <StatusBadge status={a.status} />
+                        </span>
                       </button>
                     );
                   })}
                 </div>
               );
             })}
-          </div>
+            </div>
+          </>
         ))}
     </div>
   );

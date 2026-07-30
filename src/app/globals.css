@@ -3449,3 +3449,208 @@ select.form-input {
     padding-left: 53px;
   }
 }
+
+/* ── Mini calendário (cabeçalho da Agenda) ─────────────────────────────── */
+.mini-cal {
+  position: relative;
+}
+.mini-cal-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 14px;
+  border: 1px solid var(--vx-border);
+  border-radius: 20px;
+  background: var(--vx-surface);
+  color: var(--vx-text2);
+  font-family: var(--font-jost), sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all var(--vx-transition);
+}
+.mini-cal-trigger:hover,
+.mini-cal-trigger.aberto {
+  border-color: var(--vx-accent);
+  color: var(--vx-text);
+}
+.mini-cal-pop {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 40;
+  width: 258px;
+  padding: 12px;
+  border: 1px solid var(--vx-border);
+  border-radius: 14px;
+  background: var(--vx-surface);
+  box-shadow: var(--vx-shadow-lg);
+}
+.mini-cal-cab {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.mini-cal-cab button {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: 7px;
+  background: none;
+  color: var(--vx-muted);
+  cursor: pointer;
+  transition: background var(--vx-transition), color var(--vx-transition);
+}
+.mini-cal-cab button:hover {
+  background: var(--vx-surface2);
+  color: var(--vx-text);
+}
+.mini-cal-mes {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--vx-text);
+  text-transform: capitalize;
+}
+.mini-cal-grade {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+.mini-cal-dow {
+  display: grid;
+  place-items: center;
+  height: 22px;
+  font-size: 9.5px;
+  font-weight: 700;
+  color: var(--vx-muted);
+}
+.mini-cal-dia {
+  position: relative;
+  height: 30px;
+  border: none;
+  border-radius: 8px;
+  background: none;
+  color: var(--vx-text);
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background var(--vx-transition), color var(--vx-transition);
+}
+.mini-cal-dia:hover {
+  background: var(--vx-surface2);
+}
+.mini-cal-dia.fora {
+  color: var(--vx-muted);
+  opacity: 0.45;
+}
+.mini-cal-dia.hoje {
+  font-weight: 700;
+  color: var(--vx-accent);
+}
+.mini-cal-dia.sel {
+  background: var(--vx-accent);
+  color: #fff;
+  font-weight: 600;
+}
+[data-theme="dark"] .mini-cal-dia.sel {
+  color: #1a1814;
+}
+/* Ponto do dia com atendimento — é o que guia a navegação para frente */
+.mini-cal-ponto {
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--vx-green);
+}
+.mini-cal-dia.sel .mini-cal-ponto {
+  background: currentColor;
+}
+.mini-cal-ponto.estatico {
+  position: static;
+  transform: none;
+  display: inline-block;
+  margin-right: 5px;
+}
+.mini-cal-rodape {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+  padding-top: 9px;
+  border-top: 1px solid var(--vx-border);
+}
+.mini-cal-legenda {
+  display: inline-flex;
+  align-items: center;
+  font-size: 10.5px;
+  color: var(--vx-muted);
+}
+.mini-cal-hoje {
+  padding: 4px 11px;
+  border: 1px solid var(--vx-border2);
+  border-radius: 7px;
+  background: none;
+  color: var(--vx-text2);
+  font-family: inherit;
+  font-size: 11.5px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.mini-cal-hoje:hover {
+  background: var(--vx-surface2);
+  color: var(--vx-text);
+}
+
+/* ── Cabeçalho de colunas da lista ── */
+.ag-lista-thead {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 9px 18px;
+  border-top: 1px solid var(--vx-border);
+  background: var(--vx-surface2);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--vx-muted);
+}
+.ag-lista-thead .ag-lista-hora {
+  color: var(--vx-muted);
+  font-family: inherit;
+  font-size: 9.5px;
+}
+/* Alinha com o nome, que vem depois do avatar (28px + 11px de gap) */
+.ag-lista-th-cliente {
+  flex: 1;
+  min-width: 0;
+  padding-left: 39px;
+}
+.ag-lista-th-servico {
+  flex: 1;
+  min-width: 0;
+}
+.ag-lista-th-status,
+.ag-lista-status {
+  width: 92px;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: flex-end;
+}
+@media (max-width: 640px) {
+  /* Sem espaço para 4 colunas: o cabeçalho sai e cada linha se explica sozinha */
+  .ag-lista-thead {
+    display: none;
+  }
+  .ag-lista-status {
+    width: auto;
+  }
+}

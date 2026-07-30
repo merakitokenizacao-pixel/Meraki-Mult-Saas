@@ -15,6 +15,7 @@ import {
 } from "@/lib/agenda";
 import { TimeGrid } from "@/components/agenda/time-grid";
 import { AgendaLista } from "@/components/agenda/agenda-lista";
+import { MiniCalendario } from "@/components/agenda/mini-calendario";
 import { MonthGrid } from "@/components/agenda/month-grid";
 import { NewAgendModal } from "@/components/agenda/new-agend-modal";
 import { EditAgendModal } from "@/components/agenda/edit-agend-modal";
@@ -137,6 +138,13 @@ export function Agenda() {
           <div className="agenda-month">{label}</div>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          {/* Pula direto para uma data, marcando os dias que têm atendimento —
+              move a grade E a lista juntas. */}
+          <MiniCalendario
+            valor={refDate}
+            onChange={setRefDate}
+            agendamentos={agendamentos}
+          />
           <DateFilter value={view} options={VIEWS} onChange={setView} />
           <button className="btn-primary" onClick={openNewAgendamento}>
             + Novo

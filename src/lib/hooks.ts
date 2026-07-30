@@ -5,7 +5,6 @@ import {
   getAgendaSlots,
   getAgendamentos,
   getAgendamentosComLead,
-  getCampanhas,
   getLeads,
   getProximasVisitas,
   getUltimaConversaPorLead,
@@ -59,6 +58,3 @@ export function useConversas() {
   });
 }
 
-export function useCampanhas() {
-  return useQuery({ queryKey: ["campanhas"], queryFn: getCampanhas });
-}

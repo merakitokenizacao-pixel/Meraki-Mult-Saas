@@ -6,7 +6,7 @@ import { ThemeScript } from "@/components/theme-script";
 import { Toaster } from "@/components/ui/sonner";
 
 // Chrome do CRM. Route group `(painel)` não aparece na URL: as rotas continuam
-// sendo /, /clientes, /conversas, /agenda e /campanhas.
+// sendo /, /clientes, /conversas, /agenda e /promocoes.
 export default function PainelLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {

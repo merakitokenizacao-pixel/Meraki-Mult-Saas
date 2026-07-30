@@ -8,11 +8,7 @@ export type LeadStatus = Loose<"novo" | "agendado" | "convertido" | "cancelado">
 export type AgendamentoStatus = Loose<
   "pendente" | "confirmado" | "cancelado" | "realizado"
 >;
-export type CampanhaStatus = Loose<
-  "rascunho" | "enviando" | "concluida" | "pausada"
->;
 export type ConversaOrigem = "cliente" | "agente" | "humano";
-export type EnvioStatus = Loose<"pendente" | "enviado" | "falhou">;
 
 export interface Lead {
   id: string;
@@ -64,25 +60,6 @@ export interface AgendamentoComLead extends Agendamento {
   leads: Pick<Lead, "nome" | "telefone" | "foto_url"> | null;
 }
 
-export interface Campanha {
-  id: string;
-  nome: string;
-  mensagem: string;
-  publico: string | null;
-  status: CampanhaStatus;
-  total: number | null;
-  enviados: number | null;
-  criado_em: string;
-}
-
-export interface CampanhaEnvio {
-  id: string;
-  campanha_id: string;
-  lead_id: string;
-  telefone: string;
-  nome: string | null;
-  status: EnvioStatus;
-}
 
 // ── fichas_avaliacao ────────────────────────────────────────────────────────
 // Dado de saúde: só trafega server-side (RLS ligada, sem policies).

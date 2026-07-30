@@ -6,7 +6,6 @@ import type {
   Conversa,
   Agendamento,
   AgendamentoComLead,
-  Campanha,
 } from "@/types/db";
 
 // ── Leads ──
@@ -48,19 +47,6 @@ export async function getLeadById(id: string): Promise<Lead | null> {
     .maybeSingle();
   if (error) throw error;
   return (data as Lead) ?? null;
-}
-
-// Subconjunto de colunas usado para montar o público de campanhas.
-export type LeadParaCampanha = Pick<
-  Lead,
-  "id" | "nome" | "telefone" | "aceita_campanha" | "ultima_interacao" | "criado_em"
->;
-export async function getLeadsParaCampanha(): Promise<LeadParaCampanha[]> {
-  const { data, error } = await supabase
-    .from("leads")
-    .select("id,nome,telefone,aceita_campanha,ultima_interacao,criado_em");
-  if (error) throw error;
-  return (data ?? []) as LeadParaCampanha[];
 }
 
 // ── Disponibilidade da agenda (FONTE ÚNICA: o banco) ──
@@ -235,55 +221,4 @@ export async function getConversasByLead(leadId: string): Promise<Conversa[]> {
     .order("enviado_em", { ascending: true });
   if (error) throw error;
   return (data ?? []) as Conversa[];
-}
-
-// ── Campanhas ──
-export async function getCampanhas(): Promise<Campanha[]> {
-  const { data, error } = await supabase
-    .from("campanhas")
-    .select("*")
-    .order("criado_em", { ascending: false });
-  if (error) throw error;
-  return (data ?? []) as Campanha[];
-}
-
-export async function createCampanha(fields: {
-  nome: string;
-  mensagem: string;
-  publico: string;
-  status: string;
-  total: number;
-  enviados: number;
-}): Promise<Campanha> {
-  const { data, error } = await supabase
-    .from("campanhas")
-    .insert(fields)
-    .select()
-    .single();
-  if (error || !data) throw error ?? new Error("Falha ao criar campanha");
-  return data as Campanha;
-}
-
-export async function insertCampanhaEnvios(
-  lote: Array<{
-    campanha_id: string;
-    lead_id: string;
-    telefone: string;
-    nome: string | null;
-    status: string;
-  }>
-): Promise<void> {
-  const { error } = await supabase.from("campanha_envios").insert(lote);
-  if (error) throw error;
-}
-
-export async function updateCampanhaTotal(
-  id: string,
-  total: number
-): Promise<void> {
-  const { error } = await supabase
-    .from("campanhas")
-    .update({ total })
-    .eq("id", id);
-  if (error) throw error;
 }

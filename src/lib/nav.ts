@@ -3,7 +3,6 @@ import {
   Users,
   MessageCircle,
   CalendarDays,
-  Send,
   Settings,
   Tag,
   Undo2,
@@ -31,7 +30,6 @@ export const NAV_ITEMS: NavItem[] = [
   { href: "/clientes", label: "Clientes", icon: Users, title: "Clientes" },
   { href: "/conversas", label: "Conversas", icon: MessageCircle, title: "Conversas" },
   { href: "/agenda", label: "Agenda", icon: CalendarDays, title: "Agenda" },
-  { href: "/campanhas", label: "Campanhas", icon: Send, title: "Campanhas" },
   { href: "/promocoes", label: "Promoções", icon: Tag, title: "Promoções" },
   { href: "/follow-ups", label: "Follow-ups", icon: Undo2, title: "Follow-ups" },
 ];

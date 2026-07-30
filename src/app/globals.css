@@ -3285,3 +3285,167 @@ select.form-input {
     grid-template-columns: 1fr;
   }
 }
+
+/* Evento em célula compartilhada: com 2-3 no mesmo horário, cada um fica
+   estreito — corta o respiro e o tamanho para o nome ainda caber. */
+.agenda-event.dividido {
+  padding: 3px 4px;
+}
+.agenda-event.dividido .agenda-event-time {
+  font-size: 8.5px;
+}
+.agenda-event.dividido .agenda-event-name {
+  font-size: 9.5px;
+  line-height: 1.15;
+}
+
+/* ── Lista de agendamentos (abaixo da grade) ────────────────────────────── */
+.ag-lista {
+  margin-top: 14px;
+  background: var(--vx-surface);
+  border: 1px solid var(--vx-border);
+  border-radius: var(--vx-radius-lg);
+  overflow: hidden;
+}
+.ag-lista-cab {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px 18px;
+  border: none;
+  background: none;
+  color: var(--vx-text2);
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background var(--vx-transition);
+}
+.ag-lista-cab:hover {
+  background: var(--vx-surface2);
+}
+.ag-lista-titulo {
+  font-weight: 600;
+  color: var(--vx-text);
+}
+.ag-lista-contador {
+  display: grid;
+  place-items: center;
+  min-width: 22px;
+  height: 20px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: var(--vx-surface3);
+  font-family: var(--font-jetbrains), monospace;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--vx-text2);
+}
+.ag-lista-chev {
+  margin-left: auto;
+  transition: transform var(--vx-transition);
+}
+.ag-lista-chev.aberta {
+  transform: rotate(180deg);
+}
+.ag-lista-vazio {
+  padding: 0 18px 18px;
+  font-size: 12.5px;
+  color: var(--vx-muted);
+}
+.ag-lista-corpo {
+  border-top: 1px solid var(--vx-border);
+  max-height: 460px;
+  overflow-y: auto;
+}
+.ag-lista-dia-cab {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  padding: 12px 18px 8px;
+  background: var(--vx-surface2);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+.ag-lista-dia-num {
+  font-family: var(--font-cormorant), serif;
+  font-size: 19px;
+  color: var(--vx-accent);
+  line-height: 1;
+}
+.ag-lista-dia-mes {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--vx-muted);
+}
+.ag-lista-dia-nome {
+  font-size: 12px;
+  color: var(--vx-text2);
+}
+.ag-lista-dia-qtd {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--vx-muted);
+}
+.ag-lista-item {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  padding: 9px 18px;
+  border: none;
+  border-bottom: 1px solid var(--vx-border);
+  background: none;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--vx-transition);
+}
+.ag-lista-item:hover {
+  background: var(--vx-surface2);
+}
+.ag-lista-item.cancelado {
+  opacity: 0.5;
+}
+.ag-lista-item.cancelado .ag-lista-nome {
+  text-decoration: line-through;
+}
+.ag-lista-hora {
+  font-family: var(--font-jetbrains), monospace;
+  font-size: 11.5px;
+  color: var(--vx-accent);
+  width: 42px;
+  flex-shrink: 0;
+}
+.ag-lista-nome {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--vx-text);
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ag-lista-servico {
+  font-size: 12px;
+  color: var(--vx-muted);
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* No celular o serviço quebra para baixo do nome em vez de espremer os dois */
+@media (max-width: 640px) {
+  .ag-lista-item {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .ag-lista-servico {
+    flex-basis: 100%;
+    padding-left: 53px;
+  }
+}

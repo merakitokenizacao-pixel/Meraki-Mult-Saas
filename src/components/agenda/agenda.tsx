@@ -14,6 +14,7 @@ import {
   startOfDay,
 } from "@/lib/agenda";
 import { TimeGrid } from "@/components/agenda/time-grid";
+import { AgendaLista } from "@/components/agenda/agenda-lista";
 import { MonthGrid } from "@/components/agenda/month-grid";
 import { NewAgendModal } from "@/components/agenda/new-agend-modal";
 import { EditAgendModal } from "@/components/agenda/edit-agend-modal";
@@ -65,6 +66,27 @@ export function Agenda() {
     for (const s of slotsQuery.data ?? []) m.set(`${s.data}|${s.hora}`, s);
     return m;
   }, [slotsQuery.data]);
+
+  // Agendamentos da janela que está na tela — a lista abaixo da grade mostra
+  // exatamente o mesmo recorte que a grade desenha, incluindo a visão de Mês
+  // (onde `days` não se aplica).
+  const doPeriodoVisivel = useMemo(() => {
+    let ini: Date, fim: Date;
+    if (view === "mes") {
+      ini = new Date(refDate.getFullYear(), refDate.getMonth(), 1);
+      fim = new Date(refDate.getFullYear(), refDate.getMonth() + 1, 1);
+    } else {
+      ini = new Date(days[0]);
+      ini.setHours(0, 0, 0, 0);
+      fim = new Date(days[days.length - 1]);
+      fim.setHours(24, 0, 0, 0);
+    }
+    return agendamentos.filter((a) => {
+      if (!a.data_agendamento) return false;
+      const t = new Date(a.data_agendamento).getTime();
+      return t >= ini.getTime() && t < fim.getTime();
+    });
+  }, [agendamentos, view, refDate, days]);
 
   const label = useMemo(() => {
     if (view === "dia") return dayLabel(refDate);
@@ -144,6 +166,14 @@ export function Agenda() {
           />
         )}
       </div>
+
+      {/* Lista do período visível — a leitura completa, sem o aperto da grade */}
+      {!loading && (
+        <AgendaLista
+          agendamentos={doPeriodoVisivel}
+          onEventClick={setEditAgend}
+        />
+      )}
 
       <NewAgendModal
         open={newOpen}

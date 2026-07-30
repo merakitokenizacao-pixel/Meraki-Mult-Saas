@@ -16,6 +16,24 @@ type PositionedEvent = {
   servico: string;
 };
 
+/**
+ * Posiciona N eventos que caem na MESMA célula lado a lado, dividindo a
+ * largura — como faz um calendário de verdade.
+ *
+ * Antes todos recebiam `left: 3px; right: 3px` do CSS e o mesmo `top`, então
+ * ficavam empilhados no mesmo pixel e só o último aparecia. Com 3 profissionais
+ * atendendo às 15h, a agenda mostrava uma cliente e escondia duas.
+ */
+function larguraLadoALado(idx: number, total: number) {
+  if (total <= 1) return undefined;
+  const vao = 2; // respiro entre os cartões
+  return {
+    left: `calc(3px + ${idx} * ((100% - 6px) / ${total}))`,
+    width: `calc((100% - 6px) / ${total} - ${vao}px)`,
+    right: "auto" as const,
+  };
+}
+
 // Grade de horários (hora × dias) que serve tanto para a visão de Semana
 // (7 dias) quanto de Dia (1 dia).
 //
@@ -170,21 +188,36 @@ export function TimeGrid({
                       {lotado ? "cheio" : `${slot.livres}/${slot.capacidade}`}
                     </span>
                   )}
-                  {events.map((ev) => (
-                    <div
-                      key={ev.agend.id}
-                      className={`agenda-event ${ev.agend.status}`}
-                      style={{ top: ev.top, height: ev.height }}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onEventClick(ev.agend);
-                      }}
-                    >
-                      <div className="agenda-event-time">{ev.time}</div>
-                      <div className="agenda-event-name">{ev.nome}</div>
-                      <div className="agenda-event-service">{ev.servico}</div>
-                    </div>
-                  ))}
+                  {events.map((ev, i) => {
+                    const dividido = events.length > 1;
+                    return (
+                      <div
+                        key={ev.agend.id}
+                        className={`agenda-event ${ev.agend.status}${
+                          dividido ? " dividido" : ""
+                        }`}
+                        style={{
+                          top: ev.top,
+                          height: ev.height,
+                          ...larguraLadoALado(i, events.length),
+                        }}
+                        title={`${ev.time} · ${ev.nome} · ${ev.servico}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onEventClick(ev.agend);
+                        }}
+                      >
+                        <div className="agenda-event-time">{ev.time}</div>
+                        <div className="agenda-event-name">{ev.nome}</div>
+                        {/* Com a célula dividida não cabe o serviço — o nome é
+                            o que identifica; o detalhe fica no tooltip e na
+                            lista abaixo da grade. */}
+                        {!dividido && (
+                          <div className="agenda-event-service">{ev.servico}</div>
+                        )}
+                      </div>
+                    );
+                  })}
                   {nowLine?.key === cellKey && (
                     <div className="agenda-now-line" style={{ top: nowLine.top }} />
                   )}

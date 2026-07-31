@@ -32,14 +32,18 @@ const VIEWS: ReadonlyArray<[string, string]> = [
 export function Agenda() {
   const qc = useQueryClient();
   const agendQuery = useAgendamentosComLead();
-  const leadsQuery = useLeads();
+  const [view, setView] = useState("semana");
+  const [refDate, setRefDate] = useState<Date>(() => new Date());
+  const [newOpen, setNewOpen] = useState(false);
+
+  // A lista de leads serve só ao combobox do modal de novo agendamento. Baixar
+  // os ~375 leads inteiros na abertura da Agenda, para um modal que pode nem
+  // ser aberto, era o maior desperdício da tela.
+  const leadsQuery = useLeads({ enabled: newOpen });
   const agendamentos = agendQuery.data ?? [];
   const leads = leadsQuery.data ?? [];
   const loading = agendQuery.isPending;
 
-  const [view, setView] = useState("semana");
-  const [refDate, setRefDate] = useState<Date>(() => new Date());
-  const [newOpen, setNewOpen] = useState(false);
   const [prefill, setPrefill] = useState({ data: "", hora: "" });
   const [editAgend, setEditAgend] = useState<AgendamentoComLead | null>(null);
 
@@ -187,6 +191,7 @@ export function Agenda() {
         open={newOpen}
         onClose={() => setNewOpen(false)}
         leads={leads}
+        leadsLoading={leadsQuery.isPending}
         prefill={prefill}
         onCreated={refresh}
       />

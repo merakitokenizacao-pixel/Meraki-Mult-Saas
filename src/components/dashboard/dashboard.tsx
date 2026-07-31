@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { CalendarDays } from "lucide-react";
-import { useAgendamentos, useAgendamentosComLead, useLeads } from "@/lib/hooks";
+import { useAgendamentosComLead, useLeads } from "@/lib/hooks";
 import { rotuloIntervalo, saudacaoDe } from "@/lib/date";
 import { DateFilter } from "@/components/date-filter";
 import { MetricsGrid } from "@/components/dashboard/metrics-grid";
@@ -32,11 +32,15 @@ function Spinner() {
 
 export function Dashboard() {
   const leadsQuery = useLeads();
-  const agendamentosQuery = useAgendamentos();
+  // Uma única busca de agendamentos. Antes esta tela pedia a MESMA tabela duas
+  // vezes na mesma renderização (useAgendamentos + useAgendamentosComLead),
+  // com queryKeys diferentes, então nem o cache aproveitava. Como
+  // AgendamentoComLead estende Agendamento, a versão com join serve os dois
+  // usos: só ela traz o nome do cliente, que "Próximos agendamentos" precisa.
   const agendComLeadQuery = useAgendamentosComLead();
   const leads = leadsQuery.data ?? [];
-  const agendamentos = agendamentosQuery.data ?? [];
   const agendComLead = agendComLeadQuery.data ?? [];
+  const agendamentos = agendComLead;
   const loading = leadsQuery.isPending;
 
   const [period, setPeriod] = useState("hoje");

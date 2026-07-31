@@ -1,6 +1,7 @@
 // Funções de acesso ao Supabase reutilizáveis pelas telas.
 // Espelham as queries do legacy (mesmas tabelas, ordenações e joins).
 import { supabase } from "@/lib/supabase";
+import { buscarTodasAsPaginas } from "@/lib/paginar";
 import type {
   Lead,
   Conversa,
@@ -8,14 +9,22 @@ import type {
   AgendamentoComLead,
 } from "@/types/db";
 
+// Sobre o teto de 1.000 linhas do PostgREST e por que estas buscas são
+// paginadas (e sempre com ordenação determinística), ver src/lib/paginar.ts.
+
 // ── Leads ──
+// Consumida por Visão geral (métricas e funil), Clientes, Conversas e Agenda —
+// todas precisam do conjunto completo, senão a taxa de conversão e o funil
+// passam a mentir. Hoje são ~375; o corte começaria em 1.000.
 export async function getLeads(): Promise<Lead[]> {
-  const { data, error } = await supabase
-    .from("leads")
-    .select("*")
-    .order("criado_em", { ascending: false });
-  if (error) throw error;
-  return (data ?? []) as Lead[];
+  return buscarTodasAsPaginas<Lead>((de, ate) =>
+    supabase
+      .from("leads")
+      .select("*")
+      .order("criado_em", { ascending: false })
+      .order("id", { ascending: false })
+      .range(de, ate)
+  );
 }
 
 // Atualiza campos de um lead (nao_lidas, ia_pausada, etc.). Lança em erro.
@@ -122,17 +131,23 @@ export type ProximaVisita = {
 };
 export async function getProximasVisitas(): Promise<ProximaVisita[]> {
   const nowIso = new Date().toISOString();
-  const { data, error } = await supabase
-    .from("agendamentos")
-    .select("lead_id, data_agendamento, servico")
-    .gte("data_agendamento", nowIso)
-    .neq("status", "cancelado")
-    .order("data_agendamento", { ascending: true });
-  if (error) throw error;
+  // Ordem CRESCENTE: o corte descartaria os agendamentos mais distantes, e
+  // como a redução pega a 1ª ocorrência por lead, um cliente com muitas
+  // marcações futuras poderia empurrar outros para fora da lista.
+  const data = await buscarTodasAsPaginas<ProximaVisita>((de, ate) =>
+    supabase
+      .from("agendamentos")
+      .select("lead_id, data_agendamento, servico")
+      .gte("data_agendamento", nowIso)
+      .neq("status", "cancelado")
+      .order("data_agendamento", { ascending: true })
+      .order("id", { ascending: true })
+      .range(de, ate)
+  );
 
   const vistos = new Set<string>();
   const proximas: ProximaVisita[] = [];
-  for (const a of (data ?? []) as ProximaVisita[]) {
+  for (const a of data) {
     if (!a.lead_id || vistos.has(a.lead_id)) continue; // 1ª ocorrência = mais próxima
     vistos.add(a.lead_id);
     proximas.push(a);
@@ -141,18 +156,28 @@ export async function getProximasVisitas(): Promise<ProximaVisita[]> {
 }
 
 export async function getAgendamentos(): Promise<Agendamento[]> {
-  const { data, error } = await supabase.from("agendamentos").select("*");
-  if (error) throw error;
-  return (data ?? []) as Agendamento[];
+  return buscarTodasAsPaginas<Agendamento>((de, ate) =>
+    supabase
+      .from("agendamentos")
+      .select("*")
+      .order("data_agendamento", { ascending: true })
+      .order("id", { ascending: true })
+      .range(de, ate)
+  );
 }
 
+// Ordem CRESCENTE: aqui o corte é o pior de todos, porque descartaria o
+// FUTURO — a agenda perderia silenciosamente as marcações que ainda vão
+// acontecer, que é justamente o que a tela existe para mostrar.
 export async function getAgendamentosComLead(): Promise<AgendamentoComLead[]> {
-  const { data, error } = await supabase
-    .from("agendamentos")
-    .select("*, leads(nome, telefone, foto_url)")
-    .order("data_agendamento", { ascending: true });
-  if (error) throw error;
-  return (data ?? []) as AgendamentoComLead[];
+  return buscarTodasAsPaginas<AgendamentoComLead>((de, ate) =>
+    supabase
+      .from("agendamentos")
+      .select("*, leads(nome, telefone, foto_url)")
+      .order("data_agendamento", { ascending: true })
+      .order("id", { ascending: true })
+      .range(de, ate)
+  );
 }
 
 export async function insertAgendamento(fields: {
@@ -193,24 +218,22 @@ export async function getAgendamentosByLead(
 }
 
 // ── Conversas ──
-export async function getConversas(): Promise<Conversa[]> {
-  const { data, error } = await supabase
-    .from("conversas")
-    .select("*")
-    .order("enviado_em", { ascending: true });
-  if (error) throw error;
-  return (data ?? []) as Conversa[];
-}
+// (getConversas — `select *` ascendente sobre a tabela inteira — foi removida:
+// não tinha consumidor e era o pior caso do teto de 1.000, devolveria as
+// mensagens MAIS ANTIGAS de toda a base. O inbox usa a view abaixo e o chat
+// usa getConversasByLead.)
 
-// Última mensagem por lead (view no banco). O inbox só precisa disso para
-// preview/ordenação — evita puxar TODAS as mensagens (que o PostgREST corta
-// em 1000 e quebraria previews conforme a base cresce).
+// Última mensagem por lead (view no banco): 1 linha por lead. O inbox só
+// precisa disso para preview e ordenação. Ordenada por `lead_id`, que é único
+// nesta view (distinct on) — é o que torna a paginação estável.
 export async function getUltimaConversaPorLead(): Promise<Conversa[]> {
-  const { data, error } = await supabase
-    .from("conversa_ultima_por_lead")
-    .select("*");
-  if (error) throw error;
-  return (data ?? []) as Conversa[];
+  return buscarTodasAsPaginas<Conversa>((de, ate) =>
+    supabase
+      .from("conversa_ultima_por_lead")
+      .select("*")
+      .order("lead_id", { ascending: true })
+      .range(de, ate)
+  );
 }
 
 // Tamanho do lote do chat. O WhatsApp faz o mesmo: abre no fim da conversa e

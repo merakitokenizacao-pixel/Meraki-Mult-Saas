@@ -16,8 +16,16 @@ import {
 // sem alterá-las — só adicionam cache/dedupe/estado de loading e erro.
 // queryKeys dos agendamentos compartilham o prefixo ["agendamentos"], então
 // invalidar esse prefixo atualiza tanto a lista simples quanto a com join.
-export function useLeads() {
-  return useQuery({ queryKey: ["leads"], queryFn: getLeads });
+// `enabled` existe para quem só precisa dos leads sob demanda (a Agenda, que
+// usa a lista apenas no combobox de um modal que pode nem abrir). A queryKey é
+// a mesma das outras telas, então quando o cache já está quente o modal abre
+// preenchido na hora — desabilitado não significa vazio, significa "não busque".
+export function useLeads(opcoes: { enabled?: boolean } = {}) {
+  return useQuery({
+    queryKey: ["leads"],
+    queryFn: getLeads,
+    enabled: opcoes.enabled ?? true,
+  });
 }
 
 export function useAgendamentos() {

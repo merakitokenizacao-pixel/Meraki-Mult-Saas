@@ -23,12 +23,15 @@ export function NewAgendModal({
   open,
   onClose,
   leads,
+  leadsLoading = false,
   prefill,
   onCreated,
 }: {
   open: boolean;
   onClose: () => void;
   leads: Lead[];
+  /** A lista só é buscada quando o modal abre — pode chegar um instante depois. */
+  leadsLoading?: boolean;
   prefill: { data: string; hora: string };
   onCreated: () => void;
 }) {
@@ -142,7 +145,16 @@ export function NewAgendModal({
       <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
         <div>
           <label className="form-label">Cliente</label>
-          <LeadCombobox leads={leads} value={leadId} onChange={setLeadId} />
+          {leadsLoading && leads.length === 0 ? (
+            <div
+              className="form-input"
+              style={{ color: "var(--vx-muted)", fontSize: 12 }}
+            >
+              Carregando clientes…
+            </div>
+          ) : (
+            <LeadCombobox leads={leads} value={leadId} onChange={setLeadId} />
+          )}
         </div>
         <div>
           <label className="form-label">Servico</label>

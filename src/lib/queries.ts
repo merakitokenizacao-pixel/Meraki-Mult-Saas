@@ -213,12 +213,36 @@ export async function getUltimaConversaPorLead(): Promise<Conversa[]> {
   return (data ?? []) as Conversa[];
 }
 
-export async function getConversasByLead(leadId: string): Promise<Conversa[]> {
-  const { data, error } = await supabase
+// Tamanho do lote do chat. O WhatsApp faz o mesmo: abre no fim da conversa e
+// o histórico antigo vem sob demanda.
+export const CONVERSAS_PAGINA = 50;
+
+// Histórico do chat, do MAIS RECENTE para trás.
+//
+// O PostgREST devolve no máximo 1.000 linhas e NÃO sinaliza quando corta — sem
+// erro, sem status diferente. Ordenar crescente sem limite, portanto, jogava
+// fora exatamente o que interessa: o fim da conversa. Medido em produção: o
+// lead com 1.075 mensagens parava em 29/07 17:17 e as 75 mais recentes (até
+// 31/07 19:13) simplesmente não existiam para a tela.
+//
+// A busca é decrescente e o array volta INVERTIDO, então quem consome continua
+// recebendo ordem cronológica e nada a jusante muda (separadores de dia,
+// scroll, bolha otimista).
+export async function getConversasByLead(
+  leadId: string,
+  opcoes: { antesDe?: string; limite?: number } = {}
+): Promise<Conversa[]> {
+  const { antesDe, limite = CONVERSAS_PAGINA } = opcoes;
+  let q = supabase
     .from("conversas")
     .select("*")
     .eq("lead_id", leadId)
-    .order("enviado_em", { ascending: true });
+    .order("enviado_em", { ascending: false })
+    .limit(limite);
+  // Cursor: continua a partir da mais antiga já carregada. Por cursor, e não
+  // por deslocamento (.range), o custo não cresce conforme o usuário sobe.
+  if (antesDe) q = q.lt("enviado_em", antesDe);
+  const { data, error } = await q;
   if (error) throw error;
-  return (data ?? []) as Conversa[];
+  return ((data ?? []) as Conversa[]).reverse();
 }

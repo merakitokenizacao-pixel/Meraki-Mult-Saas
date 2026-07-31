@@ -76,6 +76,21 @@ export function Conversas() {
     return ordenadas;
   }, [chatQuery.data]);
 
+  // Mensagem que chega na conversa ABERTA já está sendo lida. O n8n incrementa
+  // `nao_lidas` sem saber o que está na tela do navegador — quem tem essa
+  // informação é o front, então é ele que zera. Idempotente: só age quando o
+  // contador está acima de zero, então não entra em laço com o refetch.
+  useEffect(() => {
+    if (!currentLeadId) return;
+    const atual = leads.find((l) => l.id === currentLeadId);
+    if (!atual || (Number(atual.nao_lidas) || 0) === 0) return;
+    setLeads((prev) =>
+      prev.map((l) => (l.id === currentLeadId ? { ...l, nao_lidas: 0 } : l))
+    );
+    updateLead(currentLeadId, { nao_lidas: 0 }).catch(() => {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chatMessages, currentLeadId, leads]);
+
   // Some com a bolha otimista assim que a versão persistida chega pelo n8n —
   // senão a mensagem enviada apareceria duas vezes depois do refetch.
   useEffect(() => {

@@ -3,8 +3,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
-import { getConversasByLead, getLeadById, updateLead } from "@/lib/queries";
-import { useAgendamentos, useConversas, useLeads } from "@/lib/hooks";
+import { getLeadById, updateLead } from "@/lib/queries";
+import {
+  useAgendamentos,
+  useConversas,
+  useConversasDoLead,
+  useLeads,
+} from "@/lib/hooks";
 import { supabase } from "@/lib/supabase";
 import { matchesPeriod } from "@/lib/date";
 import { isLeadInativo, isLeadPaused, lastMsgInfo } from "@/lib/conversa";
@@ -43,11 +48,31 @@ export function Conversas() {
   const [tab, setTab] = useState<InboxTab>("tudo");
   const [period, setPeriod] = useState("tudo");
   const [currentLeadId, setCurrentLeadId] = useState<string | null>(null);
-  const [chatMessages, setChatMessages] = useState<Conversa[]>([]);
-  const [chatLoading, setChatLoading] = useState(false);
   const [pendingMsgs, setPendingMsgs] = useState<PendingMsg[]>([]);
   const [sending, setSending] = useState(false);
   const [panelOpen, setPanelOpen] = useState(false);
+
+  // O chat aberto também é cache (prefixo ["conversas"]), então o realtime o
+  // atualiza junto com a lista. Antes era estado local carregado no clique: a
+  // mensagem nova aparecia na lista e a conversa na tela ficava congelada.
+  const chatQuery = useConversasDoLead(currentLeadId);
+  const chatMessages = useMemo(() => chatQuery.data ?? [], [chatQuery.data]);
+  const chatLoading = Boolean(currentLeadId) && chatQuery.isPending;
+
+  // Some com a bolha otimista assim que a versão persistida chega pelo n8n —
+  // senão a mensagem enviada apareceria duas vezes depois do refetch.
+  useEffect(() => {
+    setPendingMsgs((prev) => {
+      if (prev.length === 0) return prev;
+      const restantes = prev.filter(
+        (p) =>
+          !chatMessages.some(
+            (m) => m.origem === "humano" && m.mensagem === p.mensagem
+          )
+      );
+      return restantes.length === prev.length ? prev : restantes;
+    });
+  }, [chatMessages]);
 
   // Painel do cliente aberto por padrão em telas largas (>= 1440px).
   useEffect(() => {
@@ -134,23 +159,17 @@ export function Conversas() {
       updateLead(leadId, { nao_lidas: 0 }).catch(() => {});
     }
 
-    setChatLoading(true);
-    setChatMessages([]);
+    // As mensagens vêm do cache (useConversasDoLead reage ao currentLeadId).
+    // Aqui só refrescamos o lead em si.
     try {
-      const [fresh, msgs] = await Promise.all([
-        getLeadById(leadId),
-        getConversasByLead(leadId),
-      ]);
+      const fresh = await getLeadById(leadId);
       if (fresh) {
         setLeads((prev) =>
           prev.map((l) => (l.id === leadId ? { ...l, ...fresh } : l))
         );
       }
-      setChatMessages(msgs);
     } catch {
       /* silencioso, como o legacy */
-    } finally {
-      setChatLoading(false);
     }
   }
 

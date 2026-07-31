@@ -22,16 +22,21 @@ export function Avatar({
   className?: string;
   style?: React.CSSProperties;
 }) {
-  const [erro, setErro] = useState(false);
+  // Guarda a URL que falhou, não um booleano: as fotos do WhatsApp
+  // (pps.whatsapp.net) EXPIRAM em poucos dias, então onError é rotina. Com um
+  // booleano, o primeiro link vencido envenenava a instância — e onde o Avatar
+  // é reaproveitado (cabeçalho do chat, painel de detalhes) todo cliente
+  // seguinte caía nas iniciais, mesmo com foto válida.
+  const [urlComErro, setUrlComErro] = useState<string | null>(null);
   const [bg, fg] = getAvatarColors(nome);
   const hasFoto = fotoUrl != null && !INVALID_FOTO.has(fotoUrl);
 
-  if (hasFoto && !erro) {
+  if (hasFoto && urlComErro !== fotoUrl) {
     return (
       <img
         src={fotoUrl as string}
         alt={nome ?? ""}
-        onError={() => setErro(true)}
+        onError={() => setUrlComErro(fotoUrl as string)}
         className={className}
         style={{
           width: size,

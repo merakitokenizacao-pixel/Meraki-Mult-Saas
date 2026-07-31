@@ -5,6 +5,7 @@ import {
   getAgendaSlots,
   getAgendamentos,
   getAgendamentosComLead,
+  getConversasByLead,
   getLeads,
   getProximasVisitas,
   getUltimaConversaPorLead,
@@ -55,6 +56,19 @@ export function useConversas() {
   return useQuery({
     queryKey: ["conversas"],
     queryFn: getUltimaConversaPorLead,
+  });
+}
+
+// Histórico completo de UM lead (o chat aberto). Compartilha o prefixo
+// ["conversas"], então o realtime — que invalida esse prefixo quando o n8n ou a
+// cliente grava — também atualiza a conversa que está na tela. Antes isso era
+// estado local carregado uma vez no clique: a lista recebia a mensagem nova e o
+// chat aberto ficava parado.
+export function useConversasDoLead(leadId: string | null) {
+  return useQuery({
+    queryKey: ["conversas", "lead", leadId],
+    queryFn: () => getConversasByLead(leadId as string),
+    enabled: Boolean(leadId),
   });
 }
 

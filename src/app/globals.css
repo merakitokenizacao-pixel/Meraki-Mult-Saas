@@ -2,8 +2,12 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-/* Tema escuro acionado por [data-theme="dark"] no <html> (igual ao legacy) */
-@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+/* O <html> carrega DOIS atributos (ver src/lib/tema.ts):
+     data-mode="light|dark" → o estrutural (contraste, sombras, o variant `dark:`)
+     data-theme="<id>"      → qual PALETA está em uso
+   Por isso o variant escuro olha para o MODO, não para a paleta: assim um tema
+   escuro novo herda todo o comportamento e só precisa declarar seus tokens. */
+@custom-variant dark (&:where([data-mode="dark"], [data-mode="dark"] *));
 
 @theme inline {
   /* Fontes do legacy: Cormorant (serif/títulos), Jost (texto), JetBrains (mono) */
@@ -58,6 +62,7 @@
   --color-vx-accent: var(--vx-accent);
   --color-vx-accent2: var(--vx-accent2);
   --color-vx-accent-light: var(--vx-accent-light);
+  --color-vx-on-accent: var(--vx-on-accent);
   --color-vx-gold: var(--vx-gold);
   --color-vx-gold-light: var(--vx-gold-light);
   --color-vx-green: var(--vx-green);
@@ -113,6 +118,11 @@
   --vx-shadow-sm: 0 1px 3px rgba(26, 24, 20, 0.05);
   --vx-shadow-md: 0 6px 20px rgba(26, 24, 20, 0.07);
   --vx-shadow-lg: 0 16px 48px rgba(26, 24, 20, 0.1);
+  /* Texto sobre superfície pintada de accent (botão primário, dia selecionado).
+     No claro o accent é escuro → texto branco; nos escuros, o inverso. */
+  --vx-on-accent: #ffffff;
+  /* A sidebar é sempre escura, mas o TOM acompanha a paleta. */
+  --vx-sidebar-bg: linear-gradient(180deg, #1a1510 0%, #0f0d09 100%);
   --vx-radius: 12px;
   --vx-radius-sm: 8px;
   --vx-radius-lg: 18px;
@@ -186,12 +196,62 @@
   --vx-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
   --vx-shadow-md: 0 6px 20px rgba(0, 0, 0, 0.4);
   --vx-shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.5);
+  --vx-on-accent: #1a1814;
+  --vx-sidebar-bg: linear-gradient(180deg, #0d0b08 0%, #080706 100%);
 
   /* Ajustes de contraste shadcn no escuro (btn-primary usa texto escuro) */
   --primary: var(--vx-accent);
   --primary-foreground: #1a1814;
   --sidebar-primary: var(--vx-accent);
   --sidebar-primary-foreground: #1a1814;
+}
+
+/* ── TEMA GRAFITE ([data-theme="graphite"]) ──────────────────────────────────
+   Mesmo modo escuro, paleta diferente: a base é NEUTRA (cinzas sem tingimento,
+   levemente frios). É essa neutralidade que libera as cores — no bege escuro
+   verde, âmbar e vermelho brigam com o marrom do fundo e saem lavados; aqui
+   eles aparecem. O dourado continua sendo a assinatura da marca e, por
+   contraste com o cinza frio, fica mais forte do que nos outros dois temas.
+   ─────────────────────────────────────────────────────────────────────────── */
+[data-theme="graphite"] {
+  --vx-bg: #0a0a0c;
+  --vx-surface: #131316;
+  --vx-surface2: #1a1a1e;
+  --vx-surface3: #232328;
+  --vx-border: #26262c;
+  --vx-border2: #3a3a42;
+  --vx-text: #f4f4f5;
+  --vx-text2: #c7c7ce;
+  --vx-muted: #85858f;
+  --vx-accent: #d4ac72;
+  --vx-accent2: #e2bf8c;
+  --vx-accent-light: #211c14;
+  --vx-gold: #d9b978;
+  --vx-gold-light: #1e1a11;
+  /* Cores funcionais saturadas: aqui elas são informação, não decoração. */
+  --vx-green: #3ecf8e;
+  --vx-green-bg: #0e2119;
+  --vx-amber: #f0a83c;
+  --vx-amber-bg: #241a09;
+  --vx-red: #f2565c;
+  --vx-red-bg: #281114;
+  --vx-blue: #5aa2f5;
+  --vx-blue-bg: #0e1a2e;
+  --vx-purple: #a68bfa;
+  --vx-purple-bg: #191333;
+  /* "Fechado" escurece (o fundo já é escuro); a listra clareia de leve. */
+  --vx-fechado-bg: rgba(0, 0, 0, 0.36);
+  --vx-fechado-stripe: rgba(244, 244, 245, 0.045);
+  --vx-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
+  --vx-shadow-md: 0 6px 20px rgba(0, 0, 0, 0.55);
+  --vx-shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.65);
+  --vx-on-accent: #12100c;
+  --vx-sidebar-bg: linear-gradient(180deg, #141416 0%, #09090b 100%);
+
+  --primary: var(--vx-accent);
+  --primary-foreground: #12100c;
+  --sidebar-primary: var(--vx-accent);
+  --sidebar-primary-foreground: #12100c;
 }
 
 @layer base {
@@ -231,7 +291,7 @@
 .sidebar {
   width: var(--vx-sidebar-w, 260px);
   flex-shrink: 0;
-  background: linear-gradient(180deg, #1a1510 0%, #0f0d09 100%);
+  background: var(--vx-sidebar-bg);
   display: flex;
   flex-direction: column;
   position: fixed;
@@ -251,10 +311,6 @@
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(184, 149, 90, 0.6), transparent);
 }
-[data-theme="dark"] .sidebar {
-  background: linear-gradient(180deg, #0d0b08 0%, #080706 100%);
-}
-
 .sidebar-logo {
   padding: 2rem 1.5rem 1.75rem;
   border-bottom: 1px solid rgba(184, 149, 90, 0.12);
@@ -1008,11 +1064,10 @@
 .filter-btn.active {
   background: var(--vx-accent2);
   border-color: var(--vx-accent2);
-  color: #fff;
+  color: var(--vx-on-accent);
 }
-[data-theme="dark"] .filter-btn.active {
+[data-mode="dark"] .filter-btn.active {
   background: var(--vx-accent);
-  color: #1a1814;
   border-color: var(--vx-accent);
 }
 
@@ -1245,11 +1300,11 @@
 }
 .msg-bubble.agente .msg-text {
   background: var(--vx-accent);
-  color: #fff;
+  color: var(--vx-on-accent);
   border-radius: 16px 4px 16px 16px;
   border: 1px solid transparent;
 }
-[data-theme="dark"] .msg-bubble.agente .msg-text {
+[data-mode="dark"] .msg-bubble.agente .msg-text {
   background: var(--vx-accent-light);
   color: var(--vx-accent);
   border-color: var(--vx-accent);
@@ -1276,7 +1331,7 @@
 .btn-primary {
   background: var(--vx-accent2);
   border: none;
-  color: #fff;
+  color: var(--vx-on-accent);
   padding: 9px 22px;
   border-radius: 10px;
   font-size: 12px;
@@ -1291,9 +1346,8 @@
   transform: translateY(-1px);
   box-shadow: var(--vx-shadow-md);
 }
-[data-theme="dark"] .btn-primary {
+[data-mode="dark"] .btn-primary {
   background: var(--vx-accent);
-  color: #1a1814;
 }
 .form-label {
   display: block;
@@ -2124,6 +2178,21 @@ select.form-input {
 }
 
 /* ── Aparência: cartões de tema com miniatura ── */
+.tema-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+@media (max-width: 900px) {
+  .tema-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 560px) {
+  .tema-grid {
+    grid-template-columns: 1fr;
+  }
+}
 .tema-opcao {
   display: flex;
   flex-direction: column;
@@ -2183,6 +2252,18 @@ select.form-input {
 .tema-preview-line.short {
   flex: none;
   width: 40%;
+}
+/* Amostra das cores funcionais — é a diferença real entre os temas, então
+   precisa estar na miniatura, não só na descrição. */
+.tema-preview-cores {
+  display: flex;
+  gap: 4px;
+  margin-top: auto;
+}
+.tema-preview-cor {
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
 }
 .tema-info {
   display: flex;
@@ -3439,11 +3520,8 @@ select.form-input {
 }
 .mini-cal-dia.sel {
   background: var(--vx-accent);
-  color: #fff;
+  color: var(--vx-on-accent);
   font-weight: 600;
-}
-[data-theme="dark"] .mini-cal-dia.sel {
-  color: #1a1814;
 }
 /* Ponto do dia com atendimento — é o que guia a navegação para frente */
 .mini-cal-ponto {

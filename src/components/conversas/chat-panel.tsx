@@ -34,7 +34,7 @@ function bubbleClasses(kind: "cliente" | "agente" | "humano") {
     return `${base} rounded-[16px] rounded-tl-[4px] border-vx-border bg-vx-surface text-vx-text`;
   if (kind === "humano")
     return `${base} rounded-[16px] rounded-tr-[4px] border-vx-purple bg-vx-purple-bg text-vx-purple`;
-  return `${base} rounded-[16px] rounded-tr-[4px] border-transparent bg-vx-accent text-white dark:border-vx-accent dark:bg-vx-accent-light dark:text-vx-accent`;
+  return `${base} rounded-[16px] rounded-tr-[4px] border-transparent bg-vx-accent text-vx-on-accent dark:border-vx-accent dark:bg-vx-accent-light dark:text-vx-accent`;
 }
 
 export function ChatPanel({
@@ -175,7 +175,7 @@ export function ChatPanel({
               className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[10.5px] font-bold tracking-wide transition-colors ${
                 paused
                   ? "border-vx-border2 bg-vx-surface2 text-vx-muted hover:text-vx-text"
-                  : "border-vx-accent bg-vx-accent-light text-vx-accent hover:bg-vx-accent hover:text-white dark:hover:text-[#1a1814]"
+                  : "border-vx-accent bg-vx-accent-light text-vx-accent hover:bg-vx-accent hover:text-vx-on-accent"
               }`}
             >
               <span
@@ -311,7 +311,7 @@ export function ChatPanel({
               title="Enviar"
               onClick={handleSend}
               disabled={sending}
-              className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-vx-accent text-white transition hover:opacity-85 disabled:pointer-events-none disabled:opacity-50 dark:text-[#1a1814]"
+              className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-vx-accent text-vx-on-accent transition hover:opacity-85 disabled:pointer-events-none disabled:opacity-50"
             >
               <Send size={16} />
             </button>

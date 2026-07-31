@@ -189,7 +189,7 @@ export function InboxList({
                   </div>
                 </div>
                 {showUnread && (
-                  <span className="grid h-5 min-w-5 shrink-0 place-items-center rounded-full bg-vx-accent px-1.5 font-mono text-[10px] font-bold text-white dark:text-[#1a1814]">
+                  <span className="grid h-5 min-w-5 shrink-0 place-items-center rounded-full bg-vx-accent px-1.5 font-mono text-[10px] font-bold text-vx-on-accent">
                     {unread}
                   </span>
                 )}

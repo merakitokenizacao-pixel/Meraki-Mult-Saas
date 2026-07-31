@@ -1,76 +1,70 @@
 "use client";
 
-import { Check, Moon, Sun } from "lucide-react";
+import { Check, Contrast, Moon, Sun } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { useTheme } from "@/components/theme-provider";
+import { TEMAS, type Tema } from "@/lib/tema";
 
-// O tema já existia (toggle na topbar, persistido em localStorage). Aqui ele
-// ganha um lugar explícito — e a prévia mostra o resultado antes de aplicar.
+// As opções vêm do catálogo (lib/tema.ts) — tema novo lá aparece aqui sozinho.
+// Só o ícone mora nesta camada, que é a única que desenha.
+const ICONES: Record<Tema, LucideIcon> = {
+  light: Sun,
+  dark: Moon,
+  graphite: Contrast,
+};
+
 export function SecaoAparencia() {
-  const { theme, toggleTheme } = useTheme();
-
-  const opcoes = [
-    {
-      id: "light" as const,
-      label: "Claro",
-      descricao: "Bege e dourado, para o dia",
-      icon: Sun,
-      // Cores fixas: a prévia tem que mostrar o tema OPOSTO ao atual também.
-      preview: { bg: "#f8f6f2", surface: "#ffffff", border: "#e0dbd2", text: "#1a1814", accent: "#9b7d5a" },
-    },
-    {
-      id: "dark" as const,
-      label: "Escuro",
-      descricao: "Suave para o fim do expediente",
-      icon: Moon,
-      preview: { bg: "#111009", surface: "#1a1814", border: "#38352a", text: "#f0ece4", accent: "#c8a07a" },
-    },
-  ];
+  const { theme, setTheme } = useTheme();
 
   return (
     <div className="config-card">
-      <div className="config-grid-2">
-        {opcoes.map((o) => {
-          const Icon = o.icon;
-          const ativo = theme === o.id;
+      <div className="tema-grid">
+        {TEMAS.map((t) => {
+          const Icon = ICONES[t.id];
+          const ativo = theme === t.id;
+          const p = t.previa;
           return (
             <button
-              key={o.id}
+              key={t.id}
               type="button"
-              onClick={() => {
-                if (!ativo) toggleTheme();
-              }}
+              onClick={() => setTheme(t.id)}
               className={`tema-opcao${ativo ? " active" : ""}`}
               aria-pressed={ativo}
             >
-              {/* Miniatura do tema, pintada com as cores reais dele */}
+              {/* Miniatura pintada com as cores reais do tema (literais: o
+                  cartão precisa mostrar o tema que NÃO está aplicado). */}
               <div
                 className="tema-preview"
-                style={{ background: o.preview.bg, borderColor: o.preview.border }}
+                style={{ background: p.bg, borderColor: p.border }}
               >
                 <div
                   className="tema-preview-bar"
-                  style={{ background: o.preview.surface, borderColor: o.preview.border }}
+                  style={{ background: p.surface, borderColor: p.border }}
                 >
-                  <span className="tema-preview-dot" style={{ background: o.preview.accent }} />
-                  <span className="tema-preview-line" style={{ background: o.preview.border }} />
+                  <span className="tema-preview-dot" style={{ background: p.accent }} />
+                  <span className="tema-preview-line" style={{ background: p.border }} />
                 </div>
                 <div
                   className="tema-preview-card"
-                  style={{ background: o.preview.surface, borderColor: o.preview.border }}
+                  style={{ background: p.surface, borderColor: p.border }}
                 >
-                  <span className="tema-preview-line short" style={{ background: o.preview.accent }} />
-                  <span className="tema-preview-line" style={{ background: o.preview.border }} />
-                  <span className="tema-preview-line" style={{ background: o.preview.border }} />
+                  <span className="tema-preview-line short" style={{ background: p.accent }} />
+                  <span className="tema-preview-line" style={{ background: p.border }} />
+                  <div className="tema-preview-cores">
+                    {p.cores.map((c) => (
+                      <span key={c} className="tema-preview-cor" style={{ background: c }} />
+                    ))}
+                  </div>
                 </div>
               </div>
 
               <div className="tema-info">
                 <div className="tema-nome">
                   <Icon size={15} strokeWidth={1.6} />
-                  {o.label}
+                  {t.label}
                   {ativo && <Check size={14} strokeWidth={2.5} className="tema-check" />}
                 </div>
-                <div className="tema-desc">{o.descricao}</div>
+                <div className="tema-desc">{t.descricao}</div>
               </div>
             </button>
           );

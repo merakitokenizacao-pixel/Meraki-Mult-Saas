@@ -241,7 +241,12 @@ export async function getConversasByLead(
     .limit(limite);
   // Cursor: continua a partir da mais antiga já carregada. Por cursor, e não
   // por deslocamento (.range), o custo não cresce conforme o usuário sobe.
-  if (antesDe) q = q.lt("enviado_em", antesDe);
+  //
+  // `lte` e não `lt`: existem mensagens com o MESMO `enviado_em` dentro do
+  // mesmo lead (2 pares hoje). Com `lt`, uma página que terminasse exatamente
+  // numa colisão perderia a gêmea para sempre. Com `lte` a linha do cursor
+  // volta repetida e quem monta a lista descarta por `id`.
+  if (antesDe) q = q.lte("enviado_em", antesDe);
   const { data, error } = await q;
   if (error) throw error;
   return ((data ?? []) as Conversa[]).reverse();

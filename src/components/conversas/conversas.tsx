@@ -56,8 +56,25 @@ export function Conversas() {
   // atualiza junto com a lista. Antes era estado local carregado no clique: a
   // mensagem nova aparecia na lista e a conversa na tela ficava congelada.
   const chatQuery = useConversasDoLead(currentLeadId);
-  const chatMessages = useMemo(() => chatQuery.data ?? [], [chatQuery.data]);
   const chatLoading = Boolean(currentLeadId) && chatQuery.isPending;
+
+  // As páginas vêm da mais nova para a mais antiga, e cada uma já em ordem
+  // crescente. Invertendo a ORDEM DAS PÁGINAS (não das mensagens) sai a
+  // conversa inteira em ordem cronológica.
+  //
+  // O dedupe existe porque o cursor usa `lte`: a mensagem da borda volta
+  // repetida na página seguinte (ver getConversasByLead).
+  const chatMessages = useMemo(() => {
+    const paginas = chatQuery.data?.pages ?? [];
+    const vistos = new Set<string>();
+    const ordenadas: Conversa[] = [];
+    for (const msg of [...paginas].reverse().flat()) {
+      if (vistos.has(msg.id)) continue;
+      vistos.add(msg.id);
+      ordenadas.push(msg);
+    }
+    return ordenadas;
+  }, [chatQuery.data]);
 
   // Some com a bolha otimista assim que a versão persistida chega pelo n8n —
   // senão a mensagem enviada apareceria duas vezes depois do refetch.
@@ -88,7 +105,20 @@ export function Conversas() {
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "conversas" },
-        () => qc.invalidateQueries({ queryKey: ["conversas"] })
+        (payload) => {
+          // A lista (view de última mensagem por lead) sempre atualiza.
+          qc.invalidateQueries({ queryKey: ["conversas"], exact: true });
+          // O chat só do lead que recebeu a mensagem. Invalidar o prefixo
+          // inteiro faria a conversa aberta refazer TODAS as páginas
+          // carregadas a cada mensagem de qualquer cliente. Sem o lead_id
+          // (ex.: delete sem replica identity) cai no prefixo, como antes.
+          const linha = (payload.new ?? payload.old) as { lead_id?: string };
+          qc.invalidateQueries({
+            queryKey: linha?.lead_id
+              ? ["conversas", "lead", linha.lead_id]
+              : ["conversas"],
+          });
+        }
       )
       .on(
         "postgres_changes",
@@ -305,6 +335,9 @@ export function Conversas() {
             lead={currentLead}
             messages={chatMessages}
             chatLoading={chatLoading}
+            temMaisAntigas={Boolean(chatQuery.hasNextPage)}
+            carregandoAntigas={chatQuery.isFetchingNextPage}
+            onCarregarAntigas={() => chatQuery.fetchNextPage()}
             pendingMsgs={pendingMsgs}
             sending={sending}
             panelOpen={panelOpen}

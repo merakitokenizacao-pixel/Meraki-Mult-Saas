@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   ArrowLeft,
   Bot,
+  Loader2,
   Lock,
   MessageCircle,
   Mic,
@@ -37,10 +38,19 @@ function bubbleClasses(kind: "cliente" | "agente" | "humano") {
   return `${base} rounded-[16px] rounded-tr-[4px] border-transparent bg-vx-accent text-vx-on-accent dark:border-vx-accent dark:bg-vx-accent-light dark:text-vx-accent`;
 }
 
+// useLayoutEffect roda ANTES da pintura — é o que evita ver a tela pular ao
+// inserir mensagens antigas no topo. No servidor ele não existe, e a rota é
+// pré-renderizada, então cai em useEffect lá (o corpo depende do DOM mesmo).
+const useLayoutEffectSeguro =
+  typeof window !== "undefined" ? useLayoutEffect : useEffect;
+
 export function ChatPanel({
   lead,
   messages,
   chatLoading,
+  temMaisAntigas,
+  carregandoAntigas,
+  onCarregarAntigas,
   pendingMsgs,
   sending,
   panelOpen,
@@ -52,6 +62,9 @@ export function ChatPanel({
   lead: Lead | null;
   messages: Conversa[];
   chatLoading: boolean;
+  temMaisAntigas: boolean;
+  carregandoAntigas: boolean;
+  onCarregarAntigas: () => void;
   pendingMsgs: PendingMsg[];
   sending: boolean;
   panelOpen: boolean;
@@ -63,10 +76,47 @@ export function ChatPanel({
   const [input, setInput] = useState("");
   const messagesRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  // Âncora do scroll. O lote antigo entra ACIMA do que está na tela, então
+  // grudar no fim (o comportamento normal) jogaria a leitura pro lugar errado.
+  const ancora = useRef<{
+    leadId?: string;
+    primeiro?: string;
+    ultimo?: string;
+    altura: number;
+  }>({ altura: 0 });
+
+  useLayoutEffectSeguro(() => {
     const el = messagesRef.current;
-    if (el) el.scrollTop = el.scrollHeight;
+    if (!el) return;
+    const anterior = ancora.current;
+    const primeiro = messages[0]?.id;
+    const ultimo = messages[messages.length - 1]?.id;
+
+    // Carregou histórico = a mensagem do FIM continua a mesma e a do COMEÇO
+    // mudou. Qualquer outra combinação (trocou de cliente, chegou mensagem
+    // nova, enviei uma) quer o fim da conversa.
+    const carregouAntigas =
+      anterior.leadId === lead?.id &&
+      anterior.ultimo != null &&
+      ultimo === anterior.ultimo &&
+      primeiro !== anterior.primeiro;
+
+    if (carregouAntigas) {
+      // Empurra pela diferença de altura: a mensagem que o usuário estava
+      // lendo fica exatamente onde estava.
+      el.scrollTop += el.scrollHeight - anterior.altura;
+    } else {
+      el.scrollTop = el.scrollHeight;
+    }
+    ancora.current = { leadId: lead?.id, primeiro, ultimo, altura: el.scrollHeight };
   }, [messages, pendingMsgs, lead?.id]);
+
+  // Pede o lote anterior quando o topo se aproxima.
+  function handleScroll() {
+    const el = messagesRef.current;
+    if (!el || !temMaisAntigas || carregandoAntigas) return;
+    if (el.scrollTop < 120) onCarregarAntigas();
+  }
 
   async function handleSend() {
     const ok = await onSend(input);
@@ -210,6 +260,7 @@ export function ChatPanel({
       {/* Corpo */}
       <div
         ref={messagesRef}
+        onScroll={handleScroll}
         className="flex min-h-0 flex-1 flex-col gap-1.5 overflow-y-auto px-8 py-6"
       >
         {!lead ? (
@@ -239,6 +290,25 @@ export function ChatPanel({
           </div>
         ) : (
           <>
+            {/* Topo do histórico: buscando o lote anterior, ou o fim da linha. */}
+            {carregandoAntigas ? (
+              <div className="flex shrink-0 items-center justify-center gap-2 py-3 text-[11px] text-vx-muted">
+                <Loader2 size={13} className="animate-spin" />
+                Carregando mensagens anteriores…
+              </div>
+            ) : temMaisAntigas ? (
+              <button
+                type="button"
+                onClick={onCarregarAntigas}
+                className="mx-auto shrink-0 rounded-full border border-vx-border bg-vx-surface2 px-3.5 py-1.5 text-[11px] text-vx-muted transition-colors hover:text-vx-text"
+              >
+                Ver mensagens anteriores
+              </button>
+            ) : (
+              <div className="shrink-0 py-2 text-center font-mono text-[10px] tracking-wide text-vx-muted opacity-60">
+                Início da conversa
+              </div>
+            )}
             {blocks}
             {pendingMsgs.map((p) => (
               <div

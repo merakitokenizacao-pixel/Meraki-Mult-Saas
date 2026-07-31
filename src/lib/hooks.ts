@@ -1,7 +1,8 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import {
+  CONVERSAS_PAGINA,
   getAgendaSlots,
   getAgendamentos,
   getAgendamentosComLead,
@@ -59,15 +60,33 @@ export function useConversas() {
   });
 }
 
-// Histórico completo de UM lead (o chat aberto). Compartilha o prefixo
-// ["conversas"], então o realtime — que invalida esse prefixo quando o n8n ou a
-// cliente grava — também atualiza a conversa que está na tela. Antes isso era
-// estado local carregado uma vez no clique: a lista recebia a mensagem nova e o
-// chat aberto ficava parado.
+// Histórico do chat aberto, em lotes de 50 do mais recente para trás — como o
+// WhatsApp: abre no fim da conversa e o antigo vem quando o usuário sobe.
+//
+// Compartilha o prefixo ["conversas"], então o realtime alcança esta query e a
+// conversa na tela se atualiza sozinha.
+//
+// Paginação por CURSOR (o `enviado_em` da mensagem mais antiga já carregada),
+// não por deslocamento: `.range(50,100)` obrigaria o banco a percorrer e jogar
+// fora as linhas anteriores a cada página, ficando mais lento conforme o
+// usuário sobe. Por cursor o custo é constante. E como o cursor é um instante,
+// e não uma posição, mensagem nova chegando no fim não desloca as páginas
+// antigas — por isso o refetch do realtime é seguro.
 export function useConversasDoLead(leadId: string | null) {
-  return useQuery({
+  return useInfiniteQuery({
     queryKey: ["conversas", "lead", leadId],
-    queryFn: () => getConversasByLead(leadId as string),
+    queryFn: ({ pageParam }) =>
+      getConversasByLead(leadId as string, { antesDe: pageParam }),
+    initialPageParam: undefined as string | undefined,
+    getNextPageParam: (ultimaPagina, _todas, ultimoParam) => {
+      // Lote menor que a página = chegamos no começo da conversa.
+      if (ultimaPagina.length < CONVERSAS_PAGINA) return undefined;
+      // A página vem em ordem crescente, então a mais antiga é a primeira.
+      const cursor = ultimaPagina[0]?.enviado_em;
+      // Trava: se o cursor não andou, parar em vez de repetir a mesma busca.
+      if (!cursor || cursor === ultimoParam) return undefined;
+      return cursor;
+    },
     enabled: Boolean(leadId),
   });
 }

@@ -1,5 +1,5 @@
-import { Dashboard } from "@/components/dashboard/dashboard";
+import { VisaoGeral } from "@/components/visao-geral/visao-geral";
 
 export default function DashboardPage() {
-  return <Dashboard />;
+  return <VisaoGeral />;
 }

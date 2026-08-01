@@ -3618,3 +3618,253 @@ select.form-input {
     width: auto;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   INÍCIO COM ABAS  +  LAYOUT NOVO (aba "Negócios")
+   ────────────────────────────────────────────────────────────
+   EXPERIMENTO. Prefixo `.neg-` de propósito: nada aqui toca as
+   outras telas. Se o dono aprovar, migra; se não, some inteiro.
+
+   O que muda em relação ao `.metric-card` de hoje:
+   · densidade — padding 16/18 e número 30px, no lugar de 36/32 e 46px;
+   · número em SANS TABULAR, não no serif da marca (Cormorant tem
+     largura variável por dígito, e os valores dançam entre os cards);
+   · contraste vem do FUNDO, não de sombra: card plano com hairline.
+   ══════════════════════════════════════════════════════════════ */
+.vg-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 1.75rem;
+}
+.vg-controles {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Abas: um controle segmentado. A ativa sobe para `--vx-surface` sobre o
+   trilho em `--vx-surface2`, então ela parece elevada sem sombra pesada. */
+.vg-abas {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--vx-border);
+  border-radius: 11px;
+  background: var(--vx-surface2);
+}
+.vg-aba {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--vx-muted);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color var(--vx-transition), background var(--vx-transition);
+}
+.vg-aba:hover {
+  color: var(--vx-text2);
+}
+.vg-aba.ativa {
+  background: var(--vx-surface);
+  color: var(--vx-accent);
+  box-shadow: var(--vx-shadow-sm);
+}
+
+/* ── Cards ── */
+.neg-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 16px;
+}
+@media (max-width: 1180px) {
+  .neg-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 620px) {
+  .neg-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.neg-card {
+  background: var(--vx-surface);
+  border: 1px solid var(--vx-border);
+  border-radius: 14px;
+  padding: 16px 18px 18px;
+  transition: border-color var(--vx-transition);
+}
+.neg-card:hover {
+  border-color: var(--vx-border2);
+}
+.neg-card-topo {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.neg-card-rotulo {
+  font-size: 11.5px;
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--vx-muted);
+}
+/* O chip tingido é o "destaque" do ícone: sai de graça porque cada cor
+   funcional já tem par --vx-X / --vx-X-bg nos três temas. */
+.neg-card-icone {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: var(--neg-tom-bg);
+  color: var(--neg-tom);
+}
+.neg-card-valor {
+  margin-bottom: 8px;
+  font-size: 30px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--vx-text);
+  font-variant-numeric: tabular-nums;
+}
+.neg-card-valor.vazio {
+  color: var(--vx-muted);
+}
+.neg-card-apoio {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  line-height: 1.4;
+  color: var(--vx-muted);
+}
+.neg-chip-fonte {
+  flex-shrink: 0;
+  padding: 2px 6px;
+  border-radius: 5px;
+  background: var(--vx-surface3);
+  color: var(--vx-text2);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.neg-tom-accent {
+  --neg-tom: var(--vx-accent);
+  --neg-tom-bg: var(--vx-accent-light);
+}
+.neg-tom-green {
+  --neg-tom: var(--vx-green);
+  --neg-tom-bg: var(--vx-green-bg);
+}
+.neg-tom-blue {
+  --neg-tom: var(--vx-blue);
+  --neg-tom-bg: var(--vx-blue-bg);
+}
+.neg-tom-purple {
+  --neg-tom: var(--vx-purple);
+  --neg-tom-bg: var(--vx-purple-bg);
+}
+
+/* ── Painel de baixo (serviços mais vendidos) ── */
+.neg-painel {
+  background: var(--vx-surface);
+  border: 1px solid var(--vx-border);
+  border-radius: 14px;
+  padding: 18px 20px 20px;
+}
+.neg-painel-topo {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.neg-painel-titulo {
+  font-family: var(--font-cormorant), serif;
+  font-size: 19px;
+  font-weight: 500;
+  color: var(--vx-text);
+}
+.neg-painel-nota {
+  font-size: 11px;
+  color: var(--vx-muted);
+}
+
+.neg-ranking {
+  display: grid;
+  gap: 15px;
+}
+.neg-linha {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.neg-pos {
+  flex-shrink: 0;
+  width: 18px;
+  text-align: center;
+  font-family: var(--font-jetbrains), monospace;
+  font-size: 10.5px;
+  color: var(--vx-muted);
+}
+.neg-linha-corpo {
+  flex: 1;
+  min-width: 0;
+}
+.neg-linha-topo {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.neg-linha-nome {
+  overflow: hidden;
+  font-size: 13px;
+  color: var(--vx-text);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.neg-linha-qtd {
+  flex-shrink: 0;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--vx-text);
+  font-variant-numeric: tabular-nums;
+}
+.neg-linha-pct {
+  font-weight: 400;
+  color: var(--vx-muted);
+}
+.neg-barra-trilho {
+  height: 6px;
+  overflow: hidden;
+  border-radius: 3px;
+  background: var(--vx-surface3);
+}
+.neg-barra {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--vx-accent), var(--vx-gold));
+}
+.neg-vazio {
+  padding: 26px 0;
+  text-align: center;
+  font-size: 12.5px;
+  color: var(--vx-muted);
+}

@@ -1,11 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { CalendarDays } from "lucide-react";
 import { useAgendamentosComLead, useLeads } from "@/lib/hooks";
-import { rotuloIntervalo, saudacaoDe } from "@/lib/date";
-import { DateFilter } from "@/components/date-filter";
 import { MetricsGrid } from "@/components/dashboard/metrics-grid";
 import { ProximosAgendamentos } from "@/components/dashboard/proximos-agendamentos";
 import { Funnel } from "@/components/dashboard/funnel";
@@ -13,14 +10,6 @@ import { ServiceChart } from "@/components/dashboard/service-chart";
 import { TimelineChart } from "@/components/dashboard/timeline-chart";
 import { LeadModal } from "@/components/clientes/lead-modal";
 import type { Lead } from "@/types/db";
-
-const PERIODS: ReadonlyArray<[string, string]> = [
-  ["hoje", "Hoje"],
-  ["ontem", "Ontem"],
-  ["semana", "Semana"],
-  ["mes", "Mês"],
-  ["tudo", "Tudo"],
-];
 
 function Spinner() {
   return (
@@ -30,7 +19,10 @@ function Spinner() {
   );
 }
 
-export function Dashboard() {
+// Conteúdo da aba "Multiatendimento". A saudação, o filtro de período e as
+// abas vivem no container (`visao-geral.tsx`) — daí `period` chegar por prop:
+// as duas abas compartilham o MESMO recorte, e trocar de aba não o perde.
+export function Dashboard({ period }: { period: string }) {
   const leadsQuery = useLeads();
   // Uma única busca de agendamentos. Antes esta tela pedia a MESMA tabela duas
   // vezes na mesma renderização (useAgendamentos + useAgendamentosComLead),
@@ -43,59 +35,10 @@ export function Dashboard() {
   const agendamentos = agendComLead;
   const loading = leadsQuery.isPending;
 
-  const [period, setPeriod] = useState("hoje");
-  const [greeting, setGreeting] = useState<{ prefix: string; word: string } | null>(
-    null
-  );
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
-  const [intervalo, setIntervalo] = useState<string | null>(null);
-
-  // Só no cliente (evita divergência de hidratação: o servidor está em UTC).
-  // Reavalia a cada minuto porque o painel fica aberto o dia todo — sem isso,
-  // quem abriu às 17h ainda leria "Boa tarde" às 19h.
-  useEffect(() => {
-    const aplicar = () => setGreeting(saudacaoDe());
-    aplicar();
-    const t = setInterval(aplicar, 60_000);
-    return () => clearInterval(t);
-  }, []);
-
-  // Idem: o intervalo depende de `new Date()`, que difere entre servidor (UTC)
-  // e navegador. Enquanto for null, a caixa mostra o nome do período — que é
-  // igual nos dois lados, então a hidratação casa.
-  useEffect(() => {
-    setIntervalo(rotuloIntervalo(period));
-  }, [period]);
 
   return (
-    <div className="page-fade">
-      {/* Header */}
-      <div className="dash-header">
-        <div>
-          <div className="dash-greeting">
-            {greeting ? (
-              <>
-                {greeting.prefix} <em>{greeting.word}</em>
-              </>
-            ) : (
-              " "
-            )}
-          </div>
-          <div className="dash-subtitle">
-            Visão geral do seu desempenho e atividades
-          </div>
-        </div>
-        {/* Caixa de período: mostra o INTERVALO real, não só "Semana" — tira a
-            ambiguidade de qual janela está no ar. O menu lista os nomes. */}
-        <DateFilter
-          value={period}
-          options={PERIODS}
-          onChange={setPeriod}
-          icone={<CalendarDays size={14} strokeWidth={1.6} />}
-          rotulo={intervalo ?? undefined}
-        />
-      </div>
-
+    <>
       {/* Métricas */}
       {loading ? (
         <div className="metrics-grid">
@@ -154,6 +97,6 @@ export function Dashboard() {
       </div>
 
       <LeadModal lead={selectedLead} onClose={() => setSelectedLead(null)} />
-    </div>
+    </>
   );
 }

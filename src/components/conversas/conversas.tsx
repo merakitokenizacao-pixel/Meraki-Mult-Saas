@@ -14,6 +14,12 @@ import { supabase } from "@/lib/supabase";
 import { matchesPeriod } from "@/lib/date";
 import { isLeadInativo, isLeadPaused, lastMsgInfo } from "@/lib/conversa";
 import { enviarMensagemWebhook } from "@/lib/n8n";
+import {
+  destravarSom,
+  gravarPreferenciaSom,
+  lerPreferenciaSom,
+  tocarNotificacao,
+} from "@/lib/som";
 import { showToast } from "@/lib/toast";
 import { InboxList, type InboxTab } from "@/components/conversas/inbox-list";
 import { ChatPanel } from "@/components/conversas/chat-panel";
@@ -51,6 +57,48 @@ export function Conversas() {
   const [pendingMsgs, setPendingMsgs] = useState<PendingMsg[]>([]);
   const [sending, setSending] = useState(false);
   const [panelOpen, setPanelOpen] = useState(false);
+
+  // Aviso sonoro. Fica só aqui de propósito: este componente só monta em
+  // /conversas, então o som existe exatamente enquanto a tela está aberta —
+  // sem precisar checar rota em lugar nenhum.
+  //
+  // Em ref, e não em state, porque quem lê é o handler do realtime, que é
+  // montado uma vez. Com state ele congelaria no valor do primeiro render.
+  const [somLigado, setSomLigado] = useState(true);
+  const somRef = useRef(true);
+  useEffect(() => {
+    // Só no cliente: localStorage não existe no SSR e mudaria a hidratação.
+    const pref = lerPreferenciaSom();
+    setSomLigado(pref);
+    somRef.current = pref;
+  }, []);
+
+  // O navegador só libera áudio depois de um gesto do usuário. Sem isto, quem
+  // abre a tela e fica só olhando não ouviria o primeiro aviso — o contexto
+  // nasce suspenso e `resume()` fora de gesto é bloqueado. Qualquer clique ou
+  // tecla na página serve, uma vez só.
+  useEffect(() => {
+    const destravar = () => destravarSom();
+    window.addEventListener("pointerdown", destravar, { once: true });
+    window.addEventListener("keydown", destravar, { once: true });
+    return () => {
+      window.removeEventListener("pointerdown", destravar);
+      window.removeEventListener("keydown", destravar);
+    };
+  }, []);
+
+  function alternarSom() {
+    const novo = !somLigado;
+    setSomLigado(novo);
+    somRef.current = novo;
+    gravarPreferenciaSom(novo);
+    // O clique no botão é o gesto que o navegador exige para liberar áudio;
+    // aproveita ele para destravar e já toca uma prévia do que foi ligado.
+    if (novo) {
+      destravarSom();
+      tocarNotificacao();
+    }
+  }
 
   // O chat aberto também é cache (prefixo ["conversas"]), então o realtime o
   // atualiza junto com a lista. Antes era estado local carregado no clique: a
@@ -121,6 +169,15 @@ export function Conversas() {
         "postgres_changes",
         { event: "*", schema: "public", table: "conversas" },
         (payload) => {
+          // Só mensagem NOVA e só da cliente: a resposta da IA e o que a
+          // própria equipe envia não devem tocar nada.
+          if (
+            payload.eventType === "INSERT" &&
+            (payload.new as { origem?: string })?.origem === "cliente" &&
+            somRef.current
+          ) {
+            tocarNotificacao();
+          }
           // A lista (view de última mensagem por lead) sempre atualiza.
           qc.invalidateQueries({ queryKey: ["conversas"], exact: true });
           // O chat só do lead que recebeu a mensagem. Invalidar o prefixo
@@ -334,6 +391,8 @@ export function Conversas() {
             period={period}
             currentLeadId={currentLeadId}
             loading={loading}
+            somLigado={somLigado}
+            onAlternarSom={alternarSom}
             onSelectTab={setTab}
             onSelectPeriod={setPeriod}
             onSelectLead={openConversa}

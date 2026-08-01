@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import {
+  Bell,
+  BellOff,
   Bot,
   Clock,
   Inbox,
@@ -45,6 +47,8 @@ export function InboxList({
   period,
   currentLeadId,
   loading,
+  somLigado,
+  onAlternarSom,
   onSelectTab,
   onSelectPeriod,
   onSelectLead,
@@ -57,6 +61,8 @@ export function InboxList({
   period: string;
   currentLeadId: string | null;
   loading: boolean;
+  somLigado: boolean;
+  onAlternarSom: () => void;
   onSelectTab: (t: InboxTab) => void;
   onSelectPeriod: (p: string) => void;
   onSelectLead: (id: string) => void;
@@ -89,6 +95,28 @@ export function InboxList({
               className="w-full bg-transparent text-[13px] text-vx-text outline-none placeholder:text-vx-muted"
             />
           </label>
+          <button
+            type="button"
+            onClick={onAlternarSom}
+            title={
+              somLigado
+                ? "Aviso sonoro ligado — clique para silenciar"
+                : "Aviso sonoro desligado — clique para ligar"
+            }
+            aria-label="Aviso sonoro de mensagem nova"
+            aria-pressed={somLigado}
+            className={`grid h-7 w-7 shrink-0 place-items-center rounded-lg transition-colors hover:bg-vx-surface2 ${
+              somLigado
+                ? "text-vx-accent"
+                : "text-vx-muted opacity-60 hover:text-vx-text"
+            }`}
+          >
+            {somLigado ? (
+              <Bell size={15} strokeWidth={1.5} />
+            ) : (
+              <BellOff size={15} strokeWidth={1.5} />
+            )}
+          </button>
           <button
             type="button"
             onClick={onRefresh}

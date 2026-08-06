@@ -15,7 +15,7 @@ import {
   UserRound,
 } from "lucide-react";
 import { Avatar } from "@/components/avatar";
-import { formatDayLabel, getTemp, isLeadPaused } from "@/lib/conversa";
+import { formatDayLabel, isLeadPaused } from "@/lib/conversa";
 import { ChatSkeleton } from "@/components/conversas/skeletons";
 import type { Conversa, Lead } from "@/types/db";
 import type { PendingMsg } from "@/components/conversas/conversas";
@@ -124,7 +124,6 @@ export function ChatPanel({
   }
 
   const paused = isLeadPaused(lead);
-  const temp = lead ? getTemp(lead) : null;
 
   // Mensagens com separadores de dia.
   const blocks: React.ReactNode[] = [];
@@ -198,20 +197,6 @@ export function ChatPanel({
             {lead && (
               <div className="flex items-center gap-2 truncate font-mono text-[11px] text-vx-muted">
                 <span>{lead.telefone || "—"}</span>
-                {temp?.label && (
-                  <>
-                    <span className="opacity-40">·</span>
-                    <span className="font-sans font-semibold text-vx-red">
-                      🔥 {temp.label}
-                    </span>
-                    {temp.score != null && (
-                      <>
-                        <span className="opacity-40">·</span>
-                        <span>{temp.score}</span>
-                      </>
-                    )}
-                  </>
-                )}
               </div>
             )}
           </div>

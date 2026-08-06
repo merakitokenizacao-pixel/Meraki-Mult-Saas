@@ -11,6 +11,16 @@ import {
   getProximasVisitas,
   getUltimaConversaPorLead,
 } from "@/lib/queries";
+import {
+  getAtendimentos,
+  getAtendimentosDoPeriodo,
+  getCategorias,
+  getFinanceiroResumo,
+  getPacotesSaldo,
+  getPagamentosDoPeriodo,
+  temProfissionalAtribuido,
+  type FiltroAtendimentos,
+} from "@/lib/financeiro-db";
 
 // Hooks de dados com cache (React Query). Envolvem as queries do Supabase
 // sem alterá-las — só adicionam cache/dedupe/estado de loading e erro.
@@ -99,3 +109,68 @@ export function useConversasDoLead(leadId: string | null) {
   });
 }
 
+
+// ── Financeiro ───────────────────────────────────────────────────────────────
+// Prefixo comum ["financeiro"]: registrar um pagamento invalida o prefixo e
+// tudo se atualiza junto — KPIs, lista e composição — sem enumerar keys.
+export function useFinanceiroResumo(iv: { de: string; ate: string }) {
+  return useQuery({
+    queryKey: ["financeiro", "resumo", iv.de, iv.ate],
+    queryFn: () => getFinanceiroResumo(iv),
+  });
+}
+
+export function useAtendimentosDoPeriodo(iv: { de: string; ate: string }) {
+  return useQuery({
+    queryKey: ["financeiro", "periodo", iv.de, iv.ate],
+    queryFn: () => getAtendimentosDoPeriodo(iv),
+  });
+}
+
+export function useAtendimentos(f: FiltroAtendimentos, pagina: number) {
+  return useQuery({
+    queryKey: [
+      "financeiro",
+      "lista",
+      f.intervalo.de,
+      f.intervalo.ate,
+      f.status ?? "",
+      f.categoria ?? "",
+      f.soPendente ? 1 : 0,
+      f.soSemProcedimento ? 1 : 0,
+      pagina,
+    ],
+    queryFn: () => getAtendimentos(f, pagina),
+    placeholderData: (anterior) => anterior,
+  });
+}
+
+export function usePagamentosDoPeriodo(iv: { de: string; ate: string }) {
+  return useQuery({
+    queryKey: ["financeiro", "pagamentos", iv.de, iv.ate],
+    queryFn: () => getPagamentosDoPeriodo(iv),
+  });
+}
+
+export function usePacotesSaldo() {
+  return useQuery({
+    queryKey: ["financeiro", "pacotes"],
+    queryFn: getPacotesSaldo,
+  });
+}
+
+// Condição no DADO, não no código: o card por profissional volta sozinho
+// quando a Agenda começar a atribuir os atendimentos.
+export function useTemProfissional() {
+  return useQuery({
+    queryKey: ["financeiro", "tem-profissional"],
+    queryFn: temProfissionalAtribuido,
+  });
+}
+
+export function useCategorias() {
+  return useQuery({
+    queryKey: ["financeiro", "categorias"],
+    queryFn: getCategorias,
+  });
+}

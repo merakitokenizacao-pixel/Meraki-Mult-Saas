@@ -4070,3 +4070,413 @@ select.form-input {
   vertical-align: 1px;
   white-space: nowrap;
 }
+
+/* ══════════════════════════════════════════════════════════════
+   FINANCEIRO — blocos, tabela de atendimentos e modal de pagamento
+   (a estimativa saiu; tudo aqui desenha dado do banco)
+   ══════════════════════════════════════════════════════════════ */
+.neg-bloco-titulo {
+  margin: 22px 0 10px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--vx-muted);
+}
+.neg-bloco-titulo:first-of-type {
+  margin-top: 4px;
+}
+.neg-grid-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+@media (max-width: 900px) {
+  .neg-grid-3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 560px) {
+  .neg-grid-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* O aviso agora é clicável: leva direto para a fila de conferência. */
+.neg-aviso-btn {
+  width: 100%;
+  text-align: left;
+  font-family: inherit;
+  cursor: pointer;
+}
+.neg-aviso-btn:hover {
+  border-color: var(--vx-amber);
+}
+
+.neg-vazio-dica {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 11px;
+  opacity: 0.75;
+}
+
+/* ── Formas de pagamento ── */
+.neg-formas {
+  display: grid;
+  gap: 11px;
+  list-style: none;
+}
+.neg-formas li {
+  display: grid;
+  grid-template-columns: 8px 1fr auto auto;
+  align-items: center;
+  gap: 9px;
+  font-size: 12.5px;
+}
+.neg-forma-nome {
+  color: var(--vx-text);
+}
+.neg-forma-pct {
+  color: var(--vx-muted);
+  font-variant-numeric: tabular-nums;
+}
+.neg-forma-valor {
+  font-weight: 600;
+  color: var(--vx-text);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Pacotes a entregar (o contrapeso do Bloco 1) ── */
+.neg-passivo-topo {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  margin-bottom: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--vx-border);
+}
+.neg-passivo-num {
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--vx-purple);
+  font-variant-numeric: tabular-nums;
+}
+.neg-passivo-txt {
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--vx-muted);
+}
+.neg-pacotes {
+  display: grid;
+  gap: 13px;
+  list-style: none;
+}
+.neg-pacote-item {
+  color: var(--vx-muted);
+}
+.neg-barra.entregue {
+  background: linear-gradient(90deg, var(--vx-purple), var(--vx-blue));
+}
+.neg-mais {
+  margin-top: 12px;
+  font-size: 11px;
+  color: var(--vx-muted);
+}
+
+/* ── Painel aguardando dado (profissional) ── */
+.neg-painel-aguardando {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  color: var(--vx-muted);
+}
+.neg-painel-aguardando svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--vx-accent);
+  opacity: 0.7;
+}
+.neg-painel-aguardando strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 13px;
+  color: var(--vx-text2);
+}
+.neg-painel-aguardando p {
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* ── Filtros da lista ── */
+.neg-painel-lista {
+  margin-top: 12px;
+}
+.neg-filtros {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.neg-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11.5px;
+  color: var(--vx-text2);
+  cursor: pointer;
+  user-select: none;
+}
+.neg-toggle input {
+  accent-color: var(--vx-accent);
+  cursor: pointer;
+}
+.neg-filtros-total {
+  margin-left: auto;
+  font-size: 11.5px;
+  color: var(--vx-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Tabela ── */
+.neg-tabela-wrap {
+  /* A tabela rola dentro do próprio container: sem isto, em tela estreita ela
+     empurra a PÁGINA para o lado. */
+  overflow-x: auto;
+}
+.neg-tabela {
+  width: 100%;
+  min-width: 720px;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+.neg-tabela th {
+  padding: 0 10px 9px;
+  border-bottom: 1px solid var(--vx-border);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--vx-muted);
+  text-align: left;
+  white-space: nowrap;
+}
+.neg-tabela td {
+  padding: 9px 10px;
+  border-bottom: 1px solid var(--vx-border);
+  color: var(--vx-text);
+  vertical-align: middle;
+}
+.neg-tabela tbody tr:last-child td {
+  border-bottom: none;
+}
+.neg-tabela tbody tr:hover td {
+  background: var(--vx-surface2);
+}
+.neg-tabela .num {
+  text-align: right;
+}
+.neg-tabela .mono {
+  font-family: var(--font-jetbrains), monospace;
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.neg-tabela .trunc {
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.neg-tabela .aberto {
+  color: var(--vx-amber);
+  font-weight: 600;
+}
+.neg-td-vazio {
+  padding: 30px 0 !important;
+  text-align: center;
+  color: var(--vx-muted);
+}
+
+.neg-status {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: var(--vx-surface3);
+  color: var(--vx-text2);
+  font-size: 10.5px;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+.neg-status.ok {
+  background: var(--vx-green-bg);
+  color: var(--vx-green);
+}
+.neg-status.info {
+  background: var(--vx-blue-bg);
+  color: var(--vx-blue);
+}
+.neg-status.espera {
+  background: var(--vx-amber-bg);
+  color: var(--vx-amber);
+}
+.neg-status.ruim {
+  background: var(--vx-red-bg);
+  color: var(--vx-red);
+}
+
+.neg-tag-conferir {
+  margin-left: 6px;
+  color: var(--vx-amber);
+  vertical-align: -1px;
+}
+.neg-pacote-marca {
+  padding: 2px 6px;
+  border-radius: 5px;
+  background: var(--vx-purple-bg);
+  color: var(--vx-purple);
+  font-family: var(--font-jost), sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+}
+.neg-btn-pagar {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin-left: auto;
+  border: 1px solid var(--vx-border);
+  border-radius: 8px;
+  background: var(--vx-surface2);
+  color: var(--vx-accent);
+  cursor: pointer;
+  transition: border-color var(--vx-transition), color var(--vx-transition);
+}
+.neg-btn-pagar:hover {
+  border-color: var(--vx-accent);
+  color: var(--vx-accent2);
+}
+
+.neg-paginacao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 16px;
+}
+.neg-pag-btn {
+  padding: 6px 14px;
+  border: 1px solid var(--vx-border);
+  border-radius: 8px;
+  background: var(--vx-surface2);
+  color: var(--vx-text2);
+  font-family: inherit;
+  font-size: 11.5px;
+  cursor: pointer;
+}
+.neg-pag-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.neg-pag-btn:not(:disabled):hover {
+  border-color: var(--vx-border2);
+  color: var(--vx-text);
+}
+.neg-pag-txt {
+  font-size: 11.5px;
+  color: var(--vx-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Modal de pagamento ── */
+.neg-pg-titulo {
+  margin-bottom: 16px;
+  font-family: var(--font-cormorant), serif;
+  font-size: 21px;
+  font-weight: 500;
+  color: var(--vx-text);
+}
+.neg-pg-cabeca {
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--vx-border);
+}
+.neg-pg-cliente {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--vx-text);
+}
+.neg-pg-servico {
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--vx-muted);
+}
+.neg-pg-saldo {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+  font-family: var(--font-jetbrains), monospace;
+  font-size: 11.5px;
+  color: var(--vx-muted);
+}
+.neg-pg-saldo strong {
+  color: var(--vx-text);
+}
+.neg-pg-saldo strong.aberto {
+  color: var(--vx-amber);
+}
+.neg-pg-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.neg-pg-valor,
+.neg-pg-obs {
+  grid-column: 1 / -1;
+}
+@media (max-width: 520px) {
+  .neg-pg-form {
+    grid-template-columns: 1fr;
+  }
+}
+.neg-pg-valor-linha {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.neg-pg-atalho {
+  flex-shrink: 0;
+  padding: 7px 11px;
+  border: 1px solid var(--vx-border);
+  border-radius: 8px;
+  background: var(--vx-surface2);
+  color: var(--vx-accent);
+  font-family: inherit;
+  font-size: 11px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.neg-pg-atalho:hover {
+  border-color: var(--vx-accent);
+}
+.neg-pg-aviso {
+  margin-left: 6px;
+  color: var(--vx-red);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+.neg-pg-erro {
+  margin-top: 14px;
+  padding: 9px 12px;
+  border: 1px solid var(--vx-red);
+  border-radius: 8px;
+  background: var(--vx-red-bg);
+  color: var(--vx-red);
+  font-size: 12px;
+}
+.neg-pg-acoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}

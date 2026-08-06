@@ -2,13 +2,13 @@
 
 import { Flag, Phone, X } from "lucide-react";
 import { Avatar } from "@/components/avatar";
-import { getIASummary, getLTV, getTags, getTemp } from "@/lib/conversa";
+import { getIASummary, getLTV } from "@/lib/conversa";
 import { PanelSkeleton } from "@/components/conversas/skeletons";
 import type { Agendamento, Lead } from "@/types/db";
 
 const sectionTitle = "mb-3 text-[9px] font-bold tracking-[0.12em] text-vx-muted";
 
-// Painel do cliente (colapsável). Score IA, LTV, contato, tags, resumo, histórico.
+// Painel do cliente (colapsável). LTV, contato, resumo da IA e histórico.
 export function DetailsPanel({
   lead,
   agendamentos,
@@ -57,9 +57,7 @@ function DetailsContent({
   lead: Lead;
   agendamentos: Agendamento[];
 }) {
-  const temp = getTemp(lead);
   const ltv = getLTV(lead.id, agendamentos);
-  const tags = getTags(lead);
   const resumo = getIASummary(lead);
   const agends = agendamentos
     .filter((a) => a.lead_id === lead.id)
@@ -69,8 +67,8 @@ function DetailsContent({
         new Date(a.data_agendamento).getTime()
     );
 
-  const origemTxt = lead.origem || lead.canal || "WhatsApp";
-  const scoreTxt = temp.score != null ? temp.score : "—";
+  // `leads.origem` foi removida; o canal do lead é `canal`.
+  const origemTxt = lead.canal || "WhatsApp";
   const ltvTxt = ltv > 0 ? "R$ " + ltv.toLocaleString("pt-BR") : "—";
 
   return (
@@ -87,21 +85,25 @@ function DetailsContent({
         </div>
       </div>
 
+      {/* SCORE IA saiu: a coluna `leads.score_ia` foi removida do banco em
+          ago/2026, então o card mostrava "—" para todo cliente, sempre. O LTV
+          ficou e agora vale de verdade — `agendamentos.valor` passou a ser
+          preenchido pelo trigger de precificação. */}
       <div className="grid grid-cols-2 gap-3 border-b border-vx-border p-6">
-        <div className="rounded-xl bg-vx-surface2 p-3">
-          <div className="text-[9px] font-bold tracking-[0.1em] text-vx-muted">
-            SCORE IA
-          </div>
-          <div className="mt-1 font-mono text-[18px] font-semibold text-vx-accent">
-            {scoreTxt}
-          </div>
-        </div>
         <div className="rounded-xl bg-vx-surface2 p-3">
           <div className="text-[9px] font-bold tracking-[0.1em] text-vx-muted">
             LTV
           </div>
           <div className="mt-1 font-mono text-[18px] font-semibold text-vx-accent">
             {ltvTxt}
+          </div>
+        </div>
+        <div className="rounded-xl bg-vx-surface2 p-3">
+          <div className="text-[9px] font-bold tracking-[0.1em] text-vx-muted">
+            ATENDIMENTOS
+          </div>
+          <div className="mt-1 font-mono text-[18px] font-semibold text-vx-accent">
+            {agends.filter((a) => a.status === "realizado").length || "—"}
           </div>
         </div>
       </div>
@@ -116,21 +118,6 @@ function DetailsContent({
         </div>
       </div>
 
-      {tags.length > 0 && (
-        <div className="border-b border-vx-border p-6">
-          <div className={sectionTitle}>TAGS</div>
-          <div className="flex flex-wrap gap-1.5">
-            {tags.map((t, i) => (
-              <span
-                key={i}
-                className="rounded-full border border-vx-accent bg-vx-accent-light px-2.5 py-1 text-[10px] font-bold tracking-wide text-vx-accent"
-              >
-                {t}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
 
       <div className="border-b border-vx-border p-6">
         <div className={sectionTitle}>RESUMO DA IA</div>

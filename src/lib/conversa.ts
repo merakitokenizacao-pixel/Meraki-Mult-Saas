@@ -14,31 +14,12 @@ export function isLeadInativo(lead: Lead): boolean {
   return diff > 30;
 }
 
-export interface Temp {
-  tier: string | null;
-  label: string | null;
-  score: number | null;
-}
+// getTemp saiu: lia `leads.score_ia` e `leads.temperatura`, removidas do banco
+// em ago/2026. Sem fonte, o selo de temperatura no chat ficava sempre vazio.
 
-// Temperatura/score: prioriza score_ia real; deriva o tier dele.
-export function getTemp(lead: Lead): Temp {
-  const score =
-    lead.score_ia != null && String(lead.score_ia) !== ""
-      ? Number(lead.score_ia)
-      : null;
-  let tier = (lead.temperatura || "").toLowerCase();
-  if (!tier && score != null) {
-    tier = score >= 70 ? "quente" : score >= 40 ? "morno" : "frio";
-  }
-  const labelMap: Record<string, string> = {
-    quente: "Quente",
-    morno: "Morno",
-    frio: "Frio",
-  };
-  return { tier: tier || null, label: labelMap[tier] || null, score };
-}
-
-// LTV real = soma dos valores de atendimentos realizados (não cancelados).
+// LTV real. Passou a valer de verdade em ago/2026: `agendamentos.valor` agora é
+// preenchido pelo trigger de precificação, então isto deixou de somar zeros.
+// Soma dos valores de atendimentos realizados (não cancelados).
 export function getLTV(leadId: string, agendamentos: Agendamento[]): number {
   return agendamentos
     .filter(
@@ -52,20 +33,7 @@ export function getIASummary(lead: Lead): string | null {
   return r || null;
 }
 
-// Tags reais (coluna tags: array ou string separada por vírgula).
-export function getTags(lead: Lead): string[] {
-  const raw = lead.tags;
-  if (!raw) return [];
-  let arr: unknown = raw;
-  if (typeof raw === "string") {
-    try {
-      arr = JSON.parse(raw);
-    } catch {
-      arr = raw.split(",").map((s) => s.trim());
-    }
-  }
-  return Array.isArray(arr) ? arr.filter(Boolean) : [];
-}
+// getTags saiu junto: `leads.tags` também foi removida.
 
 // Ícone do canal (glifo unicode + título).
 export function getChannelIcon(lead: Lead): { glyph: string; title: string } {

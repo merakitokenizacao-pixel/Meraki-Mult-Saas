@@ -2,244 +2,245 @@
 
 import { useMemo, useState } from "react";
 import {
-  Activity,
-  Info,
-  Plus,
-  RotateCcw,
+  Banknote,
+  CalendarClock,
+  Clock3,
+  Percent,
   TrendingDown,
-  TrendingUp,
+  TriangleAlert,
+  Users,
+  Wallet,
 } from "lucide-react";
-import { useAgendamentosComLead } from "@/lib/hooks";
 import {
-  FINANCEIRO_ESTIMADO,
+  useAtendimentosDoPeriodo,
+  useFinanceiroResumo,
+  usePacotesSaldo,
+  usePagamentosDoPeriodo,
+  useTemProfissional,
+} from "@/lib/hooks";
+import {
+  agruparPorValor,
+  intervaloDoPeriodo,
   moeda,
-  porProfissional,
-  rankingServicos,
-  resumoFinanceiro,
-  serieDiaria,
-  contarTicketPadrao,
+  nomeDoAtendimento,
+  num,
 } from "@/lib/financeiro";
-import { KpiCard, type TomKpi } from "@/components/negocios/kpi-card";
-import {
-  DadosDiarios,
-  LegendaSeries,
-  type Modo,
-  type SerieId,
-} from "@/components/negocios/dados-diarios";
-import { PercentualProfissional } from "@/components/negocios/percentual-profissional";
-import { ServicosVendidos } from "@/components/negocios/servicos-vendidos";
-import { ProfissionaisVendas } from "@/components/negocios/profissionais-vendas";
+import { KpiCard } from "@/components/negocios/kpi-card";
+import { RankingValor } from "@/components/negocios/ranking-valor";
+import { FormasPagamento } from "@/components/negocios/formas-pagamento";
+import { PacotesSaldo } from "@/components/negocios/pacotes-saldo";
+import { AtendimentosLista } from "@/components/negocios/atendimentos-lista";
 
-// Aba "Negócios" — a visão financeira, e onde o layout novo está sendo testado.
+// Aba financeira, ligada na fonte real (estrutura de ago/2026).
 //
-// O hook é o mesmo do Dashboard (a outra aba). Não é fetch duplicado: mesma
-// queryKey, mesmo cache, uma requisição só.
-
-const CARDS: ReadonlyArray<{
-  chave: "criado" | "ganho" | "perdido" | "aberto" | "recuperado";
-  rotulo: string;
-  icone: typeof Plus;
-  tom: TomKpi;
-  apoio: (qtd: number) => string;
-  serie: SerieId | null;
-  selo?: string;
-  dica: string;
-}> = [
-  {
-    chave: "criado",
-    rotulo: "Total criado",
-    icone: Plus,
-    tom: "blue",
-    apoio: (q) => `${q} agendamento${q === 1 ? "" : "s"}`,
-    serie: "criado",
-    dica: "Tudo que entrou no funil no período, pela data em que foi marcado.",
-  },
-  {
-    chave: "ganho",
-    rotulo: "Total ganhos",
-    icone: TrendingUp,
-    tom: "green",
-    apoio: (q) => `${q} realizado${q === 1 ? "" : "s"}`,
-    serie: "ganho",
-    dica: "Procedimentos que aconteceram no período.",
-  },
-  {
-    chave: "perdido",
-    rotulo: "Total perdidos",
-    icone: TrendingDown,
-    tom: "red",
-    apoio: (q) => `${q} cancelado${q === 1 ? "" : "s"}`,
-    serie: "perdido",
-    dica: "Cancelados que teriam acontecido no período.",
-  },
-  {
-    chave: "aberto",
-    rotulo: "Total em aberto",
-    icone: Activity,
-    tom: "accent",
-    apoio: (q) => `${q} marcado${q === 1 ? "" : "s"}`,
-    serie: null,
-    selo: "agora",
-    dica:
-      "Marcados que ainda vão acontecer. Não segue o filtro de período: aberto é situação de agora, não recorte do passado.",
-  },
-  {
-    chave: "recuperado",
-    rotulo: "Receita recuperada",
-    icone: RotateCcw,
-    tom: "purple",
-    apoio: (q) => `${q} pelo follow-up`,
-    serie: null,
-    selo: "simulado",
-    dica:
-      "Cliente que voltou depois de um follow-up. Ainda não existe coluna que marque isso — este é o card que mais depende da tabela nova.",
-  },
-];
+// A RÉGUA que a tela não pode confundir, e por isso os blocos são separados:
+//   Bloco 1 CAIXA     → dinheiro que entrou (pagamentos)
+//   Bloco 2 PIPELINE  → o que está marcado e ainda pode virar dinheiro
+//   Bloco 3 COMPOSIÇÃO→ de onde vem, e o passivo já vendido a entregar
+// Os três nunca batem, e está certo que não batam.
 
 export function Negocios({ period }: { period: string }) {
-  const agendQuery = useAgendamentosComLead();
-  const agendamentos = useMemo(() => agendQuery.data ?? [], [agendQuery.data]);
-  const carregando = agendQuery.isPending;
+  const intervalo = useMemo(() => intervaloDoPeriodo(period), [period]);
 
-  const [selecionado, setSelecionado] = useState<string | null>("criado");
-  const [modo, setModo] = useState<Modo>("valor");
-  const [destaqueManual, setDestaqueManual] = useState<SerieId | null>(null);
+  const resumoQ = useFinanceiroResumo(intervalo);
+  const pagamentosQ = usePagamentosDoPeriodo(intervalo);
+  const periodoQ = useAtendimentosDoPeriodo(intervalo);
+  const pacotesQ = usePacotesSaldo();
+  const temProfQ = useTemProfissional();
 
-  const resumo = useMemo(
-    () => resumoFinanceiro(agendamentos, period),
-    [agendamentos, period]
+  const r = resumoQ.data;
+  const carregando = resumoQ.isPending;
+  const atendimentos = useMemo(() => periodoQ.data ?? [], [periodoQ.data]);
+
+  const [verFilaConferencia, setVerFilaConferencia] = useState(false);
+
+  // Conversão agendado→realizado: só entre os que JÁ resolveram. Pendente e
+  // confirmado ainda não viraram nem uma coisa nem outra, então incluí-los no
+  // denominador faria a taxa despencar só porque a agenda está cheia à frente.
+  const conversao = useMemo(() => {
+    const feitos = atendimentos.filter((a) => a.status === "realizado").length;
+    const perdidos = atendimentos.filter((a) => a.status === "cancelado").length;
+    const resolvidos = feitos + perdidos;
+    return { pct: resolvidos > 0 ? (feitos / resolvidos) * 100 : null, feitos, perdidos };
+  }, [atendimentos]);
+
+  // Composições: só realizados, e sobre o conjunto INTEIRO do período (a busca
+  // é paginada até a página curta) — se cortasse, as somas mentiriam.
+  const realizados = useMemo(
+    () => atendimentos.filter((a) => a.status === "realizado"),
+    [atendimentos]
   );
-  const pontos = useMemo(
-    () => serieDiaria(agendamentos, period),
-    [agendamentos, period]
+  const porProcedimento = useMemo(
+    () =>
+      agruparPorValor(
+        realizados,
+        (a) => nomeDoAtendimento(a.procedimento, a.servico_texto),
+        (a) => num(a.valor)
+      ),
+    [realizados]
   );
-  const fatias = useMemo(
-    () => porProfissional(agendamentos, period),
-    [agendamentos, period]
+  const porCategoria = useMemo(
+    () => agruparPorValor(realizados, (a) => a.categoria, (a) => num(a.valor), 6),
+    [realizados]
   );
-  const servicos = useMemo(
-    () => rankingServicos(agendamentos, period),
-    [agendamentos, period]
+  const porProfissional = useMemo(
+    () => agruparPorValor(realizados, (a) => a.profissional, (a) => num(a.valor), 6),
+    [realizados]
   );
 
-  const ticket = useMemo(
-    () => contarTicketPadrao(agendamentos, period),
-    [agendamentos, period]
-  );
-
-  const janela =
-    pontos.length > 0
-      ? `${pontos[0].rotulo} a ${pontos[pontos.length - 1].rotulo}`
-      : "";
-
-  // A legenda tem precedência sobre o card: quem clicou por último manda.
-  const destaque =
-    destaqueManual ??
-    CARDS.find((c) => c.chave === selecionado)?.serie ??
-    null;
+  // Campos de dinheiro do resumo — todos chegam como string (numeric do
+  // Postgres via PostgREST), por isso passam por `num()`.
+  type CampoMoeda =
+    | "recebido"
+    | "a_receber"
+    | "previsto"
+    | "faturado"
+    | "perdido"
+    | "ticket_medio";
+  const v = (campo: CampoMoeda) =>
+    carregando || !r ? "—" : moeda(num(r[campo]));
 
   return (
     <div className="neg-fill">
-      {FINANCEIRO_ESTIMADO && (
-        <div className="neg-aviso" role="note">
-          <Info size={15} strokeWidth={1.8} />
+      {/* O banner de "valores estimados" morreu com a estimativa. No lugar,
+          só aparece o que ainda falta resolver no dado. */}
+      {!carregando && r && r.sem_procedimento > 0 && (
+        <button
+          type="button"
+          className="neg-aviso neg-aviso-btn"
+          onClick={() => setVerFilaConferencia(true)}
+        >
+          <TriangleAlert size={15} strokeWidth={1.8} />
           <div>
-            <strong>Valores estimados.</strong> Os agendamentos são reais — quais,
-            quando, com que status e serviço. Já os <em>preços</em> vêm de uma
-            tabela baseada nas promoções da clínica (a coluna{" "}
-            <code>agendamentos.valor</code> está vazia), e a divisão{" "}
-            <em>por profissional</em> é sintética, porque não existe vínculo no
-            banco ainda. Nada aqui serve para fechar caixa.
-            {/* O pedaço mais frouxo da estimativa merece número, não adjetivo:
-                são linhas de importação ("agenda legada", "caderninho", "Outro")
-                que aconteceram de verdade mas não dizem o que foi feito, e
-                entram todas pelo mesmo ticket padrão. */}
-            {ticket.padrao > 0 && (
-              <>
-                {" "}
-                Destes, <strong>{ticket.padrao} de {ticket.total}</strong>{" "}
-                atendimentos não têm serviço identificado e entram por um ticket
-                padrão de R$ 100.
-              </>
-            )}
+            <strong>{r.sem_procedimento} atendimentos sem procedimento.</strong>{" "}
+            Ficaram sem vínculo com o catálogo, então entram com valor nulo — o{" "}
+            <em>faturado</em> abaixo é piso, não total. Clique para abrir a fila
+            de conferência.
           </div>
-        </div>
+        </button>
       )}
 
-      <div className="neg-grid">
-        {CARDS.map((c) => {
-          const faixa = resumo[c.chave];
-          return (
-            <KpiCard
-              key={c.chave}
-              rotulo={c.rotulo}
-              valor={carregando ? "—" : moeda(faixa.valor)}
-              apoio={carregando ? " " : c.apoio(faixa.qtd)}
-              icone={c.icone}
-              tom={c.tom}
-              dica={c.dica}
-              selo={c.selo}
-              ativo={selecionado === c.chave}
-              onSelecionar={() => {
-                setSelecionado(selecionado === c.chave ? null : c.chave);
-                setDestaqueManual(null);
-              }}
-            />
-          );
-        })}
-      </div>
-
+      {/* ── BLOCO 1 — CAIXA ─────────────────────────────────────────────── */}
+      <h2 className="neg-bloco-titulo">Caixa</h2>
       <div className="neg-secao-2">
+        <div className="neg-grid neg-grid-3">
+          <KpiCard
+            rotulo="Recebido"
+            valor={v("recebido")}
+            apoio="pagamentos no período"
+            icone={Wallet}
+            tom="green"
+            dica="Soma de pagamentos.valor no período. É o único número que representa dinheiro que entrou."
+          />
+          <KpiCard
+            rotulo="A receber"
+            valor={v("a_receber")}
+            apoio="realizado com saldo aberto"
+            icone={Clock3}
+            tom="accent"
+            dica="Atendimento entregue no período que ainda tem saldo em aberto."
+          />
+          <KpiCard
+            rotulo="Ticket médio"
+            valor={v("ticket_medio")}
+            apoio={
+              carregando || !r
+                ? " "
+                : `${r.atendimentos_realizados} realizados`
+            }
+            icone={Percent}
+            tom="blue"
+            dica="Média do valor dos realizados com valor maior que zero."
+          />
+        </div>
+
         <section className="neg-painel">
           <header className="neg-painel-topo">
             <div>
-              <h2 className="neg-painel-titulo">Dados diários</h2>
+              <h3 className="neg-painel-titulo">Como entrou</h3>
               <span className="neg-painel-nota">
-                Por {modo === "valor" ? "valor" : "quantidade"}
-                {/* A janela do gráfico nem sempre é igual à do filtro: em
-                    "Hoje" ela abre para 7 dias (um ponto sozinho não desenha
-                    nada) e nunca passa de hoje. Mostrar o intervalo tira a
-                    ambiguidade em vez de explicar. */}
-                {janela ? ` · ${janela}` : ""}
+                Taxa de maquininha come margem e pix não
               </span>
             </div>
-            <div className="neg-painel-acoes">
-              <LegendaSeries
-                destaque={destaque}
-                onDestacar={(s) => {
-                  setDestaqueManual(s);
-                  setSelecionado(null);
-                }}
-              />
-              <select
-                className="neg-select"
-                value={modo}
-                onChange={(e) => setModo(e.target.value as Modo)}
-                aria-label="Base do gráfico"
-              >
-                <option value="valor">Valor</option>
-                <option value="qtd">Quantidade</option>
-              </select>
-            </div>
           </header>
-          {carregando ? (
+          {pagamentosQ.isPending ? (
             <div className="neg-vazio">Carregando…</div>
           ) : (
-            <DadosDiarios pontos={pontos} modo={modo} destaque={destaque} />
+            <FormasPagamento pagamentos={pagamentosQ.data ?? []} />
+          )}
+        </section>
+      </div>
+
+      {/* ── BLOCO 2 — PIPELINE ──────────────────────────────────────────── */}
+      <h2 className="neg-bloco-titulo">Pipeline</h2>
+      <div className="neg-grid neg-grid-3">
+        <KpiCard
+          rotulo="Previsto"
+          valor={v("previsto")}
+          apoio="pendentes e confirmados"
+          icone={CalendarClock}
+          tom="blue"
+          selo="de agora em diante"
+          dica="Agendamento futuro pendente ou confirmado. NÃO segue o filtro de período: pipeline é sempre daqui pra frente. Pendente e confirmado andam juntos porque 'confirmado' só quer dizer que o lembrete rodou e ninguém desmarcou."
+        />
+        <KpiCard
+          rotulo="Conversão"
+          valor={
+            periodoQ.isPending
+              ? "—"
+              : conversao.pct == null
+                ? "—"
+                : `${conversao.pct.toFixed(0)}%`
+          }
+          apoio={
+            periodoQ.isPending
+              ? " "
+              : `${conversao.feitos} de ${conversao.feitos + conversao.perdidos} resolvidos`
+          }
+          icone={Banknote}
+          tom="green"
+          dica="Dos atendimentos do período que já resolveram (realizado ou cancelado), quantos aconteceram. Pendentes e confirmados ficam de fora porque ainda não viraram nada."
+        />
+        <KpiCard
+          rotulo="Perdido"
+          valor={v("perdido")}
+          apoio={
+            periodoQ.isPending ? " " : `${conversao.perdidos} cancelados`
+          }
+          icone={TrendingDown}
+          tom="red"
+          dica="Valor dos cancelados que teriam acontecido no período."
+        />
+      </div>
+
+      {/* ── BLOCO 3 — COMPOSIÇÃO ────────────────────────────────────────── */}
+      <h2 className="neg-bloco-titulo">Composição</h2>
+      <div className="neg-secao-2 par">
+        <section className="neg-painel">
+          <header className="neg-painel-topo">
+            <div>
+              <h3 className="neg-painel-titulo">Por procedimento</h3>
+              <span className="neg-painel-nota">Realizados no período</span>
+            </div>
+          </header>
+          {periodoQ.isPending ? (
+            <div className="neg-vazio">Carregando…</div>
+          ) : (
+            <RankingValor linhas={porProcedimento} />
           )}
         </section>
 
         <section className="neg-painel">
           <header className="neg-painel-topo">
             <div>
-              <h2 className="neg-painel-titulo">Percentual por profissional</h2>
-              <span className="neg-painel-nota">Por valor dos atendimentos</span>
+              <h3 className="neg-painel-titulo">Por categoria</h3>
+              <span className="neg-painel-nota">Realizados no período</span>
             </div>
           </header>
-          {carregando ? (
+          {periodoQ.isPending ? (
             <div className="neg-vazio">Carregando…</div>
           ) : (
-            <PercentualProfissional fatias={fatias} />
+            <RankingValor linhas={porCategoria} />
           )}
         </section>
       </div>
@@ -248,31 +249,63 @@ export function Negocios({ period }: { period: string }) {
         <section className="neg-painel">
           <header className="neg-painel-topo">
             <div>
-              <h2 className="neg-painel-titulo">Serviços mais vendidos</h2>
-              <span className="neg-painel-nota">Procedimentos realizados</span>
+              <h3 className="neg-painel-titulo">Pacotes a entregar</h3>
+              <span className="neg-painel-nota">
+                Receita já reconhecida na venda
+              </span>
             </div>
           </header>
-          {carregando ? (
+          {pacotesQ.isPending ? (
             <div className="neg-vazio">Carregando…</div>
           ) : (
-            <ServicosVendidos linhas={servicos} />
+            <PacotesSaldo pacotes={pacotesQ.data ?? []} />
           )}
         </section>
 
-        <section className="neg-painel">
-          <header className="neg-painel-topo">
+        {/* Condição no DADO: o card volta sozinho quando a Agenda começar a
+            atribuir. Enquanto profissional_id for nulo em tudo, um donut vazio
+            ou zerado seria pior que a ausência. */}
+        {temProfQ.data ? (
+          <section className="neg-painel">
+            <header className="neg-painel-topo">
+              <div>
+                <h3 className="neg-painel-titulo">Por profissional</h3>
+                <span className="neg-painel-nota">Realizados no período</span>
+              </div>
+            </header>
+            <RankingValor linhas={porProfissional} />
+          </section>
+        ) : (
+          <section className="neg-painel neg-painel-aguardando">
+            <Users size={18} strokeWidth={1.6} />
             <div>
-              <h2 className="neg-painel-titulo">Profissionais com mais vendas</h2>
-              <span className="neg-painel-nota">Valor e ticket médio</span>
+              <strong>Divisão por profissional</strong>
+              <p>
+                Aparece aqui assim que os atendimentos passarem a ser atribuídos
+                na Agenda. Hoje nenhum tem profissional definido.
+              </p>
             </div>
-          </header>
-          {carregando ? (
-            <div className="neg-vazio">Carregando…</div>
-          ) : (
-            <ProfissionaisVendas fatias={fatias} />
-          )}
-        </section>
+          </section>
+        )}
       </div>
+
+      {/* ── Lista de atendimentos ───────────────────────────────────────── */}
+      <section className="neg-painel neg-painel-lista">
+        <header className="neg-painel-topo">
+          <div>
+            <h3 className="neg-painel-titulo">Atendimentos</h3>
+            <span className="neg-painel-nota">
+              Registre pagamento na linha. Estorno entra como tipo
+              &ldquo;estorno&rdquo; e faz o saldo voltar a subir.
+            </span>
+          </div>
+        </header>
+        <AtendimentosLista
+          intervalo={intervalo}
+          soSemProcedimentoInicial={verFilaConferencia}
+          key={verFilaConferencia ? "fila" : "tudo"}
+        />
+      </section>
     </div>
   );
 }

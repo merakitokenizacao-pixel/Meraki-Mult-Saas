@@ -101,6 +101,56 @@ export async function getAtendimentosDoPeriodo(
   );
 }
 
+/**
+ * "Total criado": o que ENTROU no funil no período, pela data em que foi
+ * marcado. Precisa de query própria porque a view filtra por
+ * `data_agendamento`, e aqui o recorte é `criado_em` — um agendamento feito
+ * hoje para setembro conta hoje.
+ *
+ * O valor é sempre o snapshot de `agendamentos.valor`, nunca preço de tabela.
+ */
+export async function getCriadosNoPeriodo(
+  iv: IntervaloISO
+): Promise<{ valor: number; qtd: number }> {
+  const t = limitesTimestamp(iv);
+  const linhas = await buscarTodasAsPaginas<{ valor: string | null }>(
+    (de, ate) =>
+      supabase
+        .from("agendamentos")
+        .select("valor")
+        .gte("criado_em", t.de)
+        .lt("criado_em", t.ate)
+        .order("criado_em", { ascending: false })
+        .order("id", { ascending: false })
+        .range(de, ate)
+  );
+  let valor = 0;
+  for (const l of linhas) valor += Number(l.valor) || 0;
+  return { valor, qtd: linhas.length };
+}
+
+/**
+ * Agendamentos que nasceram de um follow-up. Alimenta "Receita recuperada":
+ * cliente que voltou depois de ser cutucado.
+ *
+ * Devolve só os ids — quem soma é a tela, cruzando com os atendimentos do
+ * período que ela já carregou. Evita um join e não busca nada duas vezes.
+ */
+export async function getAgendamentosDeFollowUp(): Promise<Set<string>> {
+  const { data, error } = await supabase
+    .from("follow_ups")
+    .select("agendamento_id")
+    .not("agendamento_id", "is", null)
+    .order("id", { ascending: false })
+    .limit(TETO_AGREGACAO);
+  if (error) throw error;
+  const ids = new Set<string>();
+  for (const r of (data ?? []) as { agendamento_id: string | null }[]) {
+    if (r.agendamento_id) ids.add(r.agendamento_id);
+  }
+  return ids;
+}
+
 /** A divisão por profissional só existe quando a Agenda começar a atribuir.
  *  Uma linha basta para decidir se o card aparece — condição no DADO, não
  *  comentário no código, então ele volta sozinho. */

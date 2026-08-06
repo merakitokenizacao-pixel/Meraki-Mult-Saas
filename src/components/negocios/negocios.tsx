@@ -2,17 +2,21 @@
 
 import { useMemo, useState } from "react";
 import {
-  Banknote,
   CalendarClock,
   Clock3,
   Percent,
+  Plus,
+  RotateCcw,
   TrendingDown,
+  TrendingUp,
   TriangleAlert,
   Users,
   Wallet,
 } from "lucide-react";
 import {
+  useAgendamentosDeFollowUp,
   useAtendimentosDoPeriodo,
+  useCriadosNoPeriodo,
   useFinanceiroResumo,
   usePacotesSaldo,
   usePagamentosDoPeriodo,
@@ -47,6 +51,8 @@ export function Negocios({ period }: { period: string }) {
   const periodoQ = useAtendimentosDoPeriodo(intervalo);
   const pacotesQ = usePacotesSaldo();
   const temProfQ = useTemProfissional();
+  const criadosQ = useCriadosNoPeriodo(intervalo);
+  const deFollowUpQ = useAgendamentosDeFollowUp();
 
   const r = resumoQ.data;
   const carregando = resumoQ.isPending;
@@ -63,6 +69,22 @@ export function Negocios({ period }: { period: string }) {
     const resolvidos = feitos + perdidos;
     return { pct: resolvidos > 0 ? (feitos / resolvidos) * 100 : null, feitos, perdidos };
   }, [atendimentos]);
+
+  // Receita recuperada: atendimento realizado que NASCEU de um follow-up.
+  // O cruzamento é feito aqui porque os atendimentos do período já estão
+  // carregados — evita um join e não busca a mesma coisa duas vezes.
+  const recuperado = useMemo(() => {
+    const ids = deFollowUpQ.data;
+    if (!ids || periodoQ.isPending) return null;
+    let valor = 0;
+    let qtd = 0;
+    for (const a of atendimentos) {
+      if (a.status !== "realizado" || !ids.has(a.id)) continue;
+      valor += num(a.valor);
+      qtd += 1;
+    }
+    return { valor, qtd };
+  }, [deFollowUpQ.data, atendimentos, periodoQ.isPending]);
 
   // Composições: só realizados, e sobre o conjunto INTEIRO do período (a busca
   // é paginada até a página curta) — se cortasse, as somas mentiriam.
@@ -120,7 +142,66 @@ export function Negocios({ period }: { period: string }) {
         </button>
       )}
 
-      {/* ── BLOCO 1 — CAIXA ─────────────────────────────────────────────── */}
+      {/* ── OS 5 CARDS ──────────────────────────────────────────────────────
+          Mesma fileira de antes; o que mudou é a FONTE: nada mais é estimado.
+          Cada um puxa da coluna que responde a pergunta dele. */}
+      <div className="neg-grid">
+        <KpiCard
+          rotulo="Total criado"
+          valor={
+            criadosQ.isPending ? "—" : moeda(criadosQ.data?.valor ?? 0)
+          }
+          apoio={
+            criadosQ.isPending
+              ? " "
+              : `${criadosQ.data?.qtd ?? 0} agendamentos marcados`
+          }
+          icone={Plus}
+          tom="blue"
+          dica="O que entrou no funil no período, pela data em que foi MARCADO — um agendamento feito hoje para setembro conta hoje."
+        />
+        <KpiCard
+          rotulo="Total ganhos"
+          valor={v("faturado")}
+          apoio={
+            carregando || !r ? " " : `${r.atendimentos_realizados} realizados`
+          }
+          icone={TrendingUp}
+          tom="green"
+          dica="Valor dos atendimentos realizados no período. Serviço entregue — não é o mesmo que dinheiro recebido."
+        />
+        <KpiCard
+          rotulo="Total perdidos"
+          valor={v("perdido")}
+          apoio={periodoQ.isPending ? " " : `${conversao.perdidos} cancelados`}
+          icone={TrendingDown}
+          tom="red"
+          dica="Valor dos cancelados que teriam acontecido no período."
+        />
+        <KpiCard
+          rotulo="Total em aberto"
+          valor={v("previsto")}
+          apoio="pendentes e confirmados"
+          icone={CalendarClock}
+          tom="accent"
+          selo="de agora em diante"
+          dica="Agendamento futuro pendente ou confirmado. NÃO segue o filtro de período: pipeline é sempre daqui pra frente. Pendente e confirmado andam juntos porque 'confirmado' só quer dizer que o lembrete rodou e ninguém desmarcou."
+        />
+        <KpiCard
+          rotulo="Receita recuperada"
+          valor={recuperado == null ? "—" : moeda(recuperado.valor)}
+          apoio={
+            recuperado == null
+              ? " "
+              : `${recuperado.qtd} voltaram pelo follow-up`
+          }
+          icone={RotateCcw}
+          tom="purple"
+          dica="Atendimentos realizados que nasceram de um follow-up (follow_ups.agendamento_id). Hoje nenhum follow-up virou agendamento ainda, então o zero é real."
+        />
+      </div>
+
+      {/* ── CAIXA ───────────────────────────────────────────────────────── */}
       <h2 className="neg-bloco-titulo">Caixa</h2>
       <div className="neg-secao-2">
         <div className="neg-grid neg-grid-3">
@@ -130,7 +211,7 @@ export function Negocios({ period }: { period: string }) {
             apoio="pagamentos no período"
             icone={Wallet}
             tom="green"
-            dica="Soma de pagamentos.valor no período. É o único número que representa dinheiro que entrou."
+            dica="Soma de pagamentos.valor no período. É o único número que representa dinheiro que entrou de fato."
           />
           <KpiCard
             rotulo="A receber"
@@ -171,49 +252,7 @@ export function Negocios({ period }: { period: string }) {
         </section>
       </div>
 
-      {/* ── BLOCO 2 — PIPELINE ──────────────────────────────────────────── */}
-      <h2 className="neg-bloco-titulo">Pipeline</h2>
-      <div className="neg-grid neg-grid-3">
-        <KpiCard
-          rotulo="Previsto"
-          valor={v("previsto")}
-          apoio="pendentes e confirmados"
-          icone={CalendarClock}
-          tom="blue"
-          selo="de agora em diante"
-          dica="Agendamento futuro pendente ou confirmado. NÃO segue o filtro de período: pipeline é sempre daqui pra frente. Pendente e confirmado andam juntos porque 'confirmado' só quer dizer que o lembrete rodou e ninguém desmarcou."
-        />
-        <KpiCard
-          rotulo="Conversão"
-          valor={
-            periodoQ.isPending
-              ? "—"
-              : conversao.pct == null
-                ? "—"
-                : `${conversao.pct.toFixed(0)}%`
-          }
-          apoio={
-            periodoQ.isPending
-              ? " "
-              : `${conversao.feitos} de ${conversao.feitos + conversao.perdidos} resolvidos`
-          }
-          icone={Banknote}
-          tom="green"
-          dica="Dos atendimentos do período que já resolveram (realizado ou cancelado), quantos aconteceram. Pendentes e confirmados ficam de fora porque ainda não viraram nada."
-        />
-        <KpiCard
-          rotulo="Perdido"
-          valor={v("perdido")}
-          apoio={
-            periodoQ.isPending ? " " : `${conversao.perdidos} cancelados`
-          }
-          icone={TrendingDown}
-          tom="red"
-          dica="Valor dos cancelados que teriam acontecido no período."
-        />
-      </div>
-
-      {/* ── BLOCO 3 — COMPOSIÇÃO ────────────────────────────────────────── */}
+      {/* ── COMPOSIÇÃO ──────────────────────────────────────────────────── */}
       <h2 className="neg-bloco-titulo">Composição</h2>
       <div className="neg-secao-2 par">
         <section className="neg-painel">

@@ -12,8 +12,10 @@ import {
   getUltimaConversaPorLead,
 } from "@/lib/queries";
 import {
+  getAgendamentosDeFollowUp,
   getAtendimentos,
   getAtendimentosDoPeriodo,
+  getCriadosNoPeriodo,
   getCategorias,
   getFinanceiroResumo,
   getPacotesSaldo,
@@ -172,5 +174,21 @@ export function useCategorias() {
   return useQuery({
     queryKey: ["financeiro", "categorias"],
     queryFn: getCategorias,
+  });
+}
+
+export function useCriadosNoPeriodo(iv: { de: string; ate: string }) {
+  return useQuery({
+    queryKey: ["financeiro", "criados", iv.de, iv.ate],
+    queryFn: () => getCriadosNoPeriodo(iv),
+  });
+}
+
+// Ids dos agendamentos que nasceram de follow-up. Não depende do período: a
+// tela cruza com os atendimentos que já carregou.
+export function useAgendamentosDeFollowUp() {
+  return useQuery({
+    queryKey: ["financeiro", "de-follow-up"],
+    queryFn: getAgendamentosDeFollowUp,
   });
 }

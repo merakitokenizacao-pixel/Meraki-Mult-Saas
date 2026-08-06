@@ -16,7 +16,6 @@ export interface Lead {
   telefone: string;
   status: LeadStatus;
   canal: string | null;
-  origem: string | null;
   foto_url: string | null;
   nao_lidas: number | null;
   ia_pausada: boolean | null;
@@ -100,92 +99,3 @@ export interface FichaAvaliacao {
   preenchida_em: string | null;
 }
 
-// ── Financeiro (estrutura de ago/2026) ──────────────────────────────────────
-// A régua: PREVISTO (pipeline futuro) ≠ FATURADO (serviço entregue) ≠ RECEBIDO
-// (dinheiro que entrou). Os três nunca batem, e está certo que não batam.
-
-/** numeric do Postgres chega como STRING via PostgREST — por isso os campos de
- *  dinheiro são `string`. Passe por `num()` antes de contar. */
-export interface FinanceiroResumo {
-  recebido: string;
-  a_receber: string;
-  /** Pipeline: NÃO é filtrado pelo período, é sempre de agora em diante. */
-  previsto: string;
-  faturado: string;
-  perdido: string;
-  ticket_medio: string;
-  atendimentos_realizados: number;
-  pacotes_vendidos: string;
-  /** Passivo: sessões de pacote vendidas e ainda não entregues. */
-  sessoes_pendentes_de_entrega: number;
-  /** Agendamentos sem vínculo com o catálogo — `valor` fica nulo. */
-  sem_procedimento: number;
-}
-
-/** Uma linha por agendamento (view `vw_financeiro_atendimentos`). */
-export interface AtendimentoFinanceiro {
-  id: string;
-  lead_id: string | null;
-  cliente: string | null;
-  telefone: string | null;
-  data_agendamento: string;
-  status: AgendamentoStatus;
-  origem: string | null;
-  /** Texto livre original do agendamento. */
-  servico_texto: string | null;
-  /** Nome do catálogo. Nulo = serviço não identificado. */
-  procedimento: string | null;
-  categoria: string | null;
-  grupo: string | null;
-  procedimento_id: string | null;
-  /** Preenchido = sessão de pacote, e então `valor` é 0 (receita já foi
-   *  reconhecida na venda). Somar preço de tabela aqui contaria duas vezes. */
-  pacote_vendido_id: string | null;
-  profissional_id: string | null;
-  profissional: string | null;
-  valor: string | null;
-  pago: string | null;
-  saldo: string | null;
-  precisa_conferir: boolean | null;
-}
-
-export type FormaPagamento =
-  | "pix"
-  | "dinheiro"
-  | "credito"
-  | "debito"
-  | "link"
-  | "cortesia"
-  | "outro";
-export type TipoPagamento = "integral" | "sinal" | "parcela" | "estorno";
-
-export interface Pagamento {
-  id: string;
-  lead_id: string;
-  agendamento_id: string | null;
-  pacote_vendido_id: string | null;
-  /** Estorno entra NEGATIVO — é o que faz o saldo da view subir de volta. */
-  valor: string;
-  forma: FormaPagamento;
-  tipo: TipoPagamento;
-  pago_em: string;
-  registrado_por: string | null;
-  observacao: string | null;
-  criado_em: string;
-}
-
-/** Passivo de pacotes (view `vw_pacotes_saldo`): o contrapeso do Bloco 1. */
-export interface PacoteSaldo {
-  venda_id: string;
-  cliente: string | null;
-  telefone: string | null;
-  pacote: string | null;
-  valor_acordado: string | null;
-  vendido_em: string | null;
-  expira_em: string | null;
-  status: string | null;
-  item: string | null;
-  sessoes_total: number | null;
-  sessoes_usadas: number | null;
-  sessoes_restantes: number | null;
-}

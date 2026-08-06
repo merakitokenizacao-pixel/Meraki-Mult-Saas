@@ -41,8 +41,8 @@ export function KpiCard({
   /** Explica de onde sai o número — vira o `title` do rótulo. */
   dica?: string;
   /** Ressalva que precisa ser VISÍVEL, não só no hover: um card que se comporta
-   *  diferente dos vizinhos — o "Previsto", que ignora o filtro de período —
-   *  tem que dizer isso na cara, senão é lido como se seguisse o mesmo recorte. */
+   *  diferente dos outros (não segue o período, ou é número simulado) tem que
+   *  dizer isso na cara, senão é lido como igual aos vizinhos. */
   selo?: string;
 }) {
   const conteudo = (

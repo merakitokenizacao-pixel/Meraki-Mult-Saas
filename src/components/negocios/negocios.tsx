@@ -14,6 +14,7 @@ import {
   Wallet,
 } from "lucide-react";
 import {
+  useAgendamentos,
   useAgendamentosDeFollowUp,
   useAtendimentosDoPeriodo,
   useCriadosNoPeriodo,
@@ -24,13 +25,22 @@ import {
 } from "@/lib/hooks";
 import {
   agruparPorValor,
+  fatiasPorProfissional,
   intervaloDoPeriodo,
   moeda,
+  serieDiaria,
   nomeDoAtendimento,
   num,
 } from "@/lib/financeiro";
 import { KpiCard } from "@/components/negocios/kpi-card";
 import { RankingValor } from "@/components/negocios/ranking-valor";
+import {
+  DadosDiarios,
+  LegendaSeries,
+  type Modo,
+  type SerieId,
+} from "@/components/negocios/dados-diarios";
+import { PercentualProfissional } from "@/components/negocios/percentual-profissional";
 import { FormasPagamento } from "@/components/negocios/formas-pagamento";
 import { PacotesSaldo } from "@/components/negocios/pacotes-saldo";
 import { AtendimentosLista } from "@/components/negocios/atendimentos-lista";
@@ -59,6 +69,21 @@ export function Negocios({ period }: { period: string }) {
   const atendimentos = useMemo(() => periodoQ.data ?? [], [periodoQ.data]);
 
   const [verFilaConferencia, setVerFilaConferencia] = useState(false);
+  const [modo, setModo] = useState<Modo>("valor");
+  const [destaqueManual, setDestaqueManual] = useState<SerieId | null>("criado");
+
+  // A série precisa de `criado_em`, que a view financeira não expõe (ela
+  // recorta por data_agendamento). Vem da tabela, já paginada e em cache.
+  const agendQ = useAgendamentos();
+  const pontos = useMemo(
+    () => serieDiaria(agendQ.data ?? [], period),
+    [agendQ.data, period]
+  );
+  const janela =
+    pontos.length > 0
+      ? `${pontos[0].rotulo} a ${pontos[pontos.length - 1].rotulo}`
+      : "";
+  const destaque = destaqueManual;
 
   // Conversão agendado→realizado: só entre os que JÁ resolveram. Pendente e
   // confirmado ainda não viraram nem uma coisa nem outra, então incluí-los no
@@ -103,6 +128,10 @@ export function Negocios({ period }: { period: string }) {
   );
   const porCategoria = useMemo(
     () => agruparPorValor(realizados, (a) => a.categoria, (a) => num(a.valor), 6),
+    [realizados]
+  );
+  const fatiasProf = useMemo(
+    () => fatiasPorProfissional(realizados),
     [realizados]
   );
   const porProfissional = useMemo(
@@ -252,13 +281,76 @@ export function Negocios({ period }: { period: string }) {
         </section>
       </div>
 
-      {/* ── COMPOSIÇÃO ──────────────────────────────────────────────────── */}
-      <h2 className="neg-bloco-titulo">Composição</h2>
+      {/* ── DADOS DIÁRIOS + PERCENTUAL POR PROFISSIONAL ─────────────────── */}
+      <div className="neg-secao-2">
+        <section className="neg-painel">
+          <header className="neg-painel-topo">
+            <div>
+              <h2 className="neg-painel-titulo">Dados diários</h2>
+              <span className="neg-painel-nota">
+                Por {modo === "valor" ? "valor" : "quantidade"}
+                {/* A janela nem sempre é igual à do filtro: em "Hoje" ela abre
+                    para 7 dias (um ponto sozinho não desenha nada) e nunca passa
+                    de hoje. Mostrar o intervalo tira a ambiguidade. */}
+                {janela ? ` · ${janela}` : ""}
+              </span>
+            </div>
+            <div className="neg-painel-acoes">
+              <LegendaSeries
+                destaque={destaque}
+                onDestacar={(s) => setDestaqueManual(s)}
+              />
+              <select
+                className="neg-select"
+                value={modo}
+                onChange={(e) => setModo(e.target.value as Modo)}
+                aria-label="Base do gráfico"
+              >
+                <option value="valor">Valor</option>
+                <option value="qtd">Quantidade</option>
+              </select>
+            </div>
+          </header>
+          {agendQ.isPending ? (
+            <div className="neg-vazio">Carregando…</div>
+          ) : (
+            <DadosDiarios pontos={pontos} modo={modo} destaque={destaque} />
+          )}
+        </section>
+
+        <section className="neg-painel">
+          <header className="neg-painel-topo">
+            <div>
+              <h2 className="neg-painel-titulo">Percentual por profissional</h2>
+              <span className="neg-painel-nota">Por valor dos atendimentos</span>
+            </div>
+          </header>
+          {/* Condição no DADO, não comentário no código: hoje `profissional_id`
+              é nulo em 253 de 253, então a rosca não tem o que desenhar. Ela
+              volta sozinha quando a Agenda começar a atribuir. */}
+          {temProfQ.data ? (
+            <PercentualProfissional fatias={fatiasProf} />
+          ) : (
+            <div className="neg-aguardando">
+              <Users size={18} strokeWidth={1.6} />
+              <div>
+                <strong>Ainda sem atribuição</strong>
+                <p>
+                  A divisão aparece aqui assim que os atendimentos passarem a ter
+                  profissional definido na Agenda.
+                </p>
+              </div>
+            </div>
+          )}
+        </section>
+      </div>
+
+      {/* ── SERVIÇOS + PROFISSIONAIS ────────────────────────────────────── */}
       <div className="neg-secao-2 par">
         <section className="neg-painel">
           <header className="neg-painel-topo">
             <div>
-              <h3 className="neg-painel-titulo">Por procedimento</h3>
+              <h2 className="neg-painel-titulo">Serviços mais vendidos</h2>
               <span className="neg-painel-nota">Realizados no período</span>
             </div>
           </header>
@@ -272,7 +364,7 @@ export function Negocios({ period }: { period: string }) {
         <section className="neg-painel">
           <header className="neg-painel-topo">
             <div>
-              <h3 className="neg-painel-titulo">Por categoria</h3>
+              <h2 className="neg-painel-titulo">Por categoria</h2>
               <span className="neg-painel-nota">Realizados no período</span>
             </div>
           </header>
@@ -282,50 +374,6 @@ export function Negocios({ period }: { period: string }) {
             <RankingValor linhas={porCategoria} />
           )}
         </section>
-      </div>
-
-      <div className="neg-secao-2 par">
-        <section className="neg-painel">
-          <header className="neg-painel-topo">
-            <div>
-              <h3 className="neg-painel-titulo">Pacotes a entregar</h3>
-              <span className="neg-painel-nota">
-                Receita já reconhecida na venda
-              </span>
-            </div>
-          </header>
-          {pacotesQ.isPending ? (
-            <div className="neg-vazio">Carregando…</div>
-          ) : (
-            <PacotesSaldo pacotes={pacotesQ.data ?? []} />
-          )}
-        </section>
-
-        {/* Condição no DADO: o card volta sozinho quando a Agenda começar a
-            atribuir. Enquanto profissional_id for nulo em tudo, um donut vazio
-            ou zerado seria pior que a ausência. */}
-        {temProfQ.data ? (
-          <section className="neg-painel">
-            <header className="neg-painel-topo">
-              <div>
-                <h3 className="neg-painel-titulo">Por profissional</h3>
-                <span className="neg-painel-nota">Realizados no período</span>
-              </div>
-            </header>
-            <RankingValor linhas={porProfissional} />
-          </section>
-        ) : (
-          <section className="neg-painel neg-painel-aguardando">
-            <Users size={18} strokeWidth={1.6} />
-            <div>
-              <strong>Divisão por profissional</strong>
-              <p>
-                Aparece aqui assim que os atendimentos passarem a ser atribuídos
-                na Agenda. Hoje nenhum tem profissional definido.
-              </p>
-            </div>
-          </section>
-        )}
       </div>
 
       {/* ── Lista de atendimentos ───────────────────────────────────────── */}

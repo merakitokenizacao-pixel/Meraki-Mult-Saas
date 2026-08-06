@@ -4480,3 +4480,28 @@ select.form-input {
   gap: 10px;
   margin-top: 20px;
 }
+
+/* Estado "sem atribuição" dentro de um painel (a rosca por profissional). */
+.neg-aguardando {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 22px 0;
+  color: var(--vx-muted);
+}
+.neg-aguardando svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--vx-accent);
+  opacity: 0.7;
+}
+.neg-aguardando strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 13px;
+  color: var(--vx-text2);
+}
+.neg-aguardando p {
+  font-size: 12px;
+  line-height: 1.6;
+}

@@ -1,95 +1,278 @@
 "use client";
 
-import { CalendarClock, RotateCcw, TrendingUp, UserPlus } from "lucide-react";
-import { useAgendamentosComLead, useLeads } from "@/lib/hooks";
-import { filterByDate } from "@/lib/date";
-import { KpiCard } from "@/components/negocios/kpi-card";
+import { useMemo, useState } from "react";
+import {
+  Activity,
+  Info,
+  Plus,
+  RotateCcw,
+  TrendingDown,
+  TrendingUp,
+} from "lucide-react";
+import { useAgendamentosComLead } from "@/lib/hooks";
+import {
+  FINANCEIRO_ESTIMADO,
+  moeda,
+  porProfissional,
+  rankingServicos,
+  resumoFinanceiro,
+  serieDiaria,
+  contarTicketPadrao,
+} from "@/lib/financeiro";
+import { KpiCard, type TomKpi } from "@/components/negocios/kpi-card";
+import {
+  DadosDiarios,
+  LegendaSeries,
+  type Modo,
+  type SerieId,
+} from "@/components/negocios/dados-diarios";
+import { PercentualProfissional } from "@/components/negocios/percentual-profissional";
 import { ServicosVendidos } from "@/components/negocios/servicos-vendidos";
+import { ProfissionaisVendas } from "@/components/negocios/profissionais-vendas";
 
-// Aba "Negócios" — a tela onde o layout novo está sendo testado.
+// Aba "Negócios" — a visão financeira, e onde o layout novo está sendo testado.
 //
-// Os hooks são chamados aqui e também no Dashboard (a outra aba). Não é fetch
-// duplicado: as queryKeys são as mesmas, então o React Query serve as duas do
-// mesmo cache com uma requisição só.
-//
-// SOBRE OS NÚMEROS: três dos quatro cards saem de dado real. "Receita
-// recuperada" não tem origem no banco ainda (dependeria dos follow-ups
-// fecharem venda) e `agendamentos.valor` está 100% vazio — o n8n não preenche.
-// Por isso ela aparece marcada como "sem fonte" em vez de um R$ 0,00 que se
-// leria como informação verdadeira.
+// O hook é o mesmo do Dashboard (a outra aba). Não é fetch duplicado: mesma
+// queryKey, mesmo cache, uma requisição só.
+
+const CARDS: ReadonlyArray<{
+  chave: "criado" | "ganho" | "perdido" | "aberto" | "recuperado";
+  rotulo: string;
+  icone: typeof Plus;
+  tom: TomKpi;
+  apoio: (qtd: number) => string;
+  serie: SerieId | null;
+  selo?: string;
+  dica: string;
+}> = [
+  {
+    chave: "criado",
+    rotulo: "Total criado",
+    icone: Plus,
+    tom: "blue",
+    apoio: (q) => `${q} agendamento${q === 1 ? "" : "s"}`,
+    serie: "criado",
+    dica: "Tudo que entrou no funil no período, pela data em que foi marcado.",
+  },
+  {
+    chave: "ganho",
+    rotulo: "Total ganhos",
+    icone: TrendingUp,
+    tom: "green",
+    apoio: (q) => `${q} realizado${q === 1 ? "" : "s"}`,
+    serie: "ganho",
+    dica: "Procedimentos que aconteceram no período.",
+  },
+  {
+    chave: "perdido",
+    rotulo: "Total perdidos",
+    icone: TrendingDown,
+    tom: "red",
+    apoio: (q) => `${q} cancelado${q === 1 ? "" : "s"}`,
+    serie: "perdido",
+    dica: "Cancelados que teriam acontecido no período.",
+  },
+  {
+    chave: "aberto",
+    rotulo: "Total em aberto",
+    icone: Activity,
+    tom: "accent",
+    apoio: (q) => `${q} marcado${q === 1 ? "" : "s"}`,
+    serie: null,
+    selo: "agora",
+    dica:
+      "Marcados que ainda vão acontecer. Não segue o filtro de período: aberto é situação de agora, não recorte do passado.",
+  },
+  {
+    chave: "recuperado",
+    rotulo: "Receita recuperada",
+    icone: RotateCcw,
+    tom: "purple",
+    apoio: (q) => `${q} pelo follow-up`,
+    serie: null,
+    selo: "simulado",
+    dica:
+      "Cliente que voltou depois de um follow-up. Ainda não existe coluna que marque isso — este é o card que mais depende da tabela nova.",
+  },
+];
 
 export function Negocios({ period }: { period: string }) {
-  const leadsQuery = useLeads();
   const agendQuery = useAgendamentosComLead();
-  const leads = leadsQuery.data ?? [];
-  const agendamentos = agendQuery.data ?? [];
-  const carregando = leadsQuery.isPending || agendQuery.isPending;
+  const agendamentos = useMemo(() => agendQuery.data ?? [], [agendQuery.data]);
+  const carregando = agendQuery.isPending;
 
-  // Criados: quando o lead entrou.
-  const criados = filterByDate(leads, "criado_em", period).length;
+  const [selecionado, setSelecionado] = useState<string | null>("criado");
+  const [modo, setModo] = useState<Modo>("valor");
+  const [destaqueManual, setDestaqueManual] = useState<SerieId | null>(null);
 
-  // Ganhos e serviços: quando o atendimento aconteceu.
-  const doPeriodo = filterByDate(agendamentos, "data_agendamento", period);
-  const realizados = doPeriodo.filter((a) => a.status === "realizado").length;
+  const resumo = useMemo(
+    () => resumoFinanceiro(agendamentos, period),
+    [agendamentos, period]
+  );
+  const pontos = useMemo(
+    () => serieDiaria(agendamentos, period),
+    [agendamentos, period]
+  );
+  const fatias = useMemo(
+    () => porProfissional(agendamentos, period),
+    [agendamentos, period]
+  );
+  const servicos = useMemo(
+    () => rankingServicos(agendamentos, period),
+    [agendamentos, period]
+  );
 
-  // Em aberto NÃO é filtrado por período: "aberto" é uma situação de agora,
-  // não um recorte do passado. Filtrar por período faria a caixa "Ontem"
-  // mostrar zero em aberto, o que não quer dizer nada.
-  const agora = Date.now();
-  const emAberto = agendamentos.filter(
-    (a) =>
-      a.status !== "cancelado" &&
-      a.status !== "realizado" &&
-      new Date(a.data_agendamento).getTime() >= agora
-  ).length;
+  const ticket = useMemo(
+    () => contarTicketPadrao(agendamentos, period),
+    [agendamentos, period]
+  );
 
-  const n = (v: number) => (carregando ? "—" : String(v));
+  const janela =
+    pontos.length > 0
+      ? `${pontos[0].rotulo} a ${pontos[pontos.length - 1].rotulo}`
+      : "";
+
+  // A legenda tem precedência sobre o card: quem clicou por último manda.
+  const destaque =
+    destaqueManual ??
+    CARDS.find((c) => c.chave === selecionado)?.serie ??
+    null;
 
   return (
     <div className="neg-fill">
+      {FINANCEIRO_ESTIMADO && (
+        <div className="neg-aviso" role="note">
+          <Info size={15} strokeWidth={1.8} />
+          <div>
+            <strong>Valores estimados.</strong> Os agendamentos são reais — quais,
+            quando, com que status e serviço. Já os <em>preços</em> vêm de uma
+            tabela baseada nas promoções da clínica (a coluna{" "}
+            <code>agendamentos.valor</code> está vazia), e a divisão{" "}
+            <em>por profissional</em> é sintética, porque não existe vínculo no
+            banco ainda. Nada aqui serve para fechar caixa.
+            {/* O pedaço mais frouxo da estimativa merece número, não adjetivo:
+                são linhas de importação ("agenda legada", "caderninho", "Outro")
+                que aconteceram de verdade mas não dizem o que foi feito, e
+                entram todas pelo mesmo ticket padrão. */}
+            {ticket.padrao > 0 && (
+              <>
+                {" "}
+                Destes, <strong>{ticket.padrao} de {ticket.total}</strong>{" "}
+                atendimentos não têm serviço identificado e entram por um ticket
+                padrão de R$ 100.
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
       <div className="neg-grid">
-        <KpiCard
-          rotulo="Total criado"
-          valor={n(criados)}
-          apoio="clientes novos no período"
-          icone={UserPlus}
-          tom="accent"
-        />
-        <KpiCard
-          rotulo="Total ganhos"
-          valor={n(realizados)}
-          apoio="procedimentos realizados"
-          icone={TrendingUp}
-          tom="green"
-        />
-        <KpiCard
-          rotulo="Total em aberto"
-          valor={n(emAberto)}
-          apoio="marcados, ainda vão acontecer"
-          icone={CalendarClock}
-          tom="blue"
-        />
-        <KpiCard
-          rotulo="Receita recuperada"
-          valor="—"
-          apoio="follow-up que virou venda"
-          icone={RotateCcw}
-          tom="purple"
-          semFonte
-        />
+        {CARDS.map((c) => {
+          const faixa = resumo[c.chave];
+          return (
+            <KpiCard
+              key={c.chave}
+              rotulo={c.rotulo}
+              valor={carregando ? "—" : moeda(faixa.valor)}
+              apoio={carregando ? " " : c.apoio(faixa.qtd)}
+              icone={c.icone}
+              tom={c.tom}
+              dica={c.dica}
+              selo={c.selo}
+              ativo={selecionado === c.chave}
+              onSelecionar={() => {
+                setSelecionado(selecionado === c.chave ? null : c.chave);
+                setDestaqueManual(null);
+              }}
+            />
+          );
+        })}
       </div>
 
-      <section className="neg-painel">
-        <header className="neg-painel-topo">
-          <h2 className="neg-painel-titulo">Serviços mais vendidos</h2>
-          <span className="neg-painel-nota">procedimentos realizados</span>
-        </header>
-        {carregando ? (
-          <div className="neg-vazio">Carregando…</div>
-        ) : (
-          <ServicosVendidos agendamentos={doPeriodo} />
-        )}
-      </section>
+      <div className="neg-secao-2">
+        <section className="neg-painel">
+          <header className="neg-painel-topo">
+            <div>
+              <h2 className="neg-painel-titulo">Dados diários</h2>
+              <span className="neg-painel-nota">
+                Por {modo === "valor" ? "valor" : "quantidade"}
+                {/* A janela do gráfico nem sempre é igual à do filtro: em
+                    "Hoje" ela abre para 7 dias (um ponto sozinho não desenha
+                    nada) e nunca passa de hoje. Mostrar o intervalo tira a
+                    ambiguidade em vez de explicar. */}
+                {janela ? ` · ${janela}` : ""}
+              </span>
+            </div>
+            <div className="neg-painel-acoes">
+              <LegendaSeries
+                destaque={destaque}
+                onDestacar={(s) => {
+                  setDestaqueManual(s);
+                  setSelecionado(null);
+                }}
+              />
+              <select
+                className="neg-select"
+                value={modo}
+                onChange={(e) => setModo(e.target.value as Modo)}
+                aria-label="Base do gráfico"
+              >
+                <option value="valor">Valor</option>
+                <option value="qtd">Quantidade</option>
+              </select>
+            </div>
+          </header>
+          {carregando ? (
+            <div className="neg-vazio">Carregando…</div>
+          ) : (
+            <DadosDiarios pontos={pontos} modo={modo} destaque={destaque} />
+          )}
+        </section>
+
+        <section className="neg-painel">
+          <header className="neg-painel-topo">
+            <div>
+              <h2 className="neg-painel-titulo">Percentual por profissional</h2>
+              <span className="neg-painel-nota">Por valor dos atendimentos</span>
+            </div>
+          </header>
+          {carregando ? (
+            <div className="neg-vazio">Carregando…</div>
+          ) : (
+            <PercentualProfissional fatias={fatias} />
+          )}
+        </section>
+      </div>
+
+      <div className="neg-secao-2 par">
+        <section className="neg-painel">
+          <header className="neg-painel-topo">
+            <div>
+              <h2 className="neg-painel-titulo">Serviços mais vendidos</h2>
+              <span className="neg-painel-nota">Procedimentos realizados</span>
+            </div>
+          </header>
+          {carregando ? (
+            <div className="neg-vazio">Carregando…</div>
+          ) : (
+            <ServicosVendidos linhas={servicos} />
+          )}
+        </section>
+
+        <section className="neg-painel">
+          <header className="neg-painel-topo">
+            <div>
+              <h2 className="neg-painel-titulo">Profissionais com mais vendas</h2>
+              <span className="neg-painel-nota">Valor e ticket médio</span>
+            </div>
+          </header>
+          {carregando ? (
+            <div className="neg-vazio">Carregando…</div>
+          ) : (
+            <ProfissionaisVendas fatias={fatias} />
+          )}
+        </section>
+      </div>
     </div>
   );
 }

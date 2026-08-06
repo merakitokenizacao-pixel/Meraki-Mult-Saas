@@ -122,7 +122,8 @@
      No claro o accent é escuro → texto branco; nos escuros, o inverso. */
   --vx-on-accent: #ffffff;
   /* A sidebar é sempre escura, mas o TOM acompanha a paleta. */
-  --vx-sidebar-bg: linear-gradient(180deg, #1a1510 0%, #0f0d09 100%);
+  --vx-sidebar-bg: #16120d;
+  --vx-sidebar-linha: rgba(255, 255, 255, 0.07);
   --vx-radius: 12px;
   --vx-radius-sm: 8px;
   --vx-radius-lg: 18px;
@@ -197,7 +198,8 @@
   --vx-shadow-md: 0 6px 20px rgba(0, 0, 0, 0.4);
   --vx-shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.5);
   --vx-on-accent: #1a1814;
-  --vx-sidebar-bg: linear-gradient(180deg, #0d0b08 0%, #080706 100%);
+  --vx-sidebar-bg: #0d0c07;
+  --vx-sidebar-linha: rgba(255, 255, 255, 0.06);
 
   /* Ajustes de contraste shadcn no escuro (btn-primary usa texto escuro) */
   --primary: var(--vx-accent);
@@ -246,7 +248,8 @@
   --vx-shadow-md: 0 6px 20px rgba(0, 0, 0, 0.55);
   --vx-shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.65);
   --vx-on-accent: #12100c;
-  --vx-sidebar-bg: linear-gradient(180deg, #141416 0%, #09090b 100%);
+  --vx-sidebar-bg: #0c0c0e;
+  --vx-sidebar-linha: rgba(255, 255, 255, 0.06);
 
   --primary: var(--vx-accent);
   --primary-foreground: #12100c;
@@ -284,7 +287,8 @@
 .layout {
   display: flex;
   min-height: 100vh;
-  --vx-sidebar-w: 236px; /* largura da sidebar; muda ao colapsar */
+  --vx-sidebar-w: 208px; /* largura da sidebar; muda ao colapsar */
+  --vx-nav-margem: 8px; /* recuo lateral dos itens; a barra do ativo segue ele */
 }
 
 /* ── SIDEBAR LUXO ── */
@@ -299,21 +303,17 @@
   top: 0;
   left: 0;
   overflow: hidden;
+  border-right: 1px solid var(--vx-sidebar-linha);
   transition: transform 0.3s ease, width 0.3s ease;
   z-index: 40;
 }
-.sidebar::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(184, 149, 90, 0.6), transparent);
-}
+/* Altura EXATA da topbar (64px): sem isso o divisor do logo cai a ~88px e a
+   borda da topbar a 64px — duas linhas horizontais desalinhadas, que é o que
+   fazia a sidebar parecer colada e não encaixada. Agora formam uma só. */
 .sidebar-logo {
-  padding: 2rem 1.5rem 1.75rem;
-  border-bottom: 1px solid rgba(184, 149, 90, 0.12);
+  height: 64px;
+  padding: 0 20px;
+  border-bottom: 1px solid var(--vx-sidebar-linha);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -342,7 +342,7 @@
 }
 .sidebar-logo .logo-mark {
   font-family: var(--font-cormorant), serif;
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 300;
   color: #f0ece4;
   letter-spacing: 0.02em;
@@ -359,21 +359,21 @@
   font-weight: 600;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  padding: 1.5rem 1.75rem 0.5rem;
+  padding: 18px 20px 6px;
 }
 .nav-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 11px 1.75rem;
-  color: rgba(240, 236, 228, 0.35);
+  gap: 11px;
+  padding: 9px 12px;
+  color: rgba(240, 236, 228, 0.4);
   cursor: pointer;
   transition: all var(--vx-transition);
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 400;
-  letter-spacing: 0.02em;
-  margin: 1px 0.75rem;
-  border-radius: 10px;
+  letter-spacing: 0.01em;
+  margin: 1px var(--vx-nav-margem);
+  border-radius: 9px;
   position: relative;
   text-decoration: none;
 }
@@ -388,7 +388,7 @@
 .nav-item.active::before {
   content: "";
   position: absolute;
-  left: -12px;
+  left: calc(-1 * var(--vx-nav-margem));
   top: 50%;
   transform: translateY(-50%);
   width: 2px;
@@ -425,8 +425,8 @@
 
 .sidebar-footer {
   margin-top: auto;
-  padding: 1.25rem 1.75rem;
-  border-top: 1px solid rgba(184, 149, 90, 0.1);
+  padding: 14px 20px;
+  border-top: 1px solid var(--vx-sidebar-linha);
   display: flex;
   align-items: center;
   gap: 10px;
@@ -447,7 +447,7 @@
   align-items: center;
   gap: 12px;
   width: 100%;
-  padding: 0.7rem 1.75rem 1.1rem;
+  padding: 10px 20px 16px;
   background: none;
   border: none;
   cursor: pointer;
@@ -590,11 +590,16 @@
   .layout.collapsed .sidebar {
     overflow: visible;
   }
+  /* Colapsada, o bloco mantém os 64px (é o que alinha com a topbar), então
+     não cabe empilhar logo + botão. Fica só o botão: um clique devolve a
+     sidebar inteira, e some o risco de alguém ficar preso no colapsado —
+     que é o que aconteceria se o toggle fosse escondido. */
   .layout.collapsed .sidebar-logo {
-    flex-direction: column;
-    gap: 12px;
-    padding: 1.5rem 0;
     justify-content: center;
+    padding: 0;
+  }
+  .layout.collapsed .sidebar-logo .logo-mark {
+    display: none;
   }
   .layout.collapsed .nav-section,
   .layout.collapsed .nav-label,
@@ -641,7 +646,7 @@
 /* Tablet / narrow desktop */
 @media (max-width: 1100px) {
   .layout {
-    --vx-sidebar-w: 208px;
+    --vx-sidebar-w: 192px;
   }
   .content {
     padding: 1.75rem;
@@ -3620,15 +3625,15 @@ select.form-input {
 }
 
 /* ══════════════════════════════════════════════════════════════
-   INÍCIO COM ABAS  +  LAYOUT NOVO (aba "Negócios")
+   INÍCIO COM ABAS  +  ABA "NEGÓCIOS" (visão financeira)
    ────────────────────────────────────────────────────────────
-   EXPERIMENTO. Prefixo `.neg-` de propósito: nada aqui toca as
-   outras telas. Se o dono aprovar, migra; se não, some inteiro.
+   EXPERIMENTO. Prefixo `.neg-`: nada aqui toca as outras telas.
+   Se o dono aprovar, migra; se não, some inteiro.
 
-   O que muda em relação ao `.metric-card` de hoje:
-   · densidade — padding 16/18 e número 30px, no lugar de 36/32 e 46px;
+   Diferenças de propósito para o `.metric-card` de hoje:
+   · densidade — cabem cinco lado a lado, no lugar de quatro largos;
    · número em SANS TABULAR, não no serif da marca (Cormorant tem
-     largura variável por dígito, e os valores dançam entre os cards);
+     largura variável por dígito e faz o dinheiro dançar entre cards);
    · contraste vem do FUNDO, não de sombra: card plano com hairline.
    ══════════════════════════════════════════════════════════════ */
 .vg-header {
@@ -3637,7 +3642,7 @@ select.form-input {
   justify-content: space-between;
   gap: 20px;
   flex-wrap: wrap;
-  margin-bottom: 1.75rem;
+  margin-bottom: 1.5rem;
 }
 .vg-controles {
   display: flex;
@@ -3645,9 +3650,8 @@ select.form-input {
   gap: 10px;
   flex-wrap: wrap;
 }
-
-/* Abas: um controle segmentado. A ativa sobe para `--vx-surface` sobre o
-   trilho em `--vx-surface2`, então ela parece elevada sem sombra pesada. */
+/* Abas: controle segmentado. A ativa sobe para --vx-surface sobre o trilho em
+   --vx-surface2, então parece elevada sem sombra pesada. */
 .vg-abas {
   display: inline-flex;
   gap: 2px;
@@ -3678,133 +3682,274 @@ select.form-input {
   box-shadow: var(--vx-shadow-sm);
 }
 
+/* ── Aviso de dado estimado ── */
+.neg-aviso {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 14px;
+  padding: 11px 14px;
+  border: 1px solid var(--vx-border);
+  border-left: 3px solid var(--vx-amber);
+  border-radius: 10px;
+  background: var(--vx-amber-bg);
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--vx-text2);
+}
+.neg-aviso svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--vx-amber);
+}
+.neg-aviso code {
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--vx-surface2);
+  font-family: var(--font-jetbrains), monospace;
+  font-size: 11px;
+}
+
 /* ── Cards ── */
 .neg-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 14px;
-  margin-bottom: 16px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 12px;
 }
-@media (max-width: 1180px) {
+@media (max-width: 1400px) {
+  .neg-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (max-width: 900px) {
   .neg-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
-@media (max-width: 620px) {
+@media (max-width: 560px) {
   .neg-grid {
     grid-template-columns: 1fr;
   }
 }
 
 .neg-card {
-  background: var(--vx-surface);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 15px 17px 16px;
   border: 1px solid var(--vx-border);
   border-radius: 14px;
-  padding: 16px 18px 18px;
-  transition: border-color var(--vx-transition);
+  background: var(--vx-surface);
+  font-family: inherit;
+  text-align: left;
+  transition: border-color var(--vx-transition), background var(--vx-transition);
 }
-.neg-card:hover {
+.neg-card-btn {
+  cursor: pointer;
+}
+.neg-card-btn:hover {
   border-color: var(--vx-border2);
 }
-.neg-card-topo {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 14px;
+/* Selecionado: a borda acende na cor do próprio card, e o gráfico abaixo passa
+   a enfatizar a série dele — é o que dá função ao destaque. */
+.neg-card.ativo {
+  border-color: var(--neg-tom);
+  box-shadow: inset 0 0 0 1px var(--neg-tom);
 }
 .neg-card-rotulo {
-  font-size: 11.5px;
+  font-size: 12.5px;
   font-weight: 500;
-  line-height: 1.35;
-  color: var(--vx-muted);
+  line-height: 1.3;
+  color: var(--vx-text2);
 }
-/* O chip tingido é o "destaque" do ícone: sai de graça porque cada cor
-   funcional já tem par --vx-X / --vx-X-bg nos três temas. */
-.neg-card-icone {
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
-  background: var(--neg-tom-bg);
-  color: var(--neg-tom);
+.neg-card-linha {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 10px;
+}
+.neg-card-numeros {
+  min-width: 0;
 }
 .neg-card-valor {
-  margin-bottom: 8px;
-  font-size: 30px;
-  font-weight: 500;
-  line-height: 1;
+  font-size: 25px;
+  font-weight: 600;
+  line-height: 1.1;
   letter-spacing: -0.02em;
   color: var(--vx-text);
   font-variant-numeric: tabular-nums;
 }
-.neg-card-valor.vazio {
-  color: var(--vx-muted);
-}
 .neg-card-apoio {
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  margin-top: 4px;
   font-size: 11.5px;
-  line-height: 1.4;
   color: var(--vx-muted);
 }
-.neg-chip-fonte {
+.neg-card-icone {
   flex-shrink: 0;
-  padding: 2px 6px;
-  border-radius: 5px;
-  background: var(--vx-surface3);
-  color: var(--vx-text2);
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  color: var(--neg-tom);
 }
 
 .neg-tom-accent {
   --neg-tom: var(--vx-accent);
-  --neg-tom-bg: var(--vx-accent-light);
 }
 .neg-tom-green {
   --neg-tom: var(--vx-green);
-  --neg-tom-bg: var(--vx-green-bg);
+}
+.neg-tom-red {
+  --neg-tom: var(--vx-red);
 }
 .neg-tom-blue {
   --neg-tom: var(--vx-blue);
-  --neg-tom-bg: var(--vx-blue-bg);
 }
 .neg-tom-purple {
   --neg-tom: var(--vx-purple);
-  --neg-tom-bg: var(--vx-purple-bg);
 }
 
-/* ── Painel de baixo (serviços mais vendidos) ── */
+/* ── Painéis ── */
+.neg-secao-2 {
+  display: grid;
+  grid-template-columns: minmax(0, 1.85fr) minmax(0, 1fr);
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.neg-secao-2.par {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+@media (max-width: 1100px) {
+  .neg-secao-2,
+  .neg-secao-2.par {
+    grid-template-columns: 1fr;
+  }
+}
+
 .neg-painel {
-  background: var(--vx-surface);
+  padding: 16px 18px 18px;
   border: 1px solid var(--vx-border);
   border-radius: 14px;
-  padding: 18px 20px 20px;
+  background: var(--vx-surface);
 }
 .neg-painel-topo {
   display: flex;
-  align-items: baseline;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 18px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
 }
 .neg-painel-titulo {
   font-family: var(--font-cormorant), serif;
   font-size: 19px;
   font-weight: 500;
+  line-height: 1.2;
   color: var(--vx-text);
 }
 .neg-painel-nota {
+  display: block;
+  margin-top: 2px;
   font-size: 11px;
   color: var(--vx-muted);
 }
+.neg-painel-acoes {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.neg-select {
+  padding: 5px 10px;
+  border: 1px solid var(--vx-border);
+  border-radius: 8px;
+  background: var(--vx-surface2);
+  color: var(--vx-text2);
+  font-family: inherit;
+  font-size: 11.5px;
+  cursor: pointer;
+}
 
+/* ── Legenda clicável do gráfico ── */
+.neg-legenda {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.neg-legenda-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 9px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: transparent;
+  font-family: inherit;
+  font-size: 11.5px;
+  color: var(--vx-muted);
+  cursor: pointer;
+  transition: color var(--vx-transition), border-color var(--vx-transition);
+}
+.neg-legenda-item:hover {
+  color: var(--vx-text2);
+}
+.neg-legenda-item.ativo {
+  border-color: var(--vx-border2);
+  color: var(--vx-text);
+}
+.neg-legenda-ponto {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.neg-gr-area {
+  position: relative;
+  height: 250px;
+}
+
+/* ── Rosca ── */
+.neg-rosca-wrap {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+.neg-rosca {
+  position: relative;
+  width: 132px;
+  height: 132px;
+  flex-shrink: 0;
+}
+.neg-rosca-legenda {
+  flex: 1;
+  min-width: 150px;
+  display: grid;
+  gap: 9px;
+  list-style: none;
+}
+.neg-rosca-legenda li {
+  display: grid;
+  grid-template-columns: 8px 1fr auto auto;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+.neg-rosca-nome {
+  overflow: hidden;
+  color: var(--vx-text);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.neg-rosca-pct {
+  color: var(--vx-muted);
+  font-variant-numeric: tabular-nums;
+}
+.neg-rosca-valor {
+  font-weight: 600;
+  color: var(--vx-text);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Ranking de serviços ── */
 .neg-ranking {
   display: grid;
   gap: 15px;
@@ -3816,7 +3961,7 @@ select.form-input {
 }
 .neg-pos {
   flex-shrink: 0;
-  width: 18px;
+  width: 16px;
   text-align: center;
   font-family: var(--font-jetbrains), monospace;
   font-size: 10.5px;
@@ -3862,9 +4007,66 @@ select.form-input {
   border-radius: 3px;
   background: linear-gradient(90deg, var(--vx-accent), var(--vx-gold));
 }
+
+/* ── Profissionais ── */
+.neg-pessoas {
+  display: grid;
+  gap: 12px;
+  list-style: none;
+}
+.neg-pessoa {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+.neg-pessoa-avatar {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 600;
+}
+.neg-pessoa-corpo {
+  flex: 1;
+  min-width: 0;
+}
+.neg-pessoa-nome {
+  font-size: 13px;
+  color: var(--vx-text);
+}
+.neg-pessoa-sub {
+  margin-top: 1px;
+  font-size: 11px;
+  color: var(--vx-muted);
+}
+.neg-pessoa-valor {
+  flex-shrink: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--vx-text);
+  font-variant-numeric: tabular-nums;
+}
+
 .neg-vazio {
-  padding: 26px 0;
+  padding: 30px 0;
   text-align: center;
   font-size: 12.5px;
   color: var(--vx-muted);
+}
+.neg-selo {
+  margin-left: 7px;
+  padding: 1px 6px;
+  border-radius: 5px;
+  border: 1px solid var(--vx-border2);
+  background: var(--vx-surface2);
+  color: var(--vx-muted);
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  vertical-align: 1px;
+  white-space: nowrap;
 }

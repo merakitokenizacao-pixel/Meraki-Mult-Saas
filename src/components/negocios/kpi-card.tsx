@@ -2,27 +2,23 @@
 
 import type { LucideIcon } from "lucide-react";
 
-// ── EXPERIMENTO DE LAYOUT ────────────────────────────────────────────────────
-// Card novo, isolado de propósito na aba Negócios. Se aprovar, migra para o
-// resto do sistema; se não, some sem tocar em nada.
+// Card financeiro na anatomia da referência: rótulo em cima, VALOR como herói,
+// quantidade embaixo e o ícone à direita, alinhado com o valor.
 //
-// Três decisões que o separam do `.metric-card` de hoje:
+// Três decisões que o separam do `.metric-card` das outras telas:
 //
-// 1. DENSIDADE. O atual usa padding 2.25rem e número em 46px — ocupa muito
-//    para dizer pouco. Aqui: padding 18/20, número em 30px. Cabem quatro
-//    lado a lado sem esticar a tela.
+// 1. DENSIDADE. O atual usa padding 36/32 e número em 46px — ocupa muito para
+//    dizer pouco. Aqui cabem cinco lado a lado sem apertar.
 // 2. NÚMERO EM SANS TABULAR, não no serif da marca. Cormorant é lindo em
-//    título e péssimo em coluna de número: largura variável faz os valores
-//    dançarem entre os cards. `tabular-nums` alinha.
-// 3. CONTRASTE VEM DO FUNDO, NÃO DE SOMBRA. O atual flutua com shadow-md; este
-//    é plano com hairline, e quem separa é o fundo da página. Foi o que o
-//    dono apontou na referência ("o fundo tem um contraste perfeito").
+//    título e ruim em coluna de dinheiro: largura variável por dígito faz os
+//    valores dançarem entre os cards.
+// 3. CONTRASTE VEM DO FUNDO, não de sombra. O atual flutua com shadow-md; este
+//    é plano com hairline, e quem separa é o fundo da página.
 //
-// O ícone ganha um chip com o fundo tingido da própria cor — é o "destaque"
-// que ele elogiou, e sai de graça porque cada cor funcional já tem par
-// `--vx-X` / `--vx-X-bg` nos três temas.
+// Selecionável: clicar destaca o card e o gráfico abaixo passa a enfatizar
+// aquela série — é o que a referência faz e o que dá função à borda acesa.
 
-export type TomKpi = "accent" | "green" | "blue" | "purple";
+export type TomKpi = "accent" | "green" | "red" | "blue" | "purple";
 
 export function KpiCard({
   rotulo,
@@ -30,30 +26,55 @@ export function KpiCard({
   apoio,
   icone: Icone,
   tom = "accent",
-  semFonte = false,
+  ativo = false,
+  onSelecionar,
+  dica,
+  selo,
 }: {
   rotulo: string;
   valor: string;
   apoio: string;
   icone: LucideIcon;
   tom?: TomKpi;
-  /** Marca o card cuja origem de dado ainda não existe — em vez de exibir
-   *  um zero que se lê como informação verdadeira. */
-  semFonte?: boolean;
+  ativo?: boolean;
+  onSelecionar?: () => void;
+  /** Explica de onde sai o número — vira o `title` do rótulo. */
+  dica?: string;
+  /** Ressalva que precisa ser VISÍVEL, não só no hover: um card que se comporta
+   *  diferente dos outros (não segue o período, ou é número simulado) tem que
+   *  dizer isso na cara, senão é lido como igual aos vizinhos. */
+  selo?: string;
 }) {
-  return (
-    <div className={`neg-card neg-tom-${tom}`}>
-      <div className="neg-card-topo">
-        <span className="neg-card-rotulo">{rotulo}</span>
-        <span className="neg-card-icone">
-          <Icone size={17} strokeWidth={1.75} />
+  const conteudo = (
+    <>
+      <span className="neg-card-rotulo" title={dica}>
+        {rotulo}
+        {selo && <span className="neg-selo">{selo}</span>}
+      </span>
+      <div className="neg-card-linha">
+        <div className="neg-card-numeros">
+          <div className="neg-card-valor">{valor}</div>
+          <div className="neg-card-apoio">{apoio}</div>
+        </div>
+        <span className="neg-card-icone" aria-hidden="true">
+          <Icone size={22} strokeWidth={2} />
         </span>
       </div>
-      <div className={`neg-card-valor${semFonte ? " vazio" : ""}`}>{valor}</div>
-      <div className="neg-card-apoio">
-        {semFonte && <span className="neg-chip-fonte">sem fonte</span>}
-        {apoio}
-      </div>
-    </div>
+    </>
+  );
+
+  if (!onSelecionar) {
+    return <div className={`neg-card neg-tom-${tom}`}>{conteudo}</div>;
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={onSelecionar}
+      aria-pressed={ativo}
+      className={`neg-card neg-card-btn neg-tom-${tom}${ativo ? " ativo" : ""}`}
+    >
+      {conteudo}
+    </button>
   );
 }

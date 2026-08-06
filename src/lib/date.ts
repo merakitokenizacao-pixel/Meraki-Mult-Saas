@@ -8,8 +8,16 @@ export interface DateRange {
 }
 
 // Intervalo [from, to) para o período. "tudo" (ou desconhecido) → null (sem filtro).
-export function getDateRange(period: string): DateRange | null {
-  const now = new Date();
+//
+// `agora` é injetável só para teste: sem isso, tudo que depende de período fica
+// amarrado ao relógio da máquina e não dá para verificar com data fixa — que é
+// exatamente onde moram os bugs de data (virada de mês, madrugada, fuso).
+// Nenhum chamador de produção passa o argumento.
+export function getDateRange(
+  period: string,
+  agora: Date = new Date()
+): DateRange | null {
+  const now = agora;
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   switch (period) {
     case "hoje":

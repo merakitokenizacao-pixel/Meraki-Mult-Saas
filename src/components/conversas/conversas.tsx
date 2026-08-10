@@ -13,7 +13,7 @@ import {
 import { supabase } from "@/lib/supabase";
 import { matchesPeriod } from "@/lib/date";
 import { isLeadInativo, isLeadPaused, lastMsgInfo } from "@/lib/conversa";
-import { enviarMensagemWebhook } from "@/lib/n8n";
+import { enviarMensagem as postarMensagem } from "@/lib/enviar-mensagem";
 import {
   destravarSom,
   gravarPreferenciaSom,
@@ -341,11 +341,18 @@ export function Conversas() {
         );
       }
 
-      await enviarMensagemWebhook({
+      // A rota grava em `conversas` como origem "humano" (medido: o n8n
+      // captura o que a dona digita no celular, mas NÃO o que sai pela API).
+      const r = await postarMensagem({
         lead_id: currentLead.id,
         telefone: currentLead.telefone,
         mensagem,
       });
+      if (r.aviso === "enviada_mas_nao_registrada") {
+        // Chegou na cliente, mas não entrou no histórico. Avisar é melhor que
+        // deixar a operadora achar que a mensagem se perdeu e reenviar.
+        showToast("Enviada — mas não entrou no histórico", "error");
+      }
 
       setPendingMsgs((prev) =>
         prev.map((p) => (p.id === tempId ? { ...p, status: "enviado" } : p))

@@ -50,7 +50,10 @@ const CARDS: ReadonlyArray<{
     rotulo: "Total criado",
     icone: Plus,
     tom: "blue",
-    apoio: (q) => `${q} agendamento${q === 1 ? "" : "s"}`,
+    // "agendamentos" aqui era ambíguo: lia-se como "consultas de hoje", mas o
+    // recorte é `criado_em` — quando a marcação FOI FEITA, não quando ela
+    // acontece. Em 10/08 foram 32 marcações feitas e só 9 atendimentos no dia.
+    apoio: (q) => `${q} marcaç${q === 1 ? "ão feita" : "ões feitas"}`,
     serie: "criado",
     dica: "Tudo que entrou no funil no período, pela data em que foi marcado.",
   },
@@ -232,8 +235,17 @@ export function Negocios({ period }: { period: string }) {
         <section className="neg-painel">
           <header className="neg-painel-topo">
             <div>
-              <h2 className="neg-painel-titulo">Percentual por profissional</h2>
-              <span className="neg-painel-nota">Por valor dos atendimentos</span>
+              <h2 className="neg-painel-titulo">
+                Percentual por profissional
+                {/* O único widget da tela sem NENHUM lastro: `profissional_id`
+                    é nulo em 303 de 303 agendamentos, então a divisão é gerada
+                    por hash. Sem selo, uma rosca com nomes e percentuais é lida
+                    como fato — é a peça mais fácil de acreditar por engano. */}
+                <span className="neg-selo">sintético</span>
+              </h2>
+              <span className="neg-painel-nota">
+                Não há vínculo de profissional no banco ainda
+              </span>
             </div>
           </header>
           {carregando ? (

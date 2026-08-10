@@ -9,7 +9,7 @@ import {
   TrendingDown,
   TrendingUp,
 } from "lucide-react";
-import { useAgendamentosComLead } from "@/lib/hooks";
+import { useAgendamentosComLead, useCatalogoServicos } from "@/lib/hooks";
 import {
   FINANCEIRO_ESTIMADO,
   moeda,
@@ -17,7 +17,7 @@ import {
   rankingServicos,
   resumoFinanceiro,
   serieDiaria,
-  contarTicketPadrao,
+  contarSemPreco,
 } from "@/lib/financeiro";
 import { KpiCard, type TomKpi } from "@/components/negocios/kpi-card";
 import {
@@ -102,6 +102,17 @@ const CARDS: ReadonlyArray<{
 export function Negocios({ period }: { period: string }) {
   const agendQuery = useAgendamentosComLead();
   const agendamentos = useMemo(() => agendQuery.data ?? [], [agendQuery.data]);
+
+  // Preços vêm do catálogo da clínica (documentos_lins), não de tabela no
+  // código. Enquanto carrega, as somas ficam zeradas em vez de chutadas.
+  const catalogoQ = useCatalogoServicos();
+  const precos = useMemo(
+    () => ({
+      catalogo: catalogoQ.data?.servicos ?? [],
+      promocoes: catalogoQ.data?.promocoes ?? [],
+    }),
+    [catalogoQ.data]
+  );
   const carregando = agendQuery.isPending;
 
   const [selecionado, setSelecionado] = useState<string | null>("criado");
@@ -109,25 +120,25 @@ export function Negocios({ period }: { period: string }) {
   const [destaqueManual, setDestaqueManual] = useState<SerieId | null>(null);
 
   const resumo = useMemo(
-    () => resumoFinanceiro(agendamentos, period),
-    [agendamentos, period]
+    () => resumoFinanceiro(agendamentos, period, precos),
+    [agendamentos, period, precos]
   );
   const pontos = useMemo(
-    () => serieDiaria(agendamentos, period),
-    [agendamentos, period]
+    () => serieDiaria(agendamentos, period, precos),
+    [agendamentos, period, precos]
   );
   const fatias = useMemo(
-    () => porProfissional(agendamentos, period),
-    [agendamentos, period]
+    () => porProfissional(agendamentos, period, precos),
+    [agendamentos, period, precos]
   );
   const servicos = useMemo(
-    () => rankingServicos(agendamentos, period),
-    [agendamentos, period]
+    () => rankingServicos(agendamentos, period, precos),
+    [agendamentos, period, precos]
   );
 
   const ticket = useMemo(
-    () => contarTicketPadrao(agendamentos, period),
-    [agendamentos, period]
+    () => contarSemPreco(agendamentos, period, precos),
+    [agendamentos, period, precos]
   );
 
   const janela =
@@ -147,22 +158,24 @@ export function Negocios({ period }: { period: string }) {
         <div className="neg-aviso" role="note">
           <Info size={15} strokeWidth={1.8} />
           <div>
-            <strong>Valores estimados.</strong> Os agendamentos são reais — quais,
-            quando, com que status e serviço. Já os <em>preços</em> vêm de uma
-            tabela baseada nas promoções da clínica (a coluna{" "}
-            <code>agendamentos.valor</code> está vazia), e a divisão{" "}
-            <em>por profissional</em> é sintética, porque não existe vínculo no
-            banco ainda. Nada aqui serve para fechar caixa.
-            {/* O pedaço mais frouxo da estimativa merece número, não adjetivo:
-                são linhas de importação ("agenda legada", "caderninho", "Outro")
-                que aconteceram de verdade mas não dizem o que foi feito, e
-                entram todas pelo mesmo ticket padrão. */}
-            {ticket.padrao > 0 && (
+            <strong>Preços do catálogo da clínica.</strong> Os agendamentos são
+            reais e os valores vêm de <code>documentos_lins</code> — a mesma
+            base que a Laura consulta no WhatsApp. Quando o agendamento diz só
+            {" "}<em>&ldquo;Limpeza de pele&rdquo;</em> (o catálogo tem 4
+            variantes), entra a média da família.
+            {/* O que não dá para identificar fica FORA da soma, em vez de
+                entrar por um ticket chutado. Dizer o tamanho disso é o que
+                permite ler o total como piso, e não como verdade. */}
+            {ticket.semPreco > 0 && (
               <>
                 {" "}
-                Destes, <strong>{ticket.padrao} de {ticket.total}</strong>{" "}
-                atendimentos não têm serviço identificado e entram por um ticket
-                padrão de R$ 100.
+                <strong>
+                  {ticket.semPreco} de {ticket.total}
+                </strong>{" "}
+                atendimentos não dizem qual serviço foi feito (importação
+                antiga, &ldquo;Outro&rdquo;, caderninho) e ficam de fora da
+                soma — então o total é piso, não fechamento. A divisão{" "}
+                <em>por profissional</em> segue sintética.
               </>
             )}
           </div>

@@ -3,66 +3,49 @@
 // ⚠️ O QUE É REAL E O QUE NÃO É
 //
 // REAL: quais agendamentos existem, quando, com que status e de que serviço.
-// Tudo sai da tabela `agendamentos`.
 //
-// ESTIMADO: o VALOR. A coluna `agendamentos.valor` está 100% vazia (o n8n não
-// preenche), então o preço vem da tabela abaixo — ancorada nos valores reais
-// que a clínica pratica, lidos da tabela `promocoes`.
+// PREÇO: vem do CATÁLOGO da clínica (`documentos_lins`), a mesma base que a
+// Laura lê no WhatsApp — não de uma tabela chutada aqui dentro. Quando o texto
+// do agendamento é genérico ("Limpeza de pele", que tem 4 variantes), usa a
+// média da família; quando é um pacote com promoção, usa o preço do pacote.
+// O que não dá para identificar ("Outro", caderninho, agenda legada) fica SEM
+// preço — chutar um ticket padrão foi o que fazia o total mentir.
 //
-// SINTÉTICO: a atribuição por PROFISSIONAL. As colunas `profissional_id` e
-// `profissional` estão 100% nulas nos 251 agendamentos, ou seja, não existe
-// vínculo no banco. A distribuição aqui é derivada do id por hash — estável
-// entre renders, plausível na forma, e sem nenhum valor de verdade.
-//
-// Quando as tabelas definitivas existirem, só `valorDe` e `profissionalDe`
-// mudam; todo o resto do arquivo e os componentes seguem iguais.
+// SINTÉTICO: a atribuição por PROFISSIONAL. `profissional_id` é nulo em todos
+// os agendamentos, então a divisão é derivada do id por hash. Está marcada na
+// tela com selo, e some sozinha quando a Agenda começar a atribuir.
 
 import type { Agendamento } from "@/types/db";
 import { getDateRange } from "@/lib/date";
+import {
+  resolverServico,
+  type PromocaoPreco,
+  type ServicoCatalogo,
+} from "@/lib/servicos";
 
 /** Liga/desliga os dados estimados de uma vez. Ver aviso na tela. */
 export const FINANCEIRO_ESTIMADO = true;
 
-// ── Preços ───────────────────────────────────────────────────────────────────
-// Casados por trecho, do mais específico para o mais genérico — "Pacote 10
-// sessões de drenagem" precisa bater ANTES de "drenagem".
-const PRECOS: ReadonlyArray<readonly [string, number]> = [
-  ["agosto da modelagem", 850],
-  ["pacote copa de massagem", 499.9],
-  ["pacote 10 sessões", 499.9],
-  ["pacote 10 sessoes", 499.9],
-  ["drenagem linfática convencional (pacote)", 499.9],
-  ["combo laser day", 180],
-  ["depilação a laser", 180],
-  ["depilacao a laser", 180],
-  ["microagulhamento", 450],
-  ["botox", 890],
-  ["peeling", 180],
-  ["limpeza de pele", 150],
-  ["massagem desportiva", 140],
-  ["massagem relaxante", 120],
-  ["drenagem linfática", 120],
-  ["drenagem linfatica", 120],
-  ["depilação com cera", 60],
-  ["depilação de virilha", 70],
-  ["depilação de axila", 45],
-  ["avaliação corporal", 0],
-];
+// ── Preço ────────────────────────────────────────────────────────────────────
+// NÃO existe tabela de preços aqui, e não pode voltar a existir: os valores são
+// da clínica e moram em `documentos_lins`. Ver src/lib/servicos.ts.
 
-/** Ticket usado quando o serviço não está na tabela (legado, "Outro"…). */
-const PRECO_PADRAO = 100;
-
-export function precoDoServico(servico?: string | null): number {
-  if (!servico) return PRECO_PADRAO;
-  const s = servico.toLowerCase();
-  for (const [trecho, preco] of PRECOS) if (s.includes(trecho)) return preco;
-  return PRECO_PADRAO;
+/** Contexto de preço, montado uma vez por render e passado adiante. */
+export interface Precos {
+  catalogo: ServicoCatalogo[];
+  promocoes: PromocaoPreco[];
 }
 
-/** Valor de um agendamento: o do banco quando existir, senão o estimado. */
-export function valorDe(a: Agendamento): number {
+export const SEM_PRECOS: Precos = { catalogo: [], promocoes: [] };
+
+/**
+ * Valor de um agendamento. Prefere o do banco (quando o n8n passar a gravar);
+ * senão resolve pelo catálogo. Devolve `null` quando não dá para saber — quem
+ * soma decide o que fazer com isso, em vez de receber um chute disfarçado.
+ */
+export function valorDe(a: Agendamento, p: Precos = SEM_PRECOS): number | null {
   if (typeof a.valor === "number" && a.valor > 0) return a.valor;
-  return precoDoServico(a.servico);
+  return resolverServico(a.servico, p.catalogo, p.promocoes).preco;
 }
 
 // ── Profissionais ────────────────────────────────────────────────────────────
@@ -126,8 +109,11 @@ export interface ResumoFinanceiro {
 }
 
 const zero = (): Faixa => ({ valor: 0, qtd: 0 });
-function somar(f: Faixa, a: Agendamento): void {
-  f.valor += valorDe(a);
+// A quantidade conta SEMPRE; o valor só entra quando existe. Um atendimento
+// sem preço identificado aconteceu de verdade — some da soma de dinheiro, não
+// da contagem.
+function somar(f: Faixa, a: Agendamento, precos: Precos): void {
+  f.valor += valorDe(a, precos) ?? 0;
   f.qtd += 1;
 }
 
@@ -142,6 +128,7 @@ function somar(f: Faixa, a: Agendamento): void {
 export function resumoFinanceiro(
   agendamentos: Agendamento[],
   period: string,
+  precos: Precos = SEM_PRECOS,
   agoraRef: Date = new Date()
 ): ResumoFinanceiro {
   const r: ResumoFinanceiro = {
@@ -154,24 +141,24 @@ export function resumoFinanceiro(
   const agora = agoraRef.getTime();
 
   for (const a of agendamentos) {
-    if (dentroDoPeriodo(a.criado_em, period, agoraRef)) somar(r.criado, a);
+    if (dentroDoPeriodo(a.criado_em, period, agoraRef)) somar(r.criado, a, precos);
 
     const noPeriodo = dentroDoPeriodo(a.data_agendamento, period, agoraRef);
     if (noPeriodo && a.status === "realizado") {
-      somar(r.ganho, a);
+      somar(r.ganho, a, precos);
       // "Recuperado": o que voltou depois de um follow-up. Não existe coluna
       // que marque isso, então aqui é uma fatia estável do ganho — presença
       // visual, não informação.
-      if (hashEstavel(a.id) % 7 === 0) somar(r.recuperado, a);
+      if (hashEstavel(a.id) % 7 === 0) somar(r.recuperado, a, precos);
     }
-    if (noPeriodo && a.status === "cancelado") somar(r.perdido, a);
+    if (noPeriodo && a.status === "cancelado") somar(r.perdido, a, precos);
 
     if (
       a.status !== "cancelado" &&
       a.status !== "realizado" &&
       new Date(a.data_agendamento).getTime() >= agora
     ) {
-      somar(r.aberto, a);
+      somar(r.aberto, a, precos);
     }
   }
   return r;
@@ -200,6 +187,7 @@ const MAXIMO_DIAS = 45;
 export function serieDiaria(
   agendamentos: Agendamento[],
   period: string,
+  precos: Precos = SEM_PRECOS,
   hoje = new Date()
 ): PontoDia[] {
   const r = getDateRange(period, hoje);
@@ -248,12 +236,12 @@ export function serieDiaria(
     const pCriado = a.criado_em
       ? porChave.get(chaveDia(new Date(a.criado_em)))
       : undefined;
-    if (pCriado) somar(pCriado.criado, a);
+    if (pCriado) somar(pCriado.criado, a, precos);
 
     const p = porChave.get(chaveDia(new Date(a.data_agendamento)));
     if (!p) continue;
-    if (a.status === "realizado") somar(p.ganho, a);
-    else if (a.status === "cancelado") somar(p.perdido, a);
+    if (a.status === "realizado") somar(p.ganho, a, precos);
+    else if (a.status === "cancelado") somar(p.perdido, a, precos);
   }
   return pontos;
 }
@@ -270,6 +258,7 @@ export interface FatiaProfissional {
 export function porProfissional(
   agendamentos: Agendamento[],
   period: string,
+  precos: Precos = SEM_PRECOS,
   agora?: Date
 ): FatiaProfissional[] {
   const acc = new Map<string, { token: string; valor: number; qtd: number }>();
@@ -278,7 +267,7 @@ export function porProfissional(
     if (!dentroDoPeriodo(a.data_agendamento, period, agora)) continue;
     const p = profissionalDe(a);
     const atual = acc.get(p.nome) ?? { token: p.token, valor: 0, qtd: 0 };
-    atual.valor += valorDe(a);
+    atual.valor += valorDe(a, precos) ?? 0;
     atual.qtd += 1;
     acc.set(p.nome, atual);
   }
@@ -303,6 +292,7 @@ export interface LinhaServico {
 export function rankingServicos(
   agendamentos: Agendamento[],
   period: string,
+  precos: Precos = SEM_PRECOS,
   teto = 6,
   agora?: Date
 ): LinhaServico[] {
@@ -312,7 +302,7 @@ export function rankingServicos(
     if (!dentroDoPeriodo(a.data_agendamento, period, agora)) continue;
     const nome = nomeCurtoServico(a.servico);
     const atual = acc.get(nome) ?? { nome, valor: 0, qtd: 0 };
-    atual.valor += valorDe(a);
+    atual.valor += valorDe(a, precos) ?? 0;
     atual.qtd += 1;
     acc.set(nome, atual);
   }
@@ -355,21 +345,19 @@ export function moedaCurta(v: number): string {
  *  "Reservado (caderninho)", "Outro" — que aconteceram de verdade mas não
  *  dizem o que foi feito. É o pedaço mais frouxo da estimativa, então a tela
  *  informa o tamanho dele em vez de escondê-lo dentro do total. */
-export function contarTicketPadrao(
+export function contarSemPreco(
   agendamentos: Agendamento[],
   period: string,
+  precos: Precos = SEM_PRECOS,
   agora?: Date
-): { padrao: number; total: number } {
-  let padrao = 0;
+): { semPreco: number; total: number } {
+  let semPreco = 0;
   let total = 0;
   for (const a of agendamentos) {
     if (a.status !== "realizado") continue;
     if (!dentroDoPeriodo(a.data_agendamento, period, agora)) continue;
     total++;
-    if (typeof a.valor !== "number" || a.valor <= 0) {
-      const s = (a.servico ?? "").toLowerCase();
-      if (!PRECOS.some(([trecho]) => s.includes(trecho))) padrao++;
-    }
+    if (valorDe(a, precos) == null) semPreco++;
   }
-  return { padrao, total };
+  return { semPreco, total };
 }

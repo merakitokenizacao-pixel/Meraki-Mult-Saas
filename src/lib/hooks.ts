@@ -11,6 +11,7 @@ import {
   getProximasVisitas,
   getUltimaConversaPorLead,
 } from "@/lib/queries";
+import type { PromocaoPreco, ServicoCatalogo } from "@/lib/servicos";
 
 // Hooks de dados com cache (React Query). Envolvem as queries do Supabase
 // sem alterá-las — só adicionam cache/dedupe/estado de loading e erro.
@@ -100,3 +101,23 @@ export function useConversasDoLead(leadId: string | null) {
 }
 
 
+
+// ── Catálogo de serviços ─────────────────────────────────────────────────────
+// Vem de `documentos_lins` por rota de servidor: a tabela tem RLS ligada sem
+// policy, então o cliente do navegador não lê direto.
+// `staleTime` alto de propósito — é catálogo, muda quando a dona edita o
+// documento, não a cada navegação.
+export function useCatalogoServicos() {
+  return useQuery({
+    queryKey: ["catalogo-servicos"],
+    queryFn: async () => {
+      const r = await fetch("/api/painel/servicos");
+      if (!r.ok) throw new Error("Não foi possível carregar os serviços");
+      return (await r.json()) as {
+        servicos: ServicoCatalogo[];
+        promocoes: PromocaoPreco[];
+      };
+    },
+    staleTime: 10 * 60 * 1000,
+  });
+}

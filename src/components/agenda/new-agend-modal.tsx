@@ -3,20 +3,12 @@
 import { useEffect, useState } from "react";
 import { Modal } from "@/components/modal";
 import { LeadCombobox } from "@/components/lead-combobox";
+import { ServicoCombobox } from "@/components/servico-combobox";
+import { useCatalogoServicos } from "@/lib/hooks";
 import { checarHorario, insertAgendamento } from "@/lib/queries";
 import { showToast } from "@/lib/toast";
 import type { Lead } from "@/types/db";
 
-const SERVICOS = [
-  "Limpeza de pele",
-  "Botox",
-  "Peeling",
-  "Drenagem linfatica",
-  "Preenchimento",
-  "Microagulhamento",
-  "Depilacao a laser",
-  "Outro",
-];
 
 // quickAgendamento / openNewAgendamento / salvarAgendamento.
 export function NewAgendModal({
@@ -37,6 +29,8 @@ export function NewAgendModal({
 }) {
   const [leadId, setLeadId] = useState("");
   const [servico, setServico] = useState("");
+  // Só busca quando o modal abre — é catálogo, não muda no meio do dia.
+  const catalogo = useCatalogoServicos();
   const [data, setData] = useState("");
   const [hora, setHora] = useState("");
   const [status, setStatus] = useState("pendente");
@@ -158,16 +152,16 @@ export function NewAgendModal({
         </div>
         <div>
           <label className="form-label">Servico</label>
-          <select
-            className="form-input"
+          {/* Era um <select> com 10 nomes fixos no código, que não cobria
+              metade do que a clínica faz — o resto virava "Outro", sem preço.
+              Agora vem de `documentos_lins`, o mesmo catálogo que a Laura lê,
+              com busca por nome, categoria e sinônimo. */}
+          <ServicoCombobox
+            servicos={catalogo.data?.servicos ?? []}
             value={servico}
-            onChange={(e) => setServico(e.target.value)}
-          >
-            <option value="">Selecione o servico...</option>
-            {SERVICOS.map((s) => (
-              <option key={s}>{s}</option>
-            ))}
-          </select>
+            onChange={setServico}
+            carregando={catalogo.isPending}
+          />
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
           <div>

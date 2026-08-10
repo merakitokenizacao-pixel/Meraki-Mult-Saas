@@ -1,5 +1,6 @@
 // Helpers puros das Conversas — portados 1:1 do legacy.
 import { fmtDate } from "@/lib/format";
+import { textoLimpo } from "@/lib/formato-whatsapp";
 import type { Agendamento, Conversa, Lead } from "@/types/db";
 
 export function isLeadPaused(lead: Lead | null | undefined): boolean {
@@ -59,8 +60,11 @@ export function getLastMsgPreview(
   let prefix = "";
   if (last.origem === "agente") prefix = "🤖 ";
   else if (last.origem === "humano") prefix = "👤 ";
+  // Tira a marcação do WhatsApp: no card não há como estilizar, então o
+  // `*negrito*` da Laura apareceria com os asteriscos crus no preview.
+  // Limpa ANTES de cortar em 60 — cortar primeiro poderia deixar um `*` órfão.
   return {
-    text: prefix + (last.mensagem || "").substring(0, 60),
+    text: prefix + textoLimpo(last.mensagem || "").substring(0, 60),
     fromAgente: last.origem === "agente",
   };
 }

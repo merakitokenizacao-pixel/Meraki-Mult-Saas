@@ -17,6 +17,7 @@ import {
 import { Avatar } from "@/components/avatar";
 import { formatDayLabel, isLeadPaused } from "@/lib/conversa";
 import { ChatSkeleton } from "@/components/conversas/skeletons";
+import { TextoWhatsApp } from "@/components/conversas/texto-whatsapp";
 import type { Conversa, Lead } from "@/types/db";
 import type { PendingMsg } from "@/components/conversas/conversas";
 
@@ -75,6 +76,17 @@ export function ChatPanel({
 }) {
   const [input, setInput] = useState("");
   const messagesRef = useRef<HTMLDivElement>(null);
+  const composerRef = useRef<HTMLTextAreaElement>(null);
+
+  // Altura acompanha o conteúdo. Zera antes de medir: sem isso o campo só
+  // cresce, porque scrollHeight nunca diminui enquanto a altura fixa segura.
+  // O teto vem do CSS (max-h-40), e aí o próprio textarea rola.
+  useLayoutEffectSeguro(() => {
+    const el = composerRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = el.scrollHeight + "px";
+  }, [input]);
 
   // Âncora do scroll. O lote antigo entra ACIMA do que está na tela, então
   // grudar no fim (o comportamento normal) jogaria a leitura pro lugar errado.
@@ -161,7 +173,9 @@ export function ChatPanel({
             <UserRound size={12} /> Você
           </div>
         )}
-        <div className={bubbleClasses(kind)}>{m.mensagem}</div>
+        <div className={bubbleClasses(kind)}>
+          <TextoWhatsApp texto={m.mensagem} />
+        </div>
         <div
           className={`mt-1 px-0.5 font-mono text-[10px] text-vx-muted ${right ? "text-right" : ""}`}
         >
@@ -303,7 +317,9 @@ export function ChatPanel({
                 <div className="mb-1 flex items-center gap-1 text-[9px] font-bold tracking-wider text-vx-accent">
                   <UserRound size={12} /> Você
                 </div>
-                <div className={bubbleClasses("agente")}>{p.mensagem}</div>
+                <div className={bubbleClasses("agente")}>
+                  <TextoWhatsApp texto={p.mensagem} />
+                </div>
                 <div className="mt-1 px-0.5 text-right font-mono text-[10px]">
                   <span
                     className={
@@ -339,20 +355,28 @@ export function ChatPanel({
             >
               <Paperclip size={18} />
             </button>
-            <input
-              type="text"
+            {/* <textarea>, não <input>: em campo de uma linha o Shift+Enter
+                não tem como inserir quebra — o navegador simplesmente ignora.
+                Cresce com o conteúdo até um teto, e volta ao tamanho ao enviar. */}
+            <textarea
+              ref={composerRef}
+              rows={1}
               placeholder="Digite uma mensagem…"
               aria-label="Mensagem"
               value={input}
               disabled={sending}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  handleSend();
-                }
+                // Enter envia; Shift+Enter (ou Alt/Ctrl+Enter) quebra linha,
+                // como na maioria dos chats. O IME precisa ser respeitado:
+                // durante composição de acento/emoji, Enter confirma o
+                // caractere e não pode disparar envio.
+                if (e.key !== "Enter" || e.nativeEvent.isComposing) return;
+                if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey) return;
+                e.preventDefault();
+                handleSend();
               }}
-              className="w-full rounded-full border border-vx-border bg-vx-surface2 px-4 py-2.5 text-[13.5px] text-vx-text outline-none transition-colors placeholder:text-vx-muted focus:border-vx-accent focus:bg-vx-surface"
+              className="max-h-40 w-full resize-none overflow-y-auto rounded-2xl border border-vx-border bg-vx-surface2 px-4 py-2.5 text-[13.5px] leading-relaxed text-vx-text outline-none transition-colors placeholder:text-vx-muted focus:border-vx-accent focus:bg-vx-surface"
             />
             <button
               aria-label="Gravar áudio"

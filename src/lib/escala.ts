@@ -3,16 +3,24 @@
 //
 // A grade tem uma célula por (dia, hora). A célula da hora H representa a
 // janela [H:00, H+1:00). Então uma faixa 13:00–20:00 acende as células 13..19
-// (a das 19h é a última: começa 19h e acaba 20h, que é o fim do expediente).
+// (a das 19h começa 19h e acaba 20h).
 //
 // Células CONTÍGUAS viram UMA faixa. Escala alternada (trabalha 8h, folga 9h,
 // volta 10h) vira várias faixas no mesmo dia — que é exatamente o que a tabela
 // suporta, e por isso o editor é pintável em vez de um formulário.
+//
+// ⚠️ A grade PRECISA cobrir toda hora que exista no banco. Ela ia até 19h
+// enquanto havia turnos 20:00–21:00 gravados (Rozaria, terça e quinta), e o
+// editor salva com DELETE + INSERT a partir do que está pintado: abrir a escala
+// dela e salvar APAGARIA o turno, sem aviso, porque a hora 20 era descartada na
+// leitura. Ao mexer aqui, confira contra o que está em `profissional_horarios`.
 
 export const HORA_GRADE_INICIO = 8;
-export const HORA_GRADE_FIM = 20; // fim do expediente (a última célula é 19h)
+/** Exclusivo: é o fim da última célula, não o início dela. 21 → última célula
+ *  é a das 20h (20:00–21:00), que é o último horário que a clínica atende. */
+export const HORA_GRADE_FIM = 21;
 
-/** Horas com célula na grade: 8..19. */
+/** Horas com célula na grade: 8..20. */
 export const HORAS_GRADE: number[] = Array.from(
   { length: HORA_GRADE_FIM - HORA_GRADE_INICIO },
   (_, i) => HORA_GRADE_INICIO + i
@@ -86,8 +94,10 @@ export function celulasParaFaixas(celulas: Set<string>): Faixa[] {
 
 /**
  * Faixas do banco → grade pintada. Uma faixa 13:00–20:00 acende 13..19.
- * Horas fora da grade (antes das 8h, a partir das 20h) são ignoradas — a grade
- * cobre o expediente da clínica.
+ *
+ * Hora fora da grade é ignorada — e isso é PERDA DE DADO no próximo salvar,
+ * porque o editor regrava a partir da grade. Por isso a grade cobre 8..20:
+ * qualquer turno que a clínica use precisa caber aqui.
  */
 export function faixasParaCelulas(faixas: Faixa[]): Set<string> {
   const celulas = new Set<string>();

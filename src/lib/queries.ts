@@ -36,17 +36,9 @@ export async function updateLead(
   if (error) throw error;
 }
 
-// Cadastro manual de lead. `telefone` é único (chave usada pelo n8n no upsert),
-// então telefone repetido lança erro com code '23505' (tratado na UI).
-export async function insertLead(fields: {
-  nome: string;
-  telefone: string;
-  canal: string;
-  status: string;
-}): Promise<void> {
-  const { error } = await supabase.from("leads").insert(fields);
-  if (error) throw error;
-}
+// (insertLead saiu: o cadastro manual passou a montar a linha inteira em
+// src/lib/lead-form.ts → paraLinha, com 17 campos. Manter um helper de 4
+// campos ao lado convidaria a usar o errado.)
 
 export async function getLeadById(id: string): Promise<Lead | null> {
   const { data, error } = await supabase

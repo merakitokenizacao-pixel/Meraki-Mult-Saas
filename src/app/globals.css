@@ -1212,7 +1212,9 @@
 .modal {
   background: var(--vx-surface);
   border: 1px solid var(--vx-border);
-  border-radius: 20px;
+  /* 14px no lugar de 20: canto muito redondo faz o modal parecer cartaz.
+     Formulário pede cara de ficha de trabalho. */
+  border-radius: 14px;
   width: 560px;
   max-height: 88vh;
   overflow-y: auto;
@@ -4079,4 +4081,226 @@ select.form-input {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--vx-muted);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   CADASTRO DE CLIENTE — modal em abas
+   ────────────────────────────────────────────────────────────
+   TIPOGRAFIA: título em SANS, não no Cormorant dos outros modais.
+   O serif é lindo em cabeçalho de leitura e atrapalha em
+   formulário: o olho pula entre a voz do título e a dos rótulos,
+   que são sans. Aqui tudo fala a mesma língua, e o peso é que
+   separa hierarquia.
+
+   FORMATO: cantos menores (14px no lugar de 20px), respiro menor
+   e as abas colando no painel — o modal deixa de parecer um
+   cartaz e vira uma ficha de trabalho.
+   ══════════════════════════════════════════════════════════════ */
+.lead-cab {
+  margin-bottom: 20px;
+}
+.lead-titulo {
+  font-family: var(--font-jost), sans-serif;
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--vx-text);
+}
+.lead-sub {
+  margin-top: 3px;
+  font-size: 12.5px;
+  color: var(--vx-muted);
+}
+
+.lead-topo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+@media (max-width: 560px) {
+  .lead-topo {
+    grid-template-columns: 1fr;
+  }
+}
+
+.lead-label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--vx-text2);
+}
+.lead-input {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--vx-border);
+  border-radius: 9px;
+  background: var(--vx-surface2);
+  color: var(--vx-text);
+  font-family: var(--font-jost), sans-serif;
+  font-size: 13px;
+  outline: none;
+  transition: border-color var(--vx-transition), background var(--vx-transition);
+}
+.lead-input::placeholder {
+  color: var(--vx-muted);
+}
+.lead-input:focus {
+  border-color: var(--vx-accent);
+  background: var(--vx-surface);
+}
+.lead-textarea {
+  resize: vertical;
+  line-height: 1.6;
+}
+.lead-erro {
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--vx-red);
+}
+
+/* ── Etiquetas (chips) ── */
+.lead-chips {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+  min-height: 37px;
+  padding: 5px 8px;
+  border: 1px solid var(--vx-border);
+  border-radius: 9px;
+  background: var(--vx-surface2);
+}
+.lead-chips:focus-within {
+  border-color: var(--vx-accent);
+  background: var(--vx-surface);
+}
+.lead-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px 2px 8px;
+  border-radius: 6px;
+  background: var(--vx-accent-light);
+  color: var(--vx-accent);
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.lead-chip button {
+  display: grid;
+  place-items: center;
+  border: none;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  opacity: 0.6;
+}
+.lead-chip button:hover {
+  opacity: 1;
+}
+.lead-chip-input {
+  flex: 1;
+  min-width: 90px;
+  border: none;
+  background: none;
+  color: var(--vx-text);
+  font-family: inherit;
+  font-size: 12.5px;
+  outline: none;
+}
+.lead-chip-input::placeholder {
+  color: var(--vx-muted);
+}
+
+/* ── Abas ── */
+.lead-abas {
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--vx-border);
+  border-radius: 10px 10px 0 0;
+  border-bottom: none;
+  background: var(--vx-surface2);
+  overflow-x: auto;
+}
+.lead-aba {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 13px;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--vx-muted);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color var(--vx-transition), background var(--vx-transition);
+}
+.lead-aba:hover {
+  color: var(--vx-text2);
+}
+.lead-aba.ativa {
+  background: var(--vx-surface);
+  color: var(--vx-accent);
+}
+/* Ponto = a aba tem conteúdo. Sem ele, saber o que já foi preenchido exige
+   abrir uma por uma. */
+.lead-aba-ponto {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--vx-accent);
+  opacity: 0.75;
+}
+
+/* O painel cola nas abas: elas viram a borda de cima dele. */
+.lead-painel {
+  min-height: 210px;
+  padding: 18px;
+  border: 1px solid var(--vx-border);
+  border-radius: 0 0 10px 10px;
+  background: var(--vx-surface);
+}
+.lead-grade {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+@media (max-width: 560px) {
+  .lead-grade {
+    grid-template-columns: 1fr;
+  }
+  .lead-grade > * {
+    grid-column: auto !important;
+  }
+}
+
+.lead-cep {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.lead-spin {
+  position: absolute;
+  right: 10px;
+  color: var(--vx-accent);
+  animation: spin 0.9s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.lead-acoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
 }

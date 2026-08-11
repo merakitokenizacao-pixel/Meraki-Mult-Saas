@@ -38,6 +38,74 @@ Fluxo: ao agendar laser pelo WhatsApp, o n8n cria uma linha em `fichas_avaliacao
 - **Ficha no painel (Entrega 2)**: `src/components/painel/ficha-section.tsx` no modal de Clientes (`lead-modal.tsx`, entre Agendamentos e Conversa). Some se o lead não tem ficha. Badge por severidade (âmbar/verde/vermelho/vermelho forte via tokens `--vx-red/amber/green`), banner de **contraindicação visível sem clique**, respostas em pt-BR, botão "Marcar como revisada". Dados via `/api/painel/ficha?lead_id=` e `/api/painel/ficha/[id]/revisar` (server-side, service role).
 - **🔴 DÍVIDA DE SEGURANÇA (Etapa 7):** as rotas `/api/painel/ficha*` são **públicas (sem login)** — o app não tem auth. Expõem dado de saúde no mesmo nível que `leads`/`conversas` já ficam hoje (RLS aberta + anon key no bundle). Decisão consciente do dono ("igual ao resto"). Resolver com login + RLS por clínica antes de qualquer deploy público.
 
+### 🗄️ O banco mudou MUITO em ago/2026 — leia antes de escrever query
+Três ondas de mudança em poucos dias, e duas delas quebraram código que existia.
+
+**1. Colunas REMOVIDAS de `leads`:** `score_ia`, `temperatura`, `tags` e `origem`. Não voltam. Saíram junto o `getTemp`, o `getTags`, o card SCORE IA (mostrava "—" para todo cliente) e o bloco TAGS das Conversas. ⚠️ **`agendamentos.origem` EXISTE** (valores `ia` ou nulo) — é outra coluna. O canal do lead é `canal`.
+
+**2. Estrutura financeira criada e depois REMOVIDA.** Em 06/08 nasceram `procedimentos`, `pagamentos`, `pacotes`, `pacotes_vendidos`, `pacote_saldo`, `pacote_itens`, as views `vw_financeiro_atendimentos` / `vw_pacotes_saldo`, a função `financeiro_resumo(date,date)` e as colunas `agendamentos.procedimento_id` / `pacote_vendido_id`. **Tudo foi apagado pelo dono em 11/08** — a spec que veio junto trocava o layout aprovado por outro, e ele preferiu voltar. `agendamentos.valor` voltou a **0 preenchidos de 254**.
+> O que ficou de aproveitável está nas mensagens dos commits `0c5b3bc`, `05a1261` e `9ea62e4`: a régua **previsto ≠ faturado ≠ recebido**, o `valor` como *snapshot* (nunca recalcular por join com preço de tabela, senão o passado muda quando o preço mudar) e o estorno como **valor negativo** (o saldo sobe sozinho; não existe "cancelar pagamento").
+
+**3. Cadastro de lead — migration ESCRITA, NÃO APLICADA.** `supabase/migrations/20260811_leads_cadastro_completo.sql` adiciona `email, site, documento, empresa, nascimento, cep, logradouro, numero, complemento, bairro, cidade, uf, pais, anotacoes, etiquetas[]`. Aditiva e anulável. Enquanto não rodar, o cadastro devolve **42703** e a tela diz isso com todas as letras.
+> ⚠️ **Não use `leads.memoria` para campo de formulário.** É da Laura: hoje guarda `{"preferencias":{"dias":[…],"horarios":[…]}}`. E não ressuscite nomes removidos — "como conheceu" foi para `anuncio_origem`, e as etiquetas são `etiquetas`, não `tags`.
+
+**Tabelas com RLS ligada e ZERO policies** (só service role lê, sempre por rota de servidor): `documentos_lins`, `promocoes`, `fichas_avaliacao`. O cliente do navegador recebe **0 linhas** — se uma tela nova vier vazia, olhe isto primeiro.
+
+### 💰 Preço vem do catálogo da clínica, nunca de tabela no código (ago/2026)
+Os valores de avulso moram em **`documentos_lins`** — a MESMA base que a Laura lê no WhatsApp. Preço próprio no CRM faria a agente dizer um valor e a tela mostrar outro.
+
+- **`src/lib/servicos.ts`** (puro): lê o preço do TEXTO do documento (`metadata` está vazia) e trata os formatos reais — fixo, `de X a Y` (média), `a partir de X` (piso), `X na clínica ou Y na residência` (o primeiro), e sem linha de preço (laser e cera cobram **por área**: média das 30 áreas, com os COMBOS excluídos senão o pacote infla a sessão).
+- **`resolverServico`** devolve 4 precisões: `promocao` (título de promoção → preço do pacote) · `exato` · `familia` (texto genérico → média das variantes; "Limpeza de pele" tem 4 no catálogo) · `desconhecido` (**preço nulo, sem chute**).
+- ⚠️ **Pacote não cai na média de avulso.** "Pacote 10 sessões de drenagem" virava R$ 125 pela família; custa 499,90. Sem promoção casada, fica sem preço — errar 4× pra menos engana mais que um vazio.
+- **O ticket padrão de R$ 100 morreu.** Ele fazia 69 atendimentos entrarem por um número que nada sustentava. Hoje: 63% exato + 11% família + 1% promoção = **75% com fonte real**, 25% honestamente nulo, e o aviso na tela diz quantos são.
+- Leitura por `/api/painel/servicos` (service role). Hook `useCatalogoServicos`.
+- **Botox e Preenchimento não estão no documento** — 17 atendimentos sem preço. Adicionar lá resolve na tela e na Laura ao mesmo tempo.
+
+### 📤 Envio de mensagem sai do SERVIDOR (ago/2026)
+O envio quebrou em produção. Diagnóstico: DNS do webhook do n8n resolvia, mas **a porta 443 recusava conexão** — o host estava fora (controle: `example.com` 200, `api.github.com` 200 da mesma máquina). Não era CORS.
+
+Mas o desenho antigo tinha três problemas ao mesmo tempo, e os três somem com a chamada saindo do servidor:
+1. `fetch` do navegador para outro domínio com `Content-Type: application/json` **obriga preflight OPTIONS**;
+2. a URL do webhook estava **no bundle** (`NEXT_PUBLIC_` + default fixo) — dava para disparar WhatsApp pela clínica sem login;
+3. host fora do ar prendia a requisição sem mensagem de erro decente.
+
+Hoje: `src/lib/evolution.ts` (`server-only`, timeout de 20s) → `/api/painel/enviar-mensagem` → o cliente chama a **nossa** rota (`src/lib/enviar-mensagem.ts`). `src/lib/n8n.ts` foi removido.
+
+- **A rota GRAVA em `conversas` como `origem='humano'`.** Isso foi **medido**: mandei uma mensagem pela API, ela chegou no WhatsApp e **não** apareceu na tabela — o fluxo do n8n captura o que a dona digita no CELULAR, não o que sai pela API. Sem essa escrita, o enviado pelo CRM sumiria no refresh.
+- A gravação vem **depois** do envio, e falhar nela não devolve erro: a cliente já recebeu, mandar reenviar seria pior. A tela avisa "enviada, mas não entrou no histórico".
+- **Instância: `Laura Lins`** (`556195021845`, perfil "Lins Estética"). ⚠️ Existe uma instância chamada **`Agente Lins` que é do Cryo**, outro negócio — escolher pelo nome mandaria WhatsApp do número errado para cliente real.
+- `EVOLUTION_API_URL`, `EVOLUTION_API_KEY`, `EVOLUTION_INSTANCE` — **sem `NEXT_PUBLIC_`**, e precisam ser cadastradas na Vercel.
+
+### 💬 Formato do WhatsApp e composer (ago/2026)
+`src/lib/formato-whatsapp.ts` converte `*negrito*`, `_itálico_`, `~riscado~` e ` ```mono``` ` numa **árvore**, não em HTML — a mensagem vem de terceiros e montar HTML com ela seria injeção. Quem desenha (`texto-whatsapp.tsx`) cria elementos React.
+- A regra é que o marcador **cola no conteúdo**: `*texto*` formata, `* texto *` não. É o que impede um asterisco solto de comer a frase. 24 asserts nisso.
+- O preview do inbox usa `textoLimpo` (lá não dá para estilizar), limpando **antes** de cortar em 60 — cortar primeiro deixaria um `*` órfão.
+- O composer virou `<textarea>`: em `<input>` de uma linha o navegador **ignora** Shift+Enter. Enter envia, Shift/Alt/Ctrl+Enter quebram linha, e respeita o **IME** (durante composição de acento, Enter confirma o caractere e não pode enviar).
+
+### Visão geral com abas + aba Negócios (ago/2026)
+`src/components/visao-geral/visao-geral.tsx` é o container: UM cabeçalho, UM filtro de período, e as abas trocam só o corpo (**Negócios** e **Multiatendimento**). O `Dashboard` perdeu o header e recebe `period` por prop — trocar de aba não perde o recorte.
+
+Layout novo isolado no prefixo `.neg-`: 5 cards, Dados diários (Chart.js, 3 séries) e Percentual por profissional; abaixo, Serviços mais vendidos e Por categoria. Três decisões que o separam do `.metric-card` das outras telas: **densidade** (cabem cinco lado a lado), **número em sans tabular** (Cormorant tem largura variável por dígito e faz o dinheiro dançar entre cards) e **contraste vindo do FUNDO**, não de sombra.
+
+⚠️ **A rosca por profissional é SINTÉTICA** (hash do id) e tem selo dizendo isso — `profissional_id` é nulo em 100% dos agendamentos. Ela sai/volta por condição no DADO, não por comentário.
+
+### Cadastro de lead completo (ago/2026)
+`new-lead-modal.tsx` passou de 4 campos para 17, em abas (Contato, Dados pessoais, Endereço, Anotações). Lógica pura em `src/lib/lead-form.ts` — **53 asserts**: CPF com dígito errado, CPF repetido, CNPJ, fixo e celular, e o nascimento comparado em **texto** (`"1990-05-14"` como `Date` vira 13/05 em Brasília).
+- **Telefone gravado em dígitos com DDI 55**, a mesma chave do upsert do n8n. Formatado, o cadastro de balcão viraria um SEGUNDO registro quando a cliente mandasse WhatsApp.
+- Erro de validação **leva para a aba do campo** — "corrija os campos" com o campo escondido em outra aba trava a pessoa.
+- CEP busca no ViaCEP ao completar 8 dígitos (ele serve `Access-Control-Allow-Origin: *`) e **não sobrescreve** o que já foi digitado.
+- Tipografia: título em **sans**, não no Cormorant dos outros modais — serif atrapalha em formulário, onde os rótulos são sans. Canto do modal 20px → 14px.
+
+### Agenda: catálogo no combobox e a grade da escala (ago/2026)
+- O `<select>` de serviço tinha 10 nomes fixos no código; virou **combobox com busca** (`servico-combobox.tsx`), com os 38 serviços do documento, agrupados por categoria, buscando por nome, categoria e **sinônimo** ("virilha" acha depilação) e mostrando o preço à direita.
+- **`HORA_GRADE_FIM` era 20 e APAGAVA turnos.** O editor de escala salva com `DELETE` + `INSERT` do que está pintado, e a leitura descartava em silêncio toda hora ≥ 20 — a Rozaria tem 20:00–21:00 em terça e quinta, então abrir a escala dela e salvar apagaria os dois turnos. Hoje é 21 (grade 8..20). O teste é de **ida e volta** com a escala real: pintar → faixas → pintar tem que devolver o mesmo conjunto.
+- Para a Agenda abrir 20h de segunda a sexta falta **escalar alguém** nesse horário — é dado, não código.
+
+### Aviso sonoro nas Conversas (ago/2026)
+`src/lib/som.ts` gera o toque pela Web Audio API — sem arquivo, sem requisição. Só toca em INSERT com `origem='cliente'`. O escopo é estrutural: o código vive em `conversas.tsx`, que só monta em `/conversas`.
+- A preferência é lida por **ref**, não por state: quem consulta é o handler do realtime, montado uma vez, que congelaria no primeiro valor.
+- O navegador só libera áudio depois de um gesto — o contexto nasce suspenso e `resume()` fora de gesto é bloqueado. Destravo no primeiro clique/tecla.
+
 ### 🔴 Teto de 1.000 linhas do PostgREST (jul/2026) — a classe de bug mais traiçoeira daqui
 O PostgREST devolve **no máximo 1.000 linhas por requisição e NÃO sinaliza quando corta**: sem erro, sem status diferente, sem aviso. `select()` sem `.limit()` não traz "tudo" — traz "até mil, e cala". **Já tinha quebrado em produção.**
 
@@ -184,24 +252,40 @@ Helpers compartilhados no legacy (virar utils/components): `renderAvatar`, `getI
 URL do projeto: `https://sflpxenfyewefzwizimf.supabase.co` (a anon key vai em variável de ambiente, ver abaixo).
 Timezone do projeto: America/Sao_Paulo.
 
-Tabelas (5):
-- **leads** — chave de negócio é `telefone` (único, usado como chave de upsert pelo n8n). Campos usados pelo front: `id`, `nome`, `telefone`, `status` (novo/agendado/convertido/...), `canal`, `origem`, `foto_url`, `nao_lidas`, `ia_pausada`, `pausada_por`, `resumo_ia`, `score_ia`, `aceita_campanha`, `ultima_interacao`, `criado_em`.
+Tabelas (15 hoje; as 5 originais primeiro). ⚠️ O schema MUDOU em ago/2026 — ver "O banco mudou MUITO" acima antes de escrever query:
+- **leads** — chave de negócio é `telefone` (único, chave de upsert do n8n). Hoje: `id`, `nome`, `telefone`, `status` (novo/cliente), `canal`, `foto_url`, `nao_lidas`, `ia_pausada`, `pausada_em`, `pausada_por`, `motivo_pausa`, `resumo_ia`, `resumo_atualizado_em`, `aceita_campanha`, `anuncio_origem`, `memoria` (jsonb — **é da Laura**, não usar para campo de formulário), `ultima_interacao`, `criado_em`, `atualizado_em`. ⚠️ `score_ia`, `temperatura`, `tags` e `origem` foram REMOVIDAS em ago/2026.
 - **conversas** — histórico de mensagens. Campos: `id`, `lead_id` (FK), `mensagem`, `origem` ('cliente' | 'agente' | 'humano'), `enviado_em`.
 - **agendamentos** — Campos: `id`, `lead_id` (FK), `servico`, `data_agendamento`, `duracao_min`, `status` (pendente/confirmado/cancelado/realizado), `origem`, `valor` (existe na tabela; hoje vem vazio porque o n8n ainda não preenche — a "Receita estimada" depende disso).
 - **campanhas** — ⚠️ **sem interface desde jul/2026** (a tela foi removida; a tabela ficou, vazia). `id`, `nome`, `mensagem`, `publico`, `status` (rascunho/enviando/concluida/pausada), `total`, `enviados`, datas.
 - **campanha_envios** — ⚠️ **idem, sem interface**. Fila: `id`, `campanha_id` (FK), `lead_id` (FK), `telefone`, `nome`, `status`, unique(campanha_id, lead_id).
+
+As demais (criadas fora deste repo, pelo n8n ou por migration daqui):
+- **profissionais**, **profissional_horarios**, **profissional_bloqueios** — escala que alimenta `agenda_slots` / `agenda_checar`. Ver "Agenda".
+- **promocoes** — o que a Laura oferece. **RLS ligada SEM policy**: só service role, por rota de servidor.
+- **documentos_lins** — catálogo de 38 serviços + preços, em texto. Mesma base que a Laura lê. **RLS ligada SEM policy.**
+- **fichas_avaliacao** — dado de saúde. **RLS ligada SEM policy.**
+- **follow_ups** (+ view `follow_ups_resultado`) — disparos do agente.
+- **dias_laser** — datas de Laser Day.
+- **conversa_ultima_por_lead** (view) — 1 linha por lead, para o inbox.
 
 RLS liberado para anon/authenticated (single-tenant). Não alterar schema sem necessidade; se precisar, registrar aqui e gerar migration.
 
 ## Variáveis de ambiente (.env.local)
 - `NEXT_PUBLIC_SUPABASE_URL` = a URL acima
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY` = a anon key (pegar no painel do Supabase; NUNCA commitar a service_role key)
+- `SUPABASE_SERVICE_ROLE_KEY` — sem `NEXT_PUBLIC_`. Lê o que tem RLS sem policy.
+- `EVOLUTION_API_URL`, `EVOLUTION_API_KEY`, `EVOLUTION_INSTANCE` — envio de WhatsApp. **Sem `NEXT_PUBLIC_`**: a chave manda mensagem em nome da clínica. ⚠️ Precisam estar cadastradas **na Vercel**, senão o envio quebra em produção.
 
 ## O que NÃO está neste repositório
 - O agente Laura, o FAQ, o Agente Agenda, os fluxos: tudo isso vive no **n8n** (nuvem), não aqui. Este front só LÊ e ESCREVE no Supabase. Não tentar implementar o agente aqui.
 - Mudanças de prompt/fluxo do agente são feitas fora deste projeto.
 
 ## Pendências conhecidas (NÃO são bugs da migração; herdadas do legacy)
+- **Migration do cadastro de lead NÃO aplicada** (`20260811_leads_cadastro_completo.sql`) — sem ela o salvar devolve 42703.
+- **Índice composto `conversas(lead_id, enviado_em DESC)` NÃO aplicado** (`20260731_idx_conversas_lead_enviado.sql`).
+- **`/privacidade`**: a constante `CONTATO` está VAZIA. Não divulgar o link antes de preencher.
+- **Botox e Preenchimento** não existem em `documentos_lins` — 17 atendimentos sem preço.
+- **Ninguém escalado em 20–21 nas segundas, quartas e sextas** — a Agenda mostra FECHADO às 20h nesses dias. É dado, não código.
 - "Receita estimada" mostra R$ 0,00 porque `agendamentos.valor` vem vazio (o n8n não preenche). Migrar como está; resolver depois.
 - ~~"Consultas agendadas"~~ **RESOLVIDO (jun/2026):** agora conta linhas de `agendamentos` (não leads), por `criado_em`, sem cancelados; "Receita estimada" usa o mesmo filtro. Ver detalhe na seção "Dashboard (Etapa 2)".
 - ~~Inbox não tem realtime~~ **RESOLVIDO (jul/2026):** Supabase Realtime ativo em `conversas`/`leads` + invalidação do cache React Query no `conversas.tsx`. Ver "Camada de dados com cache".

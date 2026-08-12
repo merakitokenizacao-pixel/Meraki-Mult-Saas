@@ -136,11 +136,9 @@ export function ProfissionalModal({
     <Modal open onClose={onClose} width={460}>
       <div
         style={{
-          fontFamily: "var(--font-cormorant), serif",
-          fontSize: 22,
-          fontWeight: 300,
-          marginBottom: "1.25rem",
-          letterSpacing: "0.02em",
+          fontSize: 16,
+          fontWeight: 600,
+          marginBottom: "1rem",
         }}
       >
         {editando ? "Editar profissional" : "Nova profissional"}

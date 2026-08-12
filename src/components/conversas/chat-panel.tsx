@@ -204,7 +204,7 @@ export function ChatPanel({
           )}
           <div className="min-w-0">
             <div
-              className={`truncate font-serif text-[18px] font-medium leading-tight ${lead ? "text-vx-text" : "text-vx-muted"}`}
+              className={`truncate text-[15px] font-semibold leading-tight ${lead ? "text-vx-text" : "text-vx-muted"}`}
             >
               {lead ? lead.nome || lead.telefone || "—" : "Selecione um cliente"}
             </div>
@@ -272,7 +272,7 @@ export function ChatPanel({
               />
             </div>
             <div>
-              <div className="font-serif text-[26px] font-medium text-vx-text">
+              <div className="text-[19.5px] font-semibold text-vx-text">
                 Conversas
               </div>
               <p className="mx-auto mt-1 max-w-xs text-[13px] text-vx-muted">

@@ -23,7 +23,7 @@ export function DetailsPanel({
   return (
     <div className="flex h-full min-h-0 flex-col border-l border-vx-border bg-vx-surface">
       <div className="flex h-16 shrink-0 items-center justify-between border-b border-vx-border px-6">
-        <span className="font-serif text-[17px] font-medium text-vx-text">
+        <span className="text-[13px] font-semibold text-vx-text">
           Detalhes
         </span>
         <button
@@ -76,7 +76,7 @@ function DetailsContent({
       <div className="flex items-center gap-3 border-b border-vx-border p-6">
         <Avatar nome={lead.nome} fotoUrl={lead.foto_url} size={54} fontSize={16} />
         <div className="min-w-0">
-          <div className="truncate font-serif text-[20px] font-medium text-vx-text">
+          <div className="truncate text-[16px] font-semibold text-vx-text">
             {lead.nome || "—"}
           </div>
           <div className="text-[11px] text-vx-muted">

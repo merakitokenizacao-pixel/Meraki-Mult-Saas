@@ -354,11 +354,9 @@
 }
 
 .nav-section {
-  font-size: 8px;
+  font-size: 11px;
   color: rgba(184, 149, 90, 0.35);
   font-weight: 600;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
   padding: 18px 20px 6px;
 }
 .nav-item {
@@ -519,15 +517,22 @@
   gap: 14px;
 }
 .topbar-title {
-  font-family: var(--font-cormorant), serif;
-  font-size: 22px;
-  font-weight: 400;
+  font-size: 19.5px;
+  font-weight: 600;
   color: var(--vx-text);
-  letter-spacing: 0.02em;
 }
 /* .topbar-right / .topbar-date / .theme-toggle foram REMOVIDOS: a data e o
    botão de tema saíram da topbar. O tema agora mora em Configurações →
    Aparência, e a data não valia o espaço. Sobra só o título. */
+
+/* Densidade do painel: toda a escala rem (utilitários do Tailwind e os
+   poucos rem daqui) encolhe 0.8125×. Fica preso ao chrome do CRM de
+   propósito: rem resolve na RAIZ, então pôr isso em html encolheria
+   junto a ficha da paciente (formulário de saúde no celular) e a landing.
+   A classe .layout só existe quando o AppShell está montado. */
+:root:has(.layout) {
+  font-size: 13px;
+}
 
 .content {
   padding: 2.5rem 2.5rem;
@@ -842,25 +847,25 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 14px;
-  min-height: 116px;
-  padding: 18px;
+  gap: 10px;
+  min-height: 94px;
+  padding: 13px 16px;
   border: 1px solid var(--vx-border);
-  border-radius: 12px;
-  background: var(--vx-surface);
+  border-radius: 7px;
+  background: var(--vx-bg);
   transition: border-color var(--vx-transition);
 }
 .metric-label {
-  font-size: 13px;
-  font-weight: 400;
-  line-height: 1.3;
-  color: var(--vx-muted);
+  font-size: 11.5px;
+  font-weight: 500;
+  line-height: 1.25;
+  color: var(--vx-text);
 }
 .metric-value {
-  font-size: 30px;
+  font-size: 20px;
   font-weight: 600;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
+  line-height: 1.22;
+  letter-spacing: 0;
   color: var(--vx-text);
   font-variant-numeric: tabular-nums;
 }
@@ -872,8 +877,8 @@
   color: var(--vx-muted);
 }
 .metric-sub {
-  margin-top: 5px;
-  font-size: 12px;
+  margin-top: 3px;
+  font-size: 10px;
   color: var(--vx-muted);
 }
 
@@ -890,14 +895,11 @@
   gap: 20px;
 }
 .card {
-  background: var(--vx-surface);
+  background: var(--vx-bg);
   border: 1px solid var(--vx-border);
-  border-radius: var(--vx-radius-lg);
-  padding: 1.5rem;
-  transition: all var(--vx-transition);
-}
-.card:hover {
-  box-shadow: var(--vx-shadow-md);
+  border-radius: 7px;
+  padding: 13px 16px 16px;
+  transition: border-color var(--vx-transition);
 }
 .card-header {
   display: flex;
@@ -906,9 +908,9 @@
   margin-bottom: 1.25rem;
 }
 .card-title {
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 600;
-  letter-spacing: -0.005em;
+  letter-spacing: 0;
   color: var(--vx-text);
 }
 .card-action {
@@ -951,14 +953,12 @@
   font-size: 11px;
   color: var(--vx-muted);
   font-weight: 400;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
 }
 .funnel-count {
-  font-family: var(--font-cormorant), serif;
-  font-size: 22px;
-  font-weight: 400;
+  font-size: 20px;
+  font-weight: 600;
   color: var(--vx-text);
+  font-variant-numeric: tabular-nums;
 }
 .funnel-track {
   height: 2px;
@@ -1103,7 +1103,6 @@
 }
 .search-bar:focus-within {
   border-color: var(--vx-accent);
-  box-shadow: 0 0 0 3px rgba(155, 125, 90, 0.08);
 }
 .search-bar input {
   flex: 1;
@@ -1129,11 +1128,9 @@
 .table-wrap thead th {
   text-align: left;
   padding: 10px 16px;
-  font-size: 9px;
+  font-size: 11px;
   color: var(--vx-muted);
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
   border-bottom: 1px solid var(--vx-border);
   background: var(--vx-surface);
 }
@@ -1206,11 +1203,9 @@
   color: var(--vx-text);
 }
 .modal-name {
-  font-family: var(--font-cormorant), serif;
-  font-size: 24px;
-  font-weight: 300;
+  font-size: 18px;
+  font-weight: 600;
   margin-bottom: 4px;
-  letter-spacing: 0.01em;
 }
 .modal-phone {
   font-size: 12px;
@@ -1218,10 +1213,8 @@
   font-family: var(--font-jetbrains), monospace;
 }
 .modal-section {
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
   color: var(--vx-muted);
   margin: 1.25rem 0 10px;
   padding-bottom: 8px;
@@ -1312,18 +1305,15 @@
 .btn-primary:hover {
   filter: brightness(1.1);
   transform: translateY(-1px);
-  box-shadow: var(--vx-shadow-md);
 }
 [data-mode="dark"] .btn-primary {
   background: var(--vx-accent);
 }
 .form-label {
   display: block;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 600;
   color: var(--vx-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
   margin-bottom: 6px;
 }
 .form-input {
@@ -1341,7 +1331,6 @@
 .form-input:focus {
   border-color: var(--vx-accent);
   background: var(--vx-surface);
-  box-shadow: 0 0 0 3px rgba(155, 125, 90, 0.08);
 }
 textarea.form-input {
   resize: vertical;
@@ -1406,11 +1395,9 @@ select.form-input {
   border-color: var(--vx-border2);
 }
 .agenda-month {
-  font-family: var(--font-cormorant), serif;
-  font-size: 22px;
-  font-weight: 400;
+  font-size: 16px;
+  font-weight: 600;
   color: var(--vx-text);
-  letter-spacing: 0.02em;
   margin-left: 8px;
   text-transform: capitalize;
 }
@@ -1444,18 +1431,16 @@ select.form-input {
   border-right: none;
 }
 .agenda-weekday {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--vx-muted);
   font-weight: 500;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
 }
 .agenda-daynum {
-  font-family: var(--font-cormorant), serif;
-  font-size: 24px;
-  font-weight: 400;
+  font-size: 16px;
+  font-weight: 600;
   color: var(--vx-text);
   line-height: 1;
+  font-variant-numeric: tabular-nums;
 }
 .agenda-day-head.today .agenda-daynum {
   color: var(--vx-accent);
@@ -1539,10 +1524,8 @@ select.form-input {
   left: 6px;
   right: 6px;
   z-index: 1;
-  font-size: 8.5px;
+  font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
   color: var(--vx-muted);
   opacity: 0.75;
   line-height: 1.2;
@@ -1582,7 +1565,6 @@ select.form-input {
 }
 .agenda-event:hover {
   transform: scale(1.02);
-  box-shadow: var(--vx-shadow-md);
   z-index: 3;
 }
 .agenda-event-time {
@@ -1756,10 +1738,8 @@ select.form-input {
 .agenda-mday-head {
   padding: 10px 8px;
   text-align: center;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
   color: var(--vx-muted);
   background: var(--vx-surface);
   border-right: 1px solid var(--vx-border);
@@ -1852,7 +1832,6 @@ select.form-input {
 .lead-combo-control:focus-within {
   border-color: var(--vx-accent);
   background: var(--vx-surface);
-  box-shadow: 0 0 0 3px rgba(155, 125, 90, 0.08);
 }
 .lead-combo-icon {
   color: var(--vx-muted);
@@ -2080,10 +2059,8 @@ select.form-input {
   margin-bottom: 18px;
 }
 .config-title {
-  font-family: var(--font-cormorant), serif;
-  font-size: 26px;
-  font-weight: 400;
-  letter-spacing: 0.01em;
+  font-size: 19.5px;
+  font-weight: 600;
   color: var(--vx-text);
 }
 .config-subtitle {
@@ -2097,7 +2074,6 @@ select.form-input {
   border: 1px solid var(--vx-border);
   border-radius: 14px;
   padding: 20px;
-  box-shadow: var(--vx-shadow-sm);
 }
 .config-grid-2 {
   display: grid;
@@ -2133,10 +2109,8 @@ select.form-input {
   flex-shrink: 0;
 }
 .config-linha-label {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
   color: var(--vx-muted);
 }
 .config-linha-valor {
@@ -2172,14 +2146,13 @@ select.form-input {
   cursor: pointer;
   font-family: inherit;
   text-align: left;
-  transition: border-color var(--vx-transition), box-shadow var(--vx-transition);
+  transition: border-color var(--vx-transition);
 }
 .tema-opcao:hover {
   border-color: var(--vx-border2);
 }
 .tema-opcao.active {
   border-color: var(--vx-accent);
-  box-shadow: 0 0 0 1px var(--vx-accent);
 }
 .tema-preview {
   height: 96px;
@@ -2292,10 +2265,8 @@ select.form-input {
   border: 1px dashed var(--vx-border);
 }
 .prof-dia-nome {
-  font-size: 9.5px;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
   color: var(--vx-muted);
 }
 .prof-dia-faixa {
@@ -2327,9 +2298,8 @@ select.form-input {
   margin-bottom: 16px;
 }
 .escala-titulo {
-  font-family: var(--font-cormorant), serif;
-  font-size: 21px;
-  font-weight: 400;
+  font-size: 15px;
+  font-weight: 600;
   color: var(--vx-text);
 }
 .escala-dica {
@@ -2352,10 +2322,8 @@ select.form-input {
   /* célula vazia do canto superior esquerdo */
 }
 .escala-dia-head {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
   color: var(--vx-muted);
   text-align: center;
   padding-bottom: 5px;
@@ -2383,7 +2351,6 @@ select.form-input {
 }
 .escala-celula.on {
   /* cor da profissional vem inline */
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.15);
 }
 
 .escala-resumo {
@@ -2402,9 +2369,7 @@ select.form-input {
 }
 .escala-resumo-dia {
   font-weight: 700;
-  font-size: 9.5px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-size: 11px;
   color: var(--vx-muted);
   padding-top: 2px;
 }
@@ -2534,13 +2499,15 @@ select.form-input {
   border-radius: 9px;
   cursor: pointer;
   padding: 0;
-  transition: transform 0.12s ease, box-shadow 0.12s ease;
+  transition: transform 0.12s ease, border-color 0.12s ease;
+}
+/* Selecionado: a borda de 2px já está reservada transparente, então acender
+   a cor não desloca nada. Era um anel duplo de sombra antes. */
+.cor-opcao.active {
+  border-color: var(--vx-text2);
 }
 .cor-opcao:hover {
   transform: scale(1.08);
-}
-.cor-opcao.active {
-  box-shadow: 0 0 0 2px var(--vx-surface), 0 0 0 4px var(--vx-text2);
 }
 
 /* ========================================================================
@@ -2564,11 +2531,11 @@ select.form-input {
   color: var(--vx-text);
 }
 .promo-contador-num {
-  font-family: var(--font-cormorant), serif;
-  font-size: 34px;
-  font-weight: 400;
+  font-size: 20px;
+  font-weight: 600;
   line-height: 1;
   color: var(--vx-accent);
+  font-variant-numeric: tabular-nums;
 }
 .promo-sub {
   margin-top: 5px;
@@ -2590,12 +2557,10 @@ select.form-input {
   border-radius: 14px;
   padding: 16px;
   cursor: pointer;
-  transition: border-color var(--vx-transition), box-shadow var(--vx-transition);
-  box-shadow: var(--vx-shadow-sm);
+  transition: border-color var(--vx-transition);
 }
 .promo-card:hover {
   border-color: var(--vx-border2);
-  box-shadow: var(--vx-shadow-md);
 }
 /* Vencida/desativada: presente, mas visivelmente fora do ar */
 .promo-card.fora {
@@ -2625,11 +2590,12 @@ select.form-input {
   color: var(--vx-text);
 }
 .promo-valor {
+  font-weight: 600;
   margin-top: 5px;
-  font-family: var(--font-cormorant), serif;
-  font-size: 21px;
+  font-size: 16px;
   color: var(--vx-accent);
   line-height: 1.2;
+  font-variant-numeric: tabular-nums;
 }
 .promo-desc {
   margin-top: 8px;
@@ -2675,10 +2641,8 @@ select.form-input {
 
 /* ── Modal ── */
 .promo-modal-titulo {
-  font-family: var(--font-cormorant), serif;
-  font-size: 22px;
-  font-weight: 300;
-  letter-spacing: 0.02em;
+  font-size: 16px;
+  font-weight: 600;
   margin-bottom: 1.25rem;
 }
 .promo-grid-2 {
@@ -2865,7 +2829,6 @@ select.form-input {
 .fu-periodo-btn.ativo {
   background: var(--vx-surface);
   color: var(--vx-text);
-  box-shadow: var(--vx-shadow-sm);
 }
 
 .fu-cards {
@@ -2884,7 +2847,6 @@ select.form-input {
   border: 1px solid var(--vx-border);
   border-radius: 14px;
   padding: 16px 18px;
-  box-shadow: var(--vx-shadow-sm);
 }
 .fu-card-label {
   display: flex;
@@ -2897,11 +2859,11 @@ select.form-input {
 }
 .fu-card-valor {
   margin-top: 8px;
-  font-family: var(--font-cormorant), serif;
-  font-size: 34px;
-  font-weight: 400;
+  font-size: 20px;
+  font-weight: 600;
   line-height: 1;
   color: var(--vx-accent);
+  font-variant-numeric: tabular-nums;
 }
 
 /* Tooltip do "Não enviados" */
@@ -2996,11 +2958,10 @@ select.form-input {
   padding: 14px 16px;
   cursor: pointer;
   font-family: inherit;
-  transition: border-color var(--vx-transition), box-shadow var(--vx-transition);
+  transition: border-color var(--vx-transition);
 }
 .fu-item:hover:not(:disabled) {
   border-color: var(--vx-border2);
-  box-shadow: var(--vx-shadow-md);
 }
 .fu-item:disabled {
   cursor: default;
@@ -3041,11 +3002,9 @@ select.form-input {
 .fu-item-tipo {
   display: inline-block;
   margin-top: 8px;
-  font-size: 10.5px;
+  font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.04em;
   color: var(--vx-muted);
-  text-transform: uppercase;
 }
 
 .fu-vazio {
@@ -3091,10 +3050,8 @@ select.form-input {
 }
 .fu-tabela th {
   text-align: left;
-  font-size: 9.5px;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
   color: var(--vx-muted);
   padding: 0 10px 9px 0;
   white-space: nowrap;
@@ -3192,11 +3149,11 @@ select.form-input {
   margin-bottom: 2.5rem;
 }
 .metrics-lente-titulo {
-  font-size: 13px;
+  font-size: 11.5px;
   font-weight: 500;
-  color: var(--vx-text2);
-  margin-bottom: 12px;
-  padding-bottom: 9px;
+  color: var(--vx-muted);
+  margin-bottom: 10px;
+  padding-bottom: 8px;
   border-bottom: 1px solid var(--vx-border);
 }
 .metrics-grid-2 {
@@ -3302,15 +3259,14 @@ select.form-input {
   z-index: 1;
 }
 .ag-lista-dia-num {
-  font-family: var(--font-cormorant), serif;
-  font-size: 19px;
+  font-weight: 600;
+  font-size: 16px;
   color: var(--vx-accent);
   line-height: 1;
+  font-variant-numeric: tabular-nums;
 }
 .ag-lista-dia-mes {
   font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
   color: var(--vx-muted);
 }
 .ag-lista-dia-nome {
@@ -3547,10 +3503,8 @@ select.form-input {
   padding: 9px 18px;
   border-top: 1px solid var(--vx-border);
   background: var(--vx-surface2);
-  font-size: 9.5px;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
   color: var(--vx-muted);
 }
 .ag-lista-thead .ag-lista-hora {
@@ -3610,26 +3564,26 @@ select.form-input {
    dobra. Sans, não Cormorant — em título de painel o serif vira enfeite e
    briga com os rótulos, que já são sans. */
 .vg-saudacao {
-  font-size: 13px;
+  font-size: 11.5px;
   font-weight: 400;
   color: var(--vx-muted);
-  line-height: 1.2;
-  margin-bottom: 2px;
+  line-height: 1.25;
+  margin-bottom: 1px;
 }
 .vg-titulo {
   font-family: var(--font-jost), system-ui, sans-serif;
-  font-size: 26px;
+  font-size: 19.5px;
   font-weight: 600;
-  letter-spacing: -0.01em;
-  line-height: 1.15;
+  letter-spacing: 0;
+  line-height: 1.33;
   color: var(--vx-text);
 }
 .vg-sub {
-  margin-top: 3px;
-  font-size: 14px;
+  margin-top: 1px;
+  font-size: 11.5px;
   font-weight: 400;
   color: var(--vx-muted);
-  line-height: 1.4;
+  line-height: 1.43;
 }
 .vg-controles {
   display: flex;
@@ -3666,7 +3620,6 @@ select.form-input {
 .vg-aba.ativa {
   background: var(--vx-surface);
   color: var(--vx-accent);
-  box-shadow: var(--vx-shadow-sm);
 }
 
 /* ── Cards ── */
@@ -3696,15 +3649,19 @@ select.form-input {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 14px;
-  /* Padding uniforme e altura mínima igual: cinco cards lado a lado com
-     paddings assimétricos desalinham os valores por 1–2px e é isso que se lê
-     como maquete. */
-  padding: 18px;
-  min-height: 116px;
+  gap: 10px;
+  /* Padding uniforme e altura travada: cinco cards lado a lado com paddings
+     assimétricos desalinham os valores por 1–2px, e é isso que se lê como
+     maquete. 94px é a altura da referência — o card antigo tinha ~135 com ar
+     morto no meio. */
+  padding: 13px 16px;
+  min-height: 94px;
   border: 1px solid var(--vx-border);
-  border-radius: 12px;
-  background: var(--vx-surface);
+  border-radius: 7px;
+  /* Fundo IGUAL ao da página: quem separa é a hairline. Card com superfície
+     própria E sombra faz cada peça flutuar por conta, e é daí que vem o ar de
+     slide. */
+  background: var(--vx-bg);
   font-family: inherit;
   text-align: left;
   transition: border-color var(--vx-transition), background var(--vx-transition);
@@ -3721,16 +3678,16 @@ select.form-input {
    e o gráfico abaixo passa a enfatizar a série do card. */
 .neg-card.ativo {
   border-color: var(--vx-accent);
-  background: var(--vx-surface2);
+  background: var(--vx-surface);
 }
 .neg-card-rotulo {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 13px;
-  font-weight: 400;
-  line-height: 1.3;
-  color: var(--vx-muted);
+  font-size: 11.5px;
+  font-weight: 500;
+  line-height: 1.25;
+  color: var(--vx-text);
 }
 .neg-card-linha {
   display: flex;
@@ -3741,17 +3698,19 @@ select.form-input {
 .neg-card-numeros {
   min-width: 0;
 }
+/* Mesmo tamanho do título da página, de propósito: número gigante é gráfico
+   de pitch deck. A autoridade vem da contenção. */
 .neg-card-valor {
-  font-size: 30px;
+  font-size: 20px;
   font-weight: 600;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
+  line-height: 1.22;
+  letter-spacing: 0;
   color: var(--vx-text);
   font-variant-numeric: tabular-nums;
 }
 .neg-card-apoio {
-  margin-top: 5px;
-  font-size: 12px;
+  margin-top: 3px;
+  font-size: 10px;
   color: var(--vx-muted);
 }
 /* Ícone de 16px no canto, discreto. Antes eram 22px na cor do card: cinco
@@ -3851,10 +3810,10 @@ select.form-input {
 }
 
 .neg-painel {
-  padding: 18px;
+  padding: 13px 16px 16px;
   border: 1px solid var(--vx-border);
-  border-radius: 12px;
-  background: var(--vx-surface);
+  border-radius: 7px;
+  background: var(--vx-bg);
 }
 .neg-painel-topo {
   display: flex;
@@ -3865,16 +3824,16 @@ select.form-input {
   flex-wrap: wrap;
 }
 .neg-painel-titulo {
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 600;
-  letter-spacing: -0.005em;
+  letter-spacing: 0;
   line-height: 1.25;
   color: var(--vx-text);
 }
 .neg-painel-nota {
   display: block;
-  margin-top: 3px;
-  font-size: 12px;
+  margin-top: 2px;
+  font-size: 11px;
   color: var(--vx-muted);
 }
 .neg-painel-acoes {

@@ -50,9 +50,11 @@ export function PercentualProfissional({
           {
             data: fatias.map((f) => (modo === "valor" ? f.valor : f.qtd)),
             backgroundColor: cores,
-            // Borda na cor da superfície: abre respiro entre as fatias sem
-            // desenhar linha nenhuma, e acompanha o tema sozinha.
-            borderColor: lerVar("--vx-surface"),
+            // Borda na cor do FUNDO DO PAINEL: abre respiro entre as fatias
+            // sem desenhar linha nenhuma, e acompanha o tema sozinha. Segue
+            // `--vx-bg` porque o painel deixou de ter superfície própria —
+            // com `--vx-surface` sobraria um anel claro em volta da rosca.
+            borderColor: lerVar("--vx-bg"),
             borderWidth: 3,
             hoverOffset: 6,
           },

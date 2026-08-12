@@ -92,17 +92,16 @@ export interface ResultadoAtribuicao {
 // Cor por TOKEN, não hex: a tabela `profissionais` guarda cores da paleta clara
 // (#3a6b4f, #2a5278…), que somem sobre superfície escura — medido em ~2:1 no
 // tema Escuro pela revisão adversarial.
-// Rampa do dourado, do passo mais escuro ao mais claro.
+// Paleta CATEGÓRICA própria, não os tokens de status.
 //
-// Já foi duas coisas erradas antes: primeiro os tokens de STATUS (que começavam
-// em --vx-accent e --vx-gold, então a rosca pintava duas fatias douradas
-// competindo com o item ativo do menu), depois uma paleta categórica de matizes
-// distintos — correta como método, mas magenta e oliva numa marca dourada eram
-// quatro cores saturadas brigando num círculo de 165px.
+// Antes esta lista começava em --vx-accent e terminava em --vx-gold: a rosca
+// pintava duas fatias douradas, mais dois pontos de legenda e dois avatares,
+// tudo disputando com o item ativo do menu — que é o único lugar onde essa cor
+// precisa querer dizer alguma coisa.
 //
-// Agora a cor codifica GRANDEZA, não identidade: um matiz só, cinco passos.
-// Os valores estão no CSS porque precisam de um passo por tema (uma rampa que
-// clareia até quase o branco desaparece no tema claro).
+// Reusar status também estava errado por si: verde/vermelho/âmbar significam
+// SITUAÇÃO em toda a interface, e como paleta categórica reprovavam
+// (vermelho↔âmbar dava ΔE 11,1 para visão normal, com piso em 15).
 const TOKENS = [
   "--vx-cat-1",
   "--vx-cat-2",
@@ -152,20 +151,21 @@ export function atribuirPorEscala(
 
   const total = [...acc.values()].reduce((s, v) => s + v.valor, 0);
 
-  // A cor segue o POSTO — e isso está certo aqui, porque a cor mudou de
-  // trabalho. Ela era paleta categórica (um matiz por pessoa: a cor dizia
-  // QUEM) e virou uma rampa do dourado (a cor diz QUANTO). Numa rampa, o
-  // passo É a ordem: a fatia mais escura é a maior, e amarrar isso a um
-  // critério estável como o alfabeto quebraria justamente a leitura.
-  //
-  // Quem responde "quem" passou a ser a legenda ao lado, que traz nome, %% e
-  // valor em cada linha. Identidade por texto, grandeza por cor.
+  // A cor segue a PESSOA, nunca o posto dela. Antes vinha do índice na lista
+  // ordenada por valor: bastava trocar o período para a Mônica cair de 1º para
+  // 2º e as duas primeiras fatias trocarem de cor — a mesma profissional
+  // mudando de cor entre dois recortes, e a rosca deixando de ser comparável
+  // com ela mesma. A ordem alfabética é estável, independe dos números e
+  // sobrevive a alguém entrar ou sair do período.
+  const ordemFixa = [...acc.keys()].sort((a, b) => a.localeCompare(b, "pt-BR"));
+  const corDe = (nome: string) =>
+    TOKENS[ordemFixa.indexOf(nome) % TOKENS.length];
 
   const fatias = [...acc.entries()]
     .sort((a, b) => b[1].valor - a[1].valor)
-    .map(([nome, v], i) => ({
+    .map(([nome, v]) => ({
       nome,
-      token: TOKENS[i % TOKENS.length],
+      token: corDe(nome),
       valor: v.valor,
       qtd: v.qtd,
       pct: total > 0 ? (v.valor / total) * 100 : 0,

@@ -1,6 +1,7 @@
 // Helpers puros das Conversas — portados 1:1 do legacy.
 import { fmtDate } from "@/lib/format";
 import { textoLimpo } from "@/lib/formato-whatsapp";
+import { textoReal } from "@/lib/midia";
 import type { Agendamento, Conversa, Lead } from "@/types/db";
 
 export function isLeadPaused(lead: Lead | null | undefined): boolean {
@@ -60,6 +61,21 @@ export function getLastMsgPreview(
   let prefix = "";
   if (last.origem === "agente") prefix = "🤖 ";
   else if (last.origem === "humano") prefix = "👤 ";
+  // Mídia: o `mensagem` guarda um placeholder do n8n (`[o cliente mandou uma
+  // foto]`), e mostrar isso cru no card é vazar a mecânica interna. O áudio é
+  // diferente — ali o campo é a TRANSCRIÇÃO, que é justamente o que ajuda a
+  // decidir se vale abrir a conversa, então ela fica.
+  if (last.media_path) {
+    const legenda = textoReal(last.mensagem);
+    const rotulo =
+      last.media_tipo === "audio"
+        ? `🎤 ${legenda ?? "Áudio"}`
+        : `📷 ${legenda ?? "Foto"}`;
+    return {
+      text: prefix + textoLimpo(rotulo).substring(0, 60),
+      fromAgente: last.origem === "agente",
+    };
+  }
   // Tira a marcação do WhatsApp: no card não há como estilizar, então o
   // `*negrito*` da Laura apareceria com os asteriscos crus no preview.
   // Limpa ANTES de cortar em 60 — cortar primeiro poderia deixar um `*` órfão.

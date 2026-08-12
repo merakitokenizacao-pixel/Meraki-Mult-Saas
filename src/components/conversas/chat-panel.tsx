@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, useMemo } from "react";
 import {
   ArrowLeft,
   Bot,
@@ -18,6 +18,10 @@ import { Avatar } from "@/components/avatar";
 import { formatDayLabel, isLeadPaused } from "@/lib/conversa";
 import { ChatSkeleton } from "@/components/conversas/skeletons";
 import { TextoWhatsApp } from "@/components/conversas/texto-whatsapp";
+import {
+  MidiaMensagem,
+  MidiaProvider,
+} from "@/components/conversas/midia-mensagem";
 import type { Conversa, Lead } from "@/types/db";
 import type { PendingMsg } from "@/components/conversas/conversas";
 
@@ -144,6 +148,14 @@ export function ChatPanel({
 
   const paused = isLeadPaused(lead);
 
+  // Os caminhos de mídia da página inteira, para o provider assinar em UMA
+  // chamada. Por bolha, uma conversa com 30 fotos dispararia 30 requisições ao
+  // abrir — e o link some em 10 minutos, então isso se repetiria a cada volta.
+  const caminhosMidia = useMemo(
+    () => messages.map((m) => m.media_path).filter(Boolean) as string[],
+    [messages]
+  );
+
   // Mensagens com separadores de dia.
   const blocks: React.ReactNode[] = [];
   let lastDay = "";
@@ -181,7 +193,18 @@ export function ChatPanel({
           </div>
         )}
         <div className={bubbleClasses(kind)}>
-          <TextoWhatsApp texto={m.mensagem} />
+          {m.media_path ? (
+            <MidiaMensagem
+              msg={{
+                media_tipo: m.media_tipo,
+                media_path: m.media_path,
+                media_duracao: m.media_duracao,
+                texto: m.mensagem,
+              }}
+            />
+          ) : (
+            <TextoWhatsApp texto={m.mensagem} />
+          )}
         </div>
         <div
           className={`mt-1 px-0.5 font-mono text-[10px] text-vx-muted ${right ? "text-right" : ""}`}
@@ -315,7 +338,7 @@ export function ChatPanel({
                 Início da conversa
               </div>
             )}
-            {blocks}
+            <MidiaProvider caminhos={caminhosMidia}>{blocks}</MidiaProvider>
             {pendingMsgs.map((p) => (
               <div
                 key={p.id}

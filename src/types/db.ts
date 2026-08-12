@@ -34,9 +34,22 @@ export interface Lead {
 export interface Conversa {
   id: string;
   lead_id: string;
+  /** Texto da mensagem OU, quando há mídia, um placeholder do n8n no formato
+   *  `[o cliente mandou uma foto]`. No áudio, guarda a transcrição. */
   mensagem: string;
   origem: ConversaOrigem;
   enviado_em: string;
+  // ── Mídia (bucket privado `midia-conversas`) ──
+  // Opcionais porque 7.061 das 7.064 linhas são anteriores à captura: elas não
+  // têm mídia e não há como recuperar — o base64 só existia no instante do
+  // webhook.
+  media_tipo?: "image" | "audio" | null;
+  media_path?: string | null;
+  media_mimetype?: string | null;
+  media_tamanho?: number | null;
+  /** Segundos. O ogg/opus do WhatsApp costuma vir sem duração no cabeçalho, e
+   *  o navegador reporta Infinity — este é o valor de que o player depende. */
+  media_duracao?: number | null;
 }
 
 export interface Agendamento {

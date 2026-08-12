@@ -147,17 +147,20 @@ export function SecaoProfissionais() {
                   title="Nome e cor"
                   style={{ display: "inline-flex", alignItems: "center", gap: 6 }}
                 >
-                  <Pencil size={13} strokeWidth={1.8} /> Editar
+                  <Pencil size={13} strokeWidth={1.8} /> Dados
                 </button>
                 <button className="btn-ghost" onClick={() => alternarAtivo(p)}>
                   {p.ativo ? "Desativar" : "Reativar"}
                 </button>
+                {/* Deixou de ser sólido: com quatro profissionais eram
+                    quatro ações primárias na tela, competindo com "+ Nova
+                    profissional", que é a única que cria alguma coisa. */}
                 <button
-                  className="btn-primary"
+                  className="btn-ghost"
                   onClick={() => setEditando(p)}
                   style={{ display: "inline-flex", alignItems: "center", gap: 6 }}
                 >
-                  <CalendarClock size={14} strokeWidth={1.8} /> Editar escala
+                  <CalendarClock size={14} strokeWidth={1.8} /> Escala
                 </button>
               </div>
             </div>
@@ -181,8 +184,9 @@ export function SecaoProfissionais() {
                 const texto = resumoDia(minhas, d.dow);
                 const folga = texto === "—";
                 return (
-                  <div key={d.dow} className={`prof-dia${folga ? " folga" : ""}`}>
+                  <div key={d.dow} className="prof-dia">
                     <div className="prof-dia-nome">{d.label}</div>
+                    <div className={`prof-dia-barra${folga ? " folga" : ""}`} />
                     {folga ? (
                       <div className="prof-dia-faixa vazio">—</div>
                     ) : (

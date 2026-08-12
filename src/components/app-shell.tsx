@@ -34,7 +34,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   // A topbar só repetia o título que a própria tela já mostra, e custava 64px
   // antes do primeiro número. Some no desktop; no mobile fica, porque carrega
   // o hambúrguer.
-  const semTopbar = pathname.startsWith("/visao-geral");
+  const semTopbar =
+    pathname.startsWith("/visao-geral") || pathname.startsWith("/configuracoes");
 
   return (
     <>

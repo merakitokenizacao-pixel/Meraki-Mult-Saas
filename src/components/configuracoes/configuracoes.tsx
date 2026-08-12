@@ -5,11 +5,13 @@ import {
   CalendarClock,
   Palette,
   Bot,
+  Grid3x3,
   Smartphone,
   UserCog,
   type LucideIcon,
 } from "lucide-react";
 import { SecaoAparencia } from "@/components/configuracoes/secao-aparencia";
+import { SecaoMatriz } from "@/components/configuracoes/secao-matriz";
 import { SecaoLaura } from "@/components/configuracoes/secao-laura";
 import { SecaoConexao } from "@/components/configuracoes/secao-conexao";
 import { SecaoConta } from "@/components/configuracoes/secao-conta";
@@ -18,6 +20,7 @@ import { SecaoProfissionais } from "@/components/configuracoes/secao-profissiona
 type SecaoId =
   | "laura"
   | "profissionais"
+  | "matriz"
   | "conexao"
   | "aparencia"
   | "conta";
@@ -40,6 +43,13 @@ const SECOES: ReadonlyArray<{
     descricao:
       "Quem atende, em que horários — é daqui que sai a capacidade da agenda",
     icon: CalendarClock,
+  },
+  {
+    id: "matriz",
+    label: "Quem faz o quê",
+    descricao:
+      "Quais procedimentos cada profissional atende — nem todas fazem tudo",
+    icon: Grid3x3,
   },
   {
     id: "conexao",
@@ -97,6 +107,7 @@ export function Configuracoes() {
 
         {secao === "laura" && <SecaoLaura />}
         {secao === "profissionais" && <SecaoProfissionais />}
+        {secao === "matriz" && <SecaoMatriz />}
         {secao === "conexao" && <SecaoConexao />}
         {secao === "aparencia" && <SecaoAparencia />}
         {secao === "conta" && <SecaoConta />}

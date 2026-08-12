@@ -4976,3 +4976,298 @@ a.sidebar-footer:hover {
   border: 0 !important;
   background: transparent !important;
 }
+
+/* ══════════════════════════════════════════════════════════════
+   QUEM FAZ O QUÊ — matriz profissional × procedimento
+   Configurações. Dados em src/lib/matriz-procedimentos.ts.
+   ══════════════════════════════════════════════════════════════ */
+.mtz-topo {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+.mtz-explica {
+  margin: 0;
+  max-width: 52ch;
+  font-size: 11.5px;
+  line-height: 1.55;
+  color: var(--vx-muted);
+}
+.mtz-novo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* A rolagem é DA TABELA, não da página: com os cabeçalhos grudados, rolar a
+   página inteira faria a linha fixa passar por cima do resto da tela. */
+.mtz-rolagem {
+  overflow: auto;
+  max-height: 62vh;
+  border: 1px solid var(--vx-border);
+  border-radius: var(--vx-radius);
+}
+.mtz-tabela {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  font-size: 11.5px;
+}
+
+/* Cabeçalhos fixos. O canto precisa de z-index MAIOR que os dois, senão ele
+   passa por baixo quando se rola nas duas direções ao mesmo tempo. */
+.mtz-tabela thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--vx-surface2);
+  border-bottom: 1px solid var(--vx-border);
+  padding: 8px 10px;
+  vertical-align: bottom;
+  font-weight: 400;
+}
+.mtz-canto {
+  left: 0;
+  z-index: 3 !important;
+  min-width: 200px;
+}
+.mtz-tabela tbody th {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--vx-bg);
+  text-align: left;
+  font-weight: 400;
+  padding: 0 8px 0 10px;
+  border-right: 1px solid var(--vx-border);
+}
+.mtz-tabela tbody tr:not(:last-child) th,
+.mtz-tabela tbody tr:not(:last-child) td {
+  border-bottom: 1px solid var(--vx-border);
+}
+.mtz-tabela td {
+  padding: 0;
+  text-align: center;
+  height: 33px;
+}
+.mtz-tabela tbody tr:hover th,
+.mtz-tabela tbody tr:hover td {
+  background: var(--vx-surface2);
+}
+
+/* ── Cabeçalho de coluna (profissional) ── */
+.mtz-col {
+  min-width: 96px;
+}
+.mtz-col-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-family: inherit;
+  font-size: 11.5px;
+  color: var(--vx-text);
+  cursor: pointer;
+  transition: color var(--vx-transition);
+}
+.mtz-col-btn:hover:not(:disabled) {
+  color: var(--vx-accent);
+}
+.mtz-col-btn:disabled {
+  cursor: not-allowed;
+}
+.mtz-ponto {
+  width: 7px;
+  height: 7px;
+  flex-shrink: 0;
+  border-radius: 50%;
+}
+.mtz-col-nome {
+  white-space: nowrap;
+}
+.mtz-contador {
+  display: block;
+  margin-top: 2px;
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  color: var(--vx-muted);
+}
+/* Profissional inativa não SOME — some daria a impressão de dado perdido. */
+.mtz-col.inativa,
+.mtz-tabela td.inativa {
+  opacity: 0.4;
+}
+
+/* ── Cabeçalho de linha (procedimento) ── */
+.mtz-linha {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 33px;
+}
+.mtz-linha.inativo .mtz-linha-btn {
+  color: var(--vx-muted);
+}
+.mtz-linha-btn {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-family: inherit;
+  font-size: 11.5px;
+  text-align: left;
+  color: var(--vx-text);
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color var(--vx-transition);
+}
+.mtz-linha-btn:hover {
+  color: var(--vx-accent);
+}
+.mtz-selo {
+  flex-shrink: 0;
+  padding: 1px 5px;
+  border: 1px solid var(--vx-border2);
+  border-radius: 4px;
+  font-size: 9px;
+  color: var(--vx-muted);
+}
+
+/* ── Menu por linha ── */
+.mtz-menu-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+.mtz-menu-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border: 0;
+  border-radius: var(--vx-radius-sm);
+  background: none;
+  color: var(--vx-muted);
+  cursor: pointer;
+  transition: color var(--vx-transition), background var(--vx-transition);
+}
+.mtz-menu-btn:hover {
+  color: var(--vx-text);
+  background: var(--vx-surface3);
+}
+/* Camada invisível que fecha o menu ao clicar fora — sem listener global, e
+   some junto com o menu. */
+.mtz-menu-fora {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+}
+.mtz-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 11;
+  min-width: 132px;
+  padding: 3px;
+  border: 1px solid var(--vx-border);
+  border-radius: var(--vx-radius-sm);
+  background: var(--vx-surface);
+}
+.mtz-menu button {
+  display: block;
+  width: 100%;
+  padding: 5px 8px;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  font-family: inherit;
+  font-size: 11.5px;
+  text-align: left;
+  color: var(--vx-text);
+  cursor: pointer;
+  transition: background var(--vx-transition);
+}
+.mtz-menu button:hover {
+  background: var(--vx-surface2);
+}
+
+/* ── A célula ── */
+.mtz-check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 17px;
+  height: 17px;
+  border: 1px solid var(--vx-border2);
+  border-radius: 4px;
+  background: var(--vx-surface);
+  color: transparent;
+  cursor: pointer;
+  transition: border-color var(--vx-transition), background var(--vx-transition);
+}
+.mtz-check:hover:not(:disabled) {
+  border-color: var(--vx-accent);
+}
+/* Marcado é o ÚNICO lugar com dourado nesta tela, junto do item ativo do
+   sub-nav. É o estado que a tela inteira existe para mostrar. */
+.mtz-check.on {
+  border-color: var(--vx-accent);
+  background: var(--vx-accent);
+  color: var(--vx-on-accent);
+}
+.mtz-check:disabled {
+  cursor: not-allowed;
+}
+
+.mtz-inativos {
+  margin-top: 10px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-family: inherit;
+  font-size: 11px;
+  color: var(--vx-muted);
+  cursor: pointer;
+  transition: color var(--vx-transition);
+}
+.mtz-inativos:hover {
+  color: var(--vx-text);
+}
+
+.mtz-vazio {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 28px;
+  font-size: 12px;
+  color: var(--vx-muted);
+}
+.mtz-girando {
+  animation: spin 0.9s linear infinite;
+}
+
+.mtz-modal-titulo {
+  margin-bottom: 1rem;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--vx-text);
+}
+.mtz-modal-acoes {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}

@@ -121,12 +121,14 @@ function Imagem({ url, legenda }: { url?: string; legenda: string | null }) {
     };
   }, [aberto]);
 
-  if (!url || falhou) {
+  // Enquanto a URL não foi assinada é ESQUELETO, não texto: o lote leva
+  // milissegundos, e uma frase que pisca é mais barulhenta que uma caixa
+  // pulsando. Falha de verdade continua sendo escrita.
+  if (!url) return <div className="midia-carregando imagem" />;
+  if (falhou) {
     return (
       <div className="midia-falha">
-        {falhou
-          ? "A imagem expirou — recarregue a conversa"
-          : "Carregando imagem…"}
+        A imagem expirou — recarregue a conversa
       </div>
     );
   }
@@ -135,7 +137,7 @@ function Imagem({ url, legenda }: { url?: string; legenda: string | null }) {
     <>
       <button
         type="button"
-        className="midia-thumb"
+        className="midia-imagem-btn"
         onClick={() => setAberto(true)}
         aria-label="Ampliar imagem"
       >
@@ -213,7 +215,7 @@ function Audio({
     if (ref.current) ref.current.playbackRate = vel;
   }, [vel]);
 
-  if (!url) return <div className="midia-falha">Carregando áudio…</div>;
+  if (!url) return <div className="midia-carregando" />;
 
   const pct = dur > 0 ? Math.min(100, (pos / dur) * 100) : 0;
 
@@ -234,9 +236,23 @@ function Audio({
           {tocando ? <Pause size={14} strokeWidth={2} /> : <Play size={14} strokeWidth={2} />}
         </button>
 
-        <div className="midia-audio-barra" aria-hidden="true">
+        <button
+          type="button"
+          className="midia-audio-barra"
+          aria-label="Avançar ou retroceder o áudio"
+          onClick={(e) => {
+            const a = ref.current;
+            if (!a || !(dur > 0)) return;
+            const r = e.currentTarget.getBoundingClientRect();
+            // Fração horizontal do clique dentro da barra. Travada em [0,1]
+            // porque a borda arredondada deixa clicar 1px fora.
+            const f = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
+            a.currentTime = f * dur;
+            setPos(f * dur);
+          }}
+        >
           <div className="midia-audio-progresso" style={{ width: `${pct}%` }} />
-        </div>
+        </button>
 
         <span className="midia-audio-tempo">
           {mmss(tocando || pos > 0 ? pos : dur)}

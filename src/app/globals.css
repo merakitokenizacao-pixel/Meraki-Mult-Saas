@@ -4720,160 +4720,259 @@ a.sidebar-footer:hover {
   background: color-mix(in srgb, var(--vx-accent) 7%, transparent);
 }
 
-/* ══════════════════════════════════════════════════════════════
-   MÍDIA NAS CONVERSAS — foto e áudio dentro da bolha
-   Lógica em src/components/conversas/midia-mensagem.tsx
-   ══════════════════════════════════════════════════════════════ */
-.midia-thumb {
-  display: block;
-  padding: 0;
-  border: none;
-  border-radius: 5px;
-  background: none;
-  cursor: zoom-in;
-  overflow: hidden;
-  line-height: 0;
-}
-.midia-thumb img {
-  max-height: 200px;
-  max-width: 100%;
-  border-radius: 5px;
-  object-fit: cover;
-}
-.midia-legenda {
-  margin-top: 6px;
-  font-size: 13px;
-  line-height: 1.5;
-}
-.midia-falha {
-  padding: 10px 12px;
-  border: 1px dashed var(--vx-border2);
-  border-radius: 5px;
-  font-size: 11.5px;
-  color: var(--vx-muted);
-}
 
-/* Lightbox: fundo mais forte que o overlay do modal, porque aqui o objeto é a
-   IMAGEM — qualquer coisa visível atrás disputa com ela. Sem blur, igual ao
-   resto. */
-.midia-lightbox {
-  position: fixed;
-  inset: 0;
-  z-index: 120;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 32px;
-  background: rgba(0, 0, 0, 0.82);
-  cursor: zoom-out;
-}
-.midia-lightbox img {
-  max-width: 100%;
-  max-height: 100%;
-  border-radius: 5px;
-  cursor: default;
-}
-.midia-lightbox-fechar {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 34px;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 5px;
-  background: rgba(0, 0, 0, 0.4);
-  color: #ffffff;
-  cursor: pointer;
-}
+/* ============================================================
+   Mídia nas conversas — player de áudio e imagem
+   ============================================================ */
 
-/* ── Áudio ── */
 .midia-audio-wrap {
-  min-width: 240px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  /* Trava a largura: sem isso o balão colapsa em ~96px, porque nada dentro do
+     player tem largura própria. */
+  width: 232px;
+  max-width: 100%;
 }
+
 .midia-audio {
   display: flex;
   align-items: center;
-  gap: 9px;
+  gap: 10px;
 }
+
+/* ---- botão tocar/pausar ---- */
+
 .midia-audio-play {
-  display: flex;
+  flex: 0 0 auto;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
-  flex-shrink: 0;
-  border: none;
-  border-radius: 50%;
-  /* `currentColor` de propósito: a bolha da IA e a do cliente têm cores de
-     texto diferentes, e o player herda a de quem fala em vez de cravar uma. */
-  background: currentColor;
-  color: inherit;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--vx-accent);
+  color: #fff;
   cursor: pointer;
+  transition: opacity var(--vx-transition);
+}
+.midia-audio-play:hover {
+  opacity: 0.88;
 }
 .midia-audio-play svg {
-  color: var(--vx-surface);
+  width: 13px;
+  height: 13px;
 }
+
+/* O triângulo do play tem o centro ÓPTICO à esquerda do geométrico: centrado
+   de verdade, ele parece torto. 1px para a direita corrige. */
+.midia-audio-play svg.lucide-play {
+  transform: translateX(1px);
+}
+
+/* ---- barra de progresso ---- */
+
 .midia-audio-barra {
-  flex: 1;
+  flex: 1 1 auto;
+  min-width: 0;
   height: 3px;
-  border-radius: 2px;
-  background: currentColor;
-  opacity: 0.25;
-  position: relative;
-}
-.midia-audio-progresso {
-  position: absolute;
-  inset: 0 auto 0 0;
-  border-radius: 2px;
-  background: currentColor;
-}
-.midia-audio-tempo {
-  font-family: var(--font-jetbrains), monospace;
-  font-size: 10.5px;
-  font-variant-numeric: tabular-nums;
-  opacity: 0.8;
-}
-.midia-audio-vel {
-  flex-shrink: 0;
-  padding: 1px 6px;
-  border: 1px solid currentColor;
-  border-radius: 4px;
-  background: none;
-  color: inherit;
-  font-family: inherit;
-  font-size: 10px;
-  font-variant-numeric: tabular-nums;
-  opacity: 0.7;
+  border: 0;
+  padding: 0;
+  border-radius: 999px;
+  background: var(--vx-border);
+  overflow: hidden;
   cursor: pointer;
 }
-.midia-audio-vel:hover {
-  opacity: 1;
+
+.midia-audio-progresso {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--vx-accent);
+  transition: width 120ms linear;
 }
+
+/* ---- tempo e velocidade ---- */
+
+.midia-audio-tempo {
+  flex: 0 0 auto;
+  font-family: var(--font-jetbrains);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  color: var(--vx-muted);
+  letter-spacing: -0.01em;
+}
+
+.midia-audio-vel {
+  flex: 0 0 auto;
+  min-width: 26px;
+  padding: 2px 4px;
+  border: 0;
+  border-radius: var(--vx-radius-sm);
+  background: transparent;
+  font-size: 10px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--vx-muted);
+  cursor: pointer;
+  transition: color var(--vx-transition), background var(--vx-transition);
+}
+.midia-audio-vel:hover {
+  color: var(--vx-text);
+  background: var(--vx-surface2);
+}
+
+/* ---- transcrição ---- */
+
 .midia-audio-transcricao-btn {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  margin-top: 7px;
   padding: 0;
-  border: none;
-  background: none;
-  color: inherit;
-  font-family: inherit;
-  font-size: 10.5px;
-  opacity: 0.7;
+  border: 0;
+  background: transparent;
+  font-size: 11px;
+  color: var(--vx-muted);
   cursor: pointer;
+  transition: color var(--vx-transition);
 }
 .midia-audio-transcricao-btn:hover {
-  opacity: 1;
+  color: var(--vx-text);
 }
+.midia-audio-transcricao-btn svg {
+  width: 11px;
+  height: 11px;
+  transition: transform var(--vx-transition);
+}
+/* A seta segue o aria-expanded: o estado acessível e o visual saem da MESMA
+   fonte, então não há como um girar e o outro não. */
+.midia-audio-transcricao-btn[aria-expanded="true"] svg {
+  transform: rotate(180deg);
+}
+
 .midia-audio-transcricao {
-  margin-top: 6px;
-  padding-top: 6px;
-  border-top: 1px solid currentColor;
-  font-size: 12.5px;
+  margin: 0;
+  padding-left: 9px;
+  border-left: 2px solid var(--vx-border);
+  font-size: 12px;
   line-height: 1.55;
-  opacity: 0.9;
+  color: var(--vx-text2);
+}
+
+/* ---- imagem ---- */
+
+.midia-imagem-btn {
+  display: block;
+  padding: 0;
+  border: 1px solid var(--vx-border);
+  border-radius: var(--vx-radius-sm);
+  overflow: hidden;
+  background: none;
+  cursor: zoom-in;
+  line-height: 0;
+  transition: opacity var(--vx-transition);
+}
+.midia-imagem-btn:hover {
+  opacity: 0.94;
+}
+.midia-imagem-btn img {
+  display: block;
+  max-height: 200px;
+  max-width: 240px;
+  width: auto;
+  object-fit: cover;
+}
+
+.midia-legenda {
+  margin-top: 6px;
+  max-width: 240px;
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+
+/* ---- lightbox ---- */
+
+.midia-lightbox {
+  position: fixed;
+  inset: 0;
+  /* Acima do modal (100): a foto é aberta a partir da conversa, e um overlay
+     por baixo dele ficaria inalcançável. */
+  z-index: 130;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgb(0 0 0 / 0.82);
+  cursor: zoom-out;
+}
+.midia-lightbox img {
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+  border-radius: var(--vx-radius-sm);
+  cursor: default;
+}
+.midia-lightbox-fechar {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.12);
+  color: #fff;
+  line-height: 1;
+  cursor: pointer;
+  transition: background var(--vx-transition);
+}
+.midia-lightbox-fechar:hover {
+  background: rgb(255 255 255 / 0.22);
+}
+
+/* ---- esqueleto enquanto a URL não foi assinada ---- */
+
+.midia-carregando {
+  width: 232px;
+  height: 30px;
+  border-radius: var(--vx-radius-sm);
+  background: var(--vx-surface2);
+  animation: midia-pulso 1.4s ease-in-out infinite;
+}
+.midia-carregando.imagem {
+  height: 140px;
+  width: 200px;
+}
+@keyframes midia-pulso {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+.midia-falha {
+  padding: 8px 10px;
+  border: 1px dashed var(--vx-border2);
+  border-radius: var(--vx-radius-sm);
+  font-size: 11.5px;
+  color: var(--vx-muted);
+}
+
+/* ---- o balão quando o conteúdo é mídia ----
+   O balão de texto tem px-4 py-2.5 e borda: padding de texto aperta o player e
+   sufoca a foto. Com imagem o balão desaparece de vez — moldura em volta de
+   moldura é ruído, e a própria foto já delimita. */
+
+.bolha-midia {
+  padding: 6px !important;
+}
+.bolha-midia:has(.midia-imagem-btn) {
+  padding: 4px !important;
+  border: 0 !important;
+  background: transparent !important;
 }

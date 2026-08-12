@@ -192,7 +192,9 @@ export function ChatPanel({
             <UserRound size={12} /> Você
           </div>
         )}
-        <div className={bubbleClasses(kind)}>
+        <div
+          className={`${bubbleClasses(kind)}${m.media_path ? " bolha-midia" : ""}`}
+        >
           {m.media_path ? (
             <MidiaMensagem
               msg={{

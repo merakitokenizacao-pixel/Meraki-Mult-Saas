@@ -92,10 +92,18 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </nav>
 
           <div className="sidebar-rodape">
-            <div className="sidebar-footer">
-              <div className="sidebar-status-dot" />
+            {/* O status da Laura era um enfeite: dizia "ativa" sempre,
+                inclusive com o WhatsApp caído. Agora leva para a tela que
+                responde de verdade se ela está atendendo. */}
+            <Link
+              href="/configuracoes"
+              className="sidebar-footer"
+              aria-label="Status da Laura"
+              data-label="Laura"
+            >
+              <span className="sidebar-status-dot" />
               <span className="sidebar-status-text">Laura ativa</span>
-            </div>
+            </Link>
             <Link
               href={SETTINGS_ITEM.href}
               className={`nav-item nav-item-footer${

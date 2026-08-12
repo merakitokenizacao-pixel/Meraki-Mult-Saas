@@ -1,12 +1,26 @@
 "use client";
 
 import { useState } from "react";
-import { CalendarClock, Palette, UserCog, type LucideIcon } from "lucide-react";
+import {
+  CalendarClock,
+  Palette,
+  Bot,
+  Smartphone,
+  UserCog,
+  type LucideIcon,
+} from "lucide-react";
 import { SecaoAparencia } from "@/components/configuracoes/secao-aparencia";
+import { SecaoLaura } from "@/components/configuracoes/secao-laura";
+import { SecaoConexao } from "@/components/configuracoes/secao-conexao";
 import { SecaoConta } from "@/components/configuracoes/secao-conta";
 import { SecaoProfissionais } from "@/components/configuracoes/secao-profissionais";
 
-type SecaoId = "aparencia" | "profissionais" | "conta";
+type SecaoId =
+  | "laura"
+  | "profissionais"
+  | "conexao"
+  | "aparencia"
+  | "conta";
 
 const SECOES: ReadonlyArray<{
   id: SecaoId;
@@ -15,11 +29,24 @@ const SECOES: ReadonlyArray<{
   icon: LucideIcon;
 }> = [
   {
+    id: "laura",
+    label: "Laura",
+    descricao: "Se a agente está atendendo, e onde ela está calada",
+    icon: Bot,
+  },
+  {
     id: "profissionais",
     label: "Horários de trabalho",
     descricao:
       "Quem atende, em que horários — é daqui que sai a capacidade da agenda",
     icon: CalendarClock,
+  },
+  {
+    id: "conexao",
+    label: "Conexão",
+    descricao:
+      "O WhatsApp pelo qual a Laura atende — e o que fazer quando ele cai",
+    icon: Smartphone,
   },
   {
     id: "aparencia",
@@ -36,7 +63,7 @@ const SECOES: ReadonlyArray<{
 ];
 
 export function Configuracoes() {
-  const [secao, setSecao] = useState<SecaoId>("profissionais");
+  const [secao, setSecao] = useState<SecaoId>("laura");
   const atual = SECOES.find((s) => s.id === secao)!;
 
   return (
@@ -68,7 +95,9 @@ export function Configuracoes() {
           <p className="config-subtitle">{atual.descricao}</p>
         </header>
 
+        {secao === "laura" && <SecaoLaura />}
         {secao === "profissionais" && <SecaoProfissionais />}
+        {secao === "conexao" && <SecaoConexao />}
         {secao === "aparencia" && <SecaoAparencia />}
         {secao === "conta" && <SecaoConta />}
       </div>

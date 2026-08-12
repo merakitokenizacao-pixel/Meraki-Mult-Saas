@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Jost, JetBrains_Mono } from "next/font/google";
+import { Cormorant_Garamond, Inter, Jost, JetBrains_Mono } from "next/font/google";
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
@@ -9,6 +9,16 @@ const cormorant = Cormorant_Garamond({
   display: "swap",
 });
 
+// A sans da INTERFACE. Desenhada para texto pequeno em tela: x-height alta,
+// aberturas abertas, pouco contraste de traço. É o oposto do que a Jost faz.
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  display: "swap",
+});
+
+// Só a landing usa. Lá ela é título grande, e o geométrico trabalha a favor.
 const jost = Jost({
   variable: "--font-jost",
   subsets: ["latin"],
@@ -46,7 +56,7 @@ export default function RootLayout({
     <html
       lang="pt-BR"
       suppressHydrationWarning
-      className={`${cormorant.variable} ${jost.variable} ${jetbrains.variable}`}
+      className={`${cormorant.variable} ${inter.variable} ${jost.variable} ${jetbrains.variable}`}
     >
       <body className="antialiased">{children}</body>
     </html>

@@ -11,7 +11,7 @@
 
 @theme inline {
   /* Fontes do legacy: Cormorant (serif/títulos), Jost (texto), JetBrains (mono) */
-  --font-sans: var(--font-jost);
+  --font-sans: var(--font-inter);
   --font-serif: var(--font-cormorant);
   --font-mono: var(--font-jetbrains);
   --font-heading: var(--font-cormorant);
@@ -97,9 +97,23 @@
   --vx-text: #1a1814;
   --vx-text2: #3d3930;
   --vx-muted: #8a8478;
-  --vx-accent: #9b7d5a;
-  --vx-accent2: #7a6244;
+  /* 4.65 de contraste sobre --vx-bg (o #9b7d5a de antes dava 3.55 e reprovava
+     no AA). Mais escuro E mais saturado: é o que faz o dourado virar tinta em
+     vez de afundar num fundo que também é quente. */
+  --vx-accent: #8a6a2f;
+  --vx-accent2: #6e5423;
   --vx-accent-light: #f5ede0;
+  /* Paleta categórica — identidade de PESSOA, não status. Validada nos cinco
+     checks (banda de luminosidade, piso de croma, separação para daltonismo,
+     piso de visão normal e contraste com a superfície), incluindo o par que
+     fecha o círculo da rosca. Nenhuma delas é dourada: essa cor é do estado
+     selecionado e de mais nada. */
+  --vx-cat-1: #2f6fd6;
+  --vx-cat-2: #c2358f;
+  --vx-cat-3: #7f8a1a;
+  --vx-cat-4: #0e86a0;
+  --vx-cat-5: #b0472f;
+
   --vx-gold: #b8955a;
   --vx-gold-light: #f7f0e4;
   --vx-green: #3a6b4f;
@@ -173,9 +187,17 @@
   --vx-text: #f0ece4;
   --vx-text2: #c4bfb4;
   --vx-muted: #8a8478;
-  --vx-accent: #c8a07a;
-  --vx-accent2: #d4b08a;
+  --vx-accent: #d4af63;
+  --vx-accent2: #e0bd7a;
   --vx-accent-light: #2a2218;
+  /* Passo escuro da paleta categórica — escolhido, não invertido: a banda de
+     luminosidade no escuro é 0,48–0,67, mais estreita que a do claro. */
+  --vx-cat-1: #4d88e0;
+  --vx-cat-2: #cf5aa4;
+  --vx-cat-3: #88991f;
+  --vx-cat-4: #2b9fbd;
+  --vx-cat-5: #d66c4a;
+
   --vx-gold: #c8a060;
   --vx-gold-light: #261f10;
   --vx-green: #5ab87a;
@@ -221,9 +243,17 @@
   --vx-text: #f4f4f5;
   --vx-text2: #c7c7ce;
   --vx-muted: #85858f;
-  --vx-accent: #d4ac72;
-  --vx-accent2: #e2bf8c;
+  --vx-accent: #d9b45f;
+  --vx-accent2: #e5c477;
   --vx-accent-light: #211c14;
+  /* Passo escuro da paleta categórica — escolhido, não invertido: a banda de
+     luminosidade no escuro é 0,48–0,67, mais estreita que a do claro. */
+  --vx-cat-1: #4d88e0;
+  --vx-cat-2: #cf5aa4;
+  --vx-cat-3: #88991f;
+  --vx-cat-4: #2b9fbd;
+  --vx-cat-5: #d66c4a;
+
   --vx-gold: #d9b978;
   --vx-gold-light: #1e1a11;
   /* Cores funcionais saturadas: aqui elas são informação, não decoração. */
@@ -257,7 +287,7 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: var(--font-jost), sans-serif;
+    font-family: var(--font-inter), sans-serif;
     font-size: 14px;
   }
 }
@@ -1007,7 +1037,7 @@
   font-weight: 500;
   cursor: pointer;
   transition: all var(--vx-transition);
-  font-family: var(--font-jost), sans-serif;
+  font-family: var(--font-inter), sans-serif;
   letter-spacing: 0.04em;
 }
 .filter-btn:hover {
@@ -1089,7 +1119,7 @@
   outline: none;
   color: var(--vx-text);
   font-size: 13px;
-  font-family: var(--font-jost), sans-serif;
+  font-family: var(--font-inter), sans-serif;
 }
 .search-bar input::placeholder {
   color: var(--vx-muted);
@@ -1277,7 +1307,7 @@
   font-weight: 500;
   cursor: pointer;
   transition: all var(--vx-transition);
-  font-family: var(--font-jost), sans-serif;
+  font-family: var(--font-inter), sans-serif;
   letter-spacing: 0.04em;
 }
 .btn-primary:hover {
@@ -1302,7 +1332,7 @@
   padding: 10px 14px;
   color: var(--vx-text);
   font-size: 13px;
-  font-family: var(--font-jost), sans-serif;
+  font-family: var(--font-inter), sans-serif;
   outline: none;
   transition: all var(--vx-transition);
 }
@@ -1346,7 +1376,7 @@ select.form-input {
   font-weight: 500;
   cursor: pointer;
   transition: all var(--vx-transition);
-  font-family: var(--font-jost), sans-serif;
+  font-family: var(--font-inter), sans-serif;
   letter-spacing: 0.04em;
 }
 .agenda-nav-btn:hover {
@@ -1655,7 +1685,7 @@ select.form-input {
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
-  font-family: var(--font-jost), sans-serif;
+  font-family: var(--font-inter), sans-serif;
   letter-spacing: 0.04em;
   transition: all var(--vx-transition);
 }
@@ -1695,7 +1725,7 @@ select.form-input {
   border-radius: 8px;
   font-size: 13px;
   cursor: pointer;
-  font-family: var(--font-jost), sans-serif;
+  font-family: var(--font-inter), sans-serif;
   transition: background var(--vx-transition);
 }
 .date-filter-item:hover {
@@ -1823,7 +1853,7 @@ select.form-input {
   outline: none;
   color: var(--vx-text);
   font-size: 13px;
-  font-family: var(--font-jost), sans-serif;
+  font-family: var(--font-inter), sans-serif;
 }
 .lead-combo-control input::placeholder {
   color: var(--vx-muted);
@@ -1869,7 +1899,7 @@ select.form-input {
   cursor: pointer;
   padding: 8px 10px;
   border-radius: 6px;
-  font-family: var(--font-jost), sans-serif;
+  font-family: var(--font-inter), sans-serif;
   transition: background var(--vx-transition);
 }
 .lead-combo-item:hover {
@@ -1922,7 +1952,7 @@ select.form-input {
   min-height: 100dvh;
   background: var(--f-bg);
   color: var(--f-text);
-  font-family: var(--font-jost), system-ui, sans-serif;
+  font-family: var(--font-inter), system-ui, sans-serif;
 }
 
 /* Campo condicional: 0fr → 1fr anima a altura sem medir nada em JS. */
@@ -3323,7 +3353,7 @@ select.form-input {
   border-radius: 20px;
   background: var(--vx-surface);
   color: var(--vx-text2);
-  font-family: var(--font-jost), sans-serif;
+  font-family: var(--font-inter), sans-serif;
   font-size: 12px;
   font-weight: 500;
   letter-spacing: 0.04em;
@@ -3542,7 +3572,7 @@ select.form-input {
   margin-bottom: 1px;
 }
 .vg-titulo {
-  font-family: var(--font-jost), system-ui, sans-serif;
+  font-family: var(--font-inter), system-ui, sans-serif;
   font-size: 19.5px;
   font-weight: 600;
   letter-spacing: 0;
@@ -3647,9 +3677,10 @@ select.form-input {
    desenhava um segundo anel por dentro da borda e engrossava tudo — dois
    traços na mesma cor lidos como halo. Um traço e um degrau de fundo bastam,
    e o gráfico abaixo passa a enfatizar a série do card. */
+/* SÓ a borda. Trocar o fundo junto reintroduzia a elevação — e um card mais
+   claro que os vizinhos é dois sinais para uma informação só. */
 .neg-card.ativo {
   border-color: var(--vx-accent);
-  background: var(--vx-surface);
 }
 .neg-card-rotulo {
   display: flex;
@@ -4047,7 +4078,7 @@ select.form-input {
   margin-bottom: 20px;
 }
 .lead-titulo {
-  font-family: var(--font-jost), sans-serif;
+  font-family: var(--font-inter), sans-serif;
   font-size: 19px;
   font-weight: 600;
   letter-spacing: -0.01em;
@@ -4086,7 +4117,7 @@ select.form-input {
   border-radius: 9px;
   background: var(--vx-surface2);
   color: var(--vx-text);
-  font-family: var(--font-jost), sans-serif;
+  font-family: var(--font-inter), sans-serif;
   font-size: 13px;
   outline: none;
   transition: border-color var(--vx-transition), background var(--vx-transition);

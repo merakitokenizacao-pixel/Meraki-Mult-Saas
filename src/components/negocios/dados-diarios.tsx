@@ -74,14 +74,16 @@ export function DadosDiarios({
             label: s.label,
             data: s.valores,
             borderColor: apagado ? comAlfa(cor, 0.28) : cor,
-            backgroundColor: comAlfa(cor, apagado ? 0.03 : 0.12),
-            borderWidth: destaque === s.id ? 2.4 : 1.6,
+            borderWidth: destaque === s.id ? 2.4 : 2,
             pointRadius: 0,
             pointHoverRadius: 4,
             pointHoverBackgroundColor: cor,
             pointHoverBorderColor: est.border,
             tension: 0.35,
-            fill: true,
+            // Sem área. As três séries não somam entre si — preencher embaixo
+            // insinua acúmulo onde não há, e o empilhamento das três era o
+            // maior bloco de cor da tela.
+            fill: false,
             order: destaque === s.id ? 0 : 1,
           };
         }),

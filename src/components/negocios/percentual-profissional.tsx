@@ -6,14 +6,8 @@ import { getChartStyle } from "@/lib/chart";
 import { useTheme } from "@/components/theme-provider";
 import { moeda } from "@/lib/financeiro";
 import type { Modo } from "@/components/negocios/dados-diarios";
-import type { FatiaProfissional } from "@/lib/atribuicao";
+import { qtdTexto, type FatiaProfissional } from "@/lib/atribuicao";
 
-// Quantidade fracionária: um atendimento rateado entre 3 vale 0,33 para cada.
-// Arredondar para inteiro faria as parcelas não somarem o total.
-function qtdTexto(q: number): string {
-  const arred = Math.round(q * 10) / 10;
-  return Number.isInteger(arred) ? `${arred}` : arred.toFixed(1).replace(".", ",");
-}
 
 /** Resolve um token CSS para o valor do tema ATUAL. O canvas não herda CSS,
  *  então cor de gráfico tem que ser lida, não escrita. */

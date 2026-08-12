@@ -206,7 +206,7 @@ export function EditAgendModal({
             fontSize: 13,
             fontWeight: 600,
             cursor: "pointer",
-            fontFamily: "var(--font-jost), sans-serif",
+            fontFamily: "var(--font-inter), sans-serif",
           }}
         >
           Excluir agendamento
@@ -232,7 +232,7 @@ export function EditAgendModal({
                 padding: "8px 16px",
                 borderRadius: 8,
                 cursor: "pointer",
-                fontFamily: "var(--font-jost), sans-serif",
+                fontFamily: "var(--font-inter), sans-serif",
               }}
             >
               Cancelar
@@ -246,7 +246,7 @@ export function EditAgendModal({
                 padding: "8px 16px",
                 borderRadius: 8,
                 cursor: "pointer",
-                fontFamily: "var(--font-jost), sans-serif",
+                fontFamily: "var(--font-inter), sans-serif",
                 fontWeight: 600,
               }}
             >

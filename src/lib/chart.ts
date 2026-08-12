@@ -48,7 +48,7 @@ export function getChartStyle(): ChartStyle {
     green: v("--vx-green"),
     blue: v("--vx-blue"),
     gold: v("--vx-gold"),
-    fontSans: v("--font-jost") || "sans-serif",
+    fontSans: v("--font-inter") || "sans-serif",
     fontMono: v("--font-jetbrains") || "monospace",
   };
 }

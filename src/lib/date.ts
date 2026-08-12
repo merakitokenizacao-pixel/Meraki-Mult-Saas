@@ -33,6 +33,20 @@ export function getDateRange(
         to: new Date(today.getTime() + (7 - day) * 86400000),
       };
     }
+    // Janelas móveis. "Semana" (domingo a sábado) responde "como vai esta
+    // semana"; estas respondem "como foram os últimos N dias" — que é o que um
+    // painel de negócio compara, sem depender de em que dia da semana se abriu
+    // a tela. Incluem HOJE: 7 dias = hoje + os 6 anteriores.
+    case "7d":
+      return {
+        from: new Date(today.getTime() - 6 * 86400000),
+        to: new Date(today.getTime() + 86400000),
+      };
+    case "30d":
+      return {
+        from: new Date(today.getTime() - 29 * 86400000),
+        to: new Date(today.getTime() + 86400000),
+      };
     case "mes":
       return {
         from: new Date(now.getFullYear(), now.getMonth(), 1),

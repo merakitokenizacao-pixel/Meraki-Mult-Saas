@@ -18,18 +18,27 @@ import type { LucideIcon } from "lucide-react";
 // Selecionável: clicar destaca o card e o gráfico abaixo passa a enfatizar
 // aquela série — é o que a referência faz e o que dá função à borda acesa.
 
-export type TomKpi = "accent" | "green" | "red" | "blue" | "purple";
+/**
+ * A cor NÃO identifica o card — identifica a direção do número.
+ *
+ * Antes eram cinco matizes (dourado, verde, vermelho, azul, roxo), um por
+ * card: cinco cores fortes lado a lado viram enfeite, e "azul" não significa
+ * nada sobre "total criado". Agora o padrão é neutro e só sobra semântica onde
+ * ela é real — o que entrou (`sobe`) e o que se perdeu (`desce`). O dourado da
+ * marca fica reservado para o estado SELECIONADO, que é o único destaque com
+ * função nesta tela.
+ */
+export type TomKpi = "neutro" | "sobe" | "desce";
 
 export function KpiCard({
   rotulo,
   valor,
   apoio,
   icone: Icone,
-  tom = "accent",
+  tom = "neutro",
   ativo = false,
   onSelecionar,
   dica,
-  selo,
 }: {
   rotulo: string;
   valor: string;
@@ -38,18 +47,22 @@ export function KpiCard({
   tom?: TomKpi;
   ativo?: boolean;
   onSelecionar?: () => void;
-  /** Explica de onde sai o número — vira o `title` do rótulo. */
+  /** De onde sai o número. Vira o tooltip do (i) ao lado do rótulo. */
   dica?: string;
-  /** Ressalva que precisa ser VISÍVEL, não só no hover: um card que se comporta
-   *  diferente dos outros (não segue o período, ou é número simulado) tem que
-   *  dizer isso na cara, senão é lido como igual aos vizinhos. */
-  selo?: string;
 }) {
   const conteudo = (
     <>
-      <span className="neg-card-rotulo" title={dica}>
+      <span className="neg-card-rotulo">
         {rotulo}
-        {selo && <span className="neg-selo">{selo}</span>}
+        {dica && (
+          // A ressalva mora aqui, não numa tarja na tela. `data-dica` desenha
+          // o balão no hover (o `title` nativo demora ~1s); o `title` fica
+          // junto porque o card inteiro é um <button> — pôr um segundo
+          // elemento focável dentro dele quebraria a ordem de tabulação.
+          <span className="neg-dica" title={dica} data-dica={dica}>
+            i
+          </span>
+        )}
       </span>
       <div className="neg-card-linha">
         <div className="neg-card-numeros">
@@ -57,7 +70,7 @@ export function KpiCard({
           <div className="neg-card-apoio">{apoio}</div>
         </div>
         <span className="neg-card-icone" aria-hidden="true">
-          <Icone size={22} strokeWidth={2} />
+          <Icone size={16} strokeWidth={2} />
         </span>
       </div>
     </>

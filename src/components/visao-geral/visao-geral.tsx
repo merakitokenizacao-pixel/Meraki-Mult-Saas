@@ -18,8 +18,9 @@ import { Dashboard } from "@/components/dashboard/dashboard";
 const PERIODS: ReadonlyArray<[string, string]> = [
   ["hoje", "Hoje"],
   ["ontem", "Ontem"],
-  ["semana", "Semana"],
-  ["mes", "Mês"],
+  ["7d", "Últimos 7 dias"],
+  ["30d", "Últimos 30 dias"],
+  ["mes", "Este mês"],
   ["tudo", "Tudo"],
 ];
 
@@ -32,7 +33,7 @@ type Aba = (typeof ABAS)[number]["id"];
 
 export function VisaoGeral() {
   const [aba, setAba] = useState<Aba>("negocios");
-  const [period, setPeriod] = useState("hoje");
+  const [period, setPeriod] = useState("7d");
   const [greeting, setGreeting] = useState<{
     prefix: string;
     word: string;
@@ -56,18 +57,13 @@ export function VisaoGeral() {
     <div className="page-fade">
       <div className="vg-header">
         <div>
-          <div className="dash-greeting">
-            {greeting ? (
-              <>
-                {greeting.prefix} <em>{greeting.word}</em>
-              </>
-            ) : (
-              " "
-            )}
+          {/* Reserva a altura mesmo antes de o relógio do cliente responder,
+              senão o título salta quando a saudação aparece. */}
+          <div className="vg-saudacao">
+            {greeting ? `${greeting.prefix} ${greeting.word}` : "\u00A0"}
           </div>
-          <div className="dash-subtitle">
-            Visão geral do seu desempenho e atividades
-          </div>
+          <h1 className="vg-titulo">Visão geral</h1>
+          <p className="vg-sub">Seu desempenho e atividades</p>
         </div>
 
         <div className="vg-controles">

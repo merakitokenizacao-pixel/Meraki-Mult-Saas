@@ -5,7 +5,15 @@ import { Chart } from "chart.js";
 import { getChartStyle } from "@/lib/chart";
 import { useTheme } from "@/components/theme-provider";
 import { moeda } from "@/lib/financeiro";
+import type { Modo } from "@/components/negocios/dados-diarios";
 import type { FatiaProfissional } from "@/lib/atribuicao";
+
+// Quantidade fracionária: um atendimento rateado entre 3 vale 0,33 para cada.
+// Arredondar para inteiro faria as parcelas não somarem o total.
+function qtdTexto(q: number): string {
+  const arred = Math.round(q * 10) / 10;
+  return Number.isInteger(arred) ? `${arred}` : arred.toFixed(1).replace(".", ",");
+}
 
 /** Resolve um token CSS para o valor do tema ATUAL. O canvas não herda CSS,
  *  então cor de gráfico tem que ser lida, não escrita. */
@@ -17,8 +25,10 @@ function lerVar(nome: string): string {
 // legenda ao lado responde "quanto", que é o que a dona vai querer saber.
 export function PercentualProfissional({
   fatias,
+  modo = "valor",
 }: {
   fatias: FatiaProfissional[];
+  modo?: Modo;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const chartRef = useRef<Chart | null>(null);
@@ -38,7 +48,7 @@ export function PercentualProfissional({
         labels: fatias.map((f) => f.nome),
         datasets: [
           {
-            data: fatias.map((f) => f.valor),
+            data: fatias.map((f) => (modo === "valor" ? f.valor : f.qtd)),
             backgroundColor: cores,
             // Borda na cor da superfície: abre respiro entre as fatias sem
             // desenhar linha nenhuma, e acompanha o tema sozinha.
@@ -67,7 +77,12 @@ export function PercentualProfissional({
             cornerRadius: 8,
             titleFont: { family: est.fontSans, size: 11, weight: 600 },
             bodyFont: { family: est.fontMono, size: 11 },
-            callbacks: { label: (ctx) => ` ${moeda(Number(ctx.parsed))}` },
+            callbacks: {
+              label: (ctx) =>
+                modo === "valor"
+                  ? ` ${moeda(Number(ctx.parsed))}`
+                  : ` ${qtdTexto(Number(ctx.parsed))} atendimento(s)`,
+            },
           },
         },
       },
@@ -77,7 +92,7 @@ export function PercentualProfissional({
       chartRef.current?.destroy();
       chartRef.current = null;
     };
-  }, [montado, fatias, theme]);
+  }, [montado, fatias, modo, theme]);
 
   if (fatias.length === 0) {
     return <div className="neg-vazio">Nenhum atendimento realizado no período.</div>;
@@ -95,7 +110,9 @@ export function PercentualProfissional({
             />
             <span className="neg-rosca-nome">{f.nome}</span>
             <span className="neg-rosca-pct">{f.pct.toFixed(0)}%</span>
-            <span className="neg-rosca-valor">{moeda(f.valor)}</span>
+            <span className="neg-rosca-valor">
+              {modo === "valor" ? moeda(f.valor) : `${qtdTexto(f.qtd)}×`}
+            </span>
           </li>
         ))}
       </ul>

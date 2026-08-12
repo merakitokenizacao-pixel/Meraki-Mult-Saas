@@ -7,6 +7,8 @@ const FRASE_PERIODO: Record<string, string> = {
   hoje: "hoje",
   ontem: "ontem",
   semana: "nesta semana",
+  "7d": "nos últimos 7 dias",
+  "30d": "nos últimos 30 dias",
   mes: "neste mês",
   tudo: "no total",
 };
@@ -65,7 +67,10 @@ export function MetricsGrid({
     receita > 0
       ? receita.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
       : "R$ 0,00";
-  const receitaSize = receita >= 10000 ? "28px" : receita >= 1000 ? "34px" : "44px";
+  // Só encolhe quando a string é mesmo longa. Com o valor em 30px (e não nos
+  // 46px de antes) o degrau agressivo virava três tamanhos de fonte no mesmo
+  // grid, e cards vizinhos com alturas de número diferentes desalinham a linha.
+  const receitaSize = receita >= 100000 ? "24px" : undefined;
 
   return (
     <div className="metrics-dupla">
@@ -81,22 +86,23 @@ export function MetricsGrid({
           <div className="metric-card">
             <div className="metric-label">Clientes captados</div>
             <div className="metric-value">{total}</div>
-            <div className="metric-divider" />
             <div className="metric-sub">via WhatsApp</div>
           </div>
           <div className="metric-card">
             <div className="metric-label">Taxa de conversão</div>
-            <div className="metric-value" style={{ color: "var(--vx-amber)" }}>
+            {/* Sem cor no número: seis matizes na tela faziam a cor virar
+                enfeite. Aqui ela não distinguia nada — o rótulo já diz o que
+                é, e "amarelo" não significa taxa. */}
+            <div className="metric-value">
               {temTaxa ? (
                 <>
                   {taxa}
-                  <span style={{ fontSize: "24px", opacity: 0.6 }}>%</span>
+                  <span className="metric-unidade">%</span>
                 </>
               ) : (
                 "—"
               )}
             </div>
-            <div className="metric-divider" />
             {/* A fração fica visível de propósito: numa janela curta a taxa é
                 de poucas pessoas (1 de 3 = 33%), e o número sozinho pareceria
                 mais sólido do que é. */}
@@ -115,24 +121,17 @@ export function MetricsGrid({
         <div className="metrics-grid-2">
           <div className="metric-card">
             <div className="metric-label">Consultas agendadas</div>
-            <div className="metric-value" style={{ color: "var(--vx-green)" }}>
-              {consultasAgendadas}
-            </div>
-            <div className="metric-divider" />
+            <div className="metric-value">{consultasAgendadas}</div>
             {/* O subtítulo antigo dizia "clientes confirmados" — errado em dois
                 sentidos: conta atendimentos (não pessoas) e inclui os pendentes. */}
-            <div className="metric-sub up">marcados para o período</div>
+            <div className="metric-sub">marcados para o período</div>
           </div>
           <div className="metric-card">
             <div className="metric-label">Receita estimada</div>
-            <div
-              className="metric-value"
-              style={{ color: "var(--vx-accent)", fontSize: receitaSize }}
-            >
+            <div className="metric-value" style={{ fontSize: receitaSize }}>
               {receitaFmt}
             </div>
-            <div className="metric-divider" />
-            <div className="metric-sub up">nesses atendimentos</div>
+            <div className="metric-sub">nesses atendimentos</div>
           </div>
         </div>
       </section>

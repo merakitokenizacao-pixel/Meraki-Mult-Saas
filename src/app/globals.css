@@ -505,6 +505,14 @@
   z-index: 10;
   transition: background var(--vx-transition), border-color var(--vx-transition);
 }
+/* Telas que já mostram o próprio título não precisam da barra repetindo-o.
+   No mobile ela FICA, porque é onde mora o hambúrguer — some só a partir do
+   breakpoint em que a sidebar é permanente. */
+@media (min-width: 641px) {
+  .topbar.topbar-so-mobile {
+    display: none;
+  }
+}
 .topbar-left {
   display: flex;
   align-items: center;
@@ -818,36 +826,6 @@
 }
 
 /* ── Header ── */
-.dash-header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  margin-bottom: 2.5rem;
-  padding-bottom: 1.75rem;
-  border-bottom: 1px solid var(--vx-border);
-  flex-wrap: wrap;
-  gap: 16px;
-}
-.dash-greeting {
-  font-family: var(--font-cormorant), serif;
-  font-size: 38px;
-  font-weight: 300;
-  color: var(--vx-text);
-  letter-spacing: -0.5px;
-  line-height: 1;
-  margin-bottom: 6px;
-}
-.dash-greeting em {
-  font-style: italic;
-  color: var(--vx-accent);
-}
-.dash-subtitle {
-  font-size: 11px;
-  color: var(--vx-muted);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  font-weight: 400;
-}
 
 /* ── Métricas ── */
 .metrics-grid {
@@ -856,53 +834,47 @@
   gap: 20px;
   margin-bottom: 2.5rem;
 }
+/* Mesma anatomia do card de Negócios — as duas abas vivem sob UM cabeçalho,
+   e dois sistemas de card na mesma tela é o que se lê como remendo. Saíram a
+   sombra com `translateY` no hover (card que pula é enfeite: não há nada para
+   clicar aqui), o filete dourado e o CAIXA ALTA espaçado do rótulo. */
 .metric-card {
-  background: var(--vx-surface);
-  /* Elevação em vez de borda dura: hairline discreta + sombra suave (flutua) */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 14px;
+  min-height: 116px;
+  padding: 18px;
   border: 1px solid var(--vx-border);
-  border-radius: var(--vx-radius-lg);
-  padding: 2.25rem 2rem;
-  box-shadow: var(--vx-shadow-md);
-  transition: box-shadow var(--vx-transition), transform var(--vx-transition);
-}
-.metric-card:hover {
-  box-shadow: var(--vx-shadow-lg);
-  transform: translateY(-2px);
+  border-radius: 12px;
+  background: var(--vx-surface);
+  transition: border-color var(--vx-transition);
 }
 .metric-label {
-  font-size: 10px;
-  color: var(--vx-text2);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  margin-bottom: 18px;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.3;
+  color: var(--vx-muted);
 }
 .metric-value {
-  font-family: var(--font-cormorant), serif;
-  font-size: 46px;
-  font-weight: 300;
-  line-height: 1;
-  margin-bottom: 12px;
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
   color: var(--vx-text);
-  letter-spacing: -1px;
+  font-variant-numeric: tabular-nums;
 }
-.metric-divider {
-  width: 24px;
-  height: 1px;
-  background: var(--vx-gold);
-  margin-bottom: 12px;
-  opacity: 0.5;
+/* O "%" não é dígito: em 30px ele domina o número. */
+.metric-unidade {
+  margin-left: 1px;
+  font-size: 0.62em;
+  font-weight: 500;
+  color: var(--vx-muted);
 }
 .metric-sub {
-  font-size: 11px;
+  margin-top: 5px;
+  font-size: 12px;
   color: var(--vx-muted);
-  letter-spacing: 0.03em;
-}
-.metric-sub.up {
-  color: var(--vx-green);
-}
-.metric-sub.down {
-  color: var(--vx-red);
 }
 
 /* ── Cards / grids ── */
@@ -934,11 +906,10 @@
   margin-bottom: 1.25rem;
 }
 .card-title {
-  font-family: var(--font-cormorant), serif;
-  font-size: 16px;
-  font-weight: 400;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
   color: var(--vx-text);
-  letter-spacing: -0.2px;
 }
 .card-action {
   font-size: 11px;
@@ -1088,21 +1059,11 @@
   .charts-grid {
     grid-template-columns: 1fr;
   }
-  .dash-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .dash-greeting {
-    font-size: 28px;
-  }
 }
 @media (max-width: 640px) {
   .metrics-grid {
     grid-template-columns: 1fr 1fr;
     gap: 10px;
-  }
-  .dash-greeting {
-    font-size: 24px;
   }
 }
 
@@ -3231,11 +3192,9 @@ select.form-input {
   margin-bottom: 2.5rem;
 }
 .metrics-lente-titulo {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--vx-muted);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--vx-text2);
   margin-bottom: 12px;
   padding-bottom: 9px;
   border-bottom: 1px solid var(--vx-border);
@@ -3243,7 +3202,7 @@ select.form-input {
 .metrics-grid-2 {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
+  gap: 12px;
 }
 
 /* Em tela estreita as lentes empilham; dentro de cada uma, os dois cards
@@ -3646,6 +3605,32 @@ select.form-input {
   flex-wrap: wrap;
   margin-bottom: 1.5rem;
 }
+/* Título = NOME DA TELA. A saudação vira a linha de cima: continua
+   cumprimentando, sem gastar os ~120px que empurravam o gráfico para baixo da
+   dobra. Sans, não Cormorant — em título de painel o serif vira enfeite e
+   briga com os rótulos, que já são sans. */
+.vg-saudacao {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--vx-muted);
+  line-height: 1.2;
+  margin-bottom: 2px;
+}
+.vg-titulo {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+  color: var(--vx-text);
+}
+.vg-sub {
+  margin-top: 3px;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--vx-muted);
+  line-height: 1.4;
+}
 .vg-controles {
   display: flex;
   align-items: center;
@@ -3684,34 +3669,6 @@ select.form-input {
   box-shadow: var(--vx-shadow-sm);
 }
 
-/* ── Aviso de dado estimado ── */
-.neg-aviso {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  margin-bottom: 14px;
-  padding: 11px 14px;
-  border: 1px solid var(--vx-border);
-  border-left: 3px solid var(--vx-amber);
-  border-radius: 10px;
-  background: var(--vx-amber-bg);
-  font-size: 12px;
-  line-height: 1.6;
-  color: var(--vx-text2);
-}
-.neg-aviso svg {
-  flex-shrink: 0;
-  margin-top: 2px;
-  color: var(--vx-amber);
-}
-.neg-aviso code {
-  padding: 1px 5px;
-  border-radius: 4px;
-  background: var(--vx-surface2);
-  font-family: var(--font-jetbrains), monospace;
-  font-size: 11px;
-}
-
 /* ── Cards ── */
 .neg-grid {
   display: grid;
@@ -3738,10 +3695,15 @@ select.form-input {
 .neg-card {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   gap: 14px;
-  padding: 15px 17px 16px;
+  /* Padding uniforme e altura mínima igual: cinco cards lado a lado com
+     paddings assimétricos desalinham os valores por 1–2px e é isso que se lê
+     como maquete. */
+  padding: 18px;
+  min-height: 116px;
   border: 1px solid var(--vx-border);
-  border-radius: 14px;
+  border-radius: 12px;
   background: var(--vx-surface);
   font-family: inherit;
   text-align: left;
@@ -3753,17 +3715,22 @@ select.form-input {
 .neg-card-btn:hover {
   border-color: var(--vx-border2);
 }
-/* Selecionado: a borda acende na cor do próprio card, e o gráfico abaixo passa
-   a enfatizar a série dele — é o que dá função ao destaque. */
+/* Selecionado: borda no accent + fundo um degrau acima. O `inset` anterior
+   desenhava um segundo anel por dentro da borda e engrossava tudo — dois
+   traços na mesma cor lidos como halo. Um traço e um degrau de fundo bastam,
+   e o gráfico abaixo passa a enfatizar a série do card. */
 .neg-card.ativo {
-  border-color: var(--neg-tom);
-  box-shadow: inset 0 0 0 1px var(--neg-tom);
+  border-color: var(--vx-accent);
+  background: var(--vx-surface2);
 }
 .neg-card-rotulo {
-  font-size: 12.5px;
-  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 400;
   line-height: 1.3;
-  color: var(--vx-text2);
+  color: var(--vx-muted);
 }
 .neg-card-linha {
   display: flex;
@@ -3775,7 +3742,7 @@ select.form-input {
   min-width: 0;
 }
 .neg-card-valor {
-  font-size: 25px;
+  font-size: 30px;
   font-weight: 600;
   line-height: 1.1;
   letter-spacing: -0.02em;
@@ -3783,29 +3750,87 @@ select.form-input {
   font-variant-numeric: tabular-nums;
 }
 .neg-card-apoio {
-  margin-top: 4px;
-  font-size: 11.5px;
+  margin-top: 5px;
+  font-size: 12px;
   color: var(--vx-muted);
 }
+/* Ícone de 16px no canto, discreto. Antes eram 22px na cor do card: cinco
+   ícones grandes e coloridos competiam com os próprios valores. */
 .neg-card-icone {
   flex-shrink: 0;
   color: var(--neg-tom);
+  opacity: 0.85;
 }
 
-.neg-tom-accent {
-  --neg-tom: var(--vx-accent);
+/* Cor só onde ela SIGNIFICA alguma coisa: subiu, desceu. O resto é neutro. */
+.neg-tom-neutro {
+  --neg-tom: var(--vx-muted);
 }
-.neg-tom-green {
+.neg-tom-sobe {
   --neg-tom: var(--vx-green);
 }
-.neg-tom-red {
+.neg-tom-desce {
   --neg-tom: var(--vx-red);
 }
-.neg-tom-blue {
-  --neg-tom: var(--vx-blue);
+
+/* ── (i) com balão ── */
+.neg-dica {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--vx-border2);
+  border-radius: 50%;
+  font-size: 9px;
+  font-weight: 600;
+  font-style: italic;
+  line-height: 1;
+  color: var(--vx-muted);
+  cursor: help;
+  position: relative;
+  transition: color var(--vx-transition), border-color var(--vx-transition);
 }
-.neg-tom-purple {
-  --neg-tom: var(--vx-purple);
+.neg-dica:hover {
+  color: var(--vx-text2);
+  border-color: var(--vx-text2);
+}
+.neg-dica::after {
+  content: attr(data-dica);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: -8px;
+  z-index: 40;
+  width: max-content;
+  /* Trava a largura: sem isto uma dica de 3 linhas vira uma faixa da largura
+     da tela e sai do card. */
+  max-width: 240px;
+  padding: 8px 10px;
+  border: 1px solid var(--vx-border);
+  border-radius: 8px;
+  background: var(--vx-surface);
+  box-shadow: var(--vx-shadow-md);
+  font-size: 11.5px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--vx-text2);
+  white-space: normal;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--vx-transition);
+}
+.neg-dica:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
+/* Nos dois últimos cards o balão sairia pela direita da tela. */
+.neg-grid > *:nth-last-child(-n + 2) .neg-dica::after {
+  left: auto;
+  right: -8px;
 }
 
 /* ── Painéis ── */
@@ -3826,9 +3851,9 @@ select.form-input {
 }
 
 .neg-painel {
-  padding: 16px 18px 18px;
+  padding: 18px;
   border: 1px solid var(--vx-border);
-  border-radius: 14px;
+  border-radius: 12px;
   background: var(--vx-surface);
 }
 .neg-painel-topo {
@@ -3840,16 +3865,16 @@ select.form-input {
   flex-wrap: wrap;
 }
 .neg-painel-titulo {
-  font-family: var(--font-cormorant), serif;
-  font-size: 19px;
-  font-weight: 500;
-  line-height: 1.2;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  line-height: 1.25;
   color: var(--vx-text);
 }
 .neg-painel-nota {
   display: block;
-  margin-top: 2px;
-  font-size: 11px;
+  margin-top: 3px;
+  font-size: 12px;
   color: var(--vx-muted);
 }
 .neg-painel-acoes {
@@ -3857,6 +3882,9 @@ select.form-input {
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
+}
+.neg-fill {
+  font-variant-numeric: tabular-nums;
 }
 .neg-select {
   padding: 5px 10px;
@@ -4058,21 +4086,6 @@ select.form-input {
   font-size: 12.5px;
   color: var(--vx-muted);
 }
-.neg-selo {
-  margin-left: 7px;
-  padding: 1px 6px;
-  border-radius: 5px;
-  border: 1px solid var(--vx-border2);
-  background: var(--vx-surface2);
-  color: var(--vx-muted);
-  font-size: 8.5px;
-  font-weight: 700;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-  vertical-align: 1px;
-  white-space: nowrap;
-}
-
 /* Cabeçalho de categoria dentro do combobox de serviço. */
 .servico-combo-grupo {
   padding: 8px 12px 4px;
@@ -4303,30 +4316,4 @@ select.form-input {
   justify-content: flex-end;
   gap: 10px;
   margin-top: 20px;
-}
-
-/* Nota do topo da aba Negócios — uma linha, não um bloco.
-   O aviso antigo era um parágrafo de 4 linhas em caixa âmbar; com a divisão
-   por profissional deixando de ser sintética, sobrou só a ressalva do preço,
-   que não merece esse peso visual. */
-.neg-nota-topo {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 14px;
-  padding: 7px 12px;
-  border: 1px solid var(--vx-border);
-  border-radius: 9px;
-  background: var(--vx-surface2);
-  font-size: 11.5px;
-  line-height: 1.5;
-  color: var(--vx-muted);
-}
-.neg-nota-topo svg {
-  flex-shrink: 0;
-  color: var(--vx-accent);
-  opacity: 0.8;
-}
-.neg-nota-topo strong {
-  color: var(--vx-text2);
 }

@@ -31,6 +31,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const isActive = (href: string) => pathname.startsWith(href);
 
   const isConversas = pathname.startsWith("/conversas");
+  // A topbar só repetia o título que a própria tela já mostra, e custava 64px
+  // antes do primeiro número. Some no desktop; no mobile fica, porque carrega
+  // o hambúrguer.
+  const semTopbar = pathname.startsWith("/visao-geral");
 
   return (
     <>
@@ -105,7 +109,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               Configurações → Aparência, e a data não valia o espaço que ocupava.
               Sobra só o título (e o hambúrguer no mobile). */}
           {!isConversas && (
-            <div className="topbar">
+            <div className={`topbar${semTopbar ? " topbar-so-mobile" : ""}`}>
               <div className="topbar-left">
                 <button
                   className="hamburger"
@@ -114,7 +118,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 >
                   ☰
                 </button>
-                <span className="topbar-title">{titleForPath(pathname)}</span>
+                {!semTopbar && (
+                  <span className="topbar-title">{titleForPath(pathname)}</span>
+                )}
               </div>
             </div>
           )}

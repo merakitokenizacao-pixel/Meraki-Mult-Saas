@@ -3,7 +3,6 @@
 import { useMemo, useState } from "react";
 import {
   Activity,
-  Info,
   Plus,
   RotateCcw,
   TrendingDown,
@@ -48,14 +47,13 @@ const CARDS: ReadonlyArray<{
   tom: TomKpi;
   apoio: (qtd: number) => string;
   serie: SerieId | null;
-  selo?: string;
   dica: string;
 }> = [
   {
     chave: "criado",
     rotulo: "Total criado",
     icone: Plus,
-    tom: "blue",
+    tom: "neutro",
     // "agendamentos" aqui era ambíguo: lia-se como "consultas de hoje", mas o
     // recorte é `criado_em` — quando a marcação FOI FEITA, não quando ela
     // acontece. Em 10/08 foram 32 marcações feitas e só 9 atendimentos no dia.
@@ -67,7 +65,7 @@ const CARDS: ReadonlyArray<{
     chave: "ganho",
     rotulo: "Total ganhos",
     icone: TrendingUp,
-    tom: "green",
+    tom: "sobe",
     apoio: (q) => `${q} realizado${q === 1 ? "" : "s"}`,
     serie: "ganho",
     dica: "Procedimentos que aconteceram no período.",
@@ -76,7 +74,7 @@ const CARDS: ReadonlyArray<{
     chave: "perdido",
     rotulo: "Total perdidos",
     icone: TrendingDown,
-    tom: "red",
+    tom: "desce",
     apoio: (q) => `${q} cancelado${q === 1 ? "" : "s"}`,
     serie: "perdido",
     dica: "Cancelados que teriam acontecido no período.",
@@ -85,7 +83,7 @@ const CARDS: ReadonlyArray<{
     chave: "aberto",
     rotulo: "Total em aberto",
     icone: Activity,
-    tom: "accent",
+    tom: "neutro",
     apoio: (q) => `${q} marcado${q === 1 ? "" : "s"}`,
     serie: null,
     dica:
@@ -95,7 +93,7 @@ const CARDS: ReadonlyArray<{
     chave: "recuperado",
     rotulo: "Receita recuperada",
     icone: RotateCcw,
-    tom: "purple",
+    tom: "neutro",
     apoio: (q) => `${q} pelo follow-up`,
     serie: null,
     dica:
@@ -124,6 +122,11 @@ export function Negocios({ period }: { period: string }) {
   const [selecionado, setSelecionado] = useState<string | null>("criado");
   const [modo, setModo] = useState<Modo>("valor");
   const [destaqueManual, setDestaqueManual] = useState<SerieId | null>(null);
+  // Um seletor POR PAINEL, com estado próprio: a base do gráfico de linhas e a
+  // do ranking são perguntas diferentes, e amarrá-las num controle global
+  // obrigaria a trocar o recorte inteiro para ver "quantos" em vez de "quanto".
+  const [modoProf, setModoProf] = useState<Modo>("valor");
+  const [modoServ, setModoServ] = useState<Modo>("valor");
 
   const resumo = useMemo(
     () => resumoFinanceiro(agendamentos, period, precos),
@@ -182,6 +185,15 @@ export function Negocios({ period }: { period: string }) {
     [agendamentos, period, precos]
   );
 
+  // A ressalva de preço deixa de ser tarja e entra no (i) dos cards que ela
+  // afeta — os que somam dinheiro do período. Uma faixa amarela permanente no
+  // topo é obra em andamento na cara de quem paga; o (i) fica à mão de quem
+  // quiser conferir de onde veio o número.
+  const ressalva =
+    !carregando && ticket.semPreco > 0
+      ? ` Preços vêm do catálogo da clínica; ${ticket.semPreco} de ${ticket.total} atendimentos não dizem qual serviço foi feito e ficam de fora da soma, então o total é piso.`
+      : "";
+
   const janela =
     pontos.length > 0
       ? `${pontos[0].rotulo} a ${pontos[pontos.length - 1].rotulo}`
@@ -195,24 +207,6 @@ export function Negocios({ period }: { period: string }) {
 
   return (
     <div className="neg-fill">
-      {/* Uma LINHA, não um bloco. A divisão por profissional deixou de ser
-          sintética, então a maior ressalva caiu — mas o preço ainda vem do
-          catálogo (agendamentos.valor está vazio) e o que não diz o serviço
-          fica fora da soma. Apagar tudo faria o total ser lido como exato. */}
-      {!carregando && ticket.semPreco > 0 && (
-        <div className="neg-nota-topo" role="note">
-          <Info size={13} strokeWidth={1.8} />
-          <span>
-            Preços do catálogo da clínica.{" "}
-            <strong>
-              {ticket.semPreco} de {ticket.total}
-            </strong>{" "}
-            atendimentos não dizem qual serviço foi feito e ficam de fora da
-            soma — o total é piso.
-          </span>
-        </div>
-      )}
-
       <div className="neg-grid">
         {CARDS.map((c) => {
           // "recuperado" não sai mais do resumo (que o derivava por hash):
@@ -226,8 +220,7 @@ export function Negocios({ period }: { period: string }) {
               apoio={carregando ? " " : c.apoio(faixa.qtd)}
               icone={c.icone}
               tom={c.tom}
-              dica={c.dica}
-              selo={c.selo}
+              dica={c.dica + ressalva}
               ativo={selecionado === c.chave}
               onSelecionar={() => {
                 setSelecionado(selecionado === c.chave ? null : c.chave);
@@ -291,14 +284,25 @@ export function Negocios({ period }: { period: string }) {
               <span className="neg-painel-nota">
                 {atribuicao.exatos + atribuicao.rateados === 0
                   ? "Pela escala de quem estava de plantão"
-                  : `Pela escala · ${atribuicao.exatos} exatos, ${atribuicao.rateados} rateados entre quem estava de plantão`}
+                  : `Pela escala · ${atribuicao.exatos} exatos, ${atribuicao.rateados} rateados`}
               </span>
+            </div>
+            <div className="neg-painel-acoes">
+              <select
+                className="neg-select"
+                value={modoProf}
+                onChange={(e) => setModoProf(e.target.value as Modo)}
+                aria-label="Base da divisão por profissional"
+              >
+                <option value="valor">Valor</option>
+                <option value="qtd">Quantidade</option>
+              </select>
             </div>
           </header>
           {carregando ? (
             <div className="neg-vazio">Carregando…</div>
           ) : (
-            <PercentualProfissional fatias={fatias} />
+            <PercentualProfissional fatias={fatias} modo={modoProf} />
           )}
         </section>
       </div>
@@ -310,11 +314,22 @@ export function Negocios({ period }: { period: string }) {
               <h2 className="neg-painel-titulo">Serviços mais vendidos</h2>
               <span className="neg-painel-nota">Procedimentos realizados</span>
             </div>
+            <div className="neg-painel-acoes">
+              <select
+                className="neg-select"
+                value={modoServ}
+                onChange={(e) => setModoServ(e.target.value as Modo)}
+                aria-label="Base do ranking de serviços"
+              >
+                <option value="valor">Valor</option>
+                <option value="qtd">Quantidade</option>
+              </select>
+            </div>
           </header>
           {carregando ? (
             <div className="neg-vazio">Carregando…</div>
           ) : (
-            <ServicosVendidos linhas={servicos} />
+            <ServicosVendidos linhas={servicos} modo={modoServ} />
           )}
         </section>
 

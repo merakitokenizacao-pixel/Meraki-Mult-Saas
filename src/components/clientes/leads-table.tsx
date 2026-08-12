@@ -1,6 +1,6 @@
 import { Avatar } from "@/components/avatar";
 import { LeadStatusBadge } from "@/components/lead-status-badge";
-import { fmtDate } from "@/lib/format";
+import { fmtDate, formatTelefone, nomeCanal } from "@/lib/format";
 import { formatProximaVisita } from "@/lib/date";
 import type { Lead } from "@/types/db";
 import type { ProximaVisita } from "@/lib/queries";
@@ -47,16 +47,27 @@ export function LeadsTable({
         ) : (
           leads.map((l) => {
             const visita = proximasVisitas.get(l.id);
+            // Lead sem nome existe: o n8n cria pelo telefone assim que a
+            // pessoa manda a primeira mensagem, e o nome só chega depois. A
+            // linha mostrava um travessão ao lado de um avatar vazio e parecia
+            // registro quebrado — o telefone É o identificador dela, então é
+            // ele que vai no lugar do nome.
+            const telefone = formatTelefone(l.telefone);
+            const semNome = !l.nome?.trim();
             return (
               <tr key={l.id} onClick={() => onRowClick(l)}>
                 <td>
                   <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                     <Avatar nome={l.nome} fotoUrl={l.foto_url} size={30} fontSize={10} />
-                    <span>{l.nome || "—"}</span>
+                    <span className={semNome ? "lead-sem-nome" : undefined}>
+                      {semNome ? telefone : l.nome}
+                    </span>
                   </div>
                 </td>
-                <td className="muted">{l.telefone || "—"}</td>
-                <td className="muted">{l.canal || "whatsapp"}</td>
+                {/* Sem nome, o telefone já é a identificação na primeira
+                    coluna; repetir aqui seria a mesma informação duas vezes. */}
+                <td className="muted">{semNome ? "—" : telefone}</td>
+                <td className="muted">{nomeCanal(l.canal)}</td>
                 <td>
                   <LeadStatusBadge status={l.status} />
                 </td>

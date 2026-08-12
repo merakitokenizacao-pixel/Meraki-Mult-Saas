@@ -407,9 +407,9 @@ export function NewLeadModal({
       </div>
 
       <div className="lead-acoes">
-        <button type="button" className="btn-ghost" onClick={onClose}>
-          Cancelar
-        </button>
+        {/* Sem "Cancelar": o X do canto e a tecla Esc já fecham, e dois
+            botões no rodapé faziam a ação primária competir com uma saída que
+            já existia em dois lugares. */}
         <button
           type="button"
           className="btn-primary"

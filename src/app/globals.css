@@ -146,9 +146,9 @@
      No claro o accent é escuro → texto branco; nos escuros, o inverso. */
   --vx-on-accent: #ffffff;
   /* A sidebar é sempre escura, mas o TOM acompanha a paleta. */
-  --vx-radius: 12px;
-  --vx-radius-sm: 8px;
-  --vx-radius-lg: 18px;
+  --vx-radius: 8px;
+  --vx-radius-sm: 5px;
+  --vx-radius-lg: 10px;
   --vx-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 
   /* shadcn ← VoraX */
@@ -602,8 +602,9 @@
   display: none;
   position: fixed;
   inset: 0;
+  /* Chapado também aqui, pelo mesmo motivo do overlay do modal: o desfoque não
+     ajuda a ler a sidebar e roda no celular, onde a GPU é mais escassa. */
   background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(2px);
   z-index: 39;
 }
 .sidebar-overlay.open {
@@ -1113,12 +1114,13 @@
 .search-bar {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  height: 33px;
   background: var(--vx-surface);
-  border: 1px solid var(--vx-border);
-  border-radius: var(--vx-radius);
-  padding: 9px 14px;
-  transition: all var(--vx-transition);
+  border: 1px solid var(--vx-border2);
+  border-radius: 5px;
+  padding: 0 10px;
+  transition: border-color var(--vx-transition);
 }
 .search-bar:focus-within {
   border-color: var(--vx-accent);
@@ -1176,8 +1178,9 @@
   display: none;
   position: fixed;
   inset: 0;
+  /* Chapado, sem blur. Desfoque em overlay é efeito decorativo — não ajuda a
+     ler o modal, custa GPU e é a coisa mais "template" que havia aqui. */
   background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(8px);
   z-index: 100;
   align-items: center;
   justify-content: center;
@@ -1189,13 +1192,13 @@
 .modal {
   background: var(--vx-surface);
   border: 1px solid var(--vx-border);
-  /* 14px no lugar de 20: canto muito redondo faz o modal parecer cartaz.
-     Formulário pede cara de ficha de trabalho. */
-  border-radius: 14px;
+  /* 8px: canto redondo faz o modal parecer cartaz. Formulário pede cara de
+     ficha de trabalho. */
+  border-radius: 8px;
   width: 560px;
   max-height: 88vh;
   overflow-y: auto;
-  padding: 2rem;
+  padding: 1.5rem;
   position: relative;
   box-shadow: var(--vx-shadow-lg);
   animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1312,14 +1315,15 @@
   background: var(--vx-accent2);
   border: none;
   color: var(--vx-on-accent);
-  padding: 9px 22px;
-  border-radius: 10px;
+  height: 33px;
+  padding: 0 13px;
+  border-radius: 5px;
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
-  transition: all var(--vx-transition);
+  transition: background var(--vx-transition);
   font-family: var(--font-inter), sans-serif;
-  letter-spacing: 0.04em;
+  letter-spacing: 0;
 }
 .btn-primary:hover {
   filter: brightness(1.1);
@@ -4115,29 +4119,35 @@ select.form-input {
 
 .lead-label {
   display: block;
-  margin-bottom: 5px;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  color: var(--vx-text2);
+  margin-bottom: 4px;
+  font-size: 11.5px;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: var(--vx-text);
 }
 .lead-input {
   width: 100%;
-  padding: 9px 12px;
-  border: 1px solid var(--vx-border);
-  border-radius: 9px;
-  background: var(--vx-surface2);
+  height: 33px;
+  padding: 0 10px;
+  /* Borda um pouco mais forte que a hairline geral: no fundo branco, o campo
+     precisa se delimitar sozinho, já que perdeu o preenchimento cinza. */
+  border: 1px solid var(--vx-border2);
+  border-radius: 5px;
+  /* Branco, não cinza: campo preenchido de cinza lê como desabilitado, e cinco
+     deles empilhados eram a maior massa visual do modal. */
+  background: var(--vx-surface);
   color: var(--vx-text);
   font-family: var(--font-inter), sans-serif;
-  font-size: 13px;
+  font-size: 12.5px;
   outline: none;
-  transition: border-color var(--vx-transition), background var(--vx-transition);
+  transition: border-color var(--vx-transition);
 }
 .lead-input::placeholder {
   color: var(--vx-muted);
 }
 .lead-input:focus {
   border-color: var(--vx-accent);
+  /* Sem halo: a cor da borda já diz onde está o cursor. */
   background: var(--vx-surface);
 }
 .lead-textarea {
@@ -4206,22 +4216,23 @@ select.form-input {
 
 /* ── Abas ── */
 .lead-abas {
-  display: flex;
+  display: inline-flex;
   gap: 2px;
   padding: 3px;
+  margin-bottom: 14px;
   border: 1px solid var(--vx-border);
-  border-radius: 10px 10px 0 0;
-  border-bottom: none;
+  border-radius: 6px;
   background: var(--vx-surface2);
   overflow-x: auto;
+  max-width: 100%;
 }
 .lead-aba {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 7px 13px;
+  padding: 5px 11px;
   border: none;
-  border-radius: 7px;
+  border-radius: 4px;
   background: transparent;
   font-family: inherit;
   font-size: 12.5px;
@@ -4498,4 +4509,13 @@ select.form-input {
   .drp-meses > :nth-child(2) {
     display: none;
   }
+}
+
+/* Lead ainda sem nome: o telefone ocupa o lugar do nome como identificador.
+   Em mono e um degrau mais fraco, para não competir com os nomes reais da
+   coluna — é um identificador provisório, não um nome. */
+.lead-sem-nome {
+  font-family: var(--font-jetbrains), monospace;
+  font-size: 11.5px;
+  color: var(--vx-text2);
 }

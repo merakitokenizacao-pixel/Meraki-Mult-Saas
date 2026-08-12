@@ -84,24 +84,50 @@ export function limparServico(texto?: string | null): string {
   return texto.replace(/\*/g, "").trim().split(" ").slice(0, 3).join(" ");
 }
 
-// Formata telefone BR (13 dígitos com DDI, 11 sem DDI).
+/**
+ * Telefone brasileiro para leitura.
+ *
+ * O DDI sai da exibição: a clínica é de Brasília e 100% da base é +55, então
+ * repetir o país em toda linha é ruído constante — e era ele que fazia a
+ * coluna de telefone ocupar quase o dobro da largura na tabela.
+ */
 export function formatTelefone(tel?: string | null): string {
   if (!tel) return "—";
   const n = tel.replace(/\D/g, "");
-  if (n.length === 13)
-    return (
-      "+" +
-      n.slice(0, 2) +
-      " (" +
-      n.slice(2, 4) +
-      ") " +
-      n.slice(4, 9) +
-      "-" +
-      n.slice(9)
-    );
-  if (n.length === 11)
-    return "(" + n.slice(0, 2) + ") " + n.slice(2, 7) + "-" + n.slice(7);
+  const semDDI = n.length >= 12 && n.startsWith("55") ? n.slice(2) : n;
+
+  // 11 = DDD + celular de 9 dígitos. 10 = DDD + 8 dígitos (fixo, e celular
+  // antigo, que o WhatsApp ainda entrega assim).
+  //
+  // O caso de 10 FALTAVA, e era um bug de verdade: 556181688257 tem 12 dígitos
+  // (55 + 61 + oito), não casava com nenhum ramo e caía no `return tel`,
+  // aparecendo cru na tela.
+  if (semDDI.length === 11)
+    return `(${semDDI.slice(0, 2)}) ${semDDI.slice(2, 7)}-${semDDI.slice(7)}`;
+  if (semDDI.length === 10)
+    return `(${semDDI.slice(0, 2)}) ${semDDI.slice(2, 6)}-${semDDI.slice(6)}`;
+  // Sem DDD: formata ao menos o assinante, em vez de devolver o dígito cru.
+  if (semDDI.length === 9) return `${semDDI.slice(0, 5)}-${semDDI.slice(5)}`;
+  if (semDDI.length === 8) return `${semDDI.slice(0, 4)}-${semDDI.slice(4)}`;
   return tel;
+}
+
+// Nome do canal como marca, não como valor de banco. O n8n grava "whatsapp"
+// em minúscula; escrever assim na tela é o mesmo que mostrar o enum cru.
+const CANAIS: Record<string, string> = {
+  whatsapp: "WhatsApp",
+  instagram: "Instagram",
+  facebook: "Facebook",
+  site: "Site",
+  telefone: "Telefone",
+  indicacao: "Indicação",
+  presencial: "Presencial",
+};
+
+export function nomeCanal(canal?: string | null): string {
+  const c = (canal ?? "whatsapp").trim().toLowerCase();
+  // Canal novo que o n8n invente: capitaliza em vez de sumir com ele.
+  return CANAIS[c] ?? c.charAt(0).toUpperCase() + c.slice(1);
 }
 
 // Mapeia status → classe da badge (mesma tabela do badgeHtml do legacy).

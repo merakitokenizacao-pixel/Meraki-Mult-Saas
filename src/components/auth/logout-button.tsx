@@ -31,7 +31,7 @@ export function LogoutButton({ collapsed }: { collapsed: boolean }) {
       title="Sair"
       data-label="Sair"
     >
-      <LogOut className="nav-icon" size={18} strokeWidth={1.5} />
+      <LogOut className="nav-icon" size={16} strokeWidth={2} />
       {!collapsed && <span className="nav-label">Sair</span>}
     </button>
   );

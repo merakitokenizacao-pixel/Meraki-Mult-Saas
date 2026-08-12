@@ -67,40 +67,48 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               )}
             </button>
           </div>
-          <span className="nav-section">Principal</span>
-          {NAV_ITEMS.map((item) => {
-            const Icon = item.icon;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`nav-item${isActive(item.href) ? " active" : ""}`}
-                aria-label={item.label}
-                data-label={item.label}
-              >
-                <Icon className="nav-icon" size={20} strokeWidth={1.5} />
-                <span className="nav-label">{item.label}</span>
-              </Link>
-            );
-          })}
-          <div className="sidebar-footer">
-            <div className="sidebar-status-dot" />
-            <span className="sidebar-status-text">Laura ativa</span>
-          </div>
+          {/* Sem "PRINCIPAL". A separação entre operação e sistema vem da
+              POSIÇÃO: este bloco cresce e empurra o rodapé para baixo. Um
+              rótulo de seção em dourado disputava com o único dourado que
+              precisa significar alguma coisa aqui — "você está aqui". */}
+          <nav className="sidebar-nav">
+            {NAV_ITEMS.map((item) => {
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`nav-item${isActive(item.href) ? " active" : ""}`}
+                  aria-label={item.label}
+                  data-label={item.label}
+                  aria-current={isActive(item.href) ? "page" : undefined}
+                >
+                  <Icon className="nav-icon" size={16} strokeWidth={2} />
+                  <span className="nav-label">{item.label}</span>
+                </Link>
+              );
+            })}
+          </nav>
 
-          {/* Configurações: fora da lista de operação, junto do Sair. */}
-          <Link
-            href={SETTINGS_ITEM.href}
-            className={`nav-item nav-item-footer${
-              isActive(SETTINGS_ITEM.href) ? " active" : ""
-            }`}
-            aria-label={SETTINGS_ITEM.label}
-            data-label={SETTINGS_ITEM.label}
-          >
-            <SETTINGS_ITEM.icon className="nav-icon" size={20} strokeWidth={1.5} />
-            <span className="nav-label">{SETTINGS_ITEM.label}</span>
-          </Link>
-          <LogoutButton collapsed={collapsed} />
+          <div className="sidebar-rodape">
+            <div className="sidebar-footer">
+              <div className="sidebar-status-dot" />
+              <span className="sidebar-status-text">Laura ativa</span>
+            </div>
+            <Link
+              href={SETTINGS_ITEM.href}
+              className={`nav-item nav-item-footer${
+                isActive(SETTINGS_ITEM.href) ? " active" : ""
+              }`}
+              aria-label={SETTINGS_ITEM.label}
+              data-label={SETTINGS_ITEM.label}
+              aria-current={isActive(SETTINGS_ITEM.href) ? "page" : undefined}
+            >
+              <SETTINGS_ITEM.icon className="nav-icon" size={16} strokeWidth={2} />
+              <span className="nav-label">{SETTINGS_ITEM.label}</span>
+            </Link>
+            <LogoutButton collapsed={collapsed} />
+          </div>
         </aside>
 
         <main className="main">

@@ -122,8 +122,6 @@
      No claro o accent é escuro → texto branco; nos escuros, o inverso. */
   --vx-on-accent: #ffffff;
   /* A sidebar é sempre escura, mas o TOM acompanha a paleta. */
-  --vx-sidebar-bg: #16120d;
-  --vx-sidebar-linha: rgba(255, 255, 255, 0.07);
   --vx-radius: 12px;
   --vx-radius-sm: 8px;
   --vx-radius-lg: 18px;
@@ -198,8 +196,6 @@
   --vx-shadow-md: 0 6px 20px rgba(0, 0, 0, 0.4);
   --vx-shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.5);
   --vx-on-accent: #1a1814;
-  --vx-sidebar-bg: #0d0c07;
-  --vx-sidebar-linha: rgba(255, 255, 255, 0.06);
 
   /* Ajustes de contraste shadcn no escuro (btn-primary usa texto escuro) */
   --primary: var(--vx-accent);
@@ -248,8 +244,6 @@
   --vx-shadow-md: 0 6px 20px rgba(0, 0, 0, 0.55);
   --vx-shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.65);
   --vx-on-accent: #12100c;
-  --vx-sidebar-bg: #0c0c0e;
-  --vx-sidebar-linha: rgba(255, 255, 255, 0.06);
 
   --primary: var(--vx-accent);
   --primary-foreground: #12100c;
@@ -295,7 +289,9 @@
 .sidebar {
   width: var(--vx-sidebar-w, 260px);
   flex-shrink: 0;
-  background: var(--vx-sidebar-bg);
+  /* Sem fundo: mesma superfície do conteúdo. Quem separa é a hairline da
+     direita, e só ela. */
+  background: transparent;
   display: flex;
   flex-direction: column;
   position: fixed;
@@ -303,7 +299,7 @@
   top: 0;
   left: 0;
   overflow: hidden;
-  border-right: 1px solid var(--vx-sidebar-linha);
+  border-right: 1px solid var(--vx-border);
   transition: transform 0.3s ease, width 0.3s ease;
   z-index: 40;
 }
@@ -313,7 +309,7 @@
 .sidebar-logo {
   height: 64px;
   padding: 0 20px;
-  border-bottom: 1px solid var(--vx-sidebar-linha);
+  border-bottom: 1px solid var(--vx-border);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -328,23 +324,25 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
-  background: rgba(184, 149, 90, 0.08);
-  border: 1px solid rgba(184, 149, 90, 0.15);
-  color: rgba(240, 236, 228, 0.55);
+  border-radius: 6px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--vx-muted);
   cursor: pointer;
-  transition: all var(--vx-transition);
+  transition: color var(--vx-transition), background var(--vx-transition);
 }
 .sidebar-toggle:hover {
-  color: var(--vx-gold);
-  background: rgba(184, 149, 90, 0.16);
-  border-color: rgba(184, 149, 90, 0.4);
+  color: var(--vx-text);
+  background: var(--vx-surface2);
 }
+/* O wordmark é a única serifa que sobrou na UI — e é de propósito: numa tela
+   inteira de grotesca, a forma da letra já basta como assinatura, sem precisar
+   de cor para isso. */
 .sidebar-logo .logo-mark {
   font-family: var(--font-cormorant), serif;
-  font-size: 24px;
-  font-weight: 300;
-  color: #f0ece4;
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--vx-text);
   letter-spacing: 0.02em;
   line-height: 1;
 }
@@ -353,81 +351,67 @@
   color: var(--vx-gold);
 }
 
-.nav-section {
-  font-size: 11px;
-  color: rgba(184, 149, 90, 0.35);
-  font-weight: 600;
-  padding: 18px 20px 6px;
-}
+/* Sem header de seção. "PRINCIPAL" era um rótulo dourado no meio da mesma
+   coluna dos itens — competia com o único dourado que devia significar algo
+   ali ("você está aqui"). O grupo de baixo se separa pela posição, não por
+   texto. */
 .nav-item {
   display: flex;
   align-items: center;
-  gap: 11px;
-  padding: 9px 12px;
-  color: rgba(240, 236, 228, 0.4);
+  gap: 12px;
+  height: 33px;
+  padding: 0 10px;
+  color: var(--vx-text);
   cursor: pointer;
-  transition: all var(--vx-transition);
-  font-size: 12.5px;
+  transition: color var(--vx-transition), background var(--vx-transition);
+  font-size: 11.5px;
   font-weight: 400;
-  letter-spacing: 0.01em;
-  margin: 1px var(--vx-nav-margem);
-  border-radius: 9px;
+  letter-spacing: 0;
+  /* 33 + 3 = 36px de passo entre itens. */
+  margin: 1.5px var(--vx-nav-margem);
+  border-radius: 5px;
   position: relative;
   text-decoration: none;
 }
+/* Inativo é texto CHEIO, não cinza apagado: quem não está na tela atual
+   continua sendo lido com o mesmo peso, e a única diferença fica sendo o
+   estado. */
 .nav-item:hover {
-  background: rgba(184, 149, 90, 0.08);
-  color: rgba(240, 236, 228, 0.75);
+  background: color-mix(in srgb, var(--vx-accent) 7%, transparent);
 }
+/* O ativo troca SÓ de matiz. Sem fundo, sem barra lateral, sem pill: quatro
+   sinais simultâneos não somam, dividem. */
 .nav-item.active {
-  background: rgba(184, 149, 90, 0.1);
-  color: #f0ece4;
-}
-.nav-item.active::before {
-  content: "";
-  position: absolute;
-  left: calc(-1 * var(--vx-nav-margem));
-  top: 50%;
-  transform: translateY(-50%);
-  width: 2px;
-  height: 22px;
-  background: var(--vx-gold);
-  border-radius: 0 2px 2px 0;
-  box-shadow: 0 0 8px rgba(184, 149, 90, 0.4);
+  color: var(--vx-accent);
 }
 .nav-icon {
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   flex-shrink: 0;
-  /* Line icon dourado, discreto no normal e cheio no ativo (segue o tema via --vx-accent) */
-  color: var(--vx-accent);
-  opacity: 0.4;
-  transition: opacity var(--vx-transition), color var(--vx-transition);
-}
-.nav-item:hover .nav-icon {
-  opacity: 0.7;
-}
-.nav-item.active .nav-icon {
-  opacity: 1;
-}
-.nav-badge {
-  font-size: 9px;
-  font-weight: 600;
-  background: var(--vx-gold);
-  color: #fff;
-  padding: 2px 7px;
-  border-radius: 10px;
-  margin-left: auto;
-  letter-spacing: 0.05em;
+  /* Segue a cor do item — é o mesmo sinal, não um segundo. */
+  color: currentColor;
+  transition: color var(--vx-transition);
 }
 
+/* O grupo de baixo (status, Configurações, Sair) se separa dos itens de
+   operação pela POSIÇÃO — o `.sidebar-nav` cresce e empurra. Sem título de
+   seção, sem divisor extra. */
+.sidebar-nav {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding-top: 8px;
+}
+.sidebar-rodape {
+  flex-shrink: 0;
+  padding-bottom: 6px;
+}
 .sidebar-footer {
-  margin-top: auto;
-  padding: 14px 20px;
-  border-top: 1px solid var(--vx-sidebar-linha);
+  padding: 10px 18px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 .sidebar-status-dot {
   width: 6px;
@@ -444,30 +428,20 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  width: 100%;
-  padding: 10px 20px 16px;
+  height: 33px;
+  padding: 0 10px;
+  margin: 1.5px var(--vx-nav-margem);
+  border-radius: 5px;
   background: none;
   border: none;
   cursor: pointer;
   font-family: inherit;
-  font-size: 13px;
-  color: rgba(240, 236, 228, 0.45);
-  transition: color var(--vx-transition);
+  font-size: 11.5px;
+  color: var(--vx-text);
+  transition: color var(--vx-transition), background var(--vx-transition);
 }
 .sidebar-logout:hover {
-  color: rgba(240, 236, 228, 0.85);
-}
-.sidebar-logout .nav-icon {
-  opacity: 0.5;
-  flex-shrink: 0;
-}
-.sidebar-logout:hover .nav-icon {
-  opacity: 0.9;
-}
-.layout.collapsed .sidebar-logout {
-  justify-content: center;
-  padding-left: 0;
-  padding-right: 0;
+  background: color-mix(in srgb, var(--vx-accent) 7%, transparent);
 }
 @keyframes pulse-dot {
   0%,
@@ -480,8 +454,8 @@
 }
 .sidebar-status-text {
   font-size: 10px;
-  color: rgba(240, 236, 228, 0.25);
-  letter-spacing: 0.05em;
+  color: var(--vx-muted);
+  letter-spacing: 0;
 }
 
 /* ── MAIN / TOPBAR ── */
@@ -614,14 +588,14 @@
   .layout.collapsed .sidebar-logo .logo-mark {
     display: none;
   }
-  .layout.collapsed .nav-section,
   .layout.collapsed .nav-label,
   .layout.collapsed .sidebar-status-text {
     display: none;
   }
-  .layout.collapsed .nav-item {
+  .layout.collapsed .nav-item,
+  .layout.collapsed .sidebar-logout {
     justify-content: center;
-    margin: 1px 0.5rem;
+    margin: 1.5px 8px;
     padding-left: 0;
     padding-right: 0;
     gap: 0;
@@ -674,10 +648,14 @@
 
 /* Mobile */
 @media (max-width: 640px) {
+  /* No mobile ela DESLIZA POR CIMA do conteúdo, então aqui o fundo
+     transparente não serve: o texto de baixo apareceria através dela. Este é
+     o único lugar em que a sidebar volta a ser superfície. */
   .sidebar {
     transform: translateX(-100%);
     z-index: 40;
     width: 260px;
+    background: var(--vx-bg);
   }
   .sidebar.open {
     transform: translateX(0);
@@ -1555,7 +1533,7 @@ select.form-input {
   left: 3px;
   right: 3px;
   background: var(--vx-accent-light);
-  border-left: 2px solid var(--vx-accent);
+  border-left: 2px solid var(--vx-border2);
   border-radius: 4px;
   padding: 4px 8px;
   cursor: pointer;
@@ -1570,7 +1548,7 @@ select.form-input {
 .agenda-event-time {
   font-size: 10px;
   font-family: var(--font-jetbrains), monospace;
-  color: var(--vx-accent);
+  color: var(--vx-text2);
   font-weight: 500;
   line-height: 1.2;
 }
@@ -1787,7 +1765,7 @@ select.form-input {
   line-height: 1.4;
   padding: 2px 6px;
   border-radius: 4px;
-  border-left: 2px solid var(--vx-accent);
+  border-left: 2px solid var(--vx-border2);
   background: var(--vx-accent-light);
   color: var(--vx-text);
   white-space: nowrap;
@@ -2105,7 +2083,7 @@ select.form-input {
   height: 34px;
   border-radius: 10px;
   background: var(--vx-surface2);
-  color: var(--vx-accent);
+  color: var(--vx-text2);
   flex-shrink: 0;
 }
 .config-linha-label {
@@ -2278,13 +2256,6 @@ select.form-input {
 .prof-dia-faixa.vazio {
   color: var(--vx-muted);
   opacity: 0.5;
-}
-
-/* Configurações no rodapé da sidebar (fora da lista de operação) */
-.nav-item.nav-item-footer {
-  padding-top: 0.7rem;
-  padding-bottom: 0.7rem;
-  margin-top: 0;
 }
 
 /* ========================================================================
@@ -2534,7 +2505,7 @@ select.form-input {
   font-size: 20px;
   font-weight: 600;
   line-height: 1;
-  color: var(--vx-accent);
+  color: var(--vx-text2);
   font-variant-numeric: tabular-nums;
 }
 .promo-sub {
@@ -2593,7 +2564,7 @@ select.form-input {
   font-weight: 600;
   margin-top: 5px;
   font-size: 16px;
-  color: var(--vx-accent);
+  color: var(--vx-text2);
   line-height: 1.2;
   font-variant-numeric: tabular-nums;
 }
@@ -2683,7 +2654,7 @@ select.form-input {
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.11em;
-  color: var(--vx-accent);
+  color: var(--vx-text2);
   margin-bottom: 7px;
 }
 .promo-preview-texto {
@@ -2862,7 +2833,7 @@ select.form-input {
   font-size: 20px;
   font-weight: 600;
   line-height: 1;
-  color: var(--vx-accent);
+  color: var(--vx-text2);
   font-variant-numeric: tabular-nums;
 }
 
@@ -3261,7 +3232,7 @@ select.form-input {
 .ag-lista-dia-num {
   font-weight: 600;
   font-size: 16px;
-  color: var(--vx-accent);
+  color: var(--vx-text2);
   line-height: 1;
   font-variant-numeric: tabular-nums;
 }
@@ -3304,7 +3275,7 @@ select.form-input {
 .ag-lista-hora {
   font-family: var(--font-jetbrains), monospace;
   font-size: 11.5px;
-  color: var(--vx-accent);
+  color: var(--vx-text2);
   width: 42px;
   flex-shrink: 0;
 }
@@ -3994,7 +3965,11 @@ select.form-input {
 .neg-barra {
   height: 100%;
   border-radius: 3px;
-  background: linear-gradient(90deg, var(--vx-accent), var(--vx-gold));
+  /* Neutra. A barra comunica GRANDEZA, e o comprimento faz isso sozinho — em
+     dourado, uma dúzia delas disputava com o item ativo do menu, que é o
+     único lugar onde essa cor precisa querer dizer alguma coisa. */
+  background: var(--vx-text2);
+  opacity: 0.4;
 }
 
 /* ── Profissionais ── */

@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CalendarDays } from "lucide-react";
-import { rotuloIntervalo, saudacaoDe } from "@/lib/date";
-import { DateFilter } from "@/components/date-filter";
+import { saudacaoDe } from "@/lib/date";
+import { DateRangePicker } from "@/components/date-range-picker";
 import { Negocios } from "@/components/negocios/negocios";
 import { Dashboard } from "@/components/dashboard/dashboard";
 
@@ -14,15 +13,6 @@ import { Dashboard } from "@/components/dashboard/dashboard";
 //
 // O período é estado DAQUI justamente por isso: trocar de aba não perde o
 // recorte que a pessoa escolheu.
-
-const PERIODS: ReadonlyArray<[string, string]> = [
-  ["hoje", "Hoje"],
-  ["ontem", "Ontem"],
-  ["7d", "Últimos 7 dias"],
-  ["30d", "Últimos 30 dias"],
-  ["mes", "Este mês"],
-  ["tudo", "Tudo"],
-];
 
 const ABAS = [
   { id: "negocios", label: "Negócios" },
@@ -38,7 +28,6 @@ export function VisaoGeral() {
     prefix: string;
     word: string;
   } | null>(null);
-  const [intervalo, setIntervalo] = useState<string | null>(null);
 
   // Só no cliente (o servidor está em UTC e a saudação é local). Reavalia a
   // cada minuto porque o painel fica aberto o dia todo.
@@ -48,10 +37,6 @@ export function VisaoGeral() {
     const t = setInterval(aplicar, 60_000);
     return () => clearInterval(t);
   }, []);
-
-  useEffect(() => {
-    setIntervalo(rotuloIntervalo(period));
-  }, [period]);
 
   return (
     <div className="page-fade">
@@ -67,13 +52,7 @@ export function VisaoGeral() {
         </div>
 
         <div className="vg-controles">
-          <DateFilter
-            value={period}
-            options={PERIODS}
-            onChange={setPeriod}
-            icone={<CalendarDays size={14} strokeWidth={1.6} />}
-            rotulo={intervalo ?? undefined}
-          />
+          <DateRangePicker value={period} onChange={setPeriod} />
           <div className="vg-abas" role="tablist" aria-label="Seções do início">
             {ABAS.map((a) => (
               <button

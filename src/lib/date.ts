@@ -1,5 +1,7 @@
 // Helpers de período/filtro por data — portados 1:1 do legacy.
 
+import { lerPeriodoCustom } from "@/lib/periodo";
+
 export type Periodo = "hoje" | "ontem" | "semana" | "mes" | "tudo";
 
 export interface DateRange {
@@ -19,6 +21,17 @@ export function getDateRange(
 ): DateRange | null {
   const now = agora;
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+  // Intervalo escolhido à mão no calendário. Vem embutido na própria string
+  // (`custom:2026-07-03..2026-07-17`) para que todo mundo que já pergunta o
+  // período a esta função — filterByDate, serieDiaria, rotuloIntervalo,
+  // resumoFinanceiro — passe a aceitar range sem mudar uma linha.
+  const custom = lerPeriodoCustom(period);
+  if (custom) {
+    // `to` é EXCLUSIVO em todo o resto do arquivo: o último dia entra inteiro.
+    return { from: custom.de, to: new Date(custom.ate.getTime() + 86400000) };
+  }
+
   switch (period) {
     case "hoje":
       return { from: today, to: new Date(today.getTime() + 86400000) };
@@ -42,9 +55,26 @@ export function getDateRange(
         from: new Date(today.getTime() - 6 * 86400000),
         to: new Date(today.getTime() + 86400000),
       };
+    case "15d":
+      return {
+        from: new Date(today.getTime() - 14 * 86400000),
+        to: new Date(today.getTime() + 86400000),
+      };
     case "30d":
       return {
         from: new Date(today.getTime() - 29 * 86400000),
+        to: new Date(today.getTime() + 86400000),
+      };
+    case "90d":
+      return {
+        from: new Date(today.getTime() - 89 * 86400000),
+        to: new Date(today.getTime() + 86400000),
+      };
+    // Um ano conta em MESES, não em 365 dias: "último ano" partindo de
+    // 11/08/2026 é 12/08/2025 em diante, e isso muda com ano bissexto.
+    case "1a":
+      return {
+        from: new Date(now.getFullYear() - 1, now.getMonth(), now.getDate() + 1),
         to: new Date(today.getTime() + 86400000),
       };
     case "mes":

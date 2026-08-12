@@ -103,16 +103,17 @@
   --vx-accent: #8a6a2f;
   --vx-accent2: #6e5423;
   --vx-accent-light: #f5ede0;
-  /* Paleta categórica — identidade de PESSOA, não status. Validada nos cinco
-     checks (banda de luminosidade, piso de croma, separação para daltonismo,
-     piso de visão normal e contraste com a superfície), incluindo o par que
-     fecha o círculo da rosca. Nenhuma delas é dourada: essa cor é do estado
-     selecionado e de mais nada. */
-  --vx-cat-1: #2f6fd6;
-  --vx-cat-2: #c2358f;
-  --vx-cat-3: #7f8a1a;
-  --vx-cat-4: #0e86a0;
-  --vx-cat-5: #b0472f;
+  /* Rampa do DOURADO, não paleta categórica. A troca é de ENCODING: a cor
+     deixou de dizer QUEM (identidade) e passou a dizer QUANTO (fatia). Quem
+     diz quem é a legenda ao lado, com nome e valor em cada linha.
+     Isso é o que torna legítimo pintar por posto: o passo da rampa É a ordem.
+     Todos os passos ficam acima de 3:1 contra a superfície — a rampa que
+     clareia até quase o branco some no tema claro. */
+  --vx-cat-1: #543f12;
+  --vx-cat-2: #705823;
+  --vx-cat-3: #866c34;
+  --vx-cat-4: #977d44;
+  --vx-cat-5: #a58a51;
 
   --vx-gold: #b8955a;
   --vx-gold-light: #f7f0e4;
@@ -190,13 +191,17 @@
   --vx-accent: #d4af63;
   --vx-accent2: #e0bd7a;
   --vx-accent-light: #2a2218;
-  /* Passo escuro da paleta categórica — escolhido, não invertido: a banda de
-     luminosidade no escuro é 0,48–0,67, mais estreita que a do claro. */
-  --vx-cat-1: #4d88e0;
-  --vx-cat-2: #cf5aa4;
-  --vx-cat-3: #88991f;
-  --vx-cat-4: #2b9fbd;
-  --vx-cat-5: #d66c4a;
+  /* Rampa do DOURADO, não paleta categórica. A troca é de ENCODING: a cor
+     deixou de dizer QUEM (identidade) e passou a dizer QUANTO (fatia). Quem
+     diz quem é a legenda ao lado, com nome e valor em cada linha.
+     Isso é o que torna legítimo pintar por posto: o passo da rampa É a ordem.
+     Todos os passos ficam acima de 3:1 contra a superfície — a rampa que
+     clareia até quase o branco some no tema claro. */
+  --vx-cat-1: #eedebb;
+  --vx-cat-2: #d4c4a0;
+  --vx-cat-3: #c1a975;
+  --vx-cat-4: #b08e45;
+  --vx-cat-5: #8c7648;
 
   --vx-gold: #c8a060;
   --vx-gold-light: #261f10;
@@ -246,13 +251,17 @@
   --vx-accent: #d9b45f;
   --vx-accent2: #e5c477;
   --vx-accent-light: #211c14;
-  /* Passo escuro da paleta categórica — escolhido, não invertido: a banda de
-     luminosidade no escuro é 0,48–0,67, mais estreita que a do claro. */
-  --vx-cat-1: #4d88e0;
-  --vx-cat-2: #cf5aa4;
-  --vx-cat-3: #88991f;
-  --vx-cat-4: #2b9fbd;
-  --vx-cat-5: #d66c4a;
+  /* Rampa do DOURADO, não paleta categórica. A troca é de ENCODING: a cor
+     deixou de dizer QUEM (identidade) e passou a dizer QUANTO (fatia). Quem
+     diz quem é a legenda ao lado, com nome e valor em cada linha.
+     Isso é o que torna legítimo pintar por posto: o passo da rampa É a ordem.
+     Todos os passos ficam acima de 3:1 contra a superfície — a rampa que
+     clareia até quase o branco some no tema claro. */
+  --vx-cat-1: #eedebb;
+  --vx-cat-2: #d4c4a0;
+  --vx-cat-3: #c1a975;
+  --vx-cat-4: #b08e45;
+  --vx-cat-5: #8c7648;
 
   --vx-gold: #d9b978;
   --vx-gold-light: #1e1a11;
@@ -4281,4 +4290,210 @@ select.form-input {
   justify-content: flex-end;
   gap: 10px;
   margin-top: 20px;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SELETOR DE PERÍODO COM CALENDÁRIO (Visão geral)
+   Duas partes: atalhos à esquerda, dois meses à direita.
+   Lógica pura em src/lib/periodo.ts.
+   ══════════════════════════════════════════════════════════════ */
+.drp-pop {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 50;
+  display: flex;
+  width: 560px;
+  max-width: calc(100vw - 32px);
+  border: 1px solid var(--vx-border);
+  border-radius: 10px;
+  background: var(--vx-surface);
+  /* Overlay de verdade: flutua sobre o conteúdo e sem elevação encostaria no
+     que está atrás. É uma das poucas sombras que sobraram na interface. */
+  box-shadow: 0 4px 6px -1px rgba(26, 24, 20, 0.1),
+    0 10px 24px -6px rgba(26, 24, 20, 0.12);
+  overflow: hidden;
+}
+
+/* Atalhos: TEXTO, não botão nem link. Uma coluna de pílulas coloridas ao lado
+   do calendário competiria com as pontas do intervalo, que é onde a cor
+   precisa estar. */
+.drp-rail {
+  width: 172px;
+  flex-shrink: 0;
+  padding: 12px 8px;
+  border-right: 1px solid var(--vx-border);
+}
+.drp-rail-titulo {
+  padding: 0 8px 8px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--vx-text);
+}
+.drp-atalho {
+  display: block;
+  width: 100%;
+  padding: 5px 8px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  font-family: inherit;
+  font-size: 11.5px;
+  font-weight: 400;
+  text-align: left;
+  color: var(--vx-text);
+  cursor: pointer;
+  transition: background var(--vx-transition);
+}
+.drp-atalho:hover {
+  background: var(--vx-surface2);
+}
+.drp-atalho.ativo {
+  color: var(--vx-accent);
+  font-weight: 500;
+}
+
+.drp-cal {
+  flex: 1;
+  min-width: 0;
+  padding: 12px;
+}
+.drp-cab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.drp-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  border: 1px solid var(--vx-border);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--vx-text2);
+  cursor: pointer;
+  transition: color var(--vx-transition), background var(--vx-transition);
+}
+.drp-nav:hover {
+  background: var(--vx-surface2);
+  color: var(--vx-text);
+}
+.drp-nav:last-of-type {
+  margin-left: auto;
+}
+/* Mês e ano em <select>: é o que troca vinte cliques na setinha por dois. */
+.drp-select {
+  padding: 3px 6px;
+  border: 1px solid var(--vx-border);
+  border-radius: 4px;
+  background: var(--vx-surface2);
+  color: var(--vx-text);
+  font-family: inherit;
+  font-size: 11.5px;
+  cursor: pointer;
+}
+
+.drp-meses {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.drp-mes-nome {
+  margin-bottom: 6px;
+  font-size: 11.5px;
+  font-weight: 500;
+  text-align: center;
+  color: var(--vx-text2);
+}
+.drp-semana,
+.drp-grade {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+.drp-wd {
+  padding-bottom: 4px;
+  font-size: 10px;
+  font-weight: 400;
+  text-align: center;
+  color: var(--vx-muted);
+}
+
+/* A CÉLULA QUADRADA é o que faz o intervalo virar faixa.
+   Com `border-radius: 50%` (o padrão de quase todo kit) os dias preenchidos
+   viram bolinhas soltas e o range lê como seleção múltipla. Aqui o miolo
+   encosta de borda a borda: sem `gap` na grade, sem raio grande. */
+.drp-dia {
+  aspect-ratio: 1;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  font-family: inherit;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--vx-text);
+  cursor: pointer;
+  transition: background var(--vx-transition), color var(--vx-transition);
+}
+.drp-dia:hover {
+  background: var(--vx-surface3);
+}
+/* Dia de preenchimento do mês vizinho: continua clicável — quem quer 30/07 a
+   02/08 não deveria ter que trocar de mês no meio da seleção. */
+.drp-dia.fora {
+  color: var(--vx-muted);
+  opacity: 0.5;
+}
+/* Hoje: só um sublinhado. Um círculo aqui disputaria com as pontas. */
+.drp-dia.hoje {
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+/* MIOLO DO INTERVALO — neutro quente, ZERO dourado.
+   Preencher o range inteiro com um tom do accent (o default de shadcn,
+   react-day-picker, MUI) transforma oito dias num borrão colorido. Com o meio
+   neutro, a cor sobra só para dizer onde começa e onde termina. */
+.drp-dia.dentro {
+  background: var(--vx-surface2);
+  color: var(--vx-text);
+  border-radius: 0;
+}
+/* AS DUAS PONTAS — o único dourado do popover. */
+.drp-dia.ponta {
+  background: var(--vx-accent);
+  color: var(--vx-on-accent);
+  font-weight: 600;
+  opacity: 1;
+}
+.drp-dia.ponta:hover {
+  background: var(--vx-accent2);
+}
+
+.drp-rodape {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--vx-border);
+  font-size: 10.5px;
+  color: var(--vx-muted);
+}
+
+/* Abaixo de ~620px o popover de 560 não cabe: os atalhos somem e fica um mês
+   só. Perder o calendário no celular seria pior que perder a segunda página. */
+@media (max-width: 620px) {
+  .drp-pop {
+    width: calc(100vw - 32px);
+  }
+  .drp-rail {
+    display: none;
+  }
+  .drp-meses {
+    grid-template-columns: 1fr;
+  }
+  .drp-meses > :nth-child(2) {
+    display: none;
+  }
 }

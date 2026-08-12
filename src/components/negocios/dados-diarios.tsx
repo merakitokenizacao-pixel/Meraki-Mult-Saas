@@ -9,8 +9,11 @@ import { moeda, moedaCurta, type PontoDia } from "@/lib/financeiro";
 export type SerieId = "criado" | "ganho" | "perdido";
 export type Modo = "valor" | "qtd";
 
+// Verde e vermelho ficam porque aqui eles SIGNIFICAM: ganho e perda. Já
+// "criado" não tem cor natural — era --vx-blue, um matiz que não dizia nada e
+// que vinha de uma segunda paleta. Passa a sair da rampa, a mesma da rosca.
 const SERIES: ReadonlyArray<{ id: SerieId; label: string; cor: string }> = [
-  { id: "criado", label: "Criados", cor: "--vx-blue" },
+  { id: "criado", label: "Criados", cor: "--vx-cat-1" },
   { id: "ganho", label: "Ganhos", cor: "--vx-green" },
   { id: "perdido", label: "Perdidos", cor: "--vx-red" },
 ];

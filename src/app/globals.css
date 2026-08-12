@@ -88,34 +88,44 @@
 /* ── TEMA CLARO (:root) — valores extraídos do legacy ── */
 :root {
   /* Paleta VoraX */
-  --vx-bg: #f8f6f2;
+  --vx-bg: #ffffff;
   --vx-surface: #ffffff;
-  --vx-surface2: #f2efe9;
-  --vx-surface3: #e8e4dc;
-  --vx-border: #e0dbd2;
-  --vx-border2: #c8c2b8;
-  --vx-text: #1a1814;
-  --vx-text2: #3d3930;
-  --vx-muted: #8a8478;
+  --vx-surface2: #f4f4f5;
+  --vx-surface3: #e4e4e7;
+  --vx-border: #e7e5e4;
+  --vx-border2: #d4d4d8;
+  --vx-text: #18181b;
+  --vx-text2: #3f3f46;
+  /* 4.83 sobre branco. O #8a8478 de antes dava 3.44 e reprovava no AA — e ele
+     era usado em rótulo, subtexto e nota de painel, ou seja, em texto pequeno,
+     que é onde a norma menos perdoa. */
+  --vx-muted: #71717a;
   /* 4.65 de contraste sobre --vx-bg (o #9b7d5a de antes dava 3.55 e reprovava
      no AA). Mais escuro E mais saturado: é o que faz o dourado virar tinta em
      vez de afundar num fundo que também é quente. */
   --vx-accent: #8a6a2f;
   --vx-accent2: #6e5423;
-  --vx-accent-light: #f5ede0;
-  /* Paleta categórica — identidade de PESSOA, não status. Validada nos cinco
-     checks (banda de luminosidade, piso de croma, separação para daltonismo,
-     piso de visão normal e contraste com a superfície), incluindo o par que
-     fecha o círculo da rosca. Nenhuma delas é dourada: essa cor é do estado
-     selecionado e de mais nada. */
-  --vx-cat-1: #2f6fd6;
-  --vx-cat-2: #c2358f;
-  --vx-cat-3: #7f8a1a;
-  --vx-cat-4: #0e86a0;
-  --vx-cat-5: #b0472f;
+  --vx-accent-light: #faf5ea;
+  /* Rampa do dourado — UMA paleta categórica só.
+     Existiam duas concorrentes (--chart-1..5 e --vx-cat-1..5), e era por isso
+     que a linha desenhava em navy enquanto a rosca desenhava em magenta e
+     oliva. Agora --chart-* aponta para cá.
+
+     A cor aqui codifica GRANDEZA, não identidade: um matiz, cinco passos. Quem
+     diz QUEM é a legenda ao lado, com nome e valor por linha.
+
+     ⚠️ Medido sobre #ffffff: 5.02 · 3.22 · 2.15 · 1.55 · 1.26 — os três
+     últimos passos ficam abaixo do piso de 3:1 e quase somem no branco. Os
+     valores são os do brief; a variante comprimida (que mantém todos acima de
+     3:1) está registrada na mensagem do commit. */
+  --vx-cat-1: #8a6a2f;
+  --vx-cat-2: #ab8b4d;
+  --vx-cat-3: #c9ad7c;
+  --vx-cat-4: #e0cdad;
+  --vx-cat-5: #efe4d0;
 
   --vx-gold: #b8955a;
-  --vx-gold-light: #f7f0e4;
+  --vx-gold-light: #fbf7f0;
   --vx-green: #3a6b4f;
   --vx-green-bg: #e8f4ed;
   --vx-amber: #b5600a;
@@ -161,11 +171,12 @@
   --border: var(--vx-border);
   --input: var(--vx-border);
   --ring: var(--vx-accent);
-  --chart-1: var(--vx-accent);
-  --chart-2: var(--vx-gold);
-  --chart-3: var(--vx-green);
-  --chart-4: var(--vx-blue);
-  --chart-5: var(--vx-purple);
+  /* Mesma paleta da rosca — eram duas listas concorrentes. */
+  --chart-1: var(--vx-cat-1);
+  --chart-2: var(--vx-cat-2);
+  --chart-3: var(--vx-cat-3);
+  --chart-4: var(--vx-cat-4);
+  --chart-5: var(--vx-cat-5);
   --sidebar: var(--vx-surface);
   --sidebar-foreground: var(--vx-text);
   --sidebar-primary: var(--vx-accent2);

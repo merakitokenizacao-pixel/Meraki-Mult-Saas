@@ -2,7 +2,7 @@
 
 import { getInitials } from "@/lib/format";
 import { moeda } from "@/lib/financeiro";
-import { qtdTexto, type FatiaProfissional } from "@/lib/atribuicao";
+import type { FatiaProfissional } from "@/lib/atribuicao";
 
 // Mesma fonte da rosca, leitura diferente: aqui interessa o valor por pessoa e
 // o ticket médio, não a fatia do bolo.
@@ -32,7 +32,7 @@ export function ProfissionaisVendas({ fatias }: { fatias: FatiaProfissional[] })
           <div className="neg-pessoa-corpo">
             <div className="neg-pessoa-nome">{f.nome}</div>
             <div className="neg-pessoa-sub">
-              {qtdTexto(f.qtd)} atendimento{qtdTexto(f.qtd) === "1" ? "" : "s"} · ticket{" "}
+              {Math.round(f.qtd)} atendimento{Math.round(f.qtd) === 1 ? "" : "s"} · ticket{" "}
               {moeda(f.qtd > 0 ? f.valor / f.qtd : 0)}
             </div>
           </div>

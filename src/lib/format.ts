@@ -12,17 +12,27 @@ export function getInitials(name?: string | null): string {
     .toUpperCase();
 }
 
-// Paleta determinística de cores de avatar (fundo, texto).
-export const AVATAR_PALETTE: ReadonlyArray<readonly [string, string]> = [
-  ["#8b5e3c", "#f5ede5"],
-  ["#2d6a4f", "#d8f3dc"],
-  ["#1a5276", "#e8f0fb"],
-  ["#6c5ce7", "#f0edff"],
-  ["#c0392b", "#fde8e8"],
-  ["#b5540a", "#fef3e2"],
+/**
+ * Cores do avatar, como TOKENS e não como hex.
+ *
+ * Eram pares [escura, clarinha] cravados aqui, e o componente pintava o fundo
+ * com a escura a 13% e o texto com a clarinha — 1,03 de contraste, invisível.
+ * Hex fixo também não tinha como funcionar nos dois temas: a cor que lê no
+ * branco some no #1a1814. O token resolve por tema; o fundo sai da própria
+ * cor por color-mix, então nunca mais há um segundo valor para desencontrar.
+ */
+export const AVATAR_PALETTE: ReadonlyArray<string> = [
+  "--vx-av-1",
+  "--vx-av-2",
+  "--vx-av-3",
+  "--vx-av-4",
+  "--vx-av-5",
+  "--vx-av-6",
 ];
 
-export function getAvatarColors(name?: string | null): readonly [string, string] {
+/** Sempre a mesma cor para o mesmo nome — a pessoa não muda de cor entre
+ *  telas nem entre sessões. */
+export function getAvatarColors(name?: string | null): string {
   const key = name || "?";
   return AVATAR_PALETTE[key.charCodeAt(0) % AVATAR_PALETTE.length];
 }

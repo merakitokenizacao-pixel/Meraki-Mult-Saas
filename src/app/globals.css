@@ -106,6 +106,20 @@
   --vx-accent: #8a6a2f;
   --vx-accent2: #6e5423;
   --vx-accent-light: #faf5ea;
+  /* Cores do avatar sem foto. Uma cor por pessoa, e o FUNDO é derivado dela
+     por color-mix — não um segundo hex fixo.
+
+     Antes eram pares [escura, clarinha] e o componente pintava o fundo com a
+     escura a 13% e o TEXTO com a clarinha: quase-branco sobre quase-branco,
+     1,03 de contraste. Invisível nos dois temas, e sem jeito de consertar sem
+     separar os passos por tema — que é o que estes tokens fazem. */
+  --vx-av-1: #8b5e3c;
+  --vx-av-2: #2d6a4f;
+  --vx-av-3: #1a5276;
+  --vx-av-4: #5c4fa0;
+  --vx-av-5: #a8322b;
+  --vx-av-6: #96470a;
+
   /* Rampa do dourado — UMA paleta categórica só.
      Existiam duas concorrentes (--chart-1..5 e --vx-cat-1..5), e era por isso
      que a linha desenhava em navy enquanto a rosca desenhava em magenta e
@@ -201,6 +215,15 @@
   --vx-accent: #d4af63;
   --vx-accent2: #e0bd7a;
   --vx-accent-light: #2a2218;
+  /* Passo claro das cores de avatar: no escuro a cor cheia precisa subir,
+     senão ela some no próprio tint. Medido sobre a superfície: 5,6–6,8. */
+  --vx-av-1: #c9a27a;
+  --vx-av-2: #6fc493;
+  --vx-av-3: #7fb3e0;
+  --vx-av-4: #a893e8;
+  --vx-av-5: #e88a84;
+  --vx-av-6: #e0a45c;
+
   /* Passo escuro da paleta categórica — escolhido, não invertido: a banda de
      luminosidade no escuro é 0,48–0,67, mais estreita que a do claro. */
   --vx-cat-1: #4d88e0;
@@ -257,6 +280,15 @@
   --vx-accent: #d9b45f;
   --vx-accent2: #e5c477;
   --vx-accent-light: #211c14;
+  /* Passo claro das cores de avatar: no escuro a cor cheia precisa subir,
+     senão ela some no próprio tint. Medido sobre a superfície: 5,6–6,8. */
+  --vx-av-1: #c9a27a;
+  --vx-av-2: #6fc493;
+  --vx-av-3: #7fb3e0;
+  --vx-av-4: #a893e8;
+  --vx-av-5: #e88a84;
+  --vx-av-6: #e0a45c;
+
   /* Passo escuro da paleta categórica — escolhido, não invertido: a banda de
      luminosidade no escuro é 0,48–0,67, mais estreita que a do claro. */
   --vx-cat-1: #4d88e0;

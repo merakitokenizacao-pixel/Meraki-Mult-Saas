@@ -34,9 +34,16 @@ function bubbleClasses(kind: "cliente" | "agente" | "humano") {
     "border px-4 py-2.5 text-[13.5px] leading-relaxed whitespace-pre-wrap break-words";
   if (kind === "cliente")
     return `${base} rounded-[16px] rounded-tl-[4px] border-vx-border bg-vx-surface text-vx-text`;
+  // HUMANO é neutro: quem digitou foi uma pessoa da clínica, e isso não
+  // precisa de cor própria — precisa só não ser confundido com a IA. Antes ele
+  // dividia o roxo com a agente, então os dois lados direitos da conversa eram
+  // a mesma coisa.
   if (kind === "humano")
-    return `${base} rounded-[16px] rounded-tr-[4px] border-vx-purple bg-vx-purple-bg text-vx-purple`;
-  return `${base} rounded-[16px] rounded-tr-[4px] border-transparent bg-vx-accent text-vx-on-accent dark:border-vx-accent dark:bg-vx-accent-light dark:text-vx-accent`;
+    return `${base} rounded-[16px] rounded-tr-[4px] border-vx-border bg-vx-surface2 text-vx-text`;
+  // IA na cor da marca, mas em TINT — não no accent chapado. Chapado, cada
+  // resposta da Laura virava um bloco dourado, e numa conversa longa isso é a
+  // maior massa de cor da tela.
+  return `${base} rounded-[16px] rounded-tr-[4px] border-vx-border bg-vx-accent-light text-vx-accent2`;
 }
 
 // useLayoutEffect roda ANTES da pintura — é o que evita ver a tela pular ao
@@ -169,7 +176,7 @@ export function ChatPanel({
           </div>
         )}
         {isHumano && (
-          <div className="mb-1 flex items-center gap-1 text-[9px] font-bold tracking-wider text-vx-purple">
+          <div className="mb-1 flex items-center gap-1 text-[9px] font-bold tracking-wider text-vx-muted">
             <UserRound size={12} /> Você
           </div>
         )}

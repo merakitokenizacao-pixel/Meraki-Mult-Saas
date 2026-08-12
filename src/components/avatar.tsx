@@ -28,7 +28,7 @@ export function Avatar({
   // é reaproveitado (cabeçalho do chat, painel de detalhes) todo cliente
   // seguinte caía nas iniciais, mesmo com foto válida.
   const [urlComErro, setUrlComErro] = useState<string | null>(null);
-  const [bg, fg] = getAvatarColors(nome);
+  const token = getAvatarColors(nome);
   const hasFoto = fotoUrl != null && !INVALID_FOTO.has(fotoUrl);
 
   if (hasFoto && urlComErro !== fotoUrl) {
@@ -54,8 +54,10 @@ export function Avatar({
     <div
       className={`avatar ${className}`}
       style={{
-        background: `${bg}22`,
-        color: fg,
+        // Fundo derivado da própria cor; texto na cor CHEIA. Antes o texto era
+        // um tom clarinho separado, e ele sumia no fundo.
+        background: `color-mix(in srgb, var(${token}) 12%, transparent)`,
+        color: `var(${token})`,
         width: size,
         height: size,
         fontSize,

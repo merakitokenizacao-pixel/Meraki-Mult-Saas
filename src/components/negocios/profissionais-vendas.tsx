@@ -1,7 +1,8 @@
 "use client";
 
 import { getInitials } from "@/lib/format";
-import { moeda, type FatiaProfissional } from "@/lib/financeiro";
+import { moeda } from "@/lib/financeiro";
+import type { FatiaProfissional } from "@/lib/atribuicao";
 
 // Mesma fonte da rosca, leitura diferente: aqui interessa o valor por pessoa e
 // o ticket médio, não a fatia do bolo.

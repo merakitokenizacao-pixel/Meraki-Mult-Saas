@@ -7,6 +7,7 @@ import {
   getAgendamentos,
   getAgendamentosComLead,
   getConversasByLead,
+  getEscala,
   getLeads,
   getProximasVisitas,
   getUltimaConversaPorLead,
@@ -119,5 +120,34 @@ export function useCatalogoServicos() {
       };
     },
     staleTime: 10 * 60 * 1000,
+  });
+}
+
+// Escala das profissionais — muda raramente, então cache longo.
+export function useEscala() {
+  return useQuery({
+    queryKey: ["escala"],
+    queryFn: getEscala,
+    staleTime: 10 * 60 * 1000,
+  });
+}
+
+// Follow-ups com o resultado calculado pela view (converteu = o lead marcou
+// em até 7 dias, sem cancelar). Rota de servidor: a view passa por service role.
+export function useFollowUps() {
+  return useQuery({
+    queryKey: ["follow-ups"],
+    queryFn: async () => {
+      const r = await fetch("/api/painel/follow-ups");
+      if (!r.ok) throw new Error("Não foi possível carregar os follow-ups");
+      const j = (await r.json()) as {
+        followups: Array<{
+          lead_id: string;
+          resultado: string | null;
+          agendou_em: string | null;
+        }>;
+      };
+      return j.followups ?? [];
+    },
   });
 }

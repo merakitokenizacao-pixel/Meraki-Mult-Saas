@@ -11,9 +11,8 @@
 // O que não dá para identificar ("Outro", caderninho, agenda legada) fica SEM
 // preço — chutar um ticket padrão foi o que fazia o total mentir.
 //
-// SINTÉTICO: a atribuição por PROFISSIONAL. `profissional_id` é nulo em todos
-// os agendamentos, então a divisão é derivada do id por hash. Está marcada na
-// tela com selo, e some sozinha quando a Agenda começar a atribuir.
+// QUEM ATENDEU: não fica mais aqui. Saiu para src/lib/atribuicao.ts, e passou
+// a ser derivado da ESCALA (quem estava de plantão), não de hash.
 
 import type { Agendamento } from "@/types/db";
 import { getDateRange } from "@/lib/date";
@@ -22,9 +21,6 @@ import {
   type PromocaoPreco,
   type ServicoCatalogo,
 } from "@/lib/servicos";
-
-/** Liga/desliga os dados estimados de uma vez. Ver aviso na tela. */
-export const FINANCEIRO_ESTIMADO = true;
 
 // ── Preço ────────────────────────────────────────────────────────────────────
 // NÃO existe tabela de preços aqui, e não pode voltar a existir: os valores são
@@ -48,40 +44,9 @@ export function valorDe(a: Agendamento, p: Precos = SEM_PRECOS): number | null {
   return resolverServico(a.servico, p.catalogo, p.promocoes).preco;
 }
 
-// ── Profissionais ────────────────────────────────────────────────────────────
-// A cor é um TOKEN, não um hex. A tabela `profissionais` guarda hex da paleta
-// CLARA (#3a6b4f, #2a5278…), que sobre superfície escura fica ilegível — medido
-// em 2:1 no tema Escuro. Apontando para o token, cada tema entrega a sua versão
-// da mesma cor e os três funcionam sem uma regra a mais.
-export const PROFISSIONAIS: ReadonlyArray<{
-  nome: string;
-  token: string;
-  peso: number;
-}> = [
-  { nome: "Mônica", token: "--vx-accent", peso: 4 },
-  { nome: "Alana", token: "--vx-green", peso: 3 },
-  { nome: "Gabriela", token: "--vx-blue", peso: 2 },
-  { nome: "Rozaria", token: "--vx-red", peso: 1 },
-];
-
-/** Hash estável do id. Determinístico de propósito: `Math.random()` mudaria a
- *  cada render e quebraria a hidratação (servidor e cliente sortear diferente). */
-function hashEstavel(texto: string): number {
-  let h = 0;
-  for (let i = 0; i < texto.length; i++) h = (h * 31 + texto.charCodeAt(i)) | 0;
-  return Math.abs(h);
-}
-
-const PESO_TOTAL = PROFISSIONAIS.reduce((s, p) => s + p.peso, 0);
-
-export function profissionalDe(a: Agendamento): (typeof PROFISSIONAIS)[number] {
-  let n = hashEstavel(a.id) % PESO_TOTAL;
-  for (const p of PROFISSIONAIS) {
-    if (n < p.peso) return p;
-    n -= p.peso;
-  }
-  return PROFISSIONAIS[0];
-}
+// (A lista de profissionais e a atribuição por hash saíram daqui. Quem
+// atendeu agora vem da escala — src/lib/atribuicao.ts. Manter o hash ao lado
+// convidaria a usar o errado de novo.)
 
 // ── Recortes de período ──────────────────────────────────────────────────────
 function dentroDoPeriodo(
@@ -105,7 +70,6 @@ export interface ResumoFinanceiro {
   ganho: Faixa;
   perdido: Faixa;
   aberto: Faixa;
-  recuperado: Faixa;
 }
 
 const zero = (): Faixa => ({ valor: 0, qtd: 0 });
@@ -136,7 +100,6 @@ export function resumoFinanceiro(
     ganho: zero(),
     perdido: zero(),
     aberto: zero(),
-    recuperado: zero(),
   };
   const agora = agoraRef.getTime();
 
@@ -146,10 +109,6 @@ export function resumoFinanceiro(
     const noPeriodo = dentroDoPeriodo(a.data_agendamento, period, agoraRef);
     if (noPeriodo && a.status === "realizado") {
       somar(r.ganho, a, precos);
-      // "Recuperado": o que voltou depois de um follow-up. Não existe coluna
-      // que marque isso, então aqui é uma fatia estável do ganho — presença
-      // visual, não informação.
-      if (hashEstavel(a.id) % 7 === 0) somar(r.recuperado, a, precos);
     }
     if (noPeriodo && a.status === "cancelado") somar(r.perdido, a, precos);
 
@@ -247,41 +206,6 @@ export function serieDiaria(
 }
 
 // ── Fatias e rankings ────────────────────────────────────────────────────────
-export interface FatiaProfissional {
-  nome: string;
-  token: string;
-  valor: number;
-  qtd: number;
-  pct: number;
-}
-
-export function porProfissional(
-  agendamentos: Agendamento[],
-  period: string,
-  precos: Precos = SEM_PRECOS,
-  agora?: Date
-): FatiaProfissional[] {
-  const acc = new Map<string, { token: string; valor: number; qtd: number }>();
-  for (const a of agendamentos) {
-    if (a.status !== "realizado") continue;
-    if (!dentroDoPeriodo(a.data_agendamento, period, agora)) continue;
-    const p = profissionalDe(a);
-    const atual = acc.get(p.nome) ?? { token: p.token, valor: 0, qtd: 0 };
-    atual.valor += valorDe(a, precos) ?? 0;
-    atual.qtd += 1;
-    acc.set(p.nome, atual);
-  }
-  const total = [...acc.values()].reduce((s, v) => s + v.valor, 0);
-  return [...acc.entries()]
-    .map(([nome, v]) => ({
-      nome,
-      token: v.token,
-      valor: v.valor,
-      qtd: v.qtd,
-      pct: total > 0 ? (v.valor / total) * 100 : 0,
-    }))
-    .sort((a, b) => b.valor - a.valor);
-}
 
 export interface LinhaServico {
   nome: string;

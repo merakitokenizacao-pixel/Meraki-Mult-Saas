@@ -15,8 +15,14 @@ const PUBLICAS = ["/login", "/ficha", "/api/ficha"];
 // Google. Lista de EXATAS (não prefixo) para não abrir nada além do previsto.
 const SITE = new Set(["/", "/privacidade"]);
 
-// Para onde vai quem já está logado (a raiz agora é o site institucional).
+// Para onde vai quem já está logado (a raiz é o site institucional).
 const HOME_PAINEL = "/visao-geral";
+
+// Rotas que só fazem sentido para quem NÃO está logado. A landing vende a
+// Laura para donas de clínica; para quem já é cliente e tem sessão, ela é só
+// um obstáculo entre o atalho do navegador e o painel.
+// `/privacidade` fica de fora de propósito: vale para todo mundo, logado ou não.
+const SO_DESLOGADO = new Set(["/", "/login"]);
 
 function ehPublica(pathname: string): boolean {
   if (SITE.has(pathname)) return true;
@@ -69,8 +75,8 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Já logado abrindo /login → vai direto pro painel (não para o site).
-  if (user && pathname === "/login") {
+  // Já logado abrindo a landing ou o login → vai direto pro painel.
+  if (user && SO_DESLOGADO.has(pathname)) {
     const url = request.nextUrl.clone();
     url.pathname = HOME_PAINEL;
     url.search = "";

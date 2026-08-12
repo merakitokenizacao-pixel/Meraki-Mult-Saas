@@ -266,3 +266,37 @@ export async function getConversasByLead(
   if (error) throw error;
   return ((data ?? []) as Conversa[]).reverse();
 }
+
+// ── Escala (para atribuir quem atendeu) ──
+// `profissionais` e `profissional_horarios` têm policy para `authenticated`,
+// então o navegador lê direto. São 4 e 23 linhas — limite explícito por regra
+// da casa, não por necessidade.
+export async function getEscala(): Promise<{
+  profissionais: { id: string; nome: string; ativo: boolean | null }[];
+  horarios: {
+    profissional_id: string;
+    dia_semana: number;
+    hora_inicio: string;
+    hora_fim: string;
+  }[];
+}> {
+  const [p, h] = await Promise.all([
+    supabase.from("profissionais").select("id, nome, ativo").order("nome").limit(200),
+    supabase
+      .from("profissional_horarios")
+      .select("profissional_id, dia_semana, hora_inicio, hora_fim")
+      .order("dia_semana")
+      .limit(1000),
+  ]);
+  if (p.error) throw p.error;
+  if (h.error) throw h.error;
+  return {
+    profissionais: (p.data ?? []) as { id: string; nome: string; ativo: boolean | null }[],
+    horarios: (h.data ?? []) as {
+      profissional_id: string;
+      dia_semana: number;
+      hora_inicio: string;
+      hora_fim: string;
+    }[],
+  };
+}

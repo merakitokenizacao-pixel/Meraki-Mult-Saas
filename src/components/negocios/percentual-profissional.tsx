@@ -4,7 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { Chart } from "chart.js";
 import { getChartStyle } from "@/lib/chart";
 import { useTheme } from "@/components/theme-provider";
-import { moeda, type FatiaProfissional } from "@/lib/financeiro";
+import { moeda } from "@/lib/financeiro";
+import type { FatiaProfissional } from "@/lib/atribuicao";
 
 /** Resolve um token CSS para o valor do tema ATUAL. O canvas não herda CSS,
  *  então cor de gráfico tem que ser lida, não escrita. */

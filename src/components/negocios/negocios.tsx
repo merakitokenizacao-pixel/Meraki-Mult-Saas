@@ -9,16 +9,22 @@ import {
   TrendingDown,
   TrendingUp,
 } from "lucide-react";
-import { useAgendamentosComLead, useCatalogoServicos } from "@/lib/hooks";
 import {
-  FINANCEIRO_ESTIMADO,
+  useAgendamentosComLead,
+  useCatalogoServicos,
+  useEscala,
+  useFollowUps,
+} from "@/lib/hooks";
+import { atribuirPorEscala } from "@/lib/atribuicao";
+import {
   moeda,
-  porProfissional,
   rankingServicos,
   resumoFinanceiro,
   serieDiaria,
   contarSemPreco,
+  valorDe,
 } from "@/lib/financeiro";
+import { filterByDate } from "@/lib/date";
 import { KpiCard, type TomKpi } from "@/components/negocios/kpi-card";
 import {
   DadosDiarios,
@@ -82,7 +88,6 @@ const CARDS: ReadonlyArray<{
     tom: "accent",
     apoio: (q) => `${q} marcado${q === 1 ? "" : "s"}`,
     serie: null,
-    selo: "agora",
     dica:
       "Marcados que ainda vão acontecer. Não segue o filtro de período: aberto é situação de agora, não recorte do passado.",
   },
@@ -93,9 +98,8 @@ const CARDS: ReadonlyArray<{
     tom: "purple",
     apoio: (q) => `${q} pelo follow-up`,
     serie: null,
-    selo: "simulado",
     dica:
-      "Cliente que voltou depois de um follow-up. Ainda não existe coluna que marque isso — este é o card que mais depende da tabela nova.",
+      "Atendimento realizado por cliente que marcou em até 7 dias depois de receber um follow-up (a regra é da view follow_ups_resultado). Hoje nenhum follow-up converteu, então o zero é real.",
   },
 ];
 
@@ -106,6 +110,8 @@ export function Negocios({ period }: { period: string }) {
   // Preços vêm do catálogo da clínica (documentos_lins), não de tabela no
   // código. Enquanto carrega, as somas ficam zeradas em vez de chutadas.
   const catalogoQ = useCatalogoServicos();
+  const escalaQ = useEscala();
+  const followQ = useFollowUps();
   const precos = useMemo(
     () => ({
       catalogo: catalogoQ.data?.servicos ?? [],
@@ -127,10 +133,45 @@ export function Negocios({ period }: { period: string }) {
     () => serieDiaria(agendamentos, period, precos),
     [agendamentos, period, precos]
   );
-  const fatias = useMemo(
-    () => porProfissional(agendamentos, period, precos),
-    [agendamentos, period, precos]
-  );
+  // Quem atendeu vem da ESCALA, não de hash: nunca se atribui atendimento a
+  // quem não estava trabalhando. Com uma profissional de plantão a atribuição é
+  // exata; com várias, o valor é rateado em partes iguais — estimador sem viés,
+  // e a soma continua fechando com o faturamento.
+  const atribuicao = useMemo(() => {
+    const realizados = filterByDate(agendamentos, "data_agendamento", period)
+      .filter((a) => a.status === "realizado");
+    return atribuirPorEscala(
+      realizados.map((a) => ({
+        data_agendamento: a.data_agendamento,
+        valor: valorDe(a, precos),
+      })),
+      escalaQ.data?.horarios ?? [],
+      escalaQ.data?.profissionais ?? []
+    );
+  }, [agendamentos, period, precos, escalaQ.data]);
+  const fatias = atribuicao.fatias;
+
+  // Receita recuperada: atendimento REALIZADO de um lead que marcou dentro de
+  // 7 dias após receber um follow-up. Mesma regra da view; aqui precisamos do
+  // agendamento em si para somar o valor, e a view só devolve o instante.
+  const recuperado = useMemo(() => {
+    const fus = followQ.data ?? [];
+    if (fus.length === 0) return { valor: 0, qtd: 0 };
+    const convertidos = fus.filter((fu) => fu.resultado === "convertido");
+    let valor = 0;
+    let qtd = 0;
+    const noPeriodo = filterByDate(agendamentos, "data_agendamento", period);
+    for (const a of noPeriodo) {
+      if (a.status !== "realizado") continue;
+      const casou = convertidos.some(
+        (fu) => fu.lead_id === a.lead_id && fu.agendou_em === a.criado_em
+      );
+      if (!casou) continue;
+      valor += valorDe(a, precos) ?? 0;
+      qtd += 1;
+    }
+    return { valor, qtd };
+  }, [followQ.data, agendamentos, period, precos]);
   const servicos = useMemo(
     () => rankingServicos(agendamentos, period, precos),
     [agendamentos, period, precos]
@@ -154,37 +195,29 @@ export function Negocios({ period }: { period: string }) {
 
   return (
     <div className="neg-fill">
-      {FINANCEIRO_ESTIMADO && (
-        <div className="neg-aviso" role="note">
-          <Info size={15} strokeWidth={1.8} />
-          <div>
-            <strong>Preços do catálogo da clínica.</strong> Os agendamentos são
-            reais e os valores vêm de <code>documentos_lins</code> — a mesma
-            base que a Laura consulta no WhatsApp. Quando o agendamento diz só
-            {" "}<em>&ldquo;Limpeza de pele&rdquo;</em> (o catálogo tem 4
-            variantes), entra a média da família.
-            {/* O que não dá para identificar fica FORA da soma, em vez de
-                entrar por um ticket chutado. Dizer o tamanho disso é o que
-                permite ler o total como piso, e não como verdade. */}
-            {ticket.semPreco > 0 && (
-              <>
-                {" "}
-                <strong>
-                  {ticket.semPreco} de {ticket.total}
-                </strong>{" "}
-                atendimentos não dizem qual serviço foi feito (importação
-                antiga, &ldquo;Outro&rdquo;, caderninho) e ficam de fora da
-                soma — então o total é piso, não fechamento. A divisão{" "}
-                <em>por profissional</em> segue sintética.
-              </>
-            )}
-          </div>
+      {/* Uma LINHA, não um bloco. A divisão por profissional deixou de ser
+          sintética, então a maior ressalva caiu — mas o preço ainda vem do
+          catálogo (agendamentos.valor está vazio) e o que não diz o serviço
+          fica fora da soma. Apagar tudo faria o total ser lido como exato. */}
+      {!carregando && ticket.semPreco > 0 && (
+        <div className="neg-nota-topo" role="note">
+          <Info size={13} strokeWidth={1.8} />
+          <span>
+            Preços do catálogo da clínica.{" "}
+            <strong>
+              {ticket.semPreco} de {ticket.total}
+            </strong>{" "}
+            atendimentos não dizem qual serviço foi feito e ficam de fora da
+            soma — o total é piso.
+          </span>
         </div>
       )}
 
       <div className="neg-grid">
         {CARDS.map((c) => {
-          const faixa = resumo[c.chave];
+          // "recuperado" não sai mais do resumo (que o derivava por hash):
+          // vem dos follow-ups que de fato converteram.
+          const faixa = c.chave === "recuperado" ? recuperado : resumo[c.chave];
           return (
             <KpiCard
               key={c.chave}
@@ -250,14 +283,15 @@ export function Negocios({ period }: { period: string }) {
             <div>
               <h2 className="neg-painel-titulo">
                 Percentual por profissional
-                {/* O único widget da tela sem NENHUM lastro: `profissional_id`
-                    é nulo em 303 de 303 agendamentos, então a divisão é gerada
-                    por hash. Sem selo, uma rosca com nomes e percentuais é lida
-                    como fato — é a peça mais fácil de acreditar por engano. */}
-                <span className="neg-selo">sintético</span>
               </h2>
+              {/* Diz de onde vem o número em vez de rotular. `profissional_id`
+                  é nulo, então quem atendeu sai da ESCALA: com uma de plantão a
+                  atribuição é exata; com várias, o valor é rateado entre elas.
+                  Mostrar a proporção é o que permite ler o gráfico certo. */}
               <span className="neg-painel-nota">
-                Não há vínculo de profissional no banco ainda
+                {atribuicao.exatos + atribuicao.rateados === 0
+                  ? "Pela escala de quem estava de plantão"
+                  : `Pela escala · ${atribuicao.exatos} exatos, ${atribuicao.rateados} rateados entre quem estava de plantão`}
               </span>
             </div>
           </header>

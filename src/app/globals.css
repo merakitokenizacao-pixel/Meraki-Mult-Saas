@@ -4304,3 +4304,29 @@ select.form-input {
   gap: 10px;
   margin-top: 20px;
 }
+
+/* Nota do topo da aba Negócios — uma linha, não um bloco.
+   O aviso antigo era um parágrafo de 4 linhas em caixa âmbar; com a divisão
+   por profissional deixando de ser sintética, sobrou só a ressalva do preço,
+   que não merece esse peso visual. */
+.neg-nota-topo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  padding: 7px 12px;
+  border: 1px solid var(--vx-border);
+  border-radius: 9px;
+  background: var(--vx-surface2);
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--vx-muted);
+}
+.neg-nota-topo svg {
+  flex-shrink: 0;
+  color: var(--vx-accent);
+  opacity: 0.8;
+}
+.neg-nota-topo strong {
+  color: var(--vx-text2);
+}

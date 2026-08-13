@@ -198,30 +198,53 @@ export const ABA_DO_CAMPO: Partial<Record<keyof CamposLead, string>> = {
 
 /** Campos → linha da tabela. Vazio vira NULL: string vazia em coluna opcional
  *  atrapalha filtro e conta como preenchida. */
+/**
+ * A linha que vai para o `insert` — só com o que foi PREENCHIDO.
+ *
+ * Antes ela mandava as 15 colunas opcionais sempre, mesmo como `null`. Isso
+ * quebrava o cadastro inteiro: o PostgREST valida cada nome contra o schema,
+ * então um `bairro: null` num banco sem a coluna `bairro` derruba o insert com
+ * "Could not find the 'bairro' column" — mesmo que a pessoa só tenha digitado
+ * nome e telefone.
+ *
+ * O card promete "nome e telefone bastam". Omitindo o que está vazio, a
+ * promessa passa a ser verdade de fato: um cadastro mínimo manda quatro
+ * colunas, e nenhuma delas é opcional.
+ *
+ * Efeito colateral bom: o padrão do banco volta a valer. Coluna com `default`
+ * só é aplicada quando a chave NÃO vem no insert — mandando `null` explícito,
+ * o default era sobrescrito por nulo.
+ */
 export function paraLinha(c: CamposLead): Record<string, unknown> {
-  const opc = (s: string) => {
-    const v = (s || "").trim();
-    return v.length > 0 ? v : null;
-  };
-  return {
+  const linha: Record<string, unknown> = {
     nome: c.nome.trim(),
     telefone: normalizarTelefone(c.telefone),
     canal: "manual",
     status: "novo",
-    email: opc(c.email)?.toLowerCase() ?? null,
-    site: c.site.trim() ? siteNormalizado(c.site) : null,
-    documento: soDigitos(c.documento) || null,
-    empresa: opc(c.empresa),
-    anuncio_origem: opc(c.anuncio_origem),
-    nascimento: opc(c.nascimento),
-    cep: soDigitos(c.cep) || null,
-    logradouro: opc(c.logradouro),
-    numero: opc(c.numero),
-    complemento: opc(c.complemento),
-    bairro: opc(c.bairro),
-    cidade: opc(c.cidade),
-    uf: c.uf.trim() ? c.uf.trim().toUpperCase() : null,
-    anotacoes: opc(c.anotacoes),
-    etiquetas: c.etiquetas.length > 0 ? c.etiquetas : null,
   };
+  const por = (coluna: string, valor: string | string[] | null | undefined) => {
+    if (valor == null) return;
+    if (typeof valor === "string" && valor.trim().length === 0) return;
+    if (Array.isArray(valor) && valor.length === 0) return;
+    linha[coluna] = valor;
+  };
+
+  const t = (s: string) => (s || "").trim();
+  por("email", t(c.email).toLowerCase());
+  por("site", t(c.site) ? siteNormalizado(c.site) : "");
+  por("documento", soDigitos(c.documento));
+  por("empresa", t(c.empresa));
+  por("anuncio_origem", t(c.anuncio_origem));
+  por("nascimento", t(c.nascimento));
+  por("cep", soDigitos(c.cep));
+  por("logradouro", t(c.logradouro));
+  por("numero", t(c.numero));
+  por("complemento", t(c.complemento));
+  por("bairro", t(c.bairro));
+  por("cidade", t(c.cidade));
+  por("uf", t(c.uf).toUpperCase());
+  por("anotacoes", t(c.anotacoes));
+  por("etiquetas", c.etiquetas);
+
+  return linha;
 }

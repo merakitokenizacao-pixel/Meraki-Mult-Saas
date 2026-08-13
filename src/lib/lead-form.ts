@@ -216,11 +216,17 @@ export const ABA_DO_CAMPO: Partial<Record<keyof CamposLead, string>> = {
  * o default era sobrescrito por nulo.
  */
 export function paraLinha(c: CamposLead): Record<string, unknown> {
+  // Só nome e telefone. `canal` e `status` NÃO são enviados de propósito: os
+  // dois têm default no banco (`whatsapp` e `novo`), e é o default que vale.
+  //
+  // O código mandava `canal: "manual"`, que a constraint `leads_canal_check`
+  // recusa — "manual" nunca foi um valor previsto pelo schema. E o valor certo
+  // é mesmo `whatsapp`: o telefone é normalizado com DDI 55 justamente para
+  // este lead CASAR com o upsert do n8n quando a pessoa mandar mensagem. Ele
+  // não é um lead de outro canal; é o mesmo lead, cadastrado antes.
   const linha: Record<string, unknown> = {
     nome: c.nome.trim(),
     telefone: normalizarTelefone(c.telefone),
-    canal: "manual",
-    status: "novo",
   };
   const por = (coluna: string, valor: string | string[] | null | undefined) => {
     if (valor == null) return;

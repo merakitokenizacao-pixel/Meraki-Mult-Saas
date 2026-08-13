@@ -5271,3 +5271,193 @@ a.sidebar-footer:hover {
   justify-content: flex-end;
   margin-top: 1rem;
 }
+
+/* ══════════════════════════════════════════════════════════════
+   BLOQUEIO DE HORÁRIO (Agenda)
+   Grava em profissional_bloqueios — NUNCA em agendamentos, senão
+   sobe atendimento, conversão e receita nas métricas.
+   Lógica em src/lib/bloqueios.ts.
+   ══════════════════════════════════════════════════════════════ */
+
+/* O bloqueio na grade. Listras diagonais e ZERO cor de profissional: ele tem
+   que ser inconfundível com atendimento à primeira olhada, senão a dona lê
+   "alguém marcado" e liga para uma cliente que não existe. */
+.agenda-bloqueio {
+  position: absolute;
+  inset: 2px;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
+  border: 1px solid var(--vx-border2);
+  border-radius: 4px;
+  background: repeating-linear-gradient(
+    45deg,
+    var(--vx-surface2),
+    var(--vx-surface2) 5px,
+    var(--vx-surface3) 5px,
+    var(--vx-surface3) 10px
+  );
+  cursor: pointer;
+  overflow: hidden;
+}
+.agenda-bloqueio-txt {
+  font-size: 10px;
+  color: var(--vx-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Modais ── */
+.blq-titulo {
+  margin-bottom: 1rem;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--vx-text);
+}
+.blq-espaco {
+  margin-top: 12px;
+}
+.blq-opcional {
+  color: var(--vx-muted);
+}
+.blq-horas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 8px;
+}
+.blq-erro {
+  margin: 6px 0 0;
+  font-size: 11.5px;
+  color: var(--vx-red);
+}
+.blq-acoes {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+/* Faixa × dia inteiro: segmentado, mesmo desenho das abas de Negócios. */
+.blq-modos {
+  display: inline-flex;
+  gap: 2px;
+  margin-top: 4px;
+  padding: 3px;
+  border: 1px solid var(--vx-border);
+  border-radius: 6px;
+  background: var(--vx-surface2);
+}
+.blq-modo {
+  padding: 5px 11px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  font-family: inherit;
+  font-size: 11.5px;
+  color: var(--vx-muted);
+  cursor: pointer;
+  transition: color var(--vx-transition), background var(--vx-transition);
+}
+.blq-modo.ativo {
+  background: var(--vx-surface);
+  color: var(--vx-accent);
+}
+
+/* ── Aviso de sobreposição ──
+   Bloquear NÃO cancela. Sem nomear as clientes, "há conflito" não diz se dá
+   para remarcar — e um aviso que não ajuda a decidir vira aviso ignorado. */
+.blq-aviso {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 9px 11px;
+  border: 1px solid var(--vx-amber);
+  border-radius: var(--vx-radius-sm);
+  font-size: 11.5px;
+  line-height: 1.55;
+  color: var(--vx-text2);
+}
+.blq-aviso > svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--vx-amber);
+}
+.blq-conflitos {
+  margin: 5px 0;
+  padding-left: 16px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Escolha: agendar ou bloquear ── */
+.blq-escolha {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.blq-opcao {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 11px;
+  border: 1px solid var(--vx-border);
+  border-radius: var(--vx-radius-sm);
+  background: var(--vx-surface);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--vx-transition), background var(--vx-transition);
+}
+.blq-opcao:hover {
+  border-color: var(--vx-accent);
+  background: var(--vx-surface2);
+}
+.blq-opcao > svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: var(--vx-text2);
+}
+.blq-opcao strong {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--vx-text);
+}
+.blq-opcao em {
+  display: block;
+  margin-top: 2px;
+  font-size: 11px;
+  font-style: normal;
+  color: var(--vx-muted);
+}
+
+/* ── Detalhe do bloqueio ── */
+.blq-detalhe {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 5px 14px;
+  margin: 0;
+  font-size: 12px;
+}
+.blq-detalhe dt {
+  color: var(--vx-muted);
+}
+.blq-detalhe dd {
+  margin: 0;
+  color: var(--vx-text);
+}
+.blq-nota {
+  margin: 12px 0 0;
+  font-size: 11.5px;
+  line-height: 1.55;
+  color: var(--vx-muted);
+}
+.blq-remover {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--vx-red);
+  border-color: var(--vx-red);
+}

@@ -5,6 +5,7 @@ import { limparServico } from "@/lib/format";
 import { CELL_H, HOURS, HOUR_END, HOUR_START, WEEKDAYS, dateKey } from "@/lib/agenda";
 import { rotuloDoCodigo } from "@/lib/agenda-regras";
 import type { SlotAgenda } from "@/lib/queries";
+import { minutosDe, rotuloBloqueio, type Bloqueio } from "@/lib/bloqueios";
 import type { AgendamentoComLead } from "@/types/db";
 
 type PositionedEvent = {
@@ -46,14 +47,36 @@ export function TimeGrid({
   slots,
   onCellClick,
   onEventClick,
+  bloqueios = [],
+  onBloqueioClick,
 }: {
   days: Date[];
   agendamentos: AgendamentoComLead[];
   slots: Map<string, SlotAgenda>; // chave: "2026-07-24|14"
   onCellClick: (dateStr: string, hour: number) => void;
   onEventClick: (agend: AgendamentoComLead) => void;
+  bloqueios?: Bloqueio[];
+  onBloqueioClick?: (b: Bloqueio) => void;
 }) {
   const todayStr = new Date().toDateString();
+
+  // Bloqueios por hora de célula. O "Todas" grava uma linha POR PROFISSIONAL,
+  // então a mesma faixa vem repetida — aqui elas colapsam num retângulo só,
+  // senão quatro bloqueios idênticos apareceriam empilhados.
+  const bloqPorCelula = useMemo(() => {
+    const map = new Map<string, Bloqueio>();
+    for (const b of bloqueios) {
+      const diaTodo = !b.hora_inicio || !b.hora_fim;
+      const hIni = diaTodo ? HOUR_START : Math.floor(minutosDe(b.hora_inicio!) / 60);
+      // Fim EXCLUSIVO: 10:00–11:00 pinta só a faixa das 10h.
+      const fimMin = diaTodo ? HOUR_END * 60 : minutosDe(b.hora_fim!);
+      const hFim = Math.ceil(fimMin / 60);
+      for (let h = Math.max(HOUR_START, hIni); h < Math.min(HOUR_END, hFim); h++) {
+        map.set(`${b.data}|${h}`, b);
+      }
+    }
+    return map;
+  }, [bloqueios]);
   const single = days.length === 1;
 
   // Mapa "dateStr|hour" -> eventos posicionados.
@@ -174,6 +197,9 @@ export function TimeGrid({
                   aria-disabled={fechado || lotado}
                   onClick={() => {
                     if (fechado || lotado) return; // não abre o modal
+                    // Célula bloqueada não oferece agendar: o clique nela abre
+                    // o próprio bloqueio.
+                    if (bloqPorCelula.has(cellKey)) return;
                     onCellClick(ds, h);
                   }}
                 >
@@ -187,6 +213,20 @@ export function TimeGrid({
                     <span className="agenda-vagas">
                       {lotado ? "cheio" : `${slot.livres}/${slot.capacidade}`}
                     </span>
+                  )}
+                  {bloqPorCelula.get(cellKey) && (
+                    <div
+                      className="agenda-bloqueio"
+                      title={rotuloBloqueio(bloqPorCelula.get(cellKey)!)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onBloqueioClick?.(bloqPorCelula.get(cellKey)!);
+                      }}
+                    >
+                      <span className="agenda-bloqueio-txt">
+                        {rotuloBloqueio(bloqPorCelula.get(cellKey)!)}
+                      </span>
+                    </div>
                   )}
                   {events.map((ev, i) => {
                     const dividido = events.length > 1;

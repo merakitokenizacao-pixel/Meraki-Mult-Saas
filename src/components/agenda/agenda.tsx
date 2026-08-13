@@ -13,6 +13,8 @@ import {
   monthYearLabel,
   startOfDay,
 } from "@/lib/agenda";
+import { CalendarOff, CalendarPlus } from "lucide-react";
+import { Modal } from "@/components/modal";
 import { TimeGrid } from "@/components/agenda/time-grid";
 import { AgendaLista } from "@/components/agenda/agenda-lista";
 import { MiniCalendario } from "@/components/agenda/mini-calendario";
@@ -20,7 +22,24 @@ import { MonthGrid } from "@/components/agenda/month-grid";
 import { NewAgendModal } from "@/components/agenda/new-agend-modal";
 import { EditAgendModal } from "@/components/agenda/edit-agend-modal";
 import { DateFilter } from "@/components/date-filter";
+import { BloquearModal } from "@/components/agenda/bloquear-modal";
+import { BloqueioPopover } from "@/components/agenda/bloqueio-popover";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/lib/supabase";
+import { getBloqueiosNoPeriodo, type Bloqueio } from "@/lib/bloqueios";
 import type { AgendamentoComLead } from "@/types/db";
+
+// As profissionais servem ao seletor "Quem" do bloqueio. Lista curta (4) e
+// carregada só quando o modal abre.
+async function getProfissionaisAtivas() {
+  const { data, error } = await supabase
+    .from("profissionais")
+    .select("id,nome,ativo")
+    .order("nome")
+    .limit(200);
+  if (error) throw error;
+  return (data ?? []) as { id: string; nome: string; ativo: boolean }[];
+}
 
 // Seletor de visão do calendário (Dia / Semana / Mês).
 const VIEWS: ReadonlyArray<[string, string]> = [
@@ -35,6 +54,15 @@ export function Agenda() {
   const [view, setView] = useState("semana");
   const [refDate, setRefDate] = useState<Date>(() => new Date());
   const [newOpen, setNewOpen] = useState(false);
+  // Escolha entre agendar e bloquear: guarda o slot clicado até a pessoa
+  // decidir. Antes o clique ia direto para "Novo agendamento", e era por isso
+  // que bloquear virava agendamento falso.
+  const [escolha, setEscolha] = useState<{ data: string; hora: string } | null>(
+    null
+  );
+  const [blqOpen, setBlqOpen] = useState(false);
+  const [blqPre, setBlqPre] = useState({ data: "", hora: "" });
+  const [blqAberto, setBlqAberto] = useState<Bloqueio | null>(null);
 
   // A lista de leads serve só ao combobox do modal de novo agendamento. Baixar
   // os ~375 leads inteiros na abertura da Agenda, para um modal que pode nem
@@ -51,6 +79,12 @@ export function Agenda() {
   function refresh() {
     qc.invalidateQueries({ queryKey: ["agendamentos"] });
     qc.invalidateQueries({ queryKey: ["leads"] });
+    // O bloqueio derruba a CAPACIDADE do horário, então os slots precisam ser
+    // relidos junto — senão a célula continua oferecendo vaga que não existe
+    // mais até o próximo refresh.
+    // Os slots vêm junto: a chave deles é ["agendamentos","slots",…] e o
+    // prefixo já foi invalidado acima.
+    qc.invalidateQueries({ queryKey: ["profissional-bloqueios"] });
   }
 
   // Dias exibidos na grade de horários (Dia = 1, Semana = 7).
@@ -66,6 +100,21 @@ export function Agenda() {
   const de = dateKey(days[0]);
   const ate = dateKey(days[days.length - 1]);
   const slotsQuery = useAgendaSlots(de, ate);
+
+  // Bloqueios do intervalo visível. Chave com as pontas: navegar de semana
+  // busca a nova janela em vez de reusar a anterior.
+  const bloqueiosQuery = useQuery({
+    queryKey: ["profissional-bloqueios", de, ate],
+    queryFn: () => getBloqueiosNoPeriodo(de, ate),
+  });
+  const bloqueios = bloqueiosQuery.data ?? [];
+
+  // Só quando um dos dois modais precisa dos nomes.
+  const profissionaisQuery = useQuery({
+    queryKey: ["profissionais-ativas"],
+    queryFn: getProfissionaisAtivas,
+    enabled: blqOpen || blqAberto !== null,
+  });
   const slots = useMemo(() => {
     const m = new Map<string, SlotAgenda>();
     for (const s of slotsQuery.data ?? []) m.set(`${s.data}|${s.hora}`, s);
@@ -113,9 +162,21 @@ export function Agenda() {
     });
   }
 
+  // O clique na célula não decide mais sozinho: oferece os dois caminhos.
   function quickAgendamento(dateStr: string, hour: number) {
-    setPrefill({ data: dateStr, hora: String(hour).padStart(2, "0") + ":00" });
+    setEscolha({ data: dateStr, hora: String(hour).padStart(2, "0") + ":00" });
+  }
+  function agendarDoSlot() {
+    if (!escolha) return;
+    setPrefill(escolha);
     setNewOpen(true);
+    setEscolha(null);
+  }
+  function bloquearDoSlot() {
+    if (!escolha) return;
+    setBlqPre(escolha);
+    setBlqOpen(true);
+    setEscolha(null);
   }
   function quickDay(dateStr: string) {
     setPrefill({ data: dateStr, hora: "" });
@@ -175,6 +236,8 @@ export function Agenda() {
             slots={slots}
             onCellClick={quickAgendamento}
             onEventClick={setEditAgend}
+            bloqueios={bloqueios}
+            onBloqueioClick={setBlqAberto}
           />
         )}
       </div>
@@ -184,6 +247,54 @@ export function Agenda() {
         <AgendaLista
           agendamentos={doPeriodoVisivel}
           onEventClick={setEditAgend}
+        />
+      )}
+
+      {/* Escolha do que fazer com o horário clicado. Dois caminhos, um clique
+          cada — sem isso, bloquear continuaria virando agendamento falso. */}
+      {escolha && (
+        <Modal open onClose={() => setEscolha(null)} width={320}>
+          <div className="blq-titulo">
+            {escolha.hora} · {escolha.data.split("-").reverse().join("/")}
+          </div>
+          <div className="blq-escolha">
+            <button type="button" className="blq-opcao" onClick={agendarDoSlot}>
+              <CalendarPlus size={15} strokeWidth={1.8} />
+              <span>
+                <strong>Novo agendamento</strong>
+                <em>Marcar uma cliente neste horário</em>
+              </span>
+            </button>
+            <button type="button" className="blq-opcao" onClick={bloquearDoSlot}>
+              <CalendarOff size={15} strokeWidth={1.8} />
+              <span>
+                <strong>Bloquear horário</strong>
+                <em>Tirar da agenda sem marcar ninguém</em>
+              </span>
+            </button>
+          </div>
+        </Modal>
+      )}
+
+      <BloquearModal
+        aberto={blqOpen}
+        onClose={() => setBlqOpen(false)}
+        onSalvo={refresh}
+        profissionais={profissionaisQuery.data ?? []}
+        agendamentos={agendamentos}
+        dataInicial={blqPre.data}
+        horaInicial={blqPre.hora}
+      />
+      {blqAberto && (
+        <BloqueioPopover
+          bloqueio={blqAberto}
+          nomeProfissional={
+            (profissionaisQuery.data ?? []).find(
+              (p) => p.id === blqAberto.profissional_id
+            )?.nome ?? "Profissional"
+          }
+          onClose={() => setBlqAberto(null)}
+          onRemovido={refresh}
         />
       )}
 

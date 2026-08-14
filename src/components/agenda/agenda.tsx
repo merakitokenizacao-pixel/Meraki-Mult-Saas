@@ -13,9 +13,8 @@ import {
   monthYearLabel,
   startOfDay,
 } from "@/lib/agenda";
-import { CalendarOff, CalendarPlus } from "lucide-react";
-import { Modal } from "@/components/modal";
 import { TimeGrid } from "@/components/agenda/time-grid";
+import { SlotPopover, type AlvoSlot } from "@/components/agenda/slot-popover";
 import { AgendaLista } from "@/components/agenda/agenda-lista";
 import { MiniCalendario } from "@/components/agenda/mini-calendario";
 import { MonthGrid } from "@/components/agenda/month-grid";
@@ -57,9 +56,7 @@ export function Agenda() {
   // Escolha entre agendar e bloquear: guarda o slot clicado até a pessoa
   // decidir. Antes o clique ia direto para "Novo agendamento", e era por isso
   // que bloquear virava agendamento falso.
-  const [escolha, setEscolha] = useState<{ data: string; hora: string } | null>(
-    null
-  );
+  const [escolha, setEscolha] = useState<AlvoSlot | null>(null);
   const [blqOpen, setBlqOpen] = useState(false);
   const [blqPre, setBlqPre] = useState({ data: "", hora: "" });
   const [blqAberto, setBlqAberto] = useState<Bloqueio | null>(null);
@@ -162,19 +159,33 @@ export function Agenda() {
     });
   }
 
-  // O clique na célula não decide mais sozinho: oferece os dois caminhos.
-  function quickAgendamento(dateStr: string, hour: number) {
-    setEscolha({ data: dateStr, hora: String(hour).padStart(2, "0") + ":00" });
+  // O clique na célula não decide mais sozinho: abre o popover, que diz o que
+  // aquele horário JÁ É antes de oferecer o que fazer com ele.
+  function quickAgendamento(dateStr: string, hour: number, rect: DOMRect) {
+    setEscolha({
+      data: dateStr,
+      hora: hour,
+      // Só os números: o DOMRect vivo mudaria ao rolar a grade.
+      rect: {
+        top: rect.top,
+        left: rect.left,
+        width: rect.width,
+        height: rect.height,
+      },
+    });
+  }
+  function horaHHMM(h: number) {
+    return String(h).padStart(2, "0") + ":00";
   }
   function agendarDoSlot() {
     if (!escolha) return;
-    setPrefill(escolha);
+    setPrefill({ data: escolha.data, hora: horaHHMM(escolha.hora) });
     setNewOpen(true);
     setEscolha(null);
   }
   function bloquearDoSlot() {
     if (!escolha) return;
-    setBlqPre(escolha);
+    setBlqPre({ data: escolha.data, hora: horaHHMM(escolha.hora) });
     setBlqOpen(true);
     setEscolha(null);
   }
@@ -250,30 +261,14 @@ export function Agenda() {
         />
       )}
 
-      {/* Escolha do que fazer com o horário clicado. Dois caminhos, um clique
-          cada — sem isso, bloquear continuaria virando agendamento falso. */}
       {escolha && (
-        <Modal open onClose={() => setEscolha(null)} width={320}>
-          <div className="blq-titulo">
-            {escolha.hora} · {escolha.data.split("-").reverse().join("/")}
-          </div>
-          <div className="blq-escolha">
-            <button type="button" className="blq-opcao" onClick={agendarDoSlot}>
-              <CalendarPlus size={15} strokeWidth={1.8} />
-              <span>
-                <strong>Novo agendamento</strong>
-                <em>Marcar uma cliente neste horário</em>
-              </span>
-            </button>
-            <button type="button" className="blq-opcao" onClick={bloquearDoSlot}>
-              <CalendarOff size={15} strokeWidth={1.8} />
-              <span>
-                <strong>Bloquear horário</strong>
-                <em>Tirar da agenda sem marcar ninguém</em>
-              </span>
-            </button>
-          </div>
-        </Modal>
+        <SlotPopover
+          alvo={escolha}
+          agendamentos={agendamentos}
+          onFechar={() => setEscolha(null)}
+          onAgendar={agendarDoSlot}
+          onBloquear={bloquearDoSlot}
+        />
       )}
 
       <BloquearModal

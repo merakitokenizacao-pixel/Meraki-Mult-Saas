@@ -53,7 +53,9 @@ export function TimeGrid({
   days: Date[];
   agendamentos: AgendamentoComLead[];
   slots: Map<string, SlotAgenda>; // chave: "2026-07-24|14"
-  onCellClick: (dateStr: string, hour: number) => void;
+  /** O DOMRect vai junto: o popover de ação é ancorado na CÉLULA, não
+   *  centralizado na viewport. */
+  onCellClick: (dateStr: string, hour: number, rect: DOMRect) => void;
   onEventClick: (agend: AgendamentoComLead) => void;
   bloqueios?: Bloqueio[];
   onBloqueioClick?: (b: Bloqueio) => void;
@@ -195,12 +197,12 @@ export function TimeGrid({
                   key={ds}
                   title={titulo}
                   aria-disabled={fechado || lotado}
-                  onClick={() => {
+                  onClick={(e) => {
                     if (fechado || lotado) return; // não abre o modal
                     // Célula bloqueada não oferece agendar: o clique nela abre
                     // o próprio bloqueio.
                     if (bloqPorCelula.has(cellKey)) return;
-                    onCellClick(ds, h);
+                    onCellClick(ds, h, e.currentTarget.getBoundingClientRect());
                   }}
                 >
                   {abreBloco && slot && (

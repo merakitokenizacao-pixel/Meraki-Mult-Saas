@@ -5391,47 +5391,6 @@ a.sidebar-footer:hover {
   font-variant-numeric: tabular-nums;
 }
 
-/* ── Escolha: agendar ou bloquear ── */
-.blq-escolha {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-.blq-opcao {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 11px;
-  border: 1px solid var(--vx-border);
-  border-radius: var(--vx-radius-sm);
-  background: var(--vx-surface);
-  font-family: inherit;
-  text-align: left;
-  cursor: pointer;
-  transition: border-color var(--vx-transition), background var(--vx-transition);
-}
-.blq-opcao:hover {
-  border-color: var(--vx-accent);
-  background: var(--vx-surface2);
-}
-.blq-opcao > svg {
-  flex-shrink: 0;
-  margin-top: 1px;
-  color: var(--vx-text2);
-}
-.blq-opcao strong {
-  display: block;
-  font-size: 12.5px;
-  font-weight: 500;
-  color: var(--vx-text);
-}
-.blq-opcao em {
-  display: block;
-  margin-top: 2px;
-  font-size: 11px;
-  font-style: normal;
-  color: var(--vx-muted);
-}
 
 /* ── Detalhe do bloqueio ── */
 .blq-detalhe {
@@ -5460,4 +5419,180 @@ a.sidebar-footer:hover {
   gap: 6px;
   color: var(--vx-red);
   border-color: var(--vx-red);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   POPOVER DE AÇÃO DO HORÁRIO (Agenda)
+   Diz o que o horário JÁ É antes de oferecer o que fazer com ele.
+   Capacidade e vagas vêm de `agenda_checar` — a MESMA função que as
+   tools da Laura usam. Ver src/lib/slot-agenda.ts.
+   ══════════════════════════════════════════════════════════════ */
+
+/* Camada que fecha ao clicar fora. Sem listener global no document: ela some
+   junto com o popover. */
+.slotp-fora {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+}
+.slotp {
+  position: fixed;
+  z-index: 91;
+  width: 280px;
+  border: 1px solid var(--vx-border);
+  border-radius: var(--vx-radius);
+  background: var(--vx-surface);
+  /* Sem sombra: a separação é a borda, como no resto do painel. */
+}
+
+.slotp-topo {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 10px 0 12px;
+}
+.slotp-quando {
+  flex: 1;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--vx-text);
+}
+.slotp-fechar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border: 0;
+  border-radius: var(--vx-radius-sm);
+  background: none;
+  color: var(--vx-muted);
+  cursor: pointer;
+  transition: color var(--vx-transition), background var(--vx-transition);
+}
+.slotp-fechar:hover {
+  color: var(--vx-text);
+  background: var(--vx-surface2);
+}
+.slotp-resumo {
+  padding: 2px 12px 10px;
+  border-bottom: 1px solid var(--vx-border);
+  font-size: 11px;
+  color: var(--vx-muted);
+}
+/* Ocupa a altura da linha enquanto a RPC não volta, para o popover não
+   crescer debaixo do cursor quando o dado chega. */
+.slotp-esqueleto {
+  display: block;
+  width: 62%;
+  height: 11px;
+  border-radius: 3px;
+  background: var(--vx-surface2);
+  animation: midia-pulso 1.4s ease-in-out infinite;
+}
+
+/* ── Quem está na escala ── */
+.slotp-profs {
+  margin: 0;
+  padding: 6px 0;
+  list-style: none;
+  border-bottom: 1px solid var(--vx-border);
+  /* Acima de 4 a lista rola em vez de esticar o popover para fora da tela. */
+  max-height: 116px;
+  overflow-y: auto;
+}
+.slotp-profs li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 3px 12px;
+  font-size: 11.5px;
+}
+.slotp-prof-nome {
+  color: var(--vx-text);
+  white-space: nowrap;
+}
+.slotp-livre {
+  color: var(--vx-text);
+}
+/* Com quem ela está: recuado, porque quem manda na linha é o nome da
+   profissional. */
+.slotp-com {
+  min-width: 0;
+  color: var(--vx-muted);
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.slotp-marcadas {
+  padding: 7px 12px;
+  border-bottom: 1px solid var(--vx-border);
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--vx-text2);
+}
+.slotp-marcadas-rot {
+  display: block;
+  color: var(--vx-muted);
+}
+
+/* ── Ações ──
+   Linha inteira clicável, alinhada à esquerda. Antes eram dois textos soltos
+   centralizados, sem área de clique nem hover. */
+.slotp-acoes {
+  padding: 4px;
+}
+.slotp-acao {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  padding: 8px;
+  border: 0;
+  border-radius: var(--vx-radius-sm);
+  background: none;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--vx-transition);
+}
+.slotp-acao:hover {
+  background: var(--vx-surface2);
+}
+/* Alinhado à PRIMEIRA LINHA do texto, não acima dela. */
+.slotp-acao > svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: var(--vx-muted);
+}
+/* O único dourado do popover: o ícone da ação primária. */
+.slotp-ic-primaria {
+  color: var(--vx-accent) !important;
+}
+.slotp-ic-alerta {
+  color: var(--vx-red) !important;
+}
+.slotp-acao-txt {
+  min-width: 0;
+}
+.slotp-acao-rot {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--vx-text);
+}
+/* Sem itálico: em texto auxiliar de interface ele lê como literário, não
+   como funcional. */
+.slotp-acao-sub {
+  display: block;
+  margin-top: 1px;
+  font-size: 11px;
+  font-weight: 400;
+  font-style: normal;
+  line-height: 1.4;
+  color: var(--vx-muted);
 }

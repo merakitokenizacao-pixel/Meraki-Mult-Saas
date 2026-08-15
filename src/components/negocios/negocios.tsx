@@ -25,7 +25,6 @@ import {
 } from "@/lib/financeiro";
 import { filterByDate } from "@/lib/date";
 import { KpiCard, type TomKpi } from "@/components/negocios/kpi-card";
-import { Segmentado, VALOR_QTD } from "@/components/segmentado";
 import {
   DadosDiarios,
   LegendaSeries,
@@ -54,11 +53,11 @@ const CARDS: ReadonlyArray<{
     chave: "criado",
     rotulo: "Total criado",
     icone: Plus,
-    tom: "base",
+    tom: "neutro",
     // "agendamentos" aqui era ambíguo: lia-se como "consultas de hoje", mas o
     // recorte é `criado_em` — quando a marcação FOI FEITA, não quando ela
     // acontece. Em 10/08 foram 32 marcações feitas e só 9 atendimentos no dia.
-    apoio: (q) => `${q} marcaç${q === 1 ? "ão" : "ões"}`,
+    apoio: (q) => `${q} marcaç${q === 1 ? "ão feita" : "ões feitas"}`,
     serie: "criado",
     dica: "Tudo que entrou no funil no período, pela data em que foi marcado.",
   },
@@ -84,7 +83,7 @@ const CARDS: ReadonlyArray<{
     chave: "aberto",
     rotulo: "Total em aberto",
     icone: Activity,
-    tom: "aberto",
+    tom: "neutro",
     apoio: (q) => `${q} marcado${q === 1 ? "" : "s"}`,
     serie: null,
     dica:
@@ -94,7 +93,7 @@ const CARDS: ReadonlyArray<{
     chave: "recuperado",
     rotulo: "Receita recuperada",
     icone: RotateCcw,
-    tom: "recuperado",
+    tom: "neutro",
     apoio: (q) => `${q} pelo follow-up`,
     serie: null,
     dica:
@@ -254,12 +253,15 @@ export function Negocios({ period }: { period: string }) {
                   setSelecionado(null);
                 }}
               />
-              <Segmentado
-                opcoes={VALOR_QTD}
-                valor={modo}
-                onChange={(v) => setModo(v as Modo)}
-                rotuloAcessivel="Base do gráfico"
-              />
+              <select
+                className="neg-select"
+                value={modo}
+                onChange={(e) => setModo(e.target.value as Modo)}
+                aria-label="Base do gráfico"
+              >
+                <option value="valor">Valor</option>
+                <option value="qtd">Quantidade</option>
+              </select>
             </div>
           </header>
           {carregando ? (
@@ -286,12 +288,15 @@ export function Negocios({ period }: { period: string }) {
               </span>
             </div>
             <div className="neg-painel-acoes">
-              <Segmentado
-                opcoes={VALOR_QTD}
-                valor={modoProf}
-                onChange={(v) => setModoProf(v as Modo)}
-                rotuloAcessivel="Base da divisão por profissional"
-              />
+              <select
+                className="neg-select"
+                value={modoProf}
+                onChange={(e) => setModoProf(e.target.value as Modo)}
+                aria-label="Base da divisão por profissional"
+              >
+                <option value="valor">Valor</option>
+                <option value="qtd">Quantidade</option>
+              </select>
             </div>
           </header>
           {carregando ? (
@@ -310,12 +315,15 @@ export function Negocios({ period }: { period: string }) {
               <span className="neg-painel-nota">Procedimentos realizados</span>
             </div>
             <div className="neg-painel-acoes">
-              <Segmentado
-                opcoes={VALOR_QTD}
-                valor={modoServ}
-                onChange={(v) => setModoServ(v as Modo)}
-                rotuloAcessivel="Base do ranking de serviços"
-              />
+              <select
+                className="neg-select"
+                value={modoServ}
+                onChange={(e) => setModoServ(e.target.value as Modo)}
+                aria-label="Base do ranking de serviços"
+              >
+                <option value="valor">Valor</option>
+                <option value="qtd">Quantidade</option>
+              </select>
             </div>
           </header>
           {carregando ? (

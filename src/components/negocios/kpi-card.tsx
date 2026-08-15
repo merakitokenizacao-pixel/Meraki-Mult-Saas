@@ -19,27 +19,23 @@ import type { LucideIcon } from "lucide-react";
 // aquela série — é o que a referência faz e o que dá função à borda acesa.
 
 /**
- * A cor do ícone.
+ * A cor NÃO identifica o card — identifica a direção do número.
  *
- * Três cinzas e dois coloridos criavam uma hierarquia que ninguém quis dizer:
- * parecia que dois cards importavam e três estavam desabilitados. E o cinza
- * era `--vx-muted`, claro demais para um ícone — lê como desativado, não como
- * neutro.
- *
- * Agora cada card tem a sua, e "criado" é neutro DE PROPÓSITO (é a linha de
- * base, não é bom nem ruim) — mas em `--vx-text2`, que lê como escolha.
- *
- * Nenhum é dourado: `--vx-accent` é a borda do card selecionado nesta mesma
- * fileira. Repetido num ícone, ele deixaria de significar "selecionado".
+ * Antes eram cinco matizes (dourado, verde, vermelho, azul, roxo), um por
+ * card: cinco cores fortes lado a lado viram enfeite, e "azul" não significa
+ * nada sobre "total criado". Agora o padrão é neutro e só sobra semântica onde
+ * ela é real — o que entrou (`sobe`) e o que se perdeu (`desce`). O dourado da
+ * marca fica reservado para o estado SELECIONADO, que é o único destaque com
+ * função nesta tela.
  */
-export type TomKpi = "base" | "sobe" | "desce" | "aberto" | "recuperado";
+export type TomKpi = "neutro" | "sobe" | "desce";
 
 export function KpiCard({
   rotulo,
   valor,
   apoio,
   icone: Icone,
-  tom = "base",
+  tom = "neutro",
   ativo = false,
   onSelecionar,
   dica,
@@ -51,23 +47,23 @@ export function KpiCard({
   tom?: TomKpi;
   ativo?: boolean;
   onSelecionar?: () => void;
-  /** De onde sai o número. Vira o tooltip do (i) no canto do card. */
+  /** De onde sai o número. Vira o tooltip do (i) ao lado do rótulo. */
   dica?: string;
 }) {
   const conteudo = (
     <>
-      {/* O (i) sai da LINHA do rótulo e vai para o canto do card. Colado no
-          texto ele empurrava a largura da linha, e num rótulo de duas palavras
-          isso é a diferença entre caber e quebrar. */}
-      {dica && (
-        // `data-dica` desenha o balão no hover (o `title` nativo demora ~1s);
-        // o `title` fica junto porque o card inteiro é um <button> — pôr um
-        // segundo elemento focável dentro dele quebraria a ordem de tabulação.
-        <span className="neg-dica" title={dica} data-dica={dica}>
-          i
-        </span>
-      )}
-      <span className="neg-card-rotulo">{rotulo}</span>
+      <span className="neg-card-rotulo">
+        {rotulo}
+        {dica && (
+          // A ressalva mora aqui, não numa tarja na tela. `data-dica` desenha
+          // o balão no hover (o `title` nativo demora ~1s); o `title` fica
+          // junto porque o card inteiro é um <button> — pôr um segundo
+          // elemento focável dentro dele quebraria a ordem de tabulação.
+          <span className="neg-dica" title={dica} data-dica={dica}>
+            i
+          </span>
+        )}
+      </span>
       <div className="neg-card-linha">
         <div className="neg-card-numeros">
           <div className="neg-card-valor">{valor}</div>

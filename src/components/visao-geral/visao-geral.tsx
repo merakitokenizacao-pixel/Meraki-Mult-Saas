@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { saudacaoDe } from "@/lib/date";
 import { DateRangePicker } from "@/components/date-range-picker";
+import { Segmentado } from "@/components/segmentado";
 import { Negocios } from "@/components/negocios/negocios";
 import { Dashboard } from "@/components/dashboard/dashboard";
 
@@ -53,20 +54,12 @@ export function VisaoGeral() {
 
         <div className="vg-controles">
           <DateRangePicker value={period} onChange={setPeriod} />
-          <div className="vg-abas" role="tablist" aria-label="Seções do início">
-            {ABAS.map((a) => (
-              <button
-                key={a.id}
-                type="button"
-                role="tab"
-                aria-selected={aba === a.id}
-                onClick={() => setAba(a.id)}
-                className={`vg-aba${aba === a.id ? " ativa" : ""}`}
-              >
-                {a.label}
-              </button>
-            ))}
-          </div>
+          <Segmentado
+            opcoes={ABAS.map((a) => ({ valor: a.id, rotulo: a.label }))}
+            valor={aba}
+            onChange={(v) => setAba(v as Aba)}
+            rotuloAcessivel="Seções do início"
+          />
         </div>
       </div>
 

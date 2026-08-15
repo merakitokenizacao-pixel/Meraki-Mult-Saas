@@ -3659,35 +3659,41 @@ select.form-input {
   gap: 10px;
   flex-wrap: wrap;
 }
-/* Abas: controle segmentado. A ativa sobe para --vx-surface sobre o trilho em
-   --vx-surface2, então parece elevada sem sombra pesada. */
-.vg-abas {
+/* Controle segmentado — UM componente, usado nas abas do topo e nos quatro
+   painéis. Substituiu os `<select>` nativos: escolha entre duas opções é
+   toggle, e a lista do select abria com o azul do sistema operacional, a
+   única coisa da tela que não seguia o tema (`<option>` não é estilizável).
+
+   A ativa se destaca por FUNDO + BORDA, não por elevação — zero sombra. */
+.seg {
   display: inline-flex;
   gap: 2px;
-  padding: 3px;
-  border: 1px solid var(--vx-border);
-  border-radius: 11px;
+  padding: 2px;
+  border-radius: 5px;
   background: var(--vx-surface2);
 }
-.vg-aba {
-  padding: 6px 14px;
-  border: none;
-  border-radius: 8px;
+.seg-item {
+  height: 28px;
+  padding: 0 10px;
+  border: 1px solid transparent;
+  border-radius: 4px;
   background: transparent;
   font-family: inherit;
-  font-size: 12.5px;
+  font-size: 11.5px;
   font-weight: 500;
   color: var(--vx-muted);
   white-space: nowrap;
   cursor: pointer;
-  transition: color var(--vx-transition), background var(--vx-transition);
+  transition: color var(--vx-transition), background var(--vx-transition),
+    border-color var(--vx-transition);
 }
-.vg-aba:hover {
-  color: var(--vx-text2);
+.seg-item:hover {
+  color: var(--vx-text);
 }
-.vg-aba.ativa {
+.seg-item.ativa {
   background: var(--vx-surface);
-  color: var(--vx-accent);
+  border-color: var(--vx-border);
+  color: var(--vx-text);
 }
 
 /* ── Cards ── */
@@ -3714,6 +3720,7 @@ select.form-input {
 }
 
 .neg-card {
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -3750,9 +3757,10 @@ select.form-input {
   border-color: var(--vx-accent);
 }
 .neg-card-rotulo {
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  display: block;
+  /* Espaço à direita para o (i), que agora mora no canto: sem isto o rótulo
+     passa por baixo dele. */
+  padding-right: 18px;
   font-size: 11.5px;
   font-weight: 500;
   line-height: 1.25;
@@ -3773,7 +3781,9 @@ select.form-input {
   font-size: 20px;
   font-weight: 600;
   line-height: 1.22;
-  letter-spacing: 0;
+  /* Fecha o número sem reduzir o corpo — com `tabular-nums` cada dígito ocupa
+     a mesma caixa, e em "R$ 12.078,17" isso soma. Só no valor. */
+  letter-spacing: -0.01em;
   color: var(--vx-text);
   font-variant-numeric: tabular-nums;
 }
@@ -3790,9 +3800,11 @@ select.form-input {
   opacity: 0.85;
 }
 
-/* Cor só onde ela SIGNIFICA alguma coisa: subiu, desceu. O resto é neutro. */
-.neg-tom-neutro {
-  --neg-tom: var(--vx-muted);
+/* Uma cor por card. Nenhuma é `--vx-muted` (claro demais para ícone: lê como
+   desativado) e nenhuma é dourada — o dourado é a borda do card SELECIONADO
+   nesta mesma fileira, e repetido aqui deixaria de significar isso. */
+.neg-tom-base {
+  --neg-tom: var(--vx-text2);
 }
 .neg-tom-sobe {
   --neg-tom: var(--vx-green);
@@ -3800,9 +3812,19 @@ select.form-input {
 .neg-tom-desce {
   --neg-tom: var(--vx-red);
 }
+.neg-tom-aberto {
+  --neg-tom: var(--vx-purple);
+}
+.neg-tom-recuperado {
+  --neg-tom: var(--vx-blue);
+}
 
 /* ── (i) com balão ── */
 .neg-dica {
+  position: absolute;
+  top: 13px;
+  right: 14px;
+  z-index: 1;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -3828,7 +3850,7 @@ select.form-input {
   content: attr(data-dica);
   position: absolute;
   bottom: calc(100% + 8px);
-  left: -8px;
+  right: -8px;
   z-index: 40;
   width: max-content;
   /* Trava a largura: sem isto uma dica de 3 linhas vira uma faixa da largura
@@ -3855,10 +3877,11 @@ select.form-input {
   opacity: 1;
   visibility: visible;
 }
-/* Nos dois últimos cards o balão sairia pela direita da tela. */
-.neg-grid > *:nth-last-child(-n + 2) .neg-dica::after {
-  left: auto;
-  right: -8px;
+/* No PRIMEIRO card o balão sairia pela esquerda da tela — só ele abre para o
+   outro lado. */
+.neg-grid > *:first-child .neg-dica::after {
+  right: auto;
+  left: -8px;
 }
 
 /* ── Painéis ── */
@@ -3913,16 +3936,6 @@ select.form-input {
 }
 .neg-fill {
   font-variant-numeric: tabular-nums;
-}
-.neg-select {
-  padding: 5px 10px;
-  border: 1px solid var(--vx-border);
-  border-radius: 8px;
-  background: var(--vx-surface2);
-  color: var(--vx-text2);
-  font-family: inherit;
-  font-size: 11.5px;
-  cursor: pointer;
 }
 
 /* ── Legenda clicável do gráfico ── */

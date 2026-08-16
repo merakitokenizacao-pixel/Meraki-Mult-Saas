@@ -42,3 +42,13 @@ export const HERO_META = ["Brasília · Brasil", "MMXXVI", "Atendimento autônom
 // Sem menu de âncoras no header, de propósito: a referência mantém o topo com
 // só três elementos (Entrar · marca · CTA), e é isso que o faz respirar.
 // A navegação da página é a própria rolagem.
+
+/**
+ * Identificação legal, exibida no rodapé.
+ *
+ * ⚠️ VAZIAS de propósito — o Meraki preenche. Enquanto estiverem vazias a
+ * linha simplesmente não é renderizada, o que é melhor que um CNPJ inventado
+ * num site que vende software para clínica.
+ */
+export const RAZAO_SOCIAL = "";
+export const CNPJ = "";

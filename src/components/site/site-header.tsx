@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import {
   MARCA_LAYOUT_ID,
@@ -18,18 +18,26 @@ export function SiteHeader() {
   // voo. Antes disso ela está no centro da tela, na abertura.
   const aberturaPronta = useAberturaPronta();
 
+  // SENTINELA em vez de listener de scroll. O handler antigo rodava a cada
+  // evento de rolagem só para virar um booleano — barato por evento, caro por
+  // haver um a mais numa página que já estava engasgando. O observer avisa
+  // quando o topo sai da tela e o navegador não chama nada no meio.
+  const sentinela = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    const onScroll = () => setRolou(window.scrollY > 40);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    const el = sentinela.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(([e]) => setRolou(!e.isIntersecting));
+    obs.observe(el);
+    return () => obs.disconnect();
   }, []);
 
   return (
+    <>
+      <div ref={sentinela} aria-hidden className="absolute top-10 h-px w-px" />
     <header
-      className={`fixed inset-x-0 top-0 z-50 transition-[background-color,border-color,backdrop-filter] duration-300 ${
+      className={`fixed inset-x-0 top-0 z-50 transition-[background-color,border-color] duration-300 ${
         rolou
-          ? "border-b border-s-line/70 bg-s-bg/80 backdrop-blur-md"
+          ? "border-b border-s-line/70 bg-s-bg"
           : "border-b border-transparent"
       }`}
     >
@@ -73,5 +81,6 @@ export function SiteHeader() {
         </div>
       </div>
     </header>
+    </>
   );
 }

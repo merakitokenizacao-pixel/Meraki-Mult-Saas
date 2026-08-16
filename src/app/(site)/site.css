@@ -38,6 +38,11 @@
   --s-gold2: #b8955a;
   --s-soft: #f6efe4;
 
+  /* Alerta de contraindicação — o único vermelho do site. */
+  --s-alerta-forte: #b03030;
+  --s-alerta-linha: #d9adaa;
+  --s-alerta-bg: #fdf4f3;
+
   /* Verdes do WhatsApp — usados só dentro do mockup de celular */
   --s-wa-green: #25d366;
   --s-wa-bubble: #d9fdd3;
@@ -636,5 +641,390 @@ html[data-abertura="vista"] .s-abertura {
     animation: none;
     transform: scaleX(1);
     opacity: 0.55;
+  }
+}
+
+/* =============================================================================
+   REESCRITA — conversa viva, agenda interativa, frases-monumento, rodapé
+   ============================================================================= */
+
+/* Hero: duas ações. O CTA abre o WhatsApp; "ver por dentro" é o caminho
+   secundário e é discreto de propósito. */
+.s-hero-acoes {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  flex-wrap: wrap;
+}
+.s-hero-secundario {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13.5px;
+  color: var(--s-muted);
+  transition: color 0.25s ease;
+}
+.s-hero-secundario:hover {
+  color: var(--s-ink);
+}
+
+/* ── A CONVERSA ──
+   Sem moldura de celular: nada de notch nem "online". A conversa é o produto;
+   o aparelho é embalagem, e embalagem desenhada rouba a atenção do que ela
+   deveria emoldurar. */
+.cv {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 460px;
+}
+.cv-linha {
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr);
+  align-items: start;
+  gap: 12px;
+  animation: cv-entra 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+/* Só transform e opacity: nada que force reflow durante a entrada. */
+@keyframes cv-entra {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+/* A HORA fora da bolha, na margem. O minuto decorrido entre a primeira e a
+   última mensagem é o argumento inteiro da seção — e estava em cinza de 10px
+   no canto de um balão. */
+.cv-hora {
+  font-family: var(--font-mono), monospace;
+  font-size: 15px;
+  line-height: 1.9;
+  color: var(--s-ink);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.cv-balao {
+  justify-self: start;
+  max-width: 100%;
+  padding: 9px 13px;
+  border-radius: 14px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--s-ink);
+}
+.cv-cliente .cv-balao {
+  background: var(--s-surface);
+  border: 1px solid var(--s-line);
+  border-top-left-radius: 4px;
+}
+/* O VERDE DO WHATSAPP FICA. Trocar por dourado deixaria a página mais coerente
+   e a prova mais fraca: é o verde que faz o cérebro reconhecer a plataforma em
+   200ms. Sem ele, isto vira mockup de agência. */
+.cv-laura .cv-balao {
+  justify-self: end;
+  background: #d9fdd3;
+  border-top-right-radius: 4px;
+}
+.cv-digitando {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 13px;
+}
+.cv-digitando i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #4a7a45;
+  animation: cv-pulsa 1.1s ease-in-out infinite;
+}
+.cv-digitando i:nth-child(2) {
+  animation-delay: 0.18s;
+}
+.cv-digitando i:nth-child(3) {
+  animation-delay: 0.36s;
+}
+@keyframes cv-pulsa {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* ── FRASE-MONUMENTO ──
+   Sozinha na tela, centralizada, sem cartão nem ícone. Existe para quebrar a
+   sequência demo-demo-demo: quatro seções com o mesmo formato fazem cada uma
+   parecer genérica, mesmo com conteúdo bom. É a única âncora da página que não
+   fica à direita. */
+.s-monumento {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 62vh;
+  padding: 0 24px;
+  background: var(--s-bg);
+}
+.s-monumento-frase {
+  max-width: 18ch;
+  font-family: var(--font-serif), serif;
+  font-size: clamp(38px, 7vw, 82px);
+  font-weight: 300;
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+  text-align: center;
+  text-wrap: balance;
+  color: var(--s-ink);
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.s-monumento-frase.entrou {
+  opacity: 1;
+  transform: none;
+}
+
+/* ── A AGENDA INTERATIVA ── */
+.av {
+  width: 100%;
+}
+.av-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 18px;
+  /* Vinte procedimentos não cabem sem rolagem em tela pequena, e cortar a
+     lista esconderia justamente o que prova que ela vem do banco. */
+  max-height: 132px;
+  overflow-y: auto;
+}
+.av-chip {
+  padding: 5px 11px;
+  border: 1px solid var(--s-line);
+  border-radius: 999px;
+  background: var(--s-surface);
+  font-family: inherit;
+  font-size: 12.5px;
+  color: var(--s-ink2);
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+}
+.av-chip:hover {
+  border-color: var(--s-gold);
+  color: var(--s-ink);
+}
+.av-chip.ativo {
+  background: var(--s-ink);
+  border-color: var(--s-ink);
+  color: var(--s-bg);
+}
+.av-quadro {
+  padding: 18px 20px 16px;
+  border: 1px solid var(--s-line);
+  border-radius: 14px;
+  background: var(--s-surface);
+}
+.av-quadro-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 14px;
+  font-size: 12px;
+  color: var(--s-muted);
+}
+.av-selo {
+  padding: 1px 7px;
+  border: 1px solid var(--s-line);
+  border-radius: 999px;
+  font-size: 10px;
+}
+.av-grade {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+/* A entrada do horário é o momento em que a promessa vira demonstração: ele
+   existia com "qualquer um" e some ao escolher o procedimento. */
+.av-slot {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 9px 14px;
+  border: 1px solid var(--s-line);
+  border-radius: 10px;
+  font-family: var(--font-mono), monospace;
+  font-size: 15px;
+  color: var(--s-ink);
+  font-variant-numeric: tabular-nums;
+  animation: cv-entra 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.av-slot em {
+  font-family: var(--font-sans), sans-serif;
+  font-size: 10.5px;
+  font-style: normal;
+  color: var(--s-muted);
+}
+.av-esqueleto {
+  width: 86px;
+  height: 46px;
+  border-radius: 10px;
+  background: var(--s-soft);
+  animation: av-pulso 1.4s ease-in-out infinite;
+}
+@keyframes av-pulso {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+.av-vazio {
+  margin: 0;
+  padding: 14px 0;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--s-ink2);
+}
+.av-nota {
+  margin: 14px 0 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--s-line);
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--s-muted);
+}
+
+/* ── A SEGURANÇA ──
+   O alerta É o assunto, então vai grande e direto na página. Dentro de um
+   cartão de 320px no canto, ele era um detalhe de uma tela. */
+.s-alerta {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-top: 40px;
+  padding: 22px 24px;
+  border: 1px solid var(--s-alerta-linha);
+  border-left: 3px solid var(--s-alerta-forte);
+  border-radius: 14px;
+  background: var(--s-alerta-bg);
+}
+.s-alerta > svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--s-alerta-forte);
+}
+.s-alerta-rotulo {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--s-alerta-forte);
+}
+.s-alerta-linha {
+  margin: 6px 0 0;
+  font-family: var(--font-serif), serif;
+  font-size: clamp(22px, 3.4vw, 32px);
+  font-weight: 400;
+  line-height: 1.15;
+  color: var(--s-ink);
+}
+.s-alerta-nota {
+  margin: 10px 0 0;
+  max-width: 44ch;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--s-ink2);
+}
+
+/* ── Nº 001 ── */
+.s-numeros {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 28px;
+  margin-top: 46px;
+  padding-top: 34px;
+  border-top: 1px solid var(--s-line);
+}
+.s-numero {
+  min-width: 0;
+}
+.s-numero-valor {
+  display: block;
+  font-family: var(--font-serif), serif;
+  font-size: clamp(38px, 5vw, 58px);
+  font-weight: 300;
+  line-height: 1;
+  color: var(--s-ink);
+  font-variant-numeric: tabular-nums;
+}
+.s-numero-rotulo {
+  display: block;
+  margin-top: 8px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--s-muted);
+}
+.s-numeros-data {
+  margin: 20px 0 0;
+  font-size: 11.5px;
+  color: var(--s-muted);
+}
+
+/* ── Rodapé ── */
+.s-rodape {
+  padding: 34px 24px;
+  border-top: 1px solid var(--s-line);
+  background: var(--s-bg);
+}
+.s-rodape-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  flex-wrap: wrap;
+  max-width: 64rem;
+  margin: 0 auto;
+  font-size: 12.5px;
+  color: var(--s-muted);
+}
+.s-rodape-legal {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.s-rodape-links {
+  display: flex;
+  gap: 18px;
+}
+.s-rodape-links a {
+  color: var(--s-muted);
+  transition: color 0.2s ease;
+}
+.s-rodape-links a:hover {
+  color: var(--s-ink);
+}
+
+/* ── Movimento: quem pediu menos, recebe nenhum ──
+   A página travava porque havia efeito preso ao evento de scroll. Agora tudo
+   entra por IntersectionObserver, uma vez só, e aqui desliga por completo. */
+@media (prefers-reduced-motion: reduce) {
+  .cv-linha,
+  .av-slot,
+  .av-esqueleto,
+  .cv-digitando i {
+    animation: none;
+  }
+  .s-monumento-frase {
+    opacity: 1;
+    transform: none;
+    transition: none;
   }
 }

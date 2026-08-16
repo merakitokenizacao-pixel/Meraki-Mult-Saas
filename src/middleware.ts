@@ -5,9 +5,15 @@ import { createServerClient } from "@supabase/ssr";
 //   /login          — a tela de entrada do CRM
 //   /ficha/*        — a ficha de avaliação que a paciente preenche (sem conta)
 //   /api/ficha/*    — o submit dessa ficha
+//   /api/site/*     — a agenda que o VISITANTE consulta na landing
 // Todo o resto é o CRM e exige sessão. Em especial /api/painel/*, que devolve
 // dado de saúde — é o buraco que este middleware fecha.
-const PUBLICAS = ["/login", "/ficha", "/api/ficha"];
+//
+// ⚠️ /api/site/* é público de propósito, e por isso a rota lá monta a resposta
+// CAMPO A CAMPO: a disponibilidade já é pública (qualquer um pergunta à Laura
+// no WhatsApp), mas quem está marcado não pode sair. Abrir prefixo aqui é
+// barato; o cuidado tem que estar do outro lado.
+const PUBLICAS = ["/login", "/ficha", "/api/ficha", "/api/site"];
 
 // Site institucional: rotas EXATAS, sem prefixo. `/` precisa ser tratada aqui
 // porque a regra de prefixo abaixo ("/" + "/") não casaria com nada, e sem isso

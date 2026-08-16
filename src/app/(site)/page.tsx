@@ -1,55 +1,55 @@
 import { Hero } from "@/components/site/hero";
-import { SecaoConversa } from "@/components/site/secao-conversa";
 import { Secao } from "@/components/site/secao";
-import { SecaoFeatures } from "@/components/site/secao-features";
-import { MockAgenda } from "@/components/site/mock-agenda";
+import { FraseMonumento } from "@/components/site/frase-monumento";
+import { ConversaViva } from "@/components/site/conversa-viva";
+import { AgendaViva } from "@/components/site/agenda-viva";
 import { MockCliente } from "@/components/site/mock-cliente";
-import { MockFicha } from "@/components/site/mock-ficha";
+import { SecaoSeguranca } from "@/components/site/secao-seguranca";
+import { SecaoNumeros } from "@/components/site/secao-numeros";
+import { SecaoCta } from "@/components/site/secao-cta";
+import { RodapeSite } from "@/components/site/rodape-site";
 
-// Uma capacidade por seção, cada uma com o produto real ao lado, alternando
-// fundo branco / off-white. O ritmo é o argumento: a página desce mostrando,
-// não listando.
+// O ritmo é o argumento. As demos rodam em vez de posar, e as duas
+// frases-monumento quebram a sequência demo-demo-demo — quatro seções seguidas
+// com o mesmo formato fazem cada uma parecer genérica, mesmo com conteúdo bom.
 export default function SitePage() {
   return (
     <>
       <Hero />
 
-      <SecaoConversa />
+      <Secao
+        id="conversa"
+        kicker="A conversa"
+        titulo={<>Um minuto entre a dúvida e o horário marcado.</>}
+        texto="14h32, uma desconhecida pergunta o preço. 14h33, ela tem quinta-feira reservada e a clínica tem mais um nome na agenda. Ninguém da equipe encostou no celular."
+        visual={<ConversaViva />}
+      />
+
+      <FraseMonumento>Nada do que ela oferece é chute.</FraseMonumento>
 
       <Secao
         alt
         invertida
+        largo
         kicker="A agenda"
-        titulo={
-          <>
-            Ela sabe quantas <span className="text-s-gold">mãos</span> você tem.
-          </>
-        }
-        texto="Três profissionais às 15h significam três clientes — não uma. A Laura conhece a escala de cada uma, respeita folga e almoço, e nunca promete um horário que não existe."
-        visual={<MockAgenda />}
+        titulo={<>Ela sabe quem trabalha hoje e quem faz o quê.</>}
+        texto="A Rozaria está na escala quinta às 20h — mas não faz microagulhamento. Então esse horário não existe para quem quer microagulhamento. Escolhe um procedimento e vê a agenda real responder."
+        visual={<AgendaViva />}
       />
 
       <Secao
         kicker="A memória"
-        titulo={<>Ela lembra de cada cliente.</>}
-        texto="Preferências, histórico, o que já perguntou e quanto costuma gastar. Ninguém precisa repetir nada — nem na conversa daqui a seis meses."
+        titulo={<>A conversa de junho continua em dezembro.</>}
+        texto="O que ela perguntou, o que evita, quanto costuma gastar, por que faltou da última vez. Ninguém repete nada — nem quando a cliente some por seis meses e volta."
         visual={<MockCliente />}
       />
 
-      <Secao
-        alt
-        invertida
-        kicker="A segurança"
-        titulo={
-          <>
-            A contraindicação aparece <span className="text-s-gold">antes</span>.
-          </>
-        }
-        texto="Antes do laser, a cliente preenche a ficha pelo celular. Se houver risco, sua equipe vê em vermelho no cadastro dela — sem precisar abrir nada."
-        visual={<MockFicha />}
-      />
+      <FraseMonumento>Quando você digita, ela para.</FraseMonumento>
 
-      <SecaoFeatures />
+      <SecaoSeguranca />
+      <SecaoNumeros />
+      <SecaoCta />
+      <RodapeSite />
     </>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { WHATSAPP_URL } from "@/lib/site";
 import { ArrowDown } from "lucide-react";
 import { LuzFundo } from "@/components/site/luz-fundo";
 import { HERO_IMAGEM } from "@/lib/site";
@@ -39,11 +40,6 @@ export function Hero() {
 
       {/* Assinatura editorial nas quatro quinas */}
       <span className="s-vertical s-vertical-esq top-24">Brasília · Brasil</span>
-      <span className="s-vertical s-vertical-esq bottom-10">MMXXVI</span>
-      <span className="s-vertical s-vertical-dir top-24">
-        IA · Atendimento autônomo
-      </span>
-      <span className="s-vertical s-vertical-dir bottom-10">Nº 001</span>
 
       <motion.div
         variants={container}
@@ -51,33 +47,40 @@ export function Hero() {
         animate="show"
         className="relative z-[2] mx-auto flex max-w-4xl flex-col items-center"
       >
-        <motion.p variants={sobe} className="s-kicker mb-9">
-          Edição 2026
-        </motion.p>
-
         <motion.h1
           variants={sobe}
           className="s-display text-[46px] leading-[1.02] text-s-ink sm:text-[68px] lg:text-[86px]"
         >
-          Sua recepção
+          Sua melhor profissional
           <br />
-          <span className="text-s-gold">nunca dorme.</span>
+          parou de ser <span className="text-s-gold">recepcionista.</span>
         </motion.h1>
 
         <motion.p
           variants={sobe}
           className="mt-8 max-w-[44ch] text-[16.5px] leading-relaxed text-s-ink2 sm:text-[18px]"
         >
-          A Laura atende, vende e agenda no WhatsApp 24 horas — e passa pra sua
-          equipe na hora certa.
+          A Laura atende no WhatsApp, conhece a escala inteira e marca
+          sozinha. Você volta pra cadeira.
         </motion.p>
 
-        <motion.a variants={sobe} href="#conversa" className="s-descobrir mt-14">
-          Descobrir
-          <span className="s-descobrir-circulo">
-            <ArrowDown size={15} strokeWidth={1.6} />
-          </span>
-        </motion.a>
+        {/* O CTA do hero abre o WhatsApp da clínica-demo: o jeito mais curto
+            de decidir é conversar com ela, não rolar a página. "Ver por dentro"
+            fica como caminho secundário, discreto. */}
+        <motion.div variants={sobe} className="s-hero-acoes mt-14">
+          <a
+            href={WHATSAPP_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="s-btn s-btn-primary"
+          >
+            Fale com a Laura
+          </a>
+          <a href="#conversa" className="s-hero-secundario">
+            Ver por dentro
+            <ArrowDown size={14} strokeWidth={1.7} />
+          </a>
+        </motion.div>
       </motion.div>
     </section>
   );

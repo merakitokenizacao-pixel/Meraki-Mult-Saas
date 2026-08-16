@@ -55,7 +55,7 @@ export function MockCliente() {
           </div>
           <p className="text-[12.5px] leading-relaxed text-s-ink2">
             Vem sempre à tarde, costuma remarcar na semana seguinte quando falta.
-            Perguntou sobre pacote de 30 sessões em junho.
+            Perguntou sobre pacote de 10 sessões em junho.
           </p>
         </div>
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import { nomesDoAgendamento } from "@/lib/nome-agendamento";
 import { WEEKDAYS, dateKey, getMonthMatrix, sameDay } from "@/lib/agenda";
 import type { AgendamentoComLead } from "@/types/db";
 
@@ -57,7 +58,10 @@ export function MonthGrid({
                   "pt-BR",
                   { hour: "2-digit", minute: "2-digit" }
                 );
-                const nome = a.leads?.nome || "Cliente";
+                // No mês a célula é minúscula: entra só quem vai ser
+                // atendido, e o titular fica no tooltip.
+                const nomes = nomesDoAgendamento(a.nome_cliente, a.leads?.nome);
+                const nome = nomes.exibido || "Cliente";
                 return (
                   <div
                     key={a.id}

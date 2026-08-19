@@ -1416,23 +1416,6 @@ select.form-input {
   align-items: center;
   gap: 10px;
 }
-.agenda-nav-btn {
-  background: var(--vx-surface);
-  border: 1px solid var(--vx-border);
-  color: var(--vx-text);
-  padding: 7px 18px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all var(--vx-transition);
-  font-family: var(--font-inter), sans-serif;
-  letter-spacing: 0.04em;
-}
-.agenda-nav-btn:hover {
-  background: var(--vx-surface2);
-  border-color: var(--vx-border2);
-}
 .agenda-arrow {
   background: var(--vx-surface);
   border: 1px solid var(--vx-border);
@@ -5595,4 +5578,29 @@ a.sidebar-footer:hover {
   font-style: normal;
   line-height: 1.4;
   color: var(--vx-muted);
+}
+
+/* ── Para QUEM é o horário ──
+   `leads.nome` é o dono do WhatsApp; `agendamentos.nome_cliente` é quem vai
+   ser atendido. Quando diferem, a linha principal leva quem será atendido e
+   esta aqui diz de quem é o número — duas linhas, nunca "Fulana (via
+   Beltrano)", que estoura num card de calendário.
+   Ver src/lib/nome-agendamento.ts. */
+.agenda-event-via,
+.modal-via,
+.lead-visita-para {
+  font-size: 10px;
+  line-height: 1.3;
+  color: var(--vx-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.modal-via {
+  margin-top: 2px;
+  font-size: 11.5px;
+}
+.lead-visita-para {
+  margin-top: 1px;
+  max-width: 160px;
 }

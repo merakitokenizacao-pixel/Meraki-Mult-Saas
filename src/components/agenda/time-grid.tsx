@@ -6,6 +6,7 @@ import { CELL_H, HOURS, HOUR_END, HOUR_START, WEEKDAYS, dateKey } from "@/lib/ag
 import { rotuloDoCodigo } from "@/lib/agenda-regras";
 import type { SlotAgenda } from "@/lib/queries";
 import { minutosDe, rotuloBloqueio, type Bloqueio } from "@/lib/bloqueios";
+import { nomesDoAgendamento, primeiroNome } from "@/lib/nome-agendamento";
 import type { AgendamentoComLead } from "@/types/db";
 
 type PositionedEvent = {
@@ -14,6 +15,8 @@ type PositionedEvent = {
   height: number;
   time: string;
   nome: string;
+  /** Dono do WhatsApp, só quando difere de quem vai ser atendido. */
+  titular: string | null;
   servico: string;
 };
 
@@ -108,7 +111,9 @@ export function TimeGrid({
         top: (minute / 60) * CELL_H,
         height: CELL_H - 4,
         time: dt.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }),
-        nome: a.leads?.nome || "Cliente",
+        // Quem vai ser ATENDIDO, não quem é dono do WhatsApp.
+        nome: nomesDoAgendamento(a.nome_cliente, a.leads?.nome).exibido || "Cliente",
+        titular: nomesDoAgendamento(a.nome_cliente, a.leads?.nome).titular,
         servico: limparServico(a.servico),
       };
       const arr = map.get(key);
@@ -243,7 +248,9 @@ export function TimeGrid({
                           height: ev.height,
                           ...larguraLadoALado(i, events.length),
                         }}
-                        title={`${ev.time} · ${ev.nome} · ${ev.servico}`}
+                        title={`${ev.time} · ${ev.nome}${
+                          ev.titular ? ` (via ${ev.titular})` : ""
+                        } · ${ev.servico}`}
                         onClick={(e) => {
                           e.stopPropagation();
                           onEventClick(ev.agend);
@@ -251,6 +258,14 @@ export function TimeGrid({
                       >
                         <div className="agenda-event-time">{ev.time}</div>
                         <div className="agenda-event-name">{ev.nome}</div>
+                        {/* Segunda linha, não string longa: o card é estreito
+                            e "Nanci Cardoso (via Vitor Hugo)" estoura. O nome
+                            completo do titular fica no title, acima. */}
+                        {ev.titular && !dividido && (
+                          <div className="agenda-event-via">
+                            via {primeiroNome(ev.titular)}
+                          </div>
+                        )}
                         {/* Com a célula dividida não cabe o serviço — o nome é
                             o que identifica; o detalhe fica no tooltip e na
                             lista abaixo da grade. */}

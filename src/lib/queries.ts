@@ -120,6 +120,8 @@ export type ProximaVisita = {
   lead_id: string;
   data_agendamento: string;
   servico: string | null;
+  /** Para quem é, quando difere do titular do WhatsApp. */
+  nome_cliente: string | null;
 };
 export async function getProximasVisitas(): Promise<ProximaVisita[]> {
   const nowIso = new Date().toISOString();
@@ -129,7 +131,7 @@ export async function getProximasVisitas(): Promise<ProximaVisita[]> {
   const data = await buscarTodasAsPaginas<ProximaVisita>((de, ate) =>
     supabase
       .from("agendamentos")
-      .select("lead_id, data_agendamento, servico")
+      .select("lead_id, data_agendamento, servico, nome_cliente")
       .gte("data_agendamento", nowIso)
       .neq("status", "cancelado")
       .order("data_agendamento", { ascending: true })

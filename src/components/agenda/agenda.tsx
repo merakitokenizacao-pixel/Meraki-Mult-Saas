@@ -145,9 +145,6 @@ export function Agenda() {
     return monthLabel(getWeekDays(getStartOfWeek(refDate)));
   }, [view, refDate]);
 
-  function gotoToday() {
-    setRefDate(new Date());
-  }
   // Navega conforme a visão: ±1 dia, ±1 semana ou ±1 mês.
   function step(dir: number) {
     setRefDate((prev) => {
@@ -202,9 +199,6 @@ export function Agenda() {
     <div className="page-fade">
       <div className="agenda-header">
         <div className="agenda-nav">
-          <button className="agenda-nav-btn" onClick={gotoToday}>
-            Hoje
-          </button>
           <button className="agenda-arrow" onClick={() => step(-1)}>
             ‹
           </button>

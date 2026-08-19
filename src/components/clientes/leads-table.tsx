@@ -1,4 +1,5 @@
 import { Avatar } from "@/components/avatar";
+import { nomesDoAgendamento } from "@/lib/nome-agendamento";
 import { LeadStatusBadge } from "@/components/lead-status-badge";
 import { fmtDate, formatTelefone, nomeCanal } from "@/lib/format";
 import { formatProximaVisita } from "@/lib/date";
@@ -77,6 +78,16 @@ export function LeadsTable({
                       <div style={{ fontWeight: 500 }}>
                         {formatProximaVisita(visita.data_agendamento)}
                       </div>
+                      {/* A linha é do titular do WhatsApp, mas a visita pode
+                          ser PARA OUTRA PESSOA — e é aqui que a confusão
+                          aparece: a Ingrid tem visita marcada, quem vai é a
+                          Maria Dagmar. */}
+                      {nomesDoAgendamento(visita.nome_cliente, l.nome)
+                        .titular && (
+                        <div className="lead-visita-para">
+                          para {visita.nome_cliente}
+                        </div>
+                      )}
                       {visita.servico && (
                         <div
                           style={{

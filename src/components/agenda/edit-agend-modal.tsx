@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { nomesDoAgendamento } from "@/lib/nome-agendamento";
 import { Modal } from "@/components/modal";
 import { Avatar } from "@/components/avatar";
 import { StatusBadge } from "@/components/status-badge";
@@ -39,6 +40,8 @@ export function EditAgendModal({
   if (!agend) return null;
 
   const lead = agend.leads;
+  // Quem vai ser atendido pode não ser o dono do WhatsApp.
+  const nomes = nomesDoAgendamento(agend.nome_cliente, lead?.nome);
   const dt = agend.data_agendamento ? new Date(agend.data_agendamento) : null;
   const visitas = allAgendamentos.filter(
     (x) => x.lead_id === agend.lead_id && x.status === "realizado"
@@ -105,7 +108,12 @@ export function EditAgendModal({
           style={{ border: "2px solid var(--vx-border)" }}
         />
         <div style={{ flex: 1 }}>
-          <div className="modal-name">{lead?.nome || "—"}</div>
+          <div className="modal-name">{nomes.exibido || "—"}</div>
+          {/* Aqui cabe o nome COMPLETO do titular: o modal não é estreito
+              como o card do calendário. */}
+          {nomes.titular && (
+            <div className="modal-via">via {nomes.titular}</div>
+          )}
           <div className="modal-phone">
             {lead?.telefone ? formatTelefone(lead.telefone) : "—"}
           </div>

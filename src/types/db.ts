@@ -58,6 +58,10 @@ export interface Agendamento {
   servico: string | null;
   data_agendamento: string;
   duracao_min: number | null;
+  /** Para QUEM é o horário, quando difere do dono do WhatsApp. A tool
+   *  `Criar_Agendamento` da Laura preenche; o painel exibe. Nulo = é o
+   *  próprio titular. */
+  nome_cliente?: string | null;
   status: AgendamentoStatus;
   origem: string | null;
   valor: number | null;

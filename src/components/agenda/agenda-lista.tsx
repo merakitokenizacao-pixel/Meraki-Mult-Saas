@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { nomesDoAgendamento } from "@/lib/nome-agendamento";
 import { ChevronDown, List } from "lucide-react";
 import { Avatar } from "@/components/avatar";
 import { StatusBadge } from "@/components/status-badge";
@@ -123,7 +124,10 @@ export function AgendaLista({
                           fontSize={10}
                         />
                         <span className="ag-lista-nome">
-                          {a.leads?.nome || a.leads?.telefone || "Cliente"}
+                          {nomesDoAgendamento(a.nome_cliente, a.leads?.nome)
+                            .exibido ||
+                            a.leads?.telefone ||
+                            "Cliente"}
                         </span>
                         <span className="ag-lista-servico">
                           {limparServico(a.servico)}

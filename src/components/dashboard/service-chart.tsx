@@ -23,14 +23,30 @@ export function ServiceChart({ agendamentos }: { agendamentos: Agendamento[] }) 
       svcs[s] = (svcs[s] || 0) + 1;
     }
   });
-  const sorted = Object.entries(svcs)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 6);
+  // Ordena por volume e agrupa a CAUDA em "Outros". O `slice(0,6)` de antes
+  // descartava o resto em silêncio — a rosca somava menos que o total de
+  // atendimentos e ninguém via. E juntar a cauda é o que permite ficar dentro
+  // dos cinco tons da rampa, sem voltar para o arco-íris só porque há mais
+  // categorias que cores.
+  const todos = Object.entries(svcs).sort((a, b) => b[1] - a[1]);
+  const TOPO = 4;
+  const cauda = todos.slice(TOPO);
+  const somaCauda = cauda.reduce((n, [, v]) => n + v, 0);
+  const sorted: [string, number][] =
+    somaCauda > 0
+      ? [...todos.slice(0, TOPO), [`Outros (${cauda.length})`, somaCauda]]
+      : todos.slice(0, TOPO);
 
   if (sorted.length === 0) return <div className="chart-container" />;
 
   const cs = getChartStyle();
-  const colors = [cs.accent, cs.green, cs.blue, cs.gold, "#6c5ce7", "#e74c3c"];
+  // A MESMA rampa da rosca "Percentual por profissional". Duas roscas na
+  // mesma página com linguagens de cor diferentes é o que fazia uma delas
+  // parecer de outro aplicativo.
+  const raiz = getComputedStyle(document.documentElement);
+  const colors = [1, 2, 3, 4, 5].map((i) =>
+    raiz.getPropertyValue(`--vx-cat-${i}`).trim()
+  );
 
   const data: ChartData<"doughnut"> = {
     labels: sorted.map((s) => s[0]),

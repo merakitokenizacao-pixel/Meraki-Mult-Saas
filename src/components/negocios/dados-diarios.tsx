@@ -5,6 +5,15 @@ import { Chart } from "chart.js";
 import { getChartStyle } from "@/lib/chart";
 import { useTheme } from "@/components/theme-provider";
 import { moeda, moedaCurta, type PontoDia } from "@/lib/financeiro";
+import {
+  CURVA_HONESTA,
+  comAlfa as alfa,
+  gradienteHorizontal,
+  pluginCursorVertical,
+  pluginRotuloNaPonta,
+  raioAncora,
+  tracoDuplo,
+} from "@/lib/chart-linha";
 
 export type SerieId = "criado" | "ganho" | "perdido";
 export type Modo = "valor" | "qtd";
@@ -70,31 +79,59 @@ export function DadosDiarios({
       type: "line",
       data: {
         labels: dados.rotulos,
-        datasets: dados.series.map((s) => {
+        datasets: dados.series.flatMap((s) => {
           const cor = lerVar(s.cor) || est.accent;
           const apagado = destaque !== null && destaque !== s.id;
-          return {
+          const base = {
             label: s.label,
             data: s.valores,
-            borderColor: apagado ? comAlfa(cor, 0.28) : cor,
-            borderWidth: destaque === s.id ? 2.4 : 2,
-            pointRadius: 0,
+            // Gradiente ao longo do X: claro no passado, cheio no presente.
+            // Profundidade sem massa — e diz para que lado o tempo corre.
+            // A FUNÇÃO vai direto: o Chart.js a chama com o contexto real, já
+            // com a área do gráfico calculada. Chamá-la aqui daria um gradiente
+            // de largura zero, porque no primeiro passe o layout ainda não
+            // aconteceu.
+            borderColor: apagado ? alfa(cor, 0.28) : gradienteHorizontal(cor),
+            // Ponto SÓ nas âncoras: último, máximo e mínimo.
+            pointRadius: raioAncora(s.valores),
             pointHoverRadius: 4,
+            pointBackgroundColor: cor,
+            pointBorderWidth: 0,
             pointHoverBackgroundColor: cor,
             pointHoverBorderColor: est.border,
-            tension: 0.35,
+            ...CURVA_HONESTA,
             // Sem área. As três séries não somam entre si — preencher embaixo
             // insinua acúmulo onde não há, e o empilhamento das três era o
             // maior bloco de cor da tela.
             fill: false,
-            order: destaque === s.id ? 0 : 1,
           };
+          // Traço duplo: 6px a 8% atrás, sólido na frente. A série apagada não
+          // ganha halo — ela já está recuando.
+          return apagado
+            ? [{ ...base, borderWidth: 2, order: 2 }]
+            : tracoDuplo(base, cor, destaque === s.id ? 2.4 : 2);
         }),
       },
+      // Os plugins ficam nesta instância, não registrados global: o rótulo na
+      // ponta e o cursor não devem vazar para a rosca nem para os outros
+      // gráficos.
+      plugins: [
+        pluginRotuloNaPonta(
+          (v) => (modo === "valor" ? moedaCurta(v) : String(v)),
+          est.fontSans,
+          est.fontMono
+        ),
+        pluginCursorVertical(est.border),
+      ],
       options: {
         responsive: true,
         maintainAspectRatio: false,
         interaction: { mode: "index", intersect: false },
+        // 120ms: rápido o bastante para parecer resposta, lento o bastante
+        // para o olho acompanhar de onde veio.
+        animation: { duration: 120 },
+        // Espaço à direita para o rótulo da ponta caber sem sair da área.
+        layout: { padding: { right: 62 } },
         plugins: {
           legend: { display: false },
           tooltip: {
@@ -163,34 +200,6 @@ export function DadosDiarios({
       {montado ? (
         <canvas ref={canvasRef} aria-label="Movimento diário" role="img" />
       ) : null}
-    </div>
-  );
-}
-
-export function LegendaSeries({
-  destaque,
-  onDestacar,
-}: {
-  destaque: SerieId | null;
-  onDestacar: (s: SerieId | null) => void;
-}) {
-  return (
-    <div className="neg-legenda">
-      {SERIES.map((s) => (
-        <button
-          key={s.id}
-          type="button"
-          onClick={() => onDestacar(destaque === s.id ? null : s.id)}
-          className={`neg-legenda-item${destaque === s.id ? " ativo" : ""}`}
-          aria-pressed={destaque === s.id}
-        >
-          <span
-            className="neg-legenda-ponto"
-            style={{ background: `var(${s.cor})` }}
-          />
-          {s.label}
-        </button>
-      ))}
     </div>
   );
 }

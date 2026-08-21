@@ -3908,33 +3908,6 @@ select.form-input {
   cursor: pointer;
 }
 
-/* ── Legenda clicável do gráfico ── */
-.neg-legenda {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-.neg-legenda-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 9px;
-  border: 1px solid transparent;
-  border-radius: 7px;
-  background: transparent;
-  font-family: inherit;
-  font-size: 11.5px;
-  color: var(--vx-muted);
-  cursor: pointer;
-  transition: color var(--vx-transition), border-color var(--vx-transition);
-}
-.neg-legenda-item:hover {
-  color: var(--vx-text2);
-}
-.neg-legenda-item.ativo {
-  border-color: var(--vx-border2);
-  color: var(--vx-text);
-}
 .neg-legenda-ponto {
   width: 8px;
   height: 8px;

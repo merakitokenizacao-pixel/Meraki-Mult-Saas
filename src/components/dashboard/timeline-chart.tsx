@@ -4,6 +4,12 @@ import { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
 import type { ChartData, ChartOptions } from "chart.js";
 import { getChartStyle } from "@/lib/chart";
+import {
+  CURVA_HONESTA,
+  comAlfa,
+  gradienteHorizontal,
+  raioAncora,
+} from "@/lib/chart-linha";
 import { useTheme } from "@/components/theme-provider";
 import type { Lead } from "@/types/db";
 
@@ -39,15 +45,36 @@ export function TimelineChart({ leads }: { leads: Lead[] }) {
       })
     ),
     datasets: [
+      // Traço duplo: 6px a 8% atrás, sólido na frente. Profundidade sem
+      // sombra — `shadowBlur` lê como neon e custa uma passada de blur por
+      // quadro.
       {
         data: Object.values(days),
-        borderColor: cs.accent,
-        backgroundColor: cs.accent + "18",
-        fill: true,
-        tension: 0.4,
-        pointRadius: 4,
+        borderColor: comAlfa(cs.accent, 0.08),
+        borderWidth: 6,
+        pointRadius: 0,
+        fill: false,
+        order: 10,
+        ...CURVA_HONESTA,
+      },
+      {
+        data: Object.values(days),
+        // Gradiente: claro no passado, cheio no presente.
+        borderColor: gradienteHorizontal(cs.accent),
+        // Sem área: com uma série só ela não soma nada, e era a maior massa
+        // de cor do card.
+        fill: false,
+        // ⚠️ `tension` EXTRAPOLA — era ele que fazia a curva subir acima do
+        // último ponto e voltar, inventando um pico que não existe no dado.
+        // `monotone` suaviza igual e é proibido de passar dos valores reais.
+        ...CURVA_HONESTA,
+        // Ponto só no último, no máximo e no mínimo.
+        pointRadius: raioAncora(Object.values(days)),
+        pointHoverRadius: 5,
         pointBackgroundColor: cs.accent,
+        pointBorderWidth: 0,
         borderWidth: 2,
+        order: 1,
       },
     ],
   };

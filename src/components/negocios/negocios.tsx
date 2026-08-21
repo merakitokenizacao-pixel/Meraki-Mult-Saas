@@ -27,7 +27,6 @@ import { filterByDate } from "@/lib/date";
 import { KpiCard, type TomKpi } from "@/components/negocios/kpi-card";
 import {
   DadosDiarios,
-  LegendaSeries,
   type Modo,
   type SerieId,
 } from "@/components/negocios/dados-diarios";
@@ -246,13 +245,6 @@ export function Negocios({ period }: { period: string }) {
               </span>
             </div>
             <div className="neg-painel-acoes">
-              <LegendaSeries
-                destaque={destaque}
-                onDestacar={(s) => {
-                  setDestaqueManual(s);
-                  setSelecionado(null);
-                }}
-              />
               <select
                 className="neg-select"
                 value={modo}

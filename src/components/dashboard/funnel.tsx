@@ -13,16 +13,30 @@ import type { Lead, Agendamento } from "@/types/db";
 export function Funnel({
   leads,
   agendamentos,
+  responderam,
 }: {
   leads: Lead[];
   agendamentos: Agendamento[];
+  /** Quem escreveu para a clínica pelo menos uma vez. */
+  responderam: Set<string> | null;
 }) {
-  const total = leads.length;
+  // O topo do funil é quem FALOU, não quem está na tabela. A dona disparou
+  // para a lista antiga dela: dos 956 leads, 651 nunca responderam. Com eles
+  // no topo, Agendaram caía para 7% e o funil dizia que a clínica não
+  // converte — quando o que não converte é uma lista fria.
+  const base = responderam
+    ? leads.filter((l) => responderam.has(l.id))
+    : leads;
+  const total = base.length;
 
+  // Os estágios seguintes também saem da MESMA base, senão o funil alarga no
+  // meio: alguém que agendou sem nunca ter escrito (cadastro de balcão)
+  // apareceria em Agendaram sem estar em Clientes.
+  const naBase = new Set(base.map((l) => l.id));
   const leadsAgendaram = new Set<string>();
   const leadsCompareceram = new Set<string>();
   for (const a of agendamentos) {
-    if (!a.lead_id) continue;
+    if (!a.lead_id || !naBase.has(a.lead_id)) continue;
     if (a.status !== "cancelado") leadsAgendaram.add(a.lead_id);
     if (a.status === "realizado") leadsCompareceram.add(a.lead_id);
   }

@@ -2,7 +2,11 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useAgendamentosComLead, useLeads } from "@/lib/hooks";
+import {
+  useAgendamentosComLead,
+  useLeads,
+  useLeadsQueResponderam,
+} from "@/lib/hooks";
 import { MetricsGrid } from "@/components/dashboard/metrics-grid";
 import { ProximosAgendamentos } from "@/components/dashboard/proximos-agendamentos";
 import { Funnel } from "@/components/dashboard/funnel";
@@ -24,6 +28,10 @@ function Spinner() {
 // as duas abas compartilham o MESMO recorte, e trocar de aba não o perde.
 export function Dashboard({ period }: { period: string }) {
   const leadsQuery = useLeads();
+  // Separa quem chegou de quem só recebeu disparo — ver o comentário em
+  // metrics-grid.tsx.
+  const responderamQuery = useLeadsQueResponderam();
+  const responderam = responderamQuery.data ?? null;
   // Uma única busca de agendamentos. Antes esta tela pedia a MESMA tabela duas
   // vezes na mesma renderização (useAgendamentos + useAgendamentosComLead),
   // com queryKeys diferentes, então nem o cache aproveitava. Como
@@ -45,7 +53,12 @@ export function Dashboard({ period }: { period: string }) {
           <Spinner />
         </div>
       ) : (
-        <MetricsGrid leads={leads} agendamentos={agendamentos} period={period} />
+        <MetricsGrid
+          leads={leads}
+          agendamentos={agendamentos}
+          period={period}
+          responderam={responderam}
+        />
       )}
 
       {/* Próximos agendamentos + Funil */}
@@ -75,7 +88,11 @@ export function Dashboard({ period }: { period: string }) {
           {loading ? (
             <Spinner />
           ) : (
-            <Funnel leads={leads} agendamentos={agendamentos} />
+            <Funnel
+              leads={leads}
+              agendamentos={agendamentos}
+              responderam={responderam}
+            />
           )}
         </div>
       </div>

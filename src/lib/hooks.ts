@@ -151,3 +151,27 @@ export function useFollowUps() {
     },
   });
 }
+
+/**
+ * Ids dos leads que EM ALGUM MOMENTO escreveram para a clínica.
+ *
+ * Serve para separar quem chegou de quem só recebeu disparo. A dona mandou
+ * mensagem para a lista antiga de contatos dela, e esses números entraram em
+ * `leads` — sem este filtro o painel os conta como clientes captados e a taxa
+ * de conversão despenca por causa do denominador.
+ *
+ * Vem de rota server-side porque a conta pede varrer `conversas` (6.500+
+ * linhas), acima do teto de 1.000 do PostgREST.
+ */
+export function useLeadsQueResponderam() {
+  return useQuery({
+    queryKey: ["leads-ativos"],
+    queryFn: async () => {
+      const r = await fetch("/api/painel/leads-ativos");
+      if (!r.ok) throw new Error("Não foi possível carregar quem respondeu");
+      const j = (await r.json()) as { ids: string[] };
+      return new Set(j.ids);
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+}

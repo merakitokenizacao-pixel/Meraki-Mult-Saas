@@ -18,14 +18,32 @@ export function MetricsGrid({
   leads,
   agendamentos,
   period,
+  responderam,
 }: {
   leads: Lead[];
   agendamentos: Agendamento[];
   period: string;
+  /** Quem escreveu para a clínica pelo menos uma vez. `null` = ainda
+   *  carregando; aí o número fica em "—" em vez de mostrar o total inflado
+   *  por um instante. */
+  responderam: Set<string> | null;
 }) {
   const frasePeriodo = FRASE_PERIODO[period] ?? "no período";
-  const filtered = filterByDate(leads, "criado_em", period);
+  const noPeriodo = filterByDate(leads, "criado_em", period);
+
+  // CAPTADO = quem FALOU com a clínica.
+  //
+  // A dona disparou para a lista antiga de contatos dela, e esses números
+  // entraram em `leads`. Contá-los aqui dizia "509 clientes captados em 7
+  // dias" quando só 37 tinham respondido — e afundava a taxa de conversão para
+  // 1%, porque o denominador estava cheio de gente que nunca abriu a boca.
+  // Quem recebeu disparo e ficou mudo não foi captado: a clínica falou com ele,
+  // ele não falou com a clínica.
+  const filtered = responderam
+    ? noPeriodo.filter((l) => responderam.has(l.id))
+    : noPeriodo;
   const total = filtered.length;
+  const soDisparo = noPeriodo.length - filtered.length;
 
   // Taxa de conversão = DOS LEADS CAPTADOS NO PERÍODO, quantos AGENDARAM.
   // (Coorte: denominador = captados no período; o agendamento deles pode ter
@@ -85,8 +103,15 @@ export function MetricsGrid({
         <div className="metrics-grid-2">
           <div className="metric-card">
             <div className="metric-label">Clientes captados</div>
-            <div className="metric-value">{total}</div>
-            <div className="metric-sub">via WhatsApp</div>
+            <div className="metric-value">{responderam ? total : "—"}</div>
+            {/* O número de quem só recebeu disparo não some — ele vira o
+                subtexto. Sumir com ele faria a dona achar que a lista dela
+                não entrou no sistema. */}
+            <div className="metric-sub">
+              {soDisparo > 0
+                ? `+${soDisparo} só receberam mensagem`
+                : "via WhatsApp"}
+            </div>
           </div>
           <div className="metric-card">
             <div className="metric-label">Taxa de conversão</div>

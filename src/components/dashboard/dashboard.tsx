@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import {
   useAgendamentosComLead,
   useLeads,
+  useCatalogoServicos,
   useLeadsQueResponderam,
 } from "@/lib/hooks";
 import { MetricsGrid } from "@/components/dashboard/metrics-grid";
@@ -32,6 +33,17 @@ export function Dashboard({ period }: { period: string }) {
   // metrics-grid.tsx.
   const responderamQuery = useLeadsQueResponderam();
   const responderam = responderamQuery.data ?? null;
+
+  // Preço vem do catálogo da clínica — a MESMA base que a Laura lê. Mesmo
+  // hook da aba Negócios, então nenhuma requisição a mais: mesma queryKey.
+  const catalogoQ = useCatalogoServicos();
+  const precos = useMemo(
+    () => ({
+      catalogo: catalogoQ.data?.servicos ?? [],
+      promocoes: catalogoQ.data?.promocoes ?? [],
+    }),
+    [catalogoQ.data]
+  );
   // Uma única busca de agendamentos. Antes esta tela pedia a MESMA tabela duas
   // vezes na mesma renderização (useAgendamentos + useAgendamentosComLead),
   // com queryKeys diferentes, então nem o cache aproveitava. Como
@@ -58,6 +70,7 @@ export function Dashboard({ period }: { period: string }) {
           agendamentos={agendamentos}
           period={period}
           responderam={responderam}
+          precos={precos}
         />
       )}
 

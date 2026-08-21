@@ -1,4 +1,5 @@
 import { filterByDate } from "@/lib/date";
+import { valorDe, type Precos } from "@/lib/financeiro";
 import type { Lead, Agendamento } from "@/types/db";
 
 // Completa o título de cada lente ("Quem chegou nesta semana"), para o cabeçalho
@@ -19,6 +20,7 @@ export function MetricsGrid({
   agendamentos,
   period,
   responderam,
+  precos,
 }: {
   leads: Lead[];
   agendamentos: Agendamento[];
@@ -27,6 +29,8 @@ export function MetricsGrid({
    *  carregando; aí o número fica em "—" em vez de mostrar o total inflado
    *  por um instante. */
   responderam: Set<string> | null;
+  /** Catálogo da clínica, para precificar pelo serviço. */
+  precos: Precos;
 }) {
   const frasePeriodo = FRASE_PERIODO[period] ?? "no período";
   const noPeriodo = filterByDate(leads, "criado_em", period);
@@ -44,6 +48,9 @@ export function MetricsGrid({
     : noPeriodo;
   const total = filtered.length;
   const soDisparo = noPeriodo.length - filtered.length;
+  const taxaResposta = noPeriodo.length
+    ? Math.round((total / noPeriodo.length) * 100)
+    : 0;
 
   // Taxa de conversão = DOS LEADS CAPTADOS NO PERÍODO, quantos AGENDARAM.
   // (Coorte: denominador = captados no período; o agendamento deles pode ter
@@ -78,9 +85,20 @@ export function MetricsGrid({
       : filterByDate(agendamentos, "data_agendamento", period);
   const naoCancelados = agendsPeriodo.filter((a) => a.status !== "cancelado");
   const consultasAgendadas = naoCancelados.length;
-  const receita = naoCancelados
-    .filter((a) => a.valor)
-    .reduce((sum, a) => sum + parseFloat(String(a.valor ?? 0)), 0);
+  // `agendamentos.valor` está vazio em 386 de 386 linhas — o n8n nunca
+  // preencheu. Mas 386 de 386 têm SERVIÇO, e o preço do serviço mora em
+  // `documentos_lins`, a mesma base que a Laura lê no WhatsApp.
+  //
+  // `valorDe` é exatamente essa regra e já é usada na aba Negócios: usa
+  // `a.valor` quando existe e cai no catálogo quando não. Repetir a conta aqui
+  // faria as duas abas divergirem no primeiro reajuste de preço.
+  let receita = 0;
+  let semPreco = 0;
+  for (const a of naoCancelados) {
+    const v = valorDe(a, precos);
+    if (v == null) semPreco++;
+    else receita += v;
+  }
   const receitaFmt =
     receita > 0
       ? receita.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
@@ -104,12 +122,13 @@ export function MetricsGrid({
           <div className="metric-card">
             <div className="metric-label">Clientes captados</div>
             <div className="metric-value">{responderam ? total : "—"}</div>
-            {/* O número de quem só recebeu disparo não some — ele vira o
-                subtexto. Sumir com ele faria a dona achar que a lista dela
-                não entrou no sistema. */}
+            {/* Antes esta linha dizia "+651 só receberam mensagem": punha um
+                sinal de MAIS na frente do que não aconteceu, e o card é sobre
+                quem chegou. A mesma informação vira taxa de resposta — que é
+                o que a dona faz com ela: decidir se vale disparar de novo. */}
             <div className="metric-sub">
               {soDisparo > 0
-                ? `+${soDisparo} só receberam mensagem`
+                ? `${taxaResposta}% de ${total + soDisparo} contatados responderam`
                 : "via WhatsApp"}
             </div>
           </div>
@@ -156,7 +175,14 @@ export function MetricsGrid({
             <div className="metric-value" style={{ fontSize: receitaSize }}>
               {receitaFmt}
             </div>
-            <div className="metric-sub">nesses atendimentos</div>
+            {/* Quantos ficaram de fora da soma: o serviço deles não está no
+                catálogo (Botox e Preenchimento, por exemplo), então o total é
+                PISO. Sem esta linha, o número seria lido como fechamento. */}
+            <div className="metric-sub">
+              {semPreco > 0
+                ? `${consultasAgendadas - semPreco} de ${consultasAgendadas} com preço no catálogo`
+                : "nesses atendimentos"}
+            </div>
           </div>
         </div>
       </section>

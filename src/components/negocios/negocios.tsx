@@ -19,7 +19,8 @@ import {
   moeda,
   rankingServicos,
   resumoFinanceiro,
-  serieDiaria,
+  ROTULO_GRANULARIDADE,
+  serieDoPeriodo,
   contarSemPreco,
   valorDe,
 } from "@/lib/financeiro";
@@ -131,10 +132,14 @@ export function Negocios({ period }: { period: string }) {
     () => resumoFinanceiro(agendamentos, period, precos),
     [agendamentos, period, precos]
   );
-  const pontos = useMemo(
-    () => serieDiaria(agendamentos, period, precos),
+  // A série já vem na granularidade certa: 3 meses viram ~13 pontos, não 90.
+  // Com 90 pontos em 969px são 3,6px por dia, e nenhum tratamento de traço
+  // salva isso — ruído desenhado com gradiente continua sendo ruído.
+  const serie = useMemo(
+    () => serieDoPeriodo(agendamentos, period, precos),
     [agendamentos, period, precos]
   );
+  const pontos = serie.pontos;
   // Quem atendeu vem da ESCALA, não de hash: nunca se atribui atendimento a
   // quem não estava trabalhando. Com uma profissional de plantão a atribuição é
   // exata; com várias, o valor é rateado em partes iguais — estimador sem viés,
@@ -242,6 +247,9 @@ export function Negocios({ period }: { period: string }) {
                     nada) e nunca passa de hoje. Mostrar o intervalo tira a
                     ambiguidade em vez de explicar. */}
                 {janela ? ` · ${janela}` : ""}
+                {/* E a granularidade: sem ela, "R$ 4.200" num ponto de semana
+                    é lido como um dia. */}
+                {` · ${ROTULO_GRANULARIDADE[serie.granularidade]}`}
               </span>
             </div>
             <div className="neg-painel-acoes">
@@ -259,7 +267,11 @@ export function Negocios({ period }: { period: string }) {
           {carregando ? (
             <div className="neg-vazio">Carregando…</div>
           ) : (
-            <DadosDiarios pontos={pontos} modo={modo} destaque={destaque} />
+            <DadosDiarios
+            pontos={pontos}
+            modo={modo}
+            destaque={destaque ?? "ganho"}
+          />
           )}
         </section>
 

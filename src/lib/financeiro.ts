@@ -141,7 +141,113 @@ function chaveDia(d: Date): string {
 const DIA_MS = 86400000;
 /** Piso de dias no gráfico: com "Hoje" seriam 1 ponto e nenhuma leitura. */
 const MINIMO_DIAS = 7;
-const MAXIMO_DIAS = 45;
+/** Teto de DIAS varridos, não de pontos desenhados. Só existe para não montar
+ *  um laço absurdo se alguém pedir "tudo" com anos de base — a partir de 90
+ *  dias os pontos já vêm agrupados por mês. */
+const MAXIMO_DIAS = 800;
+
+export type Granularidade = "dia" | "semana" | "mes";
+
+/**
+ * Quantos dias cabem num ponto.
+ *
+ * Com 3 meses por DIA são ~90 pontos em 969px: 3,6px por dia. Nenhum
+ * tratamento de traço salva isso — ruído desenhado com gradiente continua
+ * sendo ruído. Agrupado por semana viram 13 pontos, e a FORMA aparece.
+ */
+export function granularidadeDe(dias: number): Granularidade {
+  if (dias <= 14) return "dia";
+  if (dias <= 90) return "semana";
+  return "mes";
+}
+
+export const ROTULO_GRANULARIDADE: Record<Granularidade, string> = {
+  dia: "por dia",
+  semana: "por semana",
+  mes: "por mês",
+};
+
+const MESES_CURTOS = [
+  "jan", "fev", "mar", "abr", "mai", "jun",
+  "jul", "ago", "set", "out", "nov", "dez",
+];
+
+/** Segunda-feira da semana do dia — o balde começa nela. */
+function inicioDaSemana(d: Date): Date {
+  const dow = d.getDay(); // 0 = domingo
+  const recuo = dow === 0 ? 6 : dow - 1;
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate() - recuo);
+}
+
+function somaFaixa(destino: Faixa, origem: Faixa): void {
+  destino.valor += origem.valor;
+  destino.qtd += origem.qtd;
+}
+
+/**
+ * Junta os pontos diários em baldes de semana ou mês.
+ *
+ * A agregação é SOMA nos dois modos — valor e quantidade. Média faria o
+ * gráfico de "Ganhos" cair pela metade ao trocar de dia para semana, como se
+ * a clínica tivesse faturado menos.
+ *
+ * O rótulo usa a data de INÍCIO do balde: "08/07" é a semana que começa em 8
+ * de julho, não uma média que aconteceu naquele dia.
+ */
+export function agruparPontos(
+  pontos: PontoDia[],
+  granularidade: Granularidade
+): PontoDia[] {
+  if (granularidade === "dia") return pontos;
+
+  const baldes = new Map<string, PontoDia>();
+  for (const p of pontos) {
+    const ini =
+      granularidade === "semana"
+        ? inicioDaSemana(p.dia)
+        : new Date(p.dia.getFullYear(), p.dia.getMonth(), 1);
+    const chave = chaveDia(ini);
+    let b = baldes.get(chave);
+    if (!b) {
+      b = {
+        dia: ini,
+        rotulo:
+          granularidade === "semana"
+            ? `${String(ini.getDate()).padStart(2, "0")}/${String(
+                ini.getMonth() + 1
+              ).padStart(2, "0")}`
+            : MESES_CURTOS[ini.getMonth()],
+        criado: zero(),
+        ganho: zero(),
+        perdido: zero(),
+      };
+      baldes.set(chave, b);
+    }
+    somaFaixa(b.criado, p.criado);
+    somaFaixa(b.ganho, p.ganho);
+    somaFaixa(b.perdido, p.perdido);
+  }
+  // Ordem cronológica: o Map preserva inserção, e os pontos já chegam em
+  // ordem — mas ordenar explicitamente protege de mudança no chamador.
+  return [...baldes.values()].sort((a, b) => a.dia.getTime() - b.dia.getTime());
+}
+
+/**
+ * A série que o gráfico desenha, já na granularidade certa para o período.
+ *
+ * Devolve a granularidade junto porque a tela precisa DIZER qual está em uso:
+ * sem isso, "R$ 4.200" num ponto de semana é lido como um dia.
+ */
+export function serieDoPeriodo(
+  agendamentos: Agendamento[],
+  period: string,
+  precos: Precos = SEM_PRECOS,
+  hoje = new Date()
+): { pontos: PontoDia[]; granularidade: Granularidade } {
+  const diarios = serieDiaria(agendamentos, period, precos, hoje);
+  const g = granularidadeDe(diarios.length);
+  return { pontos: agruparPontos(diarios, g), granularidade: g };
+}
 
 export function serieDiaria(
   agendamentos: Agendamento[],

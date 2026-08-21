@@ -6,9 +6,11 @@ import { getChartStyle } from "@/lib/chart";
 import { useTheme } from "@/components/theme-provider";
 import { moeda, moedaCurta, type PontoDia } from "@/lib/financeiro";
 import {
+  areaVertical,
   CURVA_HONESTA,
   comAlfa as alfa,
   gradienteHorizontal,
+  pluginBaseEPico,
   pluginCursorVertical,
   pluginRotuloNaPonta,
   raioAncora,
@@ -72,6 +74,9 @@ export function DadosDiarios({
 
   useEffect(() => {
     if (!montado || !canvasRef.current) return;
+    const reduzirMovimento = () =>
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const est = getChartStyle();
 
     chartRef.current?.destroy();
@@ -81,7 +86,8 @@ export function DadosDiarios({
         labels: dados.rotulos,
         datasets: dados.series.flatMap((s) => {
           const cor = lerVar(s.cor) || est.accent;
-          const apagado = destaque !== null && destaque !== s.id;
+          const protagonista = destaque === s.id;
+          const apagado = !protagonista;
           const base = {
             label: s.label,
             data: s.valores,
@@ -91,25 +97,29 @@ export function DadosDiarios({
             // com a área do gráfico calculada. Chamá-la aqui daria um gradiente
             // de largura zero, porque no primeiro passe o layout ainda não
             // aconteceu.
-            borderColor: apagado ? alfa(cor, 0.28) : gradienteHorizontal(cor),
-            // Ponto SÓ nas âncoras: último, máximo e mínimo.
-            pointRadius: raioAncora(s.valores),
+            borderColor: protagonista
+              ? gradienteHorizontal(cor)
+              : alfa(est.muted, 0.45),
+            // Ponto só nas âncoras (último, máximo, mínimo) e só na
+            // protagonista: ponto na linha de contexto vira ruído.
+            pointRadius: protagonista ? raioAncora(s.valores) : 0,
             pointHoverRadius: 4,
             pointBackgroundColor: cor,
             pointBorderWidth: 0,
             pointHoverBackgroundColor: cor,
             pointHoverBorderColor: est.border,
             ...CURVA_HONESTA,
-            // Sem área. As três séries não somam entre si — preencher embaixo
-            // insinua acúmulo onde não há, e o empilhamento das três era o
-            // maior bloco de cor da tela.
-            fill: false,
+            // ÁREA só na protagonista, e a 10% no topo indo a 0 na base. O
+            // erro antigo eram TRÊS áreas somando quase um terço de pixels
+            // escuros; uma sozinha a 10% dá corpo sem peso.
+            fill: protagonista ? "origin" : false,
+            backgroundColor: protagonista ? areaVertical(cor) : undefined,
           };
-          // Traço duplo: 6px a 8% atrás, sólido na frente. A série apagada não
+          // Traço duplo: 6px a 8% atrás, sólido na frente. A de contexto não
           // ganha halo — ela já está recuando.
-          return apagado
-            ? [{ ...base, borderWidth: 2, order: 2 }]
-            : tracoDuplo(base, cor, destaque === s.id ? 2.4 : 2);
+          return protagonista
+            ? tracoDuplo(base, cor, 2)
+            : [{ ...base, borderWidth: 1, order: 3 }];
         }),
       },
       // Os plugins ficam nesta instância, não registrados global: o rótulo na
@@ -119,6 +129,13 @@ export function DadosDiarios({
         pluginRotuloNaPonta(
           (v) => (modo === "valor" ? moedaCurta(v) : String(v)),
           est.fontSans,
+          est.fontMono,
+          est.muted
+        ),
+        pluginBaseEPico(
+          (v) => (modo === "valor" ? moedaCurta(v) : String(v)),
+          est.border,
+          est.muted,
           est.fontMono
         ),
         pluginCursorVertical(est.border),
@@ -127,11 +144,13 @@ export function DadosDiarios({
         responsive: true,
         maintainAspectRatio: false,
         interaction: { mode: "index", intersect: false },
-        // 120ms: rápido o bastante para parecer resposta, lento o bastante
-        // para o olho acompanhar de onde veio.
-        animation: { duration: 120 },
+        // 200ms na troca de protagonista: rápido o bastante para parecer
+        // resposta, lento o bastante para o olho acompanhar qual linha subiu.
+        // Quem pediu menos movimento recebe zero — a troca continua
+        // acontecendo, só sem a transição.
+        animation: { duration: reduzirMovimento() ? 0 : 200 },
         // Espaço à direita para o rótulo da ponta caber sem sair da área.
-        layout: { padding: { right: 62 } },
+        layout: { padding: { right: 96 } },
         plugins: {
           legend: { display: false },
           tooltip: {
@@ -171,17 +190,16 @@ export function DadosDiarios({
               autoSkipPadding: 18,
             },
           },
+          // A CALHA DO Y SAIU. Eram ~60px de largura ocupados só por
+          // "R$ 6 mil / R$ 4 mil / R$ 2 mil / R$ 0,00" — quatro números que
+          // ninguém lê, roubando espaço da própria plotagem. Fica UMA linha de
+          // base no zero, e o valor do PICO flutua junto do pico (plugin
+          // abaixo), que é o único número do eixo que alguém procura.
           y: {
             beginAtZero: true,
-            grid: { color: est.border },
+            grid: { display: false },
             border: { display: false },
-            ticks: {
-              color: est.muted,
-              font: { family: est.fontMono, size: 10 },
-              maxTicksLimit: 5,
-              callback: (v) =>
-                modo === "valor" ? moedaCurta(Number(v)) : `${v}`,
-            },
+            ticks: { display: false },
           },
         },
       },

@@ -60,60 +60,71 @@ export async function resolverTenantPorId(
     throw new TenantErro("tenant_invalido", 400, "Clínica informada é inválida.");
   }
 
-  // `minhas_clinicas()` é SECURITY DEFINER sobre auth.uid(): devolve só as
-  // clínicas desta conta, então a lista já é o universo permitido.
-  const { data, error } = await sb.rpc("minhas_clinicas");
-  if (error) {
-    throw new TenantErro("erro_interno", 500, error.message);
-  }
-  const clinicas = (data ?? []) as Clinica[];
+  // Quem decide é `tenant_valido()` — inclusive quando nada foi informado.
+  //
+  // Antes esta função resolvia o caso implícito por conta própria, porque a
+  // versão anterior de `tenant_valido(null)` fazia `limit 2` e ficava com a
+  // primeira linha que viesse: uma conta com dois vínculos veria uma das
+  // clínicas ao acaso. Hoje ela distingue os casos e levanta com `errcode`
+  // próprio, então a regra volta a morar num lugar só — o banco.
+  //
+  // `minhas_clinicas()` sai em paralelo porque a resposta precisa do SLUG (o
+  // caminho de storage é montado com ele) e `tenant_valido` devolve só o uuid.
+  const [validacao, listagem] = await Promise.all([
+    sb.rpc("tenant_valido", { p_tenant: informado ?? null }),
+    sb.rpc("minhas_clinicas"),
+  ]);
 
-  if (clinicas.length === 0) {
-    throw new TenantErro(
-      "sem_clinica",
-      403,
-      "Esta conta não está vinculada a nenhuma clínica."
-    );
-  }
-
-  if (!informado) {
-    // Uma clínica só: o tenant é implícito, não há o que escolher.
-    if (clinicas.length === 1) return clinicas[0];
-
-    // Várias, e o cliente não disse qual. Aqui NÃO delegamos para
-    // `tenant_valido(null)`: com mais de um vínculo, aquela função pega a
-    // primeira linha que o Postgres devolver — sem ordenação, sem erro. Uma
-    // conta com duas clínicas veria a resposta de uma delas ao acaso, o que é
-    // pior que uma falha, porque parece que funcionou.
-    throw new TenantErro(
-      "tenant_nao_informado",
-      400,
-      "Esta conta atende mais de uma clínica; informe qual."
-    );
+  if (validacao.error) throw erroDoBanco(validacao.error, informado);
+  if (listagem.error) {
+    throw new TenantErro("erro_interno", 500, listagem.error.message);
   }
 
-  // Autoridade é o banco. A checagem contra a lista viria de graça, mas quem
-  // decide precisa ser `tenant_valido()`: se o vínculo mudar, muda num lugar.
-  const { error: erroValidacao } = await sb.rpc("tenant_valido", {
-    p_tenant: informado,
-  });
-  if (erroValidacao) {
-    // A função levanta exceção para tenant que não é da conta.
-    throw new TenantErro(
-      "tenant_negado",
-      403,
-      "Esta conta não tem acesso a essa clínica."
-    );
-  }
+  const escolhido = validacao.data as string | null;
+  const clinicas = (listagem.data ?? []) as Clinica[];
+  const clinica = clinicas.find((c) => c.tenant_id === escolhido);
 
-  const clinica = clinicas.find((c) => c.tenant_id === informado);
   if (!clinica) {
-    // Chegar aqui significa que `tenant_valido` aprovou algo que
-    // `minhas_clinicas` não lista — clínica inativa, por exemplo. Sem slug não
-    // dá para montar caminho de storage, então é negativa.
-    throw new TenantErro("tenant_negado", 403, "Clínica indisponível.");
+    // `tenant_valido` aprovou algo que `minhas_clinicas` não lista — clínica
+    // inativa, por exemplo (a listagem filtra por `t.ativo`). Sem slug não dá
+    // para montar caminho de storage, então é negativa.
+    throw new TenantErro("sem_acesso", 403, "Clínica indisponível.");
   }
   return clinica;
+}
+
+/**
+ * Traduz a exceção do Postgres. "Sem acesso" e "escolha a clínica" são
+ * situações DIFERENTES e precisam de respostas diferentes: a primeira é um
+ * beco sem saída para o usuário (alguém tem que vincular a conta), a segunda
+ * se resolve escolhendo no seletor. Responder 403 para as duas mandaria quem
+ * tem duas clínicas procurar um problema de permissão que não existe.
+ */
+function erroDoBanco(
+  erro: { code?: string; message?: string },
+  informado?: string | null
+): TenantErro {
+  // 42501 = insufficient_privilege. Vem de dois pontos de `tenant_valido`:
+  // tenant informado que não é da conta, e conta sem vínculo nenhum.
+  if (erro.code === "42501") {
+    return informado
+      ? new TenantErro("sem_acesso", 403, "Esta conta não tem acesso a essa clínica.")
+      : new TenantErro(
+          "sem_clinica",
+          403,
+          "Esta conta ainda não está vinculada a nenhuma clínica."
+        );
+  }
+  // 22023 = invalid_parameter_value. A conta atende mais de uma e não disse
+  // qual — é o seletor que resolve, não o suporte.
+  if (erro.code === "22023") {
+    return new TenantErro(
+      "escolha_clinica",
+      400,
+      "Esta conta atende mais de uma clínica; escolha qual."
+    );
+  }
+  return new TenantErro("erro_interno", 500, erro.message ?? "");
 }
 
 /**

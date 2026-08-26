@@ -502,6 +502,13 @@
   outline: none;
   border-color: var(--mk-accent);
 }
+/* Conta sem vínculo: ocupa o lugar do seletor porque é a mesma pergunta
+   ("qual clínica?") sem resposta possível ainda. */
+.tenant-sel-aviso {
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--mk-amber);
+}
 
 /* O grupo de baixo (status, Configurações, Sair) se separa dos itens de
    operação pela POSIÇÃO — o `.sidebar-nav` cresce e empurra. Sem título de

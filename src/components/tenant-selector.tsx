@@ -12,9 +12,26 @@ import { useTenant } from "@/components/tenant-provider";
 // clínica, e um <select> cortado é pior que ausente — a escolha continua
 // valendo, ela só não é editável ali.
 export function TenantSelector({ collapsed }: { collapsed: boolean }) {
-  const { clinicas, atual, varias, escolher } = useTenant();
+  const { clinicas, atual, varias, carregando, escolher } = useTenant();
 
-  if (!varias || collapsed) return null;
+  if (collapsed || carregando) return null;
+
+  // Conta sem vínculo nenhum. É um beco sem saída — alguém precisa rodar
+  // `vincular_conta()` — e o painel não pode simplesmente aparecer vazio: sem
+  // esta linha, toda tela responde 403 e a pessoa fica procurando o que
+  // clicou de errado. Situação DIFERENTE de "escolha a clínica", que se
+  // resolve no seletor abaixo.
+  if (clinicas.length === 0) {
+    return (
+      <div className="tenant-sel">
+        <p className="tenant-sel-aviso">
+          Esta conta ainda não está vinculada a uma clínica.
+        </p>
+      </div>
+    );
+  }
+
+  if (!varias) return null;
 
   return (
     <div className="tenant-sel">

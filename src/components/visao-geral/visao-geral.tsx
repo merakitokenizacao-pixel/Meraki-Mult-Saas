@@ -39,12 +39,7 @@ export function VisaoGeral() {
   }, []);
 
   return (
-    // `data-mk` marca a tela como já convertida ao sistema novo. É o que o
-    // `:root:has([data-mk])` do globals.css procura para trocar a escala
-    // tipográfica e o chrome — `rem` resolve na raiz, então não dá para
-    // escopar a escala por ancestral. Some no passo 5, quando o sistema
-    // antigo sair e o novo virar o padrão.
-    <div className="page-fade" data-mk>
+    <div className="page-fade">
       <div className="vg-header">
         <div>
           {/* Reserva a altura mesmo antes de o relógio do cliente responder,

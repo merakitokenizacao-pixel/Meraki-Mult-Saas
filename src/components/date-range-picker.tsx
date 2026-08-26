@@ -30,7 +30,7 @@ import {
 // 2. O MIOLO DO INTERVALO É NEUTRO. Quase todo kit preenche o range inteiro
 //    com um tom do accent. Num intervalo de 8 dias isso vira um borrão
 //    colorido. Aqui só as duas PONTAS levam a cor da marca; o meio é
-//    --mk-surface2. A cor passa a dizer "começa aqui, termina aqui".
+//    --mk-superficie-2. A cor passa a dizer "começa aqui, termina aqui".
 //
 // 3. MÊS E ANO SÃO <select>. Sem eles, chegar em março de 2024 custa vinte
 //    cliques na setinha. Com eles, dois.

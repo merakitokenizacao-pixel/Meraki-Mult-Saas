@@ -1,29 +1,34 @@
-// Catálogo dos temas do painel — fonte única.
+// Catálogo de aparência do painel — fonte única.
 //
-// O <html> carrega DOIS atributos, de propósito:
-//   data-mode="light|dark"   → o que é estrutural (contraste, sombras, o
-//                              variant `dark:` do Tailwind)
-//   data-theme="<id>"        → qual PALETA está em uso
-// Separar os dois é o que permite existir mais de um tema escuro sem reescrever
-// nenhuma regra de CSS: um tema novo só declara seus tokens `--mk-*`.
+// ⚠️ MUDOU EM AGO/2026, junto com o sistema visual. Antes eram três paletas
+// (clara, escura, grafite) sobre um mesmo conjunto de regras: `data-mode`
+// dizia o estrutural (contraste, o variant `dark:` do Tailwind) e `data-theme`
+// dizia a paleta. Trocar de paleta não mexia em regra nenhuma.
 //
-// Os ids são os mesmos valores já gravados no localStorage ('light'/'dark'),
-// então quem já tinha preferência salva não perde nada.
+// O sistema Meraki não é uma paleta a mais: é fundo PRETO com superfície
+// translúcida (`#ffffff08` sobre `#000000`). Isso não tem versão clara — 3%
+// de branco sobre branco não é superfície, é nada. As regras que separam por
+// borda de 1px também dependem do fundo escuro para existir.
+//
+// Então o catálogo tem uma entrada só, e os dois atributos continuam sendo
+// estampados porque o `dark:` do Tailwind e o toast do sonner leem `data-mode`.
+// A estrutura fica de pé para o dia em que houver um segundo sistema; hoje
+// declarar dois seria mentir sobre uma escolha que não existe.
 
-export type Tema = "light" | "dark" | "graphite";
+export type Tema = "meraki";
 export type Modo = "light" | "dark";
 
-export const TEMA_PADRAO: Tema = "light";
+export const TEMA_PADRAO: Tema = "meraki";
 export const TEMA_STORAGE_KEY = "meraki-theme";
 
-/** Amostra usada na miniatura do seletor (Configurações → Aparência). */
+/** Amostra usada na miniatura (Configurações → Aparência). */
 export interface PreviaTema {
   bg: string;
   surface: string;
   border: string;
   text: string;
   accent: string;
-  /** Cores funcionais: verde, âmbar, vermelho, azul. É o que diferencia os temas. */
+  /** Cores funcionais: ativa, aviso, alerta, pausada. */
   cores: [string, string, string, string];
 }
 
@@ -35,49 +40,23 @@ export interface DefTema {
   previa: PreviaTema;
 }
 
-// As cores da prévia são LITERAIS (não var(--mk-*)): o cartão precisa mostrar o
-// tema que NÃO está aplicado. Devem espelhar os blocos de token do globals.css.
+// As cores da prévia são LITERAIS de propósito: a miniatura tem que se pintar
+// sozinha, sem depender dos tokens que ela está ilustrando. Devem espelhar o
+// bloco de tokens do globals.css — se um mudar lá, muda aqui.
 export const TEMAS: DefTema[] = [
   {
-    id: "light",
-    label: "Claro",
-    descricao: "Bege e dourado, para o dia",
-    escuro: false,
-    previa: {
-      bg: "#f8f6f2",
-      surface: "#ffffff",
-      border: "#e0dbd2",
-      text: "#1a1814",
-      accent: "#9b7d5a",
-      cores: ["#3a6b4f", "#b5600a", "#b03030", "#2a5278"],
-    },
-  },
-  {
-    id: "dark",
-    label: "Escuro",
-    descricao: "O mesmo bege, em tom de noite",
+    id: "meraki",
+    label: "Meraki",
+    descricao: "Preto real, superfície translúcida, acento violeta",
     escuro: true,
     previa: {
-      bg: "#111009",
-      surface: "#1a1814",
-      border: "#38352a",
-      text: "#f0ece4",
-      accent: "#c8a07a",
-      cores: ["#5ab87a", "#e89040", "#e05050", "#60a0d0"],
-    },
-  },
-  {
-    id: "graphite",
-    label: "Grafite",
-    descricao: "Preto neutro; o dourado e os status ganham força",
-    escuro: true,
-    previa: {
-      bg: "#0a0a0c",
-      surface: "#131316",
-      border: "#26262c",
-      text: "#f4f4f5",
-      accent: "#d4ac72",
-      cores: ["#3ecf8e", "#f0a83c", "#f2565c", "#5aa2f5"],
+      bg: "#000000",
+      // a superfície é translúcida; na miniatura ela vai composta sobre o preto
+      surface: "#0d0d0d",
+      border: "#2b2b2b",
+      text: "#ecedee",
+      accent: "#a78bfa",
+      cores: ["#3fb950", "#d9a441", "#f85149", "#7dd3fc"],
     },
   },
 ];

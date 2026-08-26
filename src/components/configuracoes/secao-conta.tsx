@@ -119,8 +119,8 @@ export function SecaoConta() {
                 alignItems: "flex-start",
                 padding: "10px 12px",
                 borderRadius: 10,
-                background: "var(--mk-red-bg)",
-                color: "var(--mk-red)",
+                background: "var(--mk-alerta-fraca)",
+                color: "var(--mk-alerta)",
                 fontSize: 12.5,
                 marginBottom: 12,
               }}

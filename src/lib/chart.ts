@@ -42,12 +42,12 @@ export function getChartStyle(): ChartStyle {
   const s = getComputedStyle(document.documentElement);
   const v = (name: string) => s.getPropertyValue(name).trim();
   return {
-    muted: v("--mk-muted"),
-    border: v("--mk-border"),
-    accent: v("--mk-accent"),
-    green: v("--mk-green"),
-    blue: v("--mk-blue"),
-    gold: v("--mk-gold"),
+    muted: v("--mk-tinta-fraca"),
+    border: v("--mk-linha"),
+    accent: v("--mk-acento"),
+    green: v("--mk-ativa"),
+    blue: v("--mk-pausada"),
+    gold: v("--mk-acento"),
     // Sistema Meraki primeiro, sistema antigo como reserva. O gráfico tem que
     // usar a MESMA fonte do resto da tela: rótulo de eixo numa fonte e valor
     // do card em outra é o tipo de desalinho que ninguém nomeia mas todo mundo

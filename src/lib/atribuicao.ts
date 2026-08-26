@@ -94,7 +94,7 @@ export interface ResultadoAtribuicao {
 // tema Escuro pela revisão adversarial.
 // Paleta CATEGÓRICA própria, não os tokens de status.
 //
-// Antes esta lista começava em --mk-accent e terminava em --mk-gold: a rosca
+// Antes esta lista começava em --mk-acento e terminava em --mk-acento: a rosca
 // pintava duas fatias douradas, mais dois pontos de legenda e dois avatares,
 // tudo disputando com o item ativo do menu — que é o único lugar onde essa cor
 // precisa querer dizer alguma coisa.
@@ -103,11 +103,11 @@ export interface ResultadoAtribuicao {
 // SITUAÇÃO em toda a interface, e como paleta categórica reprovavam
 // (vermelho↔âmbar dava ΔE 11,1 para visão normal, com piso em 15).
 const TOKENS = [
-  "--mk-cat-1",
-  "--mk-cat-2",
-  "--mk-cat-3",
-  "--mk-cat-4",
-  "--mk-cat-5",
+  "--mk-serie-1",
+  "--mk-serie-2",
+  "--mk-serie-3",
+  "--mk-serie-4",
+  "--mk-serie-5",
 ];
 
 /**

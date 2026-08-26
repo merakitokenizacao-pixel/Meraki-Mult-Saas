@@ -81,18 +81,18 @@ export function InboxList({
     : leads;
 
   return (
-    <div className="flex h-full min-h-0 flex-col border-r border-mk-border bg-mk-surface">
+    <div className="flex h-full min-h-0 flex-col border-r border-mk-linha bg-mk-superficie">
       {/* Header compacto: busca+ações · filtro ativo+contador+período · chips */}
-      <div className="flex shrink-0 flex-col gap-3 border-b border-mk-border px-4 pb-3 pt-3.5">
+      <div className="flex shrink-0 flex-col gap-3 border-b border-mk-linha px-4 pb-3 pt-3.5">
         <div className="flex items-center gap-2">
           <label className="flex min-w-0 flex-1 items-center gap-2">
-            <Search size={15} strokeWidth={1.5} className="shrink-0 text-mk-muted" />
+            <Search size={15} strokeWidth={1.5} className="shrink-0 text-mk-tinta-fraca" />
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Pesquise seus contatos"
               aria-label="Buscar conversa"
-              className="w-full bg-transparent text-[13px] text-mk-text outline-none placeholder:text-mk-muted"
+              className="w-full bg-transparent text-[13px] text-mk-tinta outline-none placeholder:text-mk-tinta-fraca"
             />
           </label>
           <button
@@ -105,10 +105,10 @@ export function InboxList({
             }
             aria-label="Aviso sonoro de mensagem nova"
             aria-pressed={somLigado}
-            className={`grid h-7 w-7 shrink-0 place-items-center rounded-lg transition-colors hover:bg-mk-surface2 ${
+            className={`grid h-7 w-7 shrink-0 place-items-center rounded-lg transition-colors hover:bg-mk-superficie-2 ${
               somLigado
-                ? "text-mk-accent"
-                : "text-mk-muted opacity-60 hover:text-mk-text"
+                ? "text-mk-acento"
+                : "text-mk-tinta-fraca opacity-60 hover:text-mk-tinta"
             }`}
           >
             {somLigado ? (
@@ -122,7 +122,7 @@ export function InboxList({
             onClick={onRefresh}
             title="Atualizar"
             aria-label="Atualizar"
-            className="grid h-7 w-7 shrink-0 place-items-center rounded-lg text-mk-muted transition-colors hover:bg-mk-surface2 hover:text-mk-text"
+            className="grid h-7 w-7 shrink-0 place-items-center rounded-lg text-mk-tinta-fraca transition-colors hover:bg-mk-superficie-2 hover:text-mk-tinta"
           >
             <RefreshCw size={15} strokeWidth={1.5} />
           </button>
@@ -130,10 +130,10 @@ export function InboxList({
 
         <div className="flex items-center justify-between gap-2">
           <div className="flex min-w-0 items-center gap-2">
-            <h2 className="truncate text-[14px] font-semibold text-mk-text">
+            <h2 className="truncate text-[14px] font-semibold text-mk-tinta">
               {tabAtual[1]}
             </h2>
-            <span className="grid h-5 min-w-5 place-items-center rounded-full bg-mk-surface3 px-1.5 font-mono text-[10px] font-bold text-mk-text2">
+            <span className="grid h-5 min-w-5 place-items-center rounded-full bg-mk-superficie-2 px-1.5 font-mono text-[10px] font-bold text-mk-tinta-media">
               {counts[tab]}
             </span>
           </div>
@@ -158,8 +158,8 @@ export function InboxList({
                 aria-pressed={active}
                 className={`inline-flex items-center gap-1.5 rounded-lg border px-2 py-1 font-mono text-[11px] font-semibold transition-colors ${
                   active
-                    ? "border-mk-accent bg-mk-accent-light text-mk-accent"
-                    : "border-mk-border bg-mk-surface2 text-mk-muted hover:border-mk-border2 hover:text-mk-text2"
+                    ? "border-mk-acento bg-mk-acento-fraco text-mk-acento"
+                    : "border-mk-linha bg-mk-superficie-2 text-mk-tinta-fraca hover:border-mk-linha hover:text-mk-tinta-media"
                 }`}
               >
                 <Icon size={14} strokeWidth={1.6} />
@@ -176,10 +176,10 @@ export function InboxList({
           <InboxSkeleton />
         ) : filtered.length === 0 ? (
           <div className="flex h-full flex-col items-center justify-center gap-3 px-6 text-center">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-mk-border bg-mk-surface2">
-              <MessagesSquare size={24} strokeWidth={1.5} className="text-mk-muted" />
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-mk-linha bg-mk-superficie-2">
+              <MessagesSquare size={24} strokeWidth={1.5} className="text-mk-tinta-fraca" />
             </div>
-            <p className="text-[13px] text-mk-muted">
+            <p className="text-[13px] text-mk-tinta-fraca">
               {q ? "Nada encontrado" : "Sem conversas iniciadas"}
             </p>
           </div>
@@ -194,30 +194,30 @@ export function InboxList({
               <button
                 key={l.id}
                 onClick={() => onSelectLead(l.id)}
-                className={`flex w-full items-center gap-3 border-b border-mk-border/50 px-6 py-3 text-left transition-colors ${
+                className={`flex w-full items-center gap-3 border-b border-mk-linha/50 px-6 py-3 text-left transition-colors ${
                   active
-                    ? "bg-mk-accent-light shadow-[inset_2px_0_0_var(--mk-accent)]"
-                    : "hover:bg-mk-surface2/60"
+                    ? "bg-mk-acento-fraco shadow-[inset_2px_0_0_var(--mk-acento)]"
+                    : "hover:bg-mk-superficie-2/60"
                 }`}
               >
                 <Avatar nome={l.nome} fotoUrl={l.foto_url} size={44} fontSize={12} />
                 <div className="min-w-0 flex-1">
                   <div className="flex items-baseline justify-between gap-2">
-                    <span className="truncate text-[13.5px] font-semibold text-mk-text">
+                    <span className="truncate text-[13.5px] font-semibold text-mk-tinta">
                       {l.nome || l.telefone || "—"}
                     </span>
-                    <span className="shrink-0 font-mono text-[10px] text-mk-muted">
+                    <span className="shrink-0 font-mono text-[10px] text-mk-tinta-fraca">
                       {getRelativeTime(raw)}
                     </span>
                   </div>
                   <div className="mt-1 flex min-w-0 items-center gap-2">
-                    <span className="truncate text-[12px] text-mk-muted">
+                    <span className="truncate text-[12px] text-mk-tinta-fraca">
                       {preview.text}
                     </span>
                   </div>
                 </div>
                 {showUnread && (
-                  <span className="grid h-5 min-w-5 shrink-0 place-items-center rounded-full bg-mk-accent px-1.5 font-mono text-[10px] font-bold text-mk-on-accent">
+                  <span className="grid h-5 min-w-5 shrink-0 place-items-center rounded-full bg-mk-acento px-1.5 font-mono text-[10px] font-bold text-mk-sobre-acento">
                     {unread}
                   </span>
                 )}

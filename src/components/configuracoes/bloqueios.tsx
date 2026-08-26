@@ -111,12 +111,12 @@ export function Bloqueios({ profissionais }: { profissionais: Profissional[] }) 
   const nomeDe = (id: string) =>
     profissionais.find((p) => p.id === id)?.nome ?? "—";
   const corDe = (id: string) =>
-    profissionais.find((p) => p.id === id)?.cor ?? "var(--mk-muted)";
+    profissionais.find((p) => p.id === id)?.cor ?? "var(--mk-tinta-fraca)";
 
   return (
     <div className="config-card">
       <div className="prof-head" style={{ marginBottom: 12 }}>
-        <CalendarOff size={16} strokeWidth={1.6} style={{ color: "var(--mk-accent)" }} />
+        <CalendarOff size={16} strokeWidth={1.6} style={{ color: "var(--mk-acento)" }} />
         <span className="prof-nome">Folgas e férias</span>
         {!abrindo && (
           <button
@@ -219,11 +219,11 @@ export function Bloqueios({ profissionais }: { profissionais: Profissional[] }) 
       )}
 
       {isPending ? (
-        <div style={{ display: "flex", alignItems: "center", gap: 8, color: "var(--mk-muted)", fontSize: 13 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, color: "var(--mk-tinta-fraca)", fontSize: 13 }}>
           <Loader2 size={14} className="animate-spin" /> Carregando…
         </div>
       ) : (bloqueios ?? []).length === 0 ? (
-        <p style={{ fontSize: 12.5, color: "var(--mk-muted)", margin: 0 }}>
+        <p style={{ fontSize: 12.5, color: "var(--mk-tinta-fraca)", margin: 0 }}>
           Nenhuma folga marcada. A escala semanal vale para todos os dias.
         </p>
       ) : (

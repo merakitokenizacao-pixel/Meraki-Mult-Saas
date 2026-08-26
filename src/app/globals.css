@@ -11,10 +11,10 @@
 
 @theme inline {
   /* Fontes do legacy: Cormorant (serif/títulos), Jost (texto), JetBrains (mono) */
-  --font-sans: var(--font-inter);
-  --font-serif: var(--font-cormorant);
-  --font-mono: var(--font-jetbrains);
-  --font-heading: var(--font-cormorant);
+  --font-sans: var(--font-plex);
+  --font-serif: var(--font-space);
+  --font-mono: var(--font-plex-mono);
+  --font-heading: var(--font-space);
   /* Sistema Meraki: número/título em Space Grotesk, corpo em IBM Plex Sans,
      dado tabular em IBM Plex Mono. */
   --font-mk-numero: var(--font-space);
@@ -54,40 +54,38 @@
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
 
-  /* ── Paleta da marca Meraki (utilitários: bg-mk-surface, text-mk-accent, …) ── */
-  --color-mk-bg: var(--mk-bg);
-  --color-mk-surface: var(--mk-surface);
-  --color-mk-surface2: var(--mk-surface2);
-  --color-mk-surface3: var(--mk-surface3);
-  --color-mk-border: var(--mk-border);
-  --color-mk-border2: var(--mk-border2);
-  --color-mk-text: var(--mk-text);
-  --color-mk-text2: var(--mk-text2);
-  --color-mk-muted: var(--mk-muted);
-  --color-mk-accent: var(--mk-accent);
-  --color-mk-accent2: var(--mk-accent2);
-  --color-mk-accent-light: var(--mk-accent-light);
-  --color-mk-on-accent: var(--mk-on-accent);
-  --color-mk-gold: var(--mk-gold);
-  --color-mk-gold-light: var(--mk-gold-light);
-  --color-mk-green: var(--mk-green);
-  --color-mk-green-bg: var(--mk-green-bg);
-  --color-mk-amber: var(--mk-amber);
-  --color-mk-amber-bg: var(--mk-amber-bg);
-  --color-mk-red: var(--mk-red);
-  --color-mk-red-bg: var(--mk-red-bg);
-  --color-mk-blue: var(--mk-blue);
-  --color-mk-blue-bg: var(--mk-blue-bg);
-  --color-mk-purple: var(--mk-purple);
-  --color-mk-purple-bg: var(--mk-purple-bg);
+  /* ── Paleta da marca Meraki (utilitários: bg-mk-superficie, text-mk-acento, …) ── */
+  --color-mk-fundo: var(--mk-fundo);
+  --color-mk-superficie: var(--mk-superficie);
+  --color-mk-superficie-2: var(--mk-superficie-2);
+  --color-mk-superficie-2: var(--mk-superficie-2);
+  --color-mk-linha: var(--mk-linha);
+  --color-mk-linha: var(--mk-linha);
+  --color-mk-tinta: var(--mk-tinta);
+  --color-mk-tinta-media: var(--mk-tinta-media);
+  --color-mk-tinta-fraca: var(--mk-tinta-fraca);
+  --color-mk-acento: var(--mk-acento);
+  --color-mk-acento-forte: var(--mk-acento-forte);
+  --color-mk-acento-fraco: var(--mk-acento-fraco);
+  --color-mk-sobre-acento: var(--mk-sobre-acento);
+  --color-mk-acento: var(--mk-acento);
+  --color-mk-acento-fraco: var(--mk-acento-fraco);
+  --color-mk-ativa: var(--mk-ativa);
+  --color-mk-ativa-fraca: var(--mk-ativa-fraca);
+  --color-mk-aviso: var(--mk-aviso);
+  --color-mk-aviso-fraca: var(--mk-aviso-fraca);
+  --color-mk-alerta: var(--mk-alerta);
+  --color-mk-alerta-fraca: var(--mk-alerta-fraca);
+  --color-mk-pausada: var(--mk-pausada);
+  --color-mk-pausada-fraca: var(--mk-pausada-fraca);
+  --color-mk-pausada: var(--mk-pausada);
+  --color-mk-pausada-fraca: var(--mk-pausada-fraca);
 
-  /* Raios e sombras do legacy */
-  --radius-mk-sm: var(--mk-radius-sm);
-  --radius-mk: var(--mk-radius);
-  --radius-mk-lg: var(--mk-radius-lg);
-  --shadow-mk-sm: var(--mk-shadow-sm);
-  --shadow-mk-md: var(--mk-shadow-md);
-  --shadow-mk-lg: var(--mk-shadow-lg);
+  /* Raio. Sombra não existe mais: sobre preto com superfície translúcida
+     ela não separa, mancha. */
+  --radius-mk-sm: var(--mk-raio);
+  --radius-mk: var(--mk-raio);
+  --radius-mk-lg: var(--mk-raio);
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -177,6 +175,39 @@
   --mk-serie-4: #ff99db;
   --mk-serie-5: #b24bb2;
 
+  /* ── Fundos fracos das semânticas ──
+     A mesma cor a 12%, para o fundo de um badge. Opacidade de novo, e não um
+     tom escuro inventado: assim o badge acompanha a superfície embaixo dele. */
+  --mk-ativa-fraca: #3fb9501f;
+  --mk-pausada-fraca: #7dd3fc1f;
+  --mk-alerta-fraca: #f851491f;
+  /* Quarta semântica, herdada e real: "precisa de atenção, mas não é erro" —
+     ficha com alerta, envio em andamento, agendamento pendente. Âmbar em
+     8.44 sobre preto, e a 26° do vermelho de erro. */
+  --mk-aviso: #d9a441;
+  --mk-aviso-fraca: #d9a4411f;
+
+  /* ── Avatar sem foto ──
+     Uma cor por pessoa, derivada da mesma família da série. Os seis hex
+     antigos foram escolhidos para fundo branco e afundavam sobre preto. */
+  --mk-pessoa-1: #a78bfa;
+  --mk-pessoa-2: #7dd3fc;
+  --mk-pessoa-3: #ff99db;
+  --mk-pessoa-4: #5f54c7;
+  --mk-pessoa-5: #b24bb2;
+  --mk-pessoa-6: #8c4368;
+
+  /* ── Branco funcional ──
+     Não é superfície: é o fundo do QR do WhatsApp, que o leitor precisa que
+     seja claro para achar os marcadores. Único branco opaco do sistema. */
+  --mk-papel: #ffffff;
+
+  /* ── Fatia fechada da agenda ──
+     Hachura sobre o próprio fundo, não uma cor. Sobre preto, um cinza fixo
+     aqui viraria uma faixa que não pertence a superfície nenhuma. */
+  --mk-fechado-bg: #ffffff08;
+  --mk-fechado-stripe: #ffffff14;
+
   /* ── Geometria ──
      Um raio só. A referência usa um, e com superfície translúcida sobre preto
      um segundo raio não se lê — o que desenha a forma é a borda de 1px. */
@@ -184,266 +215,65 @@
   --mk-transicao: 0.18s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ── ESCOPO DE TRANSIÇÃO ─────────────────────────────────────────────────────
-   Só as telas já convertidas carregam `[data-mk]`. Enquanto a migração corre,
-   é isto que permite a Visão geral estar no sistema novo com as outras
-   intactas, sem duplicar o CSS delas.
-
-   `:root:has(…)` porque `rem` resolve na RAIZ: dá para escopar o corpo por
-   ancestral, mas não a escala tipográfica. Com `:has`, a raiz reage ao que a
-   página declarou.
-
-   Os apelidos abaixo repontam os tokens ANTIGOS para os novos DENTRO deste
-   escopo. É o que faz as regras compartilhadas (`.card`, `.btn-primary`,
-   `.modal`) funcionarem no sistema novo sem serem reescritas todas de uma
-   vez. Some no passo 5, junto com os tokens antigos. */
-/* `html:root:` e não só `:root:` — e a diferença não é estilo.
-   `:root:has(.layout)` do sistema antigo mora MAIS ABAIXO neste arquivo e tem
-   a MESMA especificidade (0,1,0), porque `:has()` herda a do argumento e
-   `.layout` e `[data-mk]` são ambos uma classe/atributo. Empate se resolve por
-   ORDEM, e a ordem estava contra: o painel continuaria em 13px com o sistema
-   novo achando que tinha pedido 16. O `html` à frente sobe para (0,1,1) e tira
-   a regra da mão da ordem. Some no passo 5, junto com a regra antiga. */
-html:root:has([data-mk]) {
-  /* 13px → 16px. A referência usa 16 e respira melhor no escuro: no claro a
-     densidade alta ainda se lê, no escuro o texto miúdo some. */
+/* Densidade do painel: 16px, e não os 13px de antes.
+   No claro a densidade alta ainda se lia; no escuro o texto miúdo some. É a
+   escala da referência, e a razão de ela caber aqui em vez de num escopo é
+   que `rem` resolve na RAIZ — não há como escopar escala tipográfica por
+   ancestral. */
+:root {
   font-size: 16px;
-
-  --mk-bg: var(--mk-fundo);
-  --mk-surface: var(--mk-superficie);
-  --mk-surface2: var(--mk-superficie-2);
-  --mk-surface3: var(--mk-superficie-2);
-  --mk-border: var(--mk-linha);
-  --mk-border2: var(--mk-linha);
-  --mk-text: var(--mk-tinta);
-  --mk-text2: var(--mk-tinta-media);
-  --mk-muted: var(--mk-tinta-fraca);
-  --mk-accent: var(--mk-acento);
-  --mk-accent2: var(--mk-acento-forte);
-  --mk-accent-light: var(--mk-acento-fraco);
-  --mk-on-accent: var(--mk-sobre-acento);
-  --mk-gold: var(--mk-acento);
-  --mk-gold-light: var(--mk-acento-fraco);
-  --mk-green: var(--mk-ativa);
-  --mk-green-bg: #3fb9501f;
-  --mk-blue: var(--mk-pausada);
-  --mk-blue-bg: #7dd3fc1f;
-  --mk-red: var(--mk-alerta);
-  --mk-red-bg: #f851491f;
-  --mk-amber: #d9a441;
-  --mk-amber-bg: #d9a4411f;
-  --mk-purple: var(--mk-serie-5);
-  --mk-purple-bg: #b24bb21f;
-  --mk-cat-1: var(--mk-serie-1);
-  --mk-cat-2: var(--mk-serie-2);
-  --mk-cat-3: var(--mk-serie-3);
-  --mk-cat-4: var(--mk-serie-4);
-  --mk-cat-5: var(--mk-serie-5);
-  --mk-radius: var(--mk-raio);
-  --mk-radius-sm: var(--mk-raio);
-  --mk-radius-lg: var(--mk-raio);
-  --mk-transition: var(--mk-transicao);
-  /* Sombra deixa de existir. Sobre preto com superfície translúcida ela não
-     separa — mancha. Os tokens continuam declarados só enquanto regras
-     antigas ainda os citam; somem no passo 5. */
-  --mk-shadow-sm: none;
-  --mk-shadow-md: none;
-  --mk-shadow-lg: none;
-  --mk-sidebar-bg: var(--mk-fundo);
-
-  /* Avatares sem foto: o mesmo raciocínio da superfície. Antes eram seis hex
-     escolhidos para fundo branco; sobre preto eles afundam. */
-  --mk-av-1: #a78bfa;
-  --mk-av-2: #7dd3fc;
-  --mk-av-3: #ff99db;
-  --mk-av-4: #5f54c7;
-  --mk-av-5: #b24bb2;
-  --mk-av-6: #8c4368;
 }
 
 /* O fundo é do documento, não de um contêiner: qualquer folga (overscroll,
    área além do conteúdo) tem que ser o mesmo preto, senão aparece a borda do
    sistema antigo por trás. */
-html:root:has([data-mk]) body {
+body {
   background: var(--mk-fundo);
   color: var(--mk-tinta);
   font-family: var(--font-plex), system-ui, sans-serif;
 }
 
-/* ── TEMA CLARO (:root) — valores extraídos do legacy ── */
+/* ── Derivações do shadcn ────────────────────────────────────────────────────
+   Os componentes do shadcn leem `--background`, `--card`, `--sidebar-*` etc.
+   Elas nao sao uma paleta: sao um MAPA para a nossa. Antes apontavam para a
+   paleta clara declarada logo acima; agora apontam para os tokens do sistema
+   Meraki, que e o unico que existe. */
 :root {
-  /* Paleta Meraki */
-  --mk-bg: #ffffff;
-  --mk-surface: #ffffff;
-  --mk-surface2: #f4f4f5;
-  --mk-surface3: #e4e4e7;
-  --mk-border: #e7e5e4;
-  --mk-border2: #d4d4d8;
-  --mk-text: #18181b;
-  --mk-text2: #3f3f46;
-  /* 4.83 sobre branco. O #8a8478 de antes dava 3.44 e reprovava no AA — e ele
-     era usado em rótulo, subtexto e nota de painel, ou seja, em texto pequeno,
-     que é onde a norma menos perdoa. */
-  --mk-muted: #71717a;
-  /* 4.65 de contraste sobre --mk-bg (o #9b7d5a de antes dava 3.55 e reprovava
-     no AA). Mais escuro E mais saturado: é o que faz o dourado virar tinta em
-     vez de afundar num fundo que também é quente. */
-  --mk-accent: #8a6a2f;
-  --mk-accent2: #6e5423;
-  --mk-accent-light: #faf5ea;
-  /* Cores do avatar sem foto. Uma cor por pessoa, e o FUNDO é derivado dela
-     por color-mix — não um segundo hex fixo.
-
-     Antes eram pares [escura, clarinha] e o componente pintava o fundo com a
-     escura a 13% e o TEXTO com a clarinha: quase-branco sobre quase-branco,
-     1,03 de contraste. Invisível nos dois temas, e sem jeito de consertar sem
-     separar os passos por tema — que é o que estes tokens fazem. */
-  --mk-av-1: #8b5e3c;
-  --mk-av-2: #2d6a4f;
-  --mk-av-3: #1a5276;
-  --mk-av-4: #5c4fa0;
-  --mk-av-5: #a8322b;
-  --mk-av-6: #96470a;
-
-  /* Rampa do dourado — UMA paleta categórica só.
-     Existiam duas concorrentes (--chart-1..5 e --mk-cat-1..5), e era por isso
-     que a linha desenhava em navy enquanto a rosca desenhava em magenta e
-     oliva. Agora --chart-* aponta para cá.
-
-     A cor aqui codifica GRANDEZA, não identidade: um matiz, cinco passos. Quem
-     diz QUEM é a legenda ao lado, com nome e valor por linha.
-
-     ⚠️ Medido sobre #ffffff: 5.02 · 3.22 · 2.15 · 1.55 · 1.26 — os três
-     últimos passos ficam abaixo do piso de 3:1 e quase somem no branco. Os
-     valores são os do brief; a variante comprimida (que mantém todos acima de
-     3:1) está registrada na mensagem do commit. */
-  --mk-cat-1: #8a6a2f;
-  --mk-cat-2: #ab8b4d;
-  --mk-cat-3: #c9ad7c;
-  --mk-cat-4: #e0cdad;
-  --mk-cat-5: #efe4d0;
-
-  --mk-gold: #b8955a;
-  --mk-gold-light: #fbf7f0;
-  --mk-green: #3a6b4f;
-  --mk-green-bg: #e8f4ed;
-  --mk-amber: #b5600a;
-  --mk-amber-bg: #fdf0e0;
-  --mk-red: #b03030;
-  --mk-red-bg: #fce8e8;
-  /* Agenda: hora em que a clínica não atende (fundo + listras). */
-  --mk-fechado-bg: rgba(26, 24, 20, 0.045);
-  --mk-fechado-stripe: rgba(26, 24, 20, 0.07);
-  --mk-blue: #2a5278;
-  --mk-blue-bg: #e8f0f8;
-  --mk-purple: #5c4fa0;
-  --mk-purple-bg: #eeebf8;
-  --mk-shadow-sm: 0 1px 3px rgba(26, 24, 20, 0.05);
-  --mk-shadow-md: 0 6px 20px rgba(26, 24, 20, 0.07);
-  --mk-shadow-lg: 0 16px 48px rgba(26, 24, 20, 0.1);
-  /* Texto sobre superfície pintada de accent (botão primário, dia selecionado).
-     No claro o accent é escuro → texto branco; nos escuros, o inverso. */
-  --mk-on-accent: #ffffff;
-  /* A sidebar é sempre escura, mas o TOM acompanha a paleta. */
-  --mk-radius: 8px;
-  --mk-radius-sm: 5px;
-  --mk-radius-lg: 10px;
-  --mk-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-
-  /* shadcn ← Meraki */
   --radius: 0.75rem; /* 12px */
-  --background: var(--mk-bg);
-  --foreground: var(--mk-text);
-  --card: var(--mk-surface);
-  --card-foreground: var(--mk-text);
-  --popover: var(--mk-surface);
-  --popover-foreground: var(--mk-text);
-  --primary: var(--mk-accent2);
-  --primary-foreground: #ffffff;
-  --secondary: var(--mk-surface2);
-  --secondary-foreground: var(--mk-text);
-  --muted: var(--mk-surface2);
-  --muted-foreground: var(--mk-muted);
-  --accent: var(--mk-accent-light);
-  --accent-foreground: var(--mk-accent);
-  --destructive: var(--mk-red);
-  --border: var(--mk-border);
-  --input: var(--mk-border);
-  --ring: var(--mk-accent);
+  --background: var(--mk-fundo);
+  --foreground: var(--mk-tinta);
+  --card: var(--mk-superficie);
+  --card-foreground: var(--mk-tinta);
+  --popover: var(--mk-superficie);
+  --popover-foreground: var(--mk-tinta);
+  --primary: var(--mk-acento-forte);
+  --primary-foreground: var(--mk-sobre-acento);
+  --secondary: var(--mk-superficie-2);
+  --secondary-foreground: var(--mk-tinta);
+  --muted: var(--mk-superficie-2);
+  --muted-foreground: var(--mk-tinta-fraca);
+  --accent: var(--mk-acento-fraco);
+  --accent-foreground: var(--mk-acento);
+  --destructive: var(--mk-alerta);
+  --border: var(--mk-linha);
+  --input: var(--mk-linha);
+  --ring: var(--mk-acento);
   /* Mesma paleta da rosca — eram duas listas concorrentes. */
-  --chart-1: var(--mk-cat-1);
-  --chart-2: var(--mk-cat-2);
-  --chart-3: var(--mk-cat-3);
-  --chart-4: var(--mk-cat-4);
-  --chart-5: var(--mk-cat-5);
-  --sidebar: var(--mk-surface);
-  --sidebar-foreground: var(--mk-text);
-  --sidebar-primary: var(--mk-accent2);
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: var(--mk-accent-light);
-  --sidebar-accent-foreground: var(--mk-accent);
-  --sidebar-border: var(--mk-border);
-  --sidebar-ring: var(--mk-accent);
+  --chart-1: var(--mk-serie-1);
+  --chart-2: var(--mk-serie-2);
+  --chart-3: var(--mk-serie-3);
+  --chart-4: var(--mk-serie-4);
+  --chart-5: var(--mk-serie-5);
+  --sidebar: var(--mk-superficie);
+  --sidebar-foreground: var(--mk-tinta);
+  --sidebar-primary: var(--mk-acento-forte);
+  --sidebar-primary-foreground: var(--mk-sobre-acento);
+  --sidebar-accent: var(--mk-acento-fraco);
+  --sidebar-accent-foreground: var(--mk-acento);
+  --sidebar-border: var(--mk-linha);
+  --sidebar-ring: var(--mk-acento);
 }
 
-/* ── TEMA ESCURO ([data-theme="dark"]) — valores do legacy ── */
-[data-theme="dark"] {
-  --mk-bg: #111009;
-  --mk-surface: #1a1814;
-  --mk-surface2: #222018;
-  --mk-surface3: #2e2b22;
-  --mk-border: #38352a;
-  --mk-border2: #4a4638;
-  --mk-text: #f0ece4;
-  --mk-text2: #c4bfb4;
-  --mk-muted: #8a8478;
-  --mk-accent: #d4af63;
-  --mk-accent2: #e0bd7a;
-  --mk-accent-light: #2a2218;
-  /* Passo claro das cores de avatar: no escuro a cor cheia precisa subir,
-     senão ela some no próprio tint. Medido sobre a superfície: 5,6–6,8. */
-  --mk-av-1: #c9a27a;
-  --mk-av-2: #6fc493;
-  --mk-av-3: #7fb3e0;
-  --mk-av-4: #a893e8;
-  --mk-av-5: #e88a84;
-  --mk-av-6: #e0a45c;
-
-  /* Passo escuro da paleta categórica — escolhido, não invertido: a banda de
-     luminosidade no escuro é 0,48–0,67, mais estreita que a do claro. */
-  --mk-cat-1: #4d88e0;
-  --mk-cat-2: #cf5aa4;
-  --mk-cat-3: #88991f;
-  --mk-cat-4: #2b9fbd;
-  --mk-cat-5: #d66c4a;
-
-  --mk-gold: #c8a060;
-  --mk-gold-light: #261f10;
-  --mk-green: #5ab87a;
-  --mk-green-bg: #182a20;
-  --mk-amber: #e89040;
-  --mk-amber-bg: #28200a;
-  --mk-red: #e05050;
-  --mk-red-bg: #281010;
-  /* No escuro, "fechado" ESCURECE a célula (o fundo já é escuro, então
-     clarear leria como disponível). As listras clareiam de leve pra dar textura. */
-  --mk-fechado-bg: rgba(0, 0, 0, 0.32);
-  --mk-fechado-stripe: rgba(240, 236, 228, 0.04);
-  --mk-blue: #60a0d0;
-  --mk-blue-bg: #101e2e;
-  --mk-purple: #9080d0;
-  --mk-purple-bg: #1a1630;
-  --mk-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
-  --mk-shadow-md: 0 6px 20px rgba(0, 0, 0, 0.4);
-  --mk-shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.5);
-  --mk-on-accent: #1a1814;
-
-  /* Ajustes de contraste shadcn no escuro (btn-primary usa texto escuro) */
-  --primary: var(--mk-accent);
-  --primary-foreground: #1a1814;
-  --sidebar-primary: var(--mk-accent);
-  --sidebar-primary-foreground: #1a1814;
-}
 
 /* ── TEMA GRAFITE ([data-theme="graphite"]) ──────────────────────────────────
    Mesmo modo escuro, paleta diferente: a base é NEUTRA (cinzas sem tingimento,
@@ -451,63 +281,6 @@ html:root:has([data-mk]) body {
    verde, âmbar e vermelho brigam com o marrom do fundo e saem lavados; aqui
    eles aparecem. O dourado continua sendo a assinatura da marca e, por
    contraste com o cinza frio, fica mais forte do que nos outros dois temas.
-   ─────────────────────────────────────────────────────────────────────────── */
-[data-theme="graphite"] {
-  --mk-bg: #0a0a0c;
-  --mk-surface: #131316;
-  --mk-surface2: #1a1a1e;
-  --mk-surface3: #232328;
-  --mk-border: #26262c;
-  --mk-border2: #3a3a42;
-  --mk-text: #f4f4f5;
-  --mk-text2: #c7c7ce;
-  --mk-muted: #85858f;
-  --mk-accent: #d9b45f;
-  --mk-accent2: #e5c477;
-  --mk-accent-light: #211c14;
-  /* Passo claro das cores de avatar: no escuro a cor cheia precisa subir,
-     senão ela some no próprio tint. Medido sobre a superfície: 5,6–6,8. */
-  --mk-av-1: #c9a27a;
-  --mk-av-2: #6fc493;
-  --mk-av-3: #7fb3e0;
-  --mk-av-4: #a893e8;
-  --mk-av-5: #e88a84;
-  --mk-av-6: #e0a45c;
-
-  /* Passo escuro da paleta categórica — escolhido, não invertido: a banda de
-     luminosidade no escuro é 0,48–0,67, mais estreita que a do claro. */
-  --mk-cat-1: #4d88e0;
-  --mk-cat-2: #cf5aa4;
-  --mk-cat-3: #88991f;
-  --mk-cat-4: #2b9fbd;
-  --mk-cat-5: #d66c4a;
-
-  --mk-gold: #d9b978;
-  --mk-gold-light: #1e1a11;
-  /* Cores funcionais saturadas: aqui elas são informação, não decoração. */
-  --mk-green: #3ecf8e;
-  --mk-green-bg: #0e2119;
-  --mk-amber: #f0a83c;
-  --mk-amber-bg: #241a09;
-  --mk-red: #f2565c;
-  --mk-red-bg: #281114;
-  --mk-blue: #5aa2f5;
-  --mk-blue-bg: #0e1a2e;
-  --mk-purple: #a68bfa;
-  --mk-purple-bg: #191333;
-  /* "Fechado" escurece (o fundo já é escuro); a listra clareia de leve. */
-  --mk-fechado-bg: rgba(0, 0, 0, 0.36);
-  --mk-fechado-stripe: rgba(244, 244, 245, 0.045);
-  --mk-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
-  --mk-shadow-md: 0 6px 20px rgba(0, 0, 0, 0.55);
-  --mk-shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.65);
-  --mk-on-accent: #12100c;
-
-  --primary: var(--mk-accent);
-  --primary-foreground: #12100c;
-  --sidebar-primary: var(--mk-accent);
-  --sidebar-primary-foreground: #12100c;
-}
 
 @layer base {
   * {
@@ -515,7 +288,7 @@ html:root:has([data-mk]) body {
   }
   body {
     @apply bg-background text-foreground;
-    font-family: var(--font-inter), sans-serif;
+    font-family: var(--font-plex), sans-serif;
     font-size: 14px;
   }
 }
@@ -532,7 +305,7 @@ html:root:has([data-mk]) body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--mk-border2);
+  background: var(--mk-linha);
   border-radius: 2px;
 }
 
@@ -557,7 +330,7 @@ html:root:has([data-mk]) body {
   top: 0;
   left: 0;
   overflow: hidden;
-  border-right: 1px solid var(--mk-border);
+  border-right: 1px solid var(--mk-linha);
   transition: transform 0.3s ease, width 0.3s ease;
   z-index: 40;
 }
@@ -567,7 +340,7 @@ html:root:has([data-mk]) body {
 .sidebar-logo {
   height: 64px;
   padding: 0 20px;
-  border-bottom: 1px solid var(--mk-border);
+  border-bottom: 1px solid var(--mk-linha);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -582,31 +355,31 @@ html:root:has([data-mk]) body {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 6px;
+  border-radius: var(--mk-raio);
   background: transparent;
   border: 1px solid transparent;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   cursor: pointer;
-  transition: color var(--mk-transition), background var(--mk-transition);
+  transition: color var(--mk-transicao), background var(--mk-transicao);
 }
 .sidebar-toggle:hover {
-  color: var(--mk-text);
-  background: var(--mk-surface2);
+  color: var(--mk-tinta);
+  background: var(--mk-superficie-2);
 }
 /* O wordmark é a única serifa que sobrou na UI — e é de propósito: numa tela
    inteira de grotesca, a forma da letra já basta como assinatura, sem precisar
    de cor para isso. */
 .sidebar-logo .logo-mark {
-  font-family: var(--font-cormorant), serif;
+  font-family: var(--font-space), system-ui, sans-serif;
   font-size: 22px;
   font-weight: 400;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
   letter-spacing: 0.02em;
   line-height: 1;
 }
 .sidebar-logo .logo-mark em {
   font-style: italic;
-  color: var(--mk-gold);
+  color: var(--mk-acento);
 }
 
 /* Sem header de seção. "PRINCIPAL" era um rótulo dourado no meio da mesma
@@ -619,15 +392,15 @@ html:root:has([data-mk]) body {
   gap: 12px;
   height: 33px;
   padding: 0 10px;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
   cursor: pointer;
-  transition: color var(--mk-transition), background var(--mk-transition);
+  transition: color var(--mk-transicao), background var(--mk-transicao);
   font-size: 11.5px;
   font-weight: 400;
   letter-spacing: 0;
   /* 33 + 3 = 36px de passo entre itens. */
   margin: 1.5px var(--mk-nav-margem);
-  border-radius: 5px;
+  border-radius: var(--mk-raio);
   position: relative;
   text-decoration: none;
 }
@@ -635,12 +408,12 @@ html:root:has([data-mk]) body {
    continua sendo lido com o mesmo peso, e a única diferença fica sendo o
    estado. */
 .nav-item:hover {
-  background: color-mix(in srgb, var(--mk-accent) 7%, transparent);
+  background: color-mix(in srgb, var(--mk-acento) 7%, transparent);
 }
 /* O ativo troca SÓ de matiz. Sem fundo, sem barra lateral, sem pill: quatro
    sinais simultâneos não somam, dividem. */
 .nav-item.active {
-  color: var(--mk-accent);
+  color: var(--mk-acento);
 }
 .nav-icon {
   width: 16px;
@@ -648,7 +421,7 @@ html:root:has([data-mk]) body {
   flex-shrink: 0;
   /* Segue a cor do item — é o mesmo sinal, não um segundo. */
   color: currentColor;
-  transition: color var(--mk-transition);
+  transition: color var(--mk-transicao);
 }
 
 /* Seletor de clínica. Só existe para conta que atende mais de uma — ver
@@ -666,33 +439,33 @@ html:root:has([data-mk]) body {
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 .tenant-sel-campo {
   width: 100%;
   height: 33px;
   padding: 0 8px;
-  border: 1px solid var(--mk-border2);
-  border-radius: var(--mk-radius-sm);
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
   /* Campo é claro com borda, nunca cinza preenchido — regra da casa. */
-  background: var(--mk-surface);
-  color: var(--mk-text);
+  background: var(--mk-superficie);
+  color: var(--mk-tinta);
   font-family: inherit;
   font-size: 12px;
   cursor: pointer;
-  transition: border-color var(--mk-transition);
+  transition: border-color var(--mk-transicao);
 }
 /* Foco muda a COR DA BORDA. Sem anel, sem brilho. */
 .tenant-sel-campo:focus {
   outline: none;
-  border-color: var(--mk-accent);
+  border-color: var(--mk-acento);
 }
 /* Conta sem vínculo: ocupa o lugar do seletor porque é a mesma pergunta
    ("qual clínica?") sem resposta possível ainda. */
 .tenant-sel-aviso {
   font-size: 11px;
   line-height: 1.45;
-  color: var(--mk-amber);
+  color: var(--mk-aviso);
 }
 
 /* O grupo de baixo (status, Configurações, Sair) se separa dos itens de
@@ -719,8 +492,7 @@ html:root:has([data-mk]) body {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #4ade80;
-  box-shadow: 0 0 8px #4ade8066;
+  background: var(--mk-ativa);
   flex-shrink: 0;
   animation: pulse-dot 2.5s ease-in-out infinite;
 }
@@ -733,17 +505,17 @@ html:root:has([data-mk]) body {
   height: 33px;
   padding: 0 10px;
   margin: 1.5px var(--mk-nav-margem);
-  border-radius: 5px;
+  border-radius: var(--mk-raio);
   background: none;
   border: none;
   cursor: pointer;
   font-family: inherit;
   font-size: 11.5px;
-  color: var(--mk-text);
-  transition: color var(--mk-transition), background var(--mk-transition);
+  color: var(--mk-tinta);
+  transition: color var(--mk-transicao), background var(--mk-transicao);
 }
 .sidebar-logout:hover {
-  background: color-mix(in srgb, var(--mk-accent) 7%, transparent);
+  background: color-mix(in srgb, var(--mk-acento) 7%, transparent);
 }
 @keyframes pulse-dot {
   0%,
@@ -756,7 +528,7 @@ html:root:has([data-mk]) body {
 }
 .sidebar-status-text {
   font-size: 10px;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   letter-spacing: 0;
 }
 
@@ -769,15 +541,15 @@ html:root:has([data-mk]) body {
 }
 .topbar {
   height: 64px;
-  border-bottom: 1px solid var(--mk-border);
+  border-bottom: 1px solid var(--mk-linha);
   display: flex;
   align-items: center;
   padding: 0 2.5rem;
-  background: var(--mk-surface);
+  background: var(--mk-superficie);
   position: sticky;
   top: 0;
   z-index: 10;
-  transition: background var(--mk-transition), border-color var(--mk-transition);
+  transition: background var(--mk-transicao), border-color var(--mk-transicao);
 }
 /* Telas que já mostram o próprio título não precisam da barra repetindo-o.
    No mobile ela FICA, porque é onde mora o hambúrguer — some só a partir do
@@ -795,7 +567,7 @@ html:root:has([data-mk]) body {
 .topbar-title {
   font-size: 19.5px;
   font-weight: 600;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
 }
 /* .topbar-right / .topbar-date / .theme-toggle foram REMOVIDOS: a data e o
    botão de tema saíram da topbar. O tema agora mora em Configurações →
@@ -806,9 +578,7 @@ html:root:has([data-mk]) body {
    propósito: rem resolve na RAIZ, então pôr isso em html encolheria
    junto a ficha da paciente (formulário de saúde no celular) e a landing.
    A classe .layout só existe quando o AppShell está montado. */
-:root:has(.layout) {
-  font-size: 13px;
-}
+
 
 .content {
   padding: 2.5rem 2.5rem;
@@ -821,8 +591,8 @@ html:root:has([data-mk]) body {
   bottom: 0;
   left: 0;
   right: 0;
-  background: var(--mk-surface);
-  border-top: 1px solid var(--mk-border);
+  background: var(--mk-superficie);
+  border-top: 1px solid var(--mk-linha);
   z-index: 50;
   padding: 8px 0 env(safe-area-inset-bottom, 8px);
 }
@@ -837,10 +607,10 @@ html:root:has([data-mk]) body {
   gap: 3px;
   padding: 4px 12px;
   cursor: pointer;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   font-size: 10px;
   font-weight: 500;
-  transition: color var(--mk-transition);
+  transition: color var(--mk-transicao);
   letter-spacing: 0.04em;
   text-decoration: none;
 }
@@ -848,13 +618,13 @@ html:root:has([data-mk]) body {
   font-size: 18px;
 }
 .bottom-nav-item.active {
-  color: var(--mk-accent);
+  color: var(--mk-acento);
 }
 .hamburger {
   display: none;
   background: none;
   border: none;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   cursor: pointer;
   font-size: 22px;
   padding: 4px;
@@ -914,18 +684,17 @@ html:root:has([data-mk]) body {
     left: calc(100% + 14px);
     top: 50%;
     transform: translateY(-50%);
-    background: var(--mk-surface);
-    color: var(--mk-text);
-    border: 1px solid var(--mk-border);
+    background: var(--mk-superficie);
+    color: var(--mk-tinta);
+    border: 1px solid var(--mk-linha);
     padding: 6px 12px;
-    border-radius: 8px;
+    border-radius: var(--mk-raio);
     font-size: 12px;
     font-weight: 500;
     white-space: nowrap;
-    box-shadow: var(--mk-shadow-md);
     opacity: 0;
     pointer-events: none;
-    transition: opacity var(--mk-transition);
+    transition: opacity var(--mk-transicao);
     z-index: 60;
   }
   .layout.collapsed .nav-item:hover::after {
@@ -958,7 +727,7 @@ html:root:has([data-mk]) body {
     transform: translateX(-100%);
     z-index: 40;
     width: 260px;
-    background: var(--mk-bg);
+    background: var(--mk-fundo);
   }
   .sidebar.open {
     transform: translateX(0);
@@ -998,64 +767,64 @@ html:root:has([data-mk]) body {
   font-size: 9px;
   font-weight: 600;
   padding: 3px 10px;
-  border-radius: 20px;
+  border-radius: var(--mk-raio);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   flex-shrink: 0;
 }
 .badge-novo {
-  background: var(--mk-blue-bg);
-  color: var(--mk-blue);
+  background: var(--mk-pausada-fraca);
+  color: var(--mk-pausada);
 }
 /* Ciclo de vida do lead (LeadStatusBadge). Ver lib/status.ts. */
 .badge-lead-novo {
-  background: var(--mk-blue-bg);
-  color: var(--mk-blue);
+  background: var(--mk-pausada-fraca);
+  color: var(--mk-pausada);
 }
 .badge-lead-cliente {
-  background: var(--mk-green-bg);
-  color: var(--mk-green);
+  background: var(--mk-ativa-fraca);
+  color: var(--mk-ativa);
 }
 .badge-lead-inativo {
-  background: var(--mk-surface3);
-  color: var(--mk-muted);
+  background: var(--mk-superficie-2);
+  color: var(--mk-tinta-fraca);
 }
 .badge-agendado {
-  background: var(--mk-gold-light);
-  color: var(--mk-gold);
+  background: var(--mk-acento-fraco);
+  color: var(--mk-acento);
 }
 .badge-convertido,
 .badge-realizado {
-  background: var(--mk-green-bg);
-  color: var(--mk-green);
+  background: var(--mk-ativa-fraca);
+  color: var(--mk-ativa);
 }
 .badge-cancelado {
-  background: var(--mk-red-bg);
-  color: var(--mk-red);
+  background: var(--mk-alerta-fraca);
+  color: var(--mk-alerta);
 }
 .badge-confirmado {
-  background: var(--mk-purple-bg);
-  color: var(--mk-purple);
+  background: var(--mk-pausada-fraca);
+  color: var(--mk-pausada);
 }
 .badge-pendente {
-  background: var(--mk-amber-bg);
-  color: var(--mk-amber);
+  background: var(--mk-aviso-fraca);
+  color: var(--mk-aviso);
 }
 .badge-enviando {
-  background: var(--mk-amber-bg);
-  color: var(--mk-amber);
+  background: var(--mk-aviso-fraca);
+  color: var(--mk-aviso);
 }
 .badge-concluida {
-  background: var(--mk-green-bg);
-  color: var(--mk-green);
+  background: var(--mk-ativa-fraca);
+  color: var(--mk-ativa);
 }
 .badge-rascunho {
-  background: var(--mk-surface3);
-  color: var(--mk-muted);
+  background: var(--mk-superficie-2);
+  color: var(--mk-tinta-fraca);
 }
 .badge-pausada {
-  background: var(--mk-blue-bg);
-  color: var(--mk-blue);
+  background: var(--mk-pausada-fraca);
+  color: var(--mk-pausada);
 }
 
 .loading {
@@ -1063,7 +832,7 @@ html:root:has([data-mk]) body {
   align-items: center;
   justify-content: center;
   padding: 3rem;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   gap: 10px;
   font-size: 12px;
   letter-spacing: 0.05em;
@@ -1071,8 +840,8 @@ html:root:has([data-mk]) body {
 .spinner {
   width: 16px;
   height: 16px;
-  border: 1.5px solid var(--mk-border2);
-  border-top-color: var(--mk-accent);
+  border: 1.5px solid var(--mk-linha);
+  border-top-color: var(--mk-acento);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -1084,7 +853,7 @@ html:root:has([data-mk]) body {
 .empty {
   text-align: center;
   padding: 3rem;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   font-size: 13px;
 }
 .empty-icon {
@@ -1131,23 +900,23 @@ html:root:has([data-mk]) body {
   gap: 10px;
   min-height: 94px;
   padding: 13px 16px;
-  border: 1px solid var(--mk-border);
-  border-radius: 7px;
-  background: var(--mk-bg);
-  transition: border-color var(--mk-transition);
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
+  background: var(--mk-fundo);
+  transition: border-color var(--mk-transicao);
 }
 .metric-label {
   font-size: 11.5px;
   font-weight: 500;
   line-height: 1.25;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
 }
 .metric-value {
   font-size: 20px;
   font-weight: 600;
   line-height: 1.22;
   letter-spacing: 0;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
   font-variant-numeric: tabular-nums;
 }
 /* O "%" não é dígito: em 30px ele domina o número. */
@@ -1155,12 +924,12 @@ html:root:has([data-mk]) body {
   margin-left: 1px;
   font-size: 0.62em;
   font-weight: 500;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 .metric-sub {
   margin-top: 3px;
   font-size: 10px;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 
 /* ── Cards / grids ── */
@@ -1176,11 +945,11 @@ html:root:has([data-mk]) body {
   gap: 20px;
 }
 .card {
-  background: var(--mk-bg);
-  border: 1px solid var(--mk-border);
-  border-radius: 7px;
+  background: var(--mk-fundo);
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
   padding: 13px 16px 16px;
-  transition: border-color var(--mk-transition);
+  transition: border-color var(--mk-transicao);
 }
 .card-header {
   display: flex;
@@ -1192,17 +961,17 @@ html:root:has([data-mk]) body {
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 0;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
 }
 .card-action {
   font-size: 11px;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   cursor: pointer;
   transition: color 0.15s;
   font-weight: 600;
 }
 .card-action:hover {
-  color: var(--mk-text);
+  color: var(--mk-tinta);
 }
 .chart-container {
   position: relative;
@@ -1232,18 +1001,18 @@ html:root:has([data-mk]) body {
 }
 .funnel-label {
   font-size: 11.5px;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   font-weight: 400;
 }
 .funnel-count {
   font-size: 15px;
   font-weight: 600;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
   font-variant-numeric: tabular-nums;
 }
 .funnel-track {
   height: 2px;
-  background: var(--mk-surface3);
+  background: var(--mk-superficie-2);
   border-radius: 1px;
   overflow: hidden;
 }
@@ -1254,9 +1023,9 @@ html:root:has([data-mk]) body {
 }
 .funnel-pct {
   font-size: 10px;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   text-align: right;
-  font-family: var(--font-jetbrains), monospace;
+  font-family: var(--font-plex-mono), monospace;
 }
 
 /* ── Lista de clientes recentes ── */
@@ -1270,14 +1039,14 @@ html:root:has([data-mk]) body {
   align-items: center;
   gap: 14px;
   padding: 12px 14px;
-  border-radius: var(--mk-radius);
+  border-radius: var(--mk-raio);
   border: 1px solid transparent;
   cursor: pointer;
-  transition: all var(--mk-transition);
+  transition: all var(--mk-transicao);
 }
 .lead-item:hover {
-  background: var(--mk-surface2);
-  border-color: var(--mk-border);
+  background: var(--mk-superficie-2);
+  border-color: var(--mk-linha);
 }
 .lead-info {
   flex: 1;
@@ -1292,7 +1061,7 @@ html:root:has([data-mk]) body {
 }
 .lead-meta {
   font-size: 11px;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   margin-top: 2px;
 }
 
@@ -1301,31 +1070,31 @@ html:root:has([data-mk]) body {
    (viraram a caixinha de intervalo). `.filter-btn` FICA: os modais de Agenda e
    Campanhas ainda usam, com wrapper próprio. */
 .filter-btn {
-  background: var(--mk-surface);
-  border: 1px solid var(--mk-border);
-  color: var(--mk-muted);
+  background: var(--mk-superficie);
+  border: 1px solid var(--mk-linha);
+  color: var(--mk-tinta-fraca);
   padding: 6px 16px;
-  border-radius: 20px;
+  border-radius: var(--mk-raio);
   font-size: 11px;
   font-weight: 500;
   cursor: pointer;
-  transition: all var(--mk-transition);
-  font-family: var(--font-inter), sans-serif;
+  transition: all var(--mk-transicao);
+  font-family: var(--font-plex), sans-serif;
   letter-spacing: 0.04em;
 }
 .filter-btn:hover {
-  border-color: var(--mk-border2);
-  color: var(--mk-text2);
-  background: var(--mk-surface2);
+  border-color: var(--mk-linha);
+  color: var(--mk-tinta-media);
+  background: var(--mk-superficie-2);
 }
 .filter-btn.active {
-  background: var(--mk-accent2);
-  border-color: var(--mk-accent2);
-  color: var(--mk-on-accent);
+  background: var(--mk-acento-forte);
+  border-color: var(--mk-acento-forte);
+  color: var(--mk-sobre-acento);
 }
-[data-mode="dark"] .filter-btn.active {
-  background: var(--mk-accent);
-  border-color: var(--mk-accent);
+.filter-btn.active {
+  background: var(--mk-acento);
+  border-color: var(--mk-acento);
 }
 
 /* ── Responsivo do dashboard ── */
@@ -1377,26 +1146,26 @@ html:root:has([data-mk]) body {
   align-items: center;
   gap: 8px;
   height: 33px;
-  background: var(--mk-surface);
-  border: 1px solid var(--mk-border2);
-  border-radius: 5px;
+  background: var(--mk-superficie);
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
   padding: 0 10px;
-  transition: border-color var(--mk-transition);
+  transition: border-color var(--mk-transicao);
 }
 .search-bar:focus-within {
-  border-color: var(--mk-accent);
+  border-color: var(--mk-acento);
 }
 .search-bar input {
   flex: 1;
   background: none;
   border: none;
   outline: none;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
   font-size: 13px;
-  font-family: var(--font-inter), sans-serif;
+  font-family: var(--font-plex), sans-serif;
 }
 .search-bar input::placeholder {
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 
 /* ── Tabela (escopo .table-wrap para não vazar em outras tabelas) ── */
@@ -1411,26 +1180,26 @@ html:root:has([data-mk]) body {
   text-align: left;
   padding: 10px 16px;
   font-size: 11px;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   font-weight: 600;
-  border-bottom: 1px solid var(--mk-border);
-  background: var(--mk-surface);
+  border-bottom: 1px solid var(--mk-linha);
+  background: var(--mk-superficie);
 }
 .table-wrap tbody tr {
-  border-bottom: 1px solid var(--mk-border);
-  transition: background var(--mk-transition);
+  border-bottom: 1px solid var(--mk-linha);
+  transition: background var(--mk-transicao);
   cursor: pointer;
 }
 .table-wrap tbody tr:hover {
-  background: var(--mk-surface2);
+  background: var(--mk-superficie-2);
 }
 .table-wrap tbody td {
   padding: 14px 16px;
   font-size: 13px;
 }
 .table-wrap tbody td.muted {
-  color: var(--mk-muted);
-  font-family: var(--font-jetbrains), monospace;
+  color: var(--mk-tinta-fraca);
+  font-family: var(--font-plex-mono), monospace;
   font-size: 11px;
 }
 
@@ -1451,39 +1220,38 @@ html:root:has([data-mk]) body {
   animation: fadeIn 0.2s ease;
 }
 .modal {
-  background: var(--mk-surface);
-  border: 1px solid var(--mk-border);
+  background: var(--mk-superficie);
+  border: 1px solid var(--mk-linha);
   /* 8px: canto redondo faz o modal parecer cartaz. Formulário pede cara de
      ficha de trabalho. */
-  border-radius: 8px;
+  border-radius: var(--mk-raio);
   width: 560px;
   max-height: 88vh;
   overflow-y: auto;
   padding: 1.5rem;
   position: relative;
-  box-shadow: var(--mk-shadow-lg);
   animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .modal-close {
   position: absolute;
   top: 1.25rem;
   right: 1.25rem;
-  background: var(--mk-surface2);
-  border: 1px solid var(--mk-border);
-  color: var(--mk-muted);
+  background: var(--mk-superficie-2);
+  border: 1px solid var(--mk-linha);
+  color: var(--mk-tinta-fraca);
   width: 30px;
   height: 30px;
-  border-radius: 8px;
+  border-radius: var(--mk-raio);
   cursor: pointer;
   font-size: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all var(--mk-transition);
+  transition: all var(--mk-transicao);
 }
 .modal-close:hover {
-  background: var(--mk-surface3);
-  color: var(--mk-text);
+  background: var(--mk-superficie-2);
+  color: var(--mk-tinta);
 }
 .modal-name {
   font-size: 18px;
@@ -1492,16 +1260,16 @@ html:root:has([data-mk]) body {
 }
 .modal-phone {
   font-size: 12px;
-  color: var(--mk-muted);
-  font-family: var(--font-jetbrains), monospace;
+  color: var(--mk-tinta-fraca);
+  font-family: var(--font-plex-mono), monospace;
 }
 .modal-section {
   font-size: 11px;
   font-weight: 600;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   margin: 1.25rem 0 10px;
   padding-bottom: 8px;
-  border-bottom: 1px solid var(--mk-border);
+  border-bottom: 1px solid var(--mk-linha);
 }
 @media (max-width: 640px) {
   .modal {
@@ -1537,27 +1305,27 @@ html:root:has([data-mk]) body {
   white-space: pre-wrap;
 }
 .msg-bubble.cliente .msg-text {
-  background: var(--mk-surface);
-  border: 1px solid var(--mk-border);
-  color: var(--mk-text);
+  background: var(--mk-superficie);
+  border: 1px solid var(--mk-linha);
+  color: var(--mk-tinta);
   border-radius: 4px 16px 16px 16px;
 }
 .msg-bubble.agente .msg-text {
-  background: var(--mk-accent);
-  color: var(--mk-on-accent);
+  background: var(--mk-acento);
+  color: var(--mk-sobre-acento);
   border-radius: 16px 4px 16px 16px;
   border: 1px solid transparent;
 }
-[data-mode="dark"] .msg-bubble.agente .msg-text {
-  background: var(--mk-accent-light);
-  color: var(--mk-accent);
-  border-color: var(--mk-accent);
+.msg-bubble.agente .msg-text {
+  background: var(--mk-acento-fraco);
+  color: var(--mk-acento);
+  border-color: var(--mk-acento);
 }
 .msg-time {
   font-size: 10px;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   margin-top: 4px;
-  font-family: var(--font-jetbrains), monospace;
+  font-family: var(--font-plex-mono), monospace;
   padding: 0 2px;
 }
 .msg-bubble.agente .msg-time {
@@ -1573,31 +1341,31 @@ html:root:has([data-mk]) body {
    Portado do legacy (var(--X) → var(--mk-X)).
    ══════════════════════════════════════════════════════════════ */
 .btn-primary {
-  background: var(--mk-accent2);
+  background: var(--mk-acento-forte);
   border: none;
-  color: var(--mk-on-accent);
+  color: var(--mk-sobre-acento);
   height: 33px;
   padding: 0 13px;
-  border-radius: 5px;
+  border-radius: var(--mk-raio);
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
-  transition: background var(--mk-transition);
-  font-family: var(--font-inter), sans-serif;
+  transition: background var(--mk-transicao);
+  font-family: var(--font-plex), sans-serif;
   letter-spacing: 0;
 }
 .btn-primary:hover {
   filter: brightness(1.1);
   transform: translateY(-1px);
 }
-[data-mode="dark"] .btn-primary {
-  background: var(--mk-accent);
+.btn-primary {
+  background: var(--mk-acento);
 }
 .form-label {
   display: block;
   font-size: 11px;
   font-weight: 600;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   margin-bottom: 6px;
 }
 .form-input {
@@ -1605,19 +1373,19 @@ html:root:has([data-mk]) body {
   height: 33px;
   /* Branco com borda, como no modal: campo preenchido de cinza lê como
      desabilitado. */
-  background: var(--mk-surface);
-  border: 1px solid var(--mk-border2);
-  border-radius: var(--mk-radius-sm);
+  background: var(--mk-superficie);
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
   padding: 0 10px;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
   font-size: 12.5px;
-  font-family: var(--font-inter), sans-serif;
+  font-family: var(--font-plex), sans-serif;
   outline: none;
-  transition: border-color var(--mk-transition);
+  transition: border-color var(--mk-transicao);
 }
 .form-input:focus {
-  border-color: var(--mk-accent);
-  background: var(--mk-surface);
+  border-color: var(--mk-acento);
+  background: var(--mk-superficie);
 }
 textarea.form-input {
   resize: vertical;
@@ -1646,9 +1414,9 @@ select.form-input {
   gap: 10px;
 }
 .agenda-arrow {
-  background: var(--mk-surface);
-  border: 1px solid var(--mk-border);
-  color: var(--mk-muted);
+  background: var(--mk-superficie);
+  border: 1px solid var(--mk-linha);
+  color: var(--mk-tinta-fraca);
   width: 32px;
   height: 32px;
   border-radius: 50%;
@@ -1657,17 +1425,17 @@ select.form-input {
   align-items: center;
   justify-content: center;
   font-size: 16px;
-  transition: all var(--mk-transition);
+  transition: all var(--mk-transicao);
 }
 .agenda-arrow:hover {
-  background: var(--mk-surface2);
-  color: var(--mk-text);
-  border-color: var(--mk-border2);
+  background: var(--mk-superficie-2);
+  color: var(--mk-tinta);
+  border-color: var(--mk-linha);
 }
 .agenda-month {
   font-size: 16px;
   font-weight: 600;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
   margin-left: 8px;
   text-transform: capitalize;
 }
@@ -1680,15 +1448,15 @@ select.form-input {
   min-width: 900px;
 }
 .agenda-corner {
-  background: var(--mk-surface);
-  border-bottom: 1px solid var(--mk-border);
-  border-right: 1px solid var(--mk-border);
+  background: var(--mk-superficie);
+  border-bottom: 1px solid var(--mk-linha);
+  border-right: 1px solid var(--mk-linha);
   height: 64px;
 }
 .agenda-day-head {
-  background: var(--mk-surface);
-  border-bottom: 1px solid var(--mk-border);
-  border-right: 1px solid var(--mk-border);
+  background: var(--mk-superficie);
+  border-bottom: 1px solid var(--mk-linha);
+  border-right: 1px solid var(--mk-linha);
   padding: 12px 8px;
   text-align: center;
   display: flex;
@@ -1702,21 +1470,21 @@ select.form-input {
 }
 .agenda-weekday {
   font-size: 11px;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   font-weight: 500;
 }
 .agenda-daynum {
   font-size: 16px;
   font-weight: 600;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
   line-height: 1;
   font-variant-numeric: tabular-nums;
 }
 .agenda-day-head.today .agenda-daynum {
-  color: var(--mk-accent);
+  color: var(--mk-acento);
   width: 36px;
   height: 36px;
-  background: var(--mk-accent-light);
+  background: var(--mk-acento-fraco);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -1724,17 +1492,17 @@ select.form-input {
   font-size: 16px;
 }
 .agenda-day-head.today .agenda-weekday {
-  color: var(--mk-accent);
+  color: var(--mk-acento);
 }
 .agenda-hour {
-  background: var(--mk-surface);
-  border-right: 1px solid var(--mk-border);
-  border-top: 1px solid var(--mk-border);
+  background: var(--mk-superficie);
+  border-right: 1px solid var(--mk-linha);
+  border-top: 1px solid var(--mk-linha);
   padding: 4px 8px 0;
   height: 60px;
   font-size: 10px;
-  color: var(--mk-muted);
-  font-family: var(--font-jetbrains), monospace;
+  color: var(--mk-tinta-fraca);
+  font-family: var(--font-plex-mono), monospace;
   text-align: right;
   position: relative;
 }
@@ -1742,22 +1510,22 @@ select.form-input {
   position: absolute;
   top: -7px;
   right: 8px;
-  background: var(--mk-surface);
+  background: var(--mk-superficie);
   padding: 0 4px;
 }
 .agenda-cell {
-  border-right: 1px solid var(--mk-border);
-  border-top: 1px solid var(--mk-border);
+  border-right: 1px solid var(--mk-linha);
+  border-top: 1px solid var(--mk-linha);
   height: 60px;
   position: relative;
   cursor: pointer;
-  transition: background var(--mk-transition);
+  transition: background var(--mk-transicao);
 }
 .agenda-cell:last-child {
   border-right: none;
 }
 .agenda-cell:hover {
-  background: var(--mk-surface2);
+  background: var(--mk-superficie-2);
 }
 .agenda-cell.today {
   background: rgba(155, 125, 90, 0.03);
@@ -1782,10 +1550,10 @@ select.form-input {
 }
 .agenda-cell.lotado {
   cursor: not-allowed;
-  background: var(--mk-red-bg);
+  background: var(--mk-alerta-fraca);
 }
 .agenda-cell.lotado:hover {
-  background: var(--mk-red-bg);
+  background: var(--mk-alerta-fraca);
 }
 /* Motivo do bloqueio, escrito uma vez por bloco (não em toda célula). */
 .agenda-fechado-label {
@@ -1796,7 +1564,7 @@ select.form-input {
   z-index: 1;
   font-size: 11px;
   font-weight: 600;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   opacity: 0.75;
   line-height: 1.2;
   pointer-events: none;
@@ -1808,15 +1576,15 @@ select.form-input {
   top: 2px;
   right: 4px;
   z-index: 1;
-  font-family: var(--font-jetbrains), monospace;
+  font-family: var(--font-plex-mono), monospace;
   font-size: 9px;
   font-weight: 500;
   letter-spacing: 0.02em;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   pointer-events: none;
 }
 .agenda-cell.lotado .agenda-vagas {
-  color: var(--mk-red);
+  color: var(--mk-alerta);
   font-weight: 700;
 }
 
@@ -1824,13 +1592,13 @@ select.form-input {
   position: absolute;
   left: 3px;
   right: 3px;
-  background: var(--mk-accent-light);
-  border-left: 2px solid var(--mk-border2);
+  background: var(--mk-acento-fraco);
+  border-left: 2px solid var(--mk-linha);
   border-radius: 4px;
   padding: 4px 8px;
   cursor: pointer;
   overflow: hidden;
-  transition: all var(--mk-transition);
+  transition: all var(--mk-transicao);
   z-index: 2;
 }
 .agenda-event:hover {
@@ -1839,15 +1607,15 @@ select.form-input {
 }
 .agenda-event-time {
   font-size: 10px;
-  font-family: var(--font-jetbrains), monospace;
-  color: var(--mk-text2);
+  font-family: var(--font-plex-mono), monospace;
+  color: var(--mk-tinta-media);
   font-weight: 500;
   line-height: 1.2;
 }
 .agenda-event-name {
   font-size: 11px;
   font-weight: 500;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
   line-height: 1.3;
   margin-top: 2px;
   white-space: nowrap;
@@ -1856,7 +1624,7 @@ select.form-input {
 }
 .agenda-event-service {
   font-size: 10px;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   line-height: 1.3;
   margin-top: 1px;
   white-space: nowrap;
@@ -1864,33 +1632,33 @@ select.form-input {
   text-overflow: ellipsis;
 }
 .agenda-event.pendente {
-  background: var(--mk-amber-bg);
-  border-left-color: var(--mk-amber);
+  background: var(--mk-aviso-fraca);
+  border-left-color: var(--mk-aviso);
 }
 .agenda-event.pendente .agenda-event-time {
-  color: var(--mk-amber);
+  color: var(--mk-aviso);
 }
 .agenda-event.confirmado {
-  background: var(--mk-purple-bg);
-  border-left-color: var(--mk-purple);
+  background: var(--mk-pausada-fraca);
+  border-left-color: var(--mk-pausada);
 }
 .agenda-event.confirmado .agenda-event-time {
-  color: var(--mk-purple);
+  color: var(--mk-pausada);
 }
 .agenda-event.realizado {
-  background: var(--mk-green-bg);
-  border-left-color: var(--mk-green);
+  background: var(--mk-ativa-fraca);
+  border-left-color: var(--mk-ativa);
 }
 .agenda-event.realizado .agenda-event-time {
-  color: var(--mk-green);
+  color: var(--mk-ativa);
 }
 .agenda-event.cancelado {
-  background: var(--mk-red-bg);
-  border-left-color: var(--mk-red);
+  background: var(--mk-alerta-fraca);
+  border-left-color: var(--mk-alerta);
   opacity: 0.6;
 }
 .agenda-event.cancelado .agenda-event-time {
-  color: var(--mk-red);
+  color: var(--mk-alerta);
 }
 .agenda-event.cancelado .agenda-event-name {
   text-decoration: line-through;
@@ -1900,7 +1668,7 @@ select.form-input {
   left: 0;
   right: 0;
   height: 2px;
-  background: var(--mk-red);
+  background: var(--mk-alerta);
   z-index: 4;
   pointer-events: none;
 }
@@ -1912,7 +1680,7 @@ select.form-input {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: var(--mk-red);
+  background: var(--mk-alerta);
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -1939,24 +1707,24 @@ select.form-input {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: var(--mk-surface);
-  border: 1px solid var(--mk-border);
-  color: var(--mk-text2);
+  background: var(--mk-superficie);
+  border: 1px solid var(--mk-linha);
+  color: var(--mk-tinta-media);
   padding: 7px 16px;
-  border-radius: 20px;
+  border-radius: var(--mk-raio);
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
-  font-family: var(--font-inter), sans-serif;
+  font-family: var(--font-plex), sans-serif;
   letter-spacing: 0.04em;
-  transition: all var(--mk-transition);
+  transition: all var(--mk-transicao);
 }
 .date-filter-trigger:hover {
-  border-color: var(--mk-border2);
-  background: var(--mk-surface2);
+  border-color: var(--mk-linha);
+  background: var(--mk-superficie-2);
 }
 .date-filter-trigger .chev {
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   transition: transform 0.2s;
 }
 .date-filter-trigger.open .chev {
@@ -1968,10 +1736,9 @@ select.form-input {
   right: 0;
   z-index: 30;
   min-width: 160px;
-  background: var(--mk-surface);
-  border: 1px solid var(--mk-border);
-  border-radius: 12px;
-  box-shadow: var(--mk-shadow-md);
+  background: var(--mk-superficie);
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
   padding: 6px;
   display: flex;
   flex-direction: column;
@@ -1982,19 +1749,19 @@ select.form-input {
   text-align: left;
   background: transparent;
   border: none;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
   padding: 8px 12px;
-  border-radius: 8px;
+  border-radius: var(--mk-raio);
   font-size: 13px;
   cursor: pointer;
-  font-family: var(--font-inter), sans-serif;
-  transition: background var(--mk-transition);
+  font-family: var(--font-plex), sans-serif;
+  transition: background var(--mk-transicao);
 }
 .date-filter-item:hover {
-  background: var(--mk-surface2);
+  background: var(--mk-superficie-2);
 }
 .date-filter-item.active {
-  color: var(--mk-accent);
+  color: var(--mk-acento);
   font-weight: 600;
 }
 
@@ -2002,18 +1769,18 @@ select.form-input {
 .agenda-month-grid {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
-  border-top: 1px solid var(--mk-border);
-  border-left: 1px solid var(--mk-border);
+  border-top: 1px solid var(--mk-linha);
+  border-left: 1px solid var(--mk-linha);
 }
 .agenda-mday-head {
   padding: 10px 8px;
   text-align: center;
   font-size: 11px;
   font-weight: 600;
-  color: var(--mk-muted);
-  background: var(--mk-surface);
-  border-right: 1px solid var(--mk-border);
-  border-bottom: 1px solid var(--mk-border);
+  color: var(--mk-tinta-fraca);
+  background: var(--mk-superficie);
+  border-right: 1px solid var(--mk-linha);
+  border-bottom: 1px solid var(--mk-linha);
 }
 .agenda-mcell {
   min-height: 104px;
@@ -2022,28 +1789,28 @@ select.form-input {
   flex-direction: column;
   gap: 4px;
   cursor: pointer;
-  border-right: 1px solid var(--mk-border);
-  border-bottom: 1px solid var(--mk-border);
-  transition: background var(--mk-transition);
+  border-right: 1px solid var(--mk-linha);
+  border-bottom: 1px solid var(--mk-linha);
+  transition: background var(--mk-transicao);
 }
 .agenda-mcell:hover {
-  background: var(--mk-surface2);
+  background: var(--mk-superficie-2);
 }
 .agenda-mcell.out {
-  background: var(--mk-bg);
+  background: var(--mk-fundo);
 }
 .agenda-mday-num {
-  font-family: var(--font-jetbrains), monospace;
+  font-family: var(--font-plex-mono), monospace;
   font-size: 12px;
   font-weight: 500;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
 }
 .agenda-mcell.out .agenda-mday-num {
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   opacity: 0.5;
 }
 .agenda-mcell.today .agenda-mday-num {
-  color: var(--mk-accent);
+  color: var(--mk-acento);
   font-weight: 700;
 }
 .agenda-mevents {
@@ -2057,35 +1824,35 @@ select.form-input {
   line-height: 1.4;
   padding: 2px 6px;
   border-radius: 4px;
-  border-left: 2px solid var(--mk-border2);
-  background: var(--mk-accent-light);
-  color: var(--mk-text);
+  border-left: 2px solid var(--mk-linha);
+  background: var(--mk-acento-fraco);
+  color: var(--mk-tinta);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   cursor: pointer;
 }
 .agenda-mevent.pendente {
-  background: var(--mk-amber-bg);
-  border-left-color: var(--mk-amber);
+  background: var(--mk-aviso-fraca);
+  border-left-color: var(--mk-aviso);
 }
 .agenda-mevent.confirmado {
-  background: var(--mk-purple-bg);
-  border-left-color: var(--mk-purple);
+  background: var(--mk-pausada-fraca);
+  border-left-color: var(--mk-pausada);
 }
 .agenda-mevent.realizado {
-  background: var(--mk-green-bg);
-  border-left-color: var(--mk-green);
+  background: var(--mk-ativa-fraca);
+  border-left-color: var(--mk-ativa);
 }
 .agenda-mevent.cancelado {
-  background: var(--mk-red-bg);
-  border-left-color: var(--mk-red);
+  background: var(--mk-alerta-fraca);
+  border-left-color: var(--mk-alerta);
   opacity: 0.6;
   text-decoration: line-through;
 }
 .agenda-mmore {
   font-size: 10px;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   padding: 0 6px;
 }
 
@@ -2100,11 +1867,11 @@ select.form-input {
   cursor: text;
 }
 .lead-combo-control:focus-within {
-  border-color: var(--mk-accent);
-  background: var(--mk-surface);
+  border-color: var(--mk-acento);
+  background: var(--mk-superficie);
 }
 .lead-combo-icon {
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   flex-shrink: 0;
 }
 .lead-combo-control input {
@@ -2113,24 +1880,24 @@ select.form-input {
   background: none;
   border: none;
   outline: none;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
   font-size: 13px;
-  font-family: var(--font-inter), sans-serif;
+  font-family: var(--font-plex), sans-serif;
 }
 .lead-combo-control input::placeholder {
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 .lead-combo-clear {
   display: flex;
   background: none;
   border: none;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   cursor: pointer;
   flex-shrink: 0;
-  transition: color var(--mk-transition);
+  transition: color var(--mk-transicao);
 }
 .lead-combo-clear:hover {
-  color: var(--mk-text);
+  color: var(--mk-tinta);
 }
 .lead-combo-menu {
   position: absolute;
@@ -2140,10 +1907,9 @@ select.form-input {
   z-index: 40;
   max-height: 240px;
   overflow-y: auto;
-  background: var(--mk-surface);
-  border: 1px solid var(--mk-border);
-  border-radius: var(--mk-radius-sm);
-  box-shadow: var(--mk-shadow-md);
+  background: var(--mk-superficie);
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
   padding: 4px;
   display: flex;
   flex-direction: column;
@@ -2160,38 +1926,38 @@ select.form-input {
   border: none;
   cursor: pointer;
   padding: 8px 10px;
-  border-radius: 6px;
-  font-family: var(--font-inter), sans-serif;
-  transition: background var(--mk-transition);
+  border-radius: var(--mk-raio);
+  font-family: var(--font-plex), sans-serif;
+  transition: background var(--mk-transicao);
 }
 .lead-combo-item:hover {
-  background: var(--mk-surface2);
+  background: var(--mk-superficie-2);
 }
 .lead-combo-item.active {
-  background: var(--mk-accent-light);
+  background: var(--mk-acento-fraco);
 }
 .lead-combo-item .nome {
   font-size: 13px;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .lead-combo-item.active .nome {
-  color: var(--mk-accent);
+  color: var(--mk-acento);
   font-weight: 600;
 }
 .lead-combo-item .tel {
   font-size: 11px;
-  color: var(--mk-muted);
-  font-family: var(--font-jetbrains), monospace;
+  color: var(--mk-tinta-fraca);
+  font-family: var(--font-plex-mono), monospace;
   flex-shrink: 0;
 }
 .lead-combo-empty,
 .lead-combo-hint {
   padding: 10px;
   font-size: 12px;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   text-align: center;
 }
 
@@ -2200,7 +1966,7 @@ select.form-input {
   padding: 5px 10px;
   font-size: 11px;
   gap: 6px;
-  border-radius: 8px;
+  border-radius: var(--mk-raio);
 }
 
 /* ========================================================================
@@ -2214,6 +1980,9 @@ select.form-input {
   min-height: 100dvh;
   background: var(--f-bg);
   color: var(--f-text);
+  /* Inter DE PROPOSITO, e nao a fonte do sistema: a ficha carrega a marca da
+     CLINICA, nao a do Meraki, e nao segue a paleta nem a tipografia do
+     painel. Ver a paleta --f-* logo acima. */
   font-family: var(--font-inter), system-ui, sans-serif;
 }
 
@@ -2277,40 +2046,40 @@ select.form-input {
   gap: 9px;
   padding: 7px 10px;
   border: none;
-  border-radius: 7px;
+  border-radius: var(--mk-raio);
   background: none;
   cursor: pointer;
   font-family: inherit;
   font-size: 12.5px;
   line-height: 1.3;
-  color: var(--mk-text2);
+  color: var(--mk-tinta-media);
   text-align: left;
   white-space: nowrap;
-  transition: background var(--mk-transition), color var(--mk-transition);
+  transition: background var(--mk-transicao), color var(--mk-transicao);
 }
 .config-nav-item svg {
   flex-shrink: 0;
   opacity: 0.75;
 }
 .config-nav-item:hover {
-  background: var(--mk-surface2);
-  color: var(--mk-text);
+  background: var(--mk-superficie-2);
+  color: var(--mk-tinta);
 }
 .config-nav-item:hover svg {
   opacity: 1;
 }
 .config-nav-item.active {
-  color: var(--mk-accent);
+  color: var(--mk-acento);
   font-weight: 600;
 }
 .config-nav-item.active svg {
   opacity: 1;
-  color: var(--mk-accent);
+  color: var(--mk-acento);
 }
 
 /* Divisória entre a sub-navegação e a seção aberta */
 .config-content {
-  border-left: 1px solid var(--mk-border);
+  border-left: 1px solid var(--mk-linha);
   padding-left: 30px;
   min-height: 60vh;
 }
@@ -2319,7 +2088,7 @@ select.form-input {
     border-left: none;
     padding-left: 0;
     padding-top: 18px;
-    border-top: 1px solid var(--mk-border);
+    border-top: 1px solid var(--mk-linha);
     min-height: 0;
   }
 }
@@ -2330,18 +2099,18 @@ select.form-input {
 .config-title {
   font-size: 19.5px;
   font-weight: 600;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
 }
 .config-subtitle {
   margin-top: 4px;
   font-size: 13px;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 
 .config-card {
-  background: var(--mk-surface);
-  border: 1px solid var(--mk-border);
-  border-radius: 14px;
+  background: var(--mk-superficie);
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
   padding: 20px;
 }
 .config-grid-2 {
@@ -2357,10 +2126,10 @@ select.form-input {
 .config-nota {
   margin-top: 16px;
   padding-top: 14px;
-  border-top: 1px solid var(--mk-border);
+  border-top: 1px solid var(--mk-linha);
   font-size: 12px;
   line-height: 1.6;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 .config-linha {
   display: flex;
@@ -2372,20 +2141,20 @@ select.form-input {
   place-items: center;
   width: 34px;
   height: 34px;
-  border-radius: 10px;
-  background: var(--mk-surface2);
-  color: var(--mk-text2);
+  border-radius: var(--mk-raio);
+  background: var(--mk-superficie-2);
+  color: var(--mk-tinta-media);
   flex-shrink: 0;
 }
 .config-linha-label {
   font-size: 11px;
   font-weight: 700;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 .config-linha-valor {
   margin-top: 2px;
   font-size: 14px;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
 }
 
 /* ── Aparência: cartões de tema com miniatura ── */
@@ -2409,24 +2178,24 @@ select.form-input {
   flex-direction: column;
   gap: 12px;
   padding: 14px;
-  border: 1px solid var(--mk-border);
-  border-radius: 12px;
-  background: var(--mk-surface);
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
+  background: var(--mk-superficie);
   cursor: pointer;
   font-family: inherit;
   text-align: left;
-  transition: border-color var(--mk-transition);
+  transition: border-color var(--mk-transicao);
 }
 .tema-opcao:hover {
-  border-color: var(--mk-border2);
+  border-color: var(--mk-linha);
 }
 .tema-opcao.active {
-  border-color: var(--mk-accent);
+  border-color: var(--mk-acento);
 }
 .tema-preview {
   height: 96px;
   border: 1px solid;
-  border-radius: 8px;
+  border-radius: var(--mk-raio);
   padding: 8px;
   display: flex;
   flex-direction: column;
@@ -2436,7 +2205,7 @@ select.form-input {
 .tema-preview-bar,
 .tema-preview-card {
   border: 1px solid;
-  border-radius: 5px;
+  border-radius: var(--mk-raio);
   padding: 6px;
   display: flex;
   align-items: center;
@@ -2486,15 +2255,15 @@ select.form-input {
   gap: 6px;
   font-size: 13.5px;
   font-weight: 600;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
 }
 .tema-check {
   margin-left: auto;
-  color: var(--mk-accent);
+  color: var(--mk-acento);
 }
 .tema-desc {
   font-size: 12px;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 
 /* ── Profissionais: cabeçalho + grade da escala ── */
@@ -2513,7 +2282,7 @@ select.form-input {
 .prof-nome {
   font-size: 15px;
   font-weight: 600;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
 }
 .prof-escala {
   display: grid;
@@ -2530,32 +2299,32 @@ select.form-input {
 .prof-dia-nome {
   font-size: 10.5px;
   font-weight: 400;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 /* Dia com turno: barra preenchida. Dia de folga: linha de 1px. A diferença
    entre "trabalha" e "não trabalha" fica sendo massa, não texto. */
 .prof-dia-barra {
   height: 5px;
   border-radius: 2px;
-  background: var(--mk-accent);
+  background: var(--mk-acento);
   opacity: 0.75;
 }
 .prof-dia-barra.folga {
   height: 1px;
   margin: 2px 0;
-  background: var(--mk-border2);
+  background: var(--mk-linha);
   opacity: 1;
 }
 /* O horário continua legível, mas em segundo plano — quem quer o número lê;
    quem quer a forma da semana vê pelas barras. */
 .prof-dia-faixa {
-  font-family: var(--font-jetbrains), monospace;
+  font-family: var(--font-plex-mono), monospace;
   font-size: 9.5px;
   line-height: 1.35;
-  color: var(--mk-text2);
+  color: var(--mk-tinta-media);
 }
 .prof-dia-faixa.vazio {
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   opacity: 0.45;
 }
 
@@ -2572,7 +2341,7 @@ select.form-input {
 .escala-titulo {
   font-size: 15px;
   font-weight: 600;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
 }
 .escala-dica {
   display: flex;
@@ -2580,7 +2349,7 @@ select.form-input {
   gap: 4px;
   margin-top: 3px;
   font-size: 11.5px;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   flex-wrap: wrap;
 }
 
@@ -2596,7 +2365,7 @@ select.form-input {
 .escala-dia-head {
   font-size: 11px;
   font-weight: 700;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   text-align: center;
   padding-bottom: 5px;
 }
@@ -2605,21 +2374,21 @@ select.form-input {
   align-items: center;
   justify-content: flex-end;
   padding-right: 8px;
-  font-family: var(--font-jetbrains), monospace;
+  font-family: var(--font-plex-mono), monospace;
   font-size: 9.5px;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 .escala-celula {
   height: 26px;
-  border: 1px solid var(--mk-border);
-  border-radius: 5px;
-  background: var(--mk-surface2);
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
+  background: var(--mk-superficie-2);
   cursor: pointer;
   padding: 0;
   transition: background 0.1s ease, border-color 0.1s ease;
 }
 .escala-celula:hover {
-  border-color: var(--mk-border2);
+  border-color: var(--mk-linha);
 }
 .escala-celula.on {
   /* cor da profissional vem inline */
@@ -2628,7 +2397,7 @@ select.form-input {
 .escala-resumo {
   margin-top: 16px;
   padding-top: 14px;
-  border-top: 1px solid var(--mk-border);
+  border-top: 1px solid var(--mk-linha);
   display: grid;
   gap: 3px;
 }
@@ -2642,12 +2411,12 @@ select.form-input {
 .escala-resumo-dia {
   font-weight: 700;
   font-size: 11px;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   padding-top: 2px;
 }
 .escala-resumo-faixas {
-  font-family: var(--font-jetbrains), monospace;
-  color: var(--mk-text);
+  font-family: var(--font-plex-mono), monospace;
+  color: var(--mk-tinta);
 }
 
 .escala-rodape {
@@ -2660,35 +2429,35 @@ select.form-input {
 }
 .escala-total {
   font-size: 12px;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 
 /* Botão secundário (cancelar / desativar) */
 .btn-ghost {
   height: 33px;
   padding: 0 11px;
-  border: 1px solid var(--mk-border2);
-  border-radius: 5px;
-  background: var(--mk-surface);
-  color: var(--mk-text2);
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
+  background: var(--mk-superficie);
+  color: var(--mk-tinta-media);
   font-family: inherit;
   font-size: 12.5px;
   font-weight: 500;
   cursor: pointer;
-  transition: background var(--mk-transition), color var(--mk-transition);
+  transition: background var(--mk-transicao), color var(--mk-transicao);
 }
 .btn-ghost:hover {
-  background: var(--mk-surface2);
-  color: var(--mk-text);
+  background: var(--mk-superficie-2);
+  color: var(--mk-tinta);
 }
 /* Desabilitado é CINZA NEUTRO, não a cor do botão com opacity.
    Um sólido dourado a 50% continua lendo como "clicável, só que apagado" — e
    o dourado desbotado é o pior tom da paleta. Cinza chapado diz "aqui não". */
 .btn-primary:disabled,
 .btn-ghost:disabled {
-  background: var(--mk-surface3);
-  border-color: var(--mk-border);
-  color: var(--mk-muted);
+  background: var(--mk-superficie-2);
+  border-color: var(--mk-linha);
+  color: var(--mk-tinta-fraca);
   opacity: 1;
   cursor: not-allowed;
 }
@@ -2700,22 +2469,22 @@ select.form-input {
   gap: 12px;
   padding: 14px;
   margin-bottom: 14px;
-  border: 1px solid var(--mk-border);
-  border-radius: 12px;
-  background: var(--mk-surface2);
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
+  background: var(--mk-superficie-2);
 }
 .bloqueio-check {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   font-size: 13px;
-  color: var(--mk-text2);
+  color: var(--mk-tinta-media);
   cursor: pointer;
 }
 .bloqueio-check input {
   width: 15px;
   height: 15px;
-  accent-color: var(--mk-accent);
+  accent-color: var(--mk-acento);
   cursor: pointer;
 }
 .bloqueio-lista {
@@ -2728,23 +2497,23 @@ select.form-input {
   align-items: center;
   gap: 10px;
   padding: 10px 12px;
-  border-radius: 10px;
-  background: var(--mk-surface2);
+  border-radius: var(--mk-raio);
+  background: var(--mk-superficie-2);
 }
 .bloqueio-quando {
   font-size: 13px;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
 }
 .bloqueio-faixa {
   margin-left: 8px;
-  font-family: var(--font-jetbrains), monospace;
+  font-family: var(--font-plex-mono), monospace;
   font-size: 11px;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 .bloqueio-motivo {
   margin-top: 2px;
   font-size: 12px;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 .bloqueio-remover {
   display: grid;
@@ -2752,16 +2521,16 @@ select.form-input {
   width: 30px;
   height: 30px;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--mk-raio);
   background: none;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   cursor: pointer;
   flex-shrink: 0;
-  transition: background var(--mk-transition), color var(--mk-transition);
+  transition: background var(--mk-transicao), color var(--mk-transicao);
 }
 .bloqueio-remover:hover {
-  background: var(--mk-red-bg);
-  color: var(--mk-red);
+  background: var(--mk-alerta-fraca);
+  color: var(--mk-alerta);
 }
 
 /* ── Seletor de cor da profissional ── */
@@ -2776,7 +2545,7 @@ select.form-input {
   width: 32px;
   height: 32px;
   border: 2px solid transparent;
-  border-radius: 9px;
+  border-radius: var(--mk-raio);
   cursor: pointer;
   padding: 0;
   transition: transform 0.12s ease, border-color 0.12s ease;
@@ -2784,7 +2553,7 @@ select.form-input {
 /* Selecionado: a borda de 2px já está reservada transparente, então acender
    a cor não desloca nada. Era um anel duplo de sombra antes. */
 .cor-opcao.active {
-  border-color: var(--mk-text2);
+  border-color: var(--mk-tinta-media);
 }
 .cor-opcao:hover {
   transform: scale(1.08);
@@ -2808,20 +2577,20 @@ select.form-input {
   align-items: baseline;
   gap: 9px;
   font-size: 15px;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
 }
 .promo-contador-num {
   font-size: 20px;
   font-weight: 600;
   line-height: 1;
-  color: var(--mk-text2);
+  color: var(--mk-tinta-media);
   font-variant-numeric: tabular-nums;
 }
 .promo-sub {
   margin-top: 5px;
   font-size: 12.5px;
   line-height: 1.5;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   max-width: 46ch;
 }
 
@@ -2832,20 +2601,20 @@ select.form-input {
 }
 .promo-card {
   position: relative;
-  background: var(--mk-surface);
-  border: 1px solid var(--mk-border);
-  border-radius: 14px;
+  background: var(--mk-superficie);
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
   padding: 16px;
   cursor: pointer;
-  transition: border-color var(--mk-transition);
+  transition: border-color var(--mk-transicao);
 }
 .promo-card:hover {
-  border-color: var(--mk-border2);
+  border-color: var(--mk-linha);
 }
 /* Vencida/desativada: presente, mas visivelmente fora do ar */
 .promo-card.fora {
   opacity: 0.62;
-  background: var(--mk-surface2);
+  background: var(--mk-superficie-2);
 }
 .promo-badges {
   display: flex;
@@ -2867,13 +2636,13 @@ select.form-input {
   font-size: 14.5px;
   font-weight: 600;
   line-height: 1.35;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
 }
 .promo-valor {
   font-weight: 600;
   margin-top: 5px;
   font-size: 16px;
-  color: var(--mk-text2);
+  color: var(--mk-tinta-media);
   line-height: 1.2;
   font-variant-numeric: tabular-nums;
 }
@@ -2881,7 +2650,7 @@ select.form-input {
   margin-top: 8px;
   font-size: 12.5px;
   line-height: 1.5;
-  color: var(--mk-text2);
+  color: var(--mk-tinta-media);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -2890,12 +2659,12 @@ select.form-input {
 .promo-meta {
   margin-top: 12px;
   padding-top: 10px;
-  border-top: 1px solid var(--mk-border);
+  border-top: 1px solid var(--mk-linha);
   display: flex;
   align-items: center;
   gap: 7px;
   font-size: 11.5px;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 .promo-meta-sep {
   opacity: 0.5;
@@ -2904,19 +2673,19 @@ select.form-input {
   margin-top: 12px;
   width: 100%;
   padding: 7px;
-  border: 1px solid var(--mk-border2);
-  border-radius: 8px;
-  background: var(--mk-surface);
-  color: var(--mk-text2);
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
+  background: var(--mk-superficie);
+  color: var(--mk-tinta-media);
   font-family: inherit;
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
-  transition: background var(--mk-transition), color var(--mk-transition);
+  transition: background var(--mk-transicao), color var(--mk-transicao);
 }
 .promo-toggle:hover {
-  background: var(--mk-surface2);
-  color: var(--mk-text);
+  background: var(--mk-superficie-2);
+  color: var(--mk-tinta);
 }
 
 /* ── Modal ── */
@@ -2940,21 +2709,21 @@ select.form-input {
   font-weight: 400;
   letter-spacing: 0;
   text-transform: none;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   margin-left: 6px;
 }
 .form-erro {
   margin-top: 5px;
   font-size: 12px;
-  color: var(--mk-red);
+  color: var(--mk-alerta);
 }
 
 /* Prévia do que o agente recebe — a defesa contra texto ruim */
 .promo-preview {
-  border: 1px dashed var(--mk-border2);
-  border-radius: 12px;
+  border: 1px dashed var(--mk-linha);
+  border-radius: var(--mk-raio);
   padding: 12px 14px;
-  background: var(--mk-surface2);
+  background: var(--mk-superficie-2);
 }
 .promo-preview-cab {
   display: flex;
@@ -2963,13 +2732,13 @@ select.form-input {
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.11em;
-  color: var(--mk-text2);
+  color: var(--mk-tinta-media);
   margin-bottom: 7px;
 }
 .promo-preview-texto {
   font-size: 12.5px;
   line-height: 1.6;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
   word-break: break-word;
 }
 
@@ -2983,7 +2752,7 @@ select.form-input {
   width: 16px;
   height: 16px;
   margin-top: 2px;
-  accent-color: var(--mk-accent);
+  accent-color: var(--mk-acento);
   cursor: pointer;
   flex-shrink: 0;
 }
@@ -2991,23 +2760,23 @@ select.form-input {
   display: block;
   font-size: 13.5px;
   font-weight: 600;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
 }
 .promo-switch-dica {
   display: block;
   margin-top: 2px;
   font-size: 11.5px;
   line-height: 1.45;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 
 .promo-aviso {
   display: flex;
   gap: 9px;
   padding: 11px 13px;
-  border-radius: 10px;
-  background: var(--mk-amber-bg);
-  color: var(--mk-amber);
+  border-radius: var(--mk-raio);
+  background: var(--mk-aviso-fraca);
+  color: var(--mk-aviso);
   font-size: 12.5px;
   line-height: 1.5;
 }
@@ -3016,7 +2785,7 @@ select.form-input {
   align-items: center;
   gap: 6px;
   font-size: 11.5px;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 
 /* Explicação na própria promoção vencida (a dona não a desativou — ela venceu) */
@@ -3024,7 +2793,7 @@ select.form-input {
   margin-top: 10px;
   font-size: 11.5px;
   line-height: 1.45;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   font-style: italic;
 }
 
@@ -3034,10 +2803,10 @@ select.form-input {
   gap: 11px;
   padding: 14px 16px;
   margin-bottom: 1.25rem;
-  border-radius: 12px;
-  border: 1px solid var(--mk-amber);
-  background: var(--mk-amber-bg);
-  color: var(--mk-amber);
+  border-radius: var(--mk-raio);
+  border: 1px solid var(--mk-aviso);
+  background: var(--mk-aviso-fraca);
+  color: var(--mk-aviso);
 }
 .promo-alerta-anuncio strong {
   display: block;
@@ -3054,19 +2823,19 @@ select.form-input {
 .promo-alerta-acao {
   margin-top: 9px;
   padding: 6px 14px;
-  border: 1px solid var(--mk-amber);
-  border-radius: 8px;
+  border: 1px solid var(--mk-aviso);
+  border-radius: var(--mk-raio);
   background: transparent;
-  color: var(--mk-amber);
+  color: var(--mk-aviso);
   font-family: inherit;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
-  transition: background var(--mk-transition), color var(--mk-transition);
+  transition: background var(--mk-transicao), color var(--mk-transicao);
 }
 .promo-alerta-acao:hover {
-  background: var(--mk-amber);
-  color: var(--mk-surface);
+  background: var(--mk-aviso);
+  color: var(--mk-superficie);
 }
 
 /* ========================================================================
@@ -3084,31 +2853,31 @@ select.form-input {
 .fu-sub {
   font-size: 13px;
   line-height: 1.55;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   max-width: 52ch;
 }
 .fu-periodo {
   display: inline-flex;
   gap: 3px;
   padding: 3px;
-  background: var(--mk-surface2);
-  border-radius: 10px;
+  background: var(--mk-superficie-2);
+  border-radius: var(--mk-raio);
 }
 .fu-periodo-btn {
   padding: 6px 13px;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--mk-raio);
   background: transparent;
-  color: var(--mk-text2);
+  color: var(--mk-tinta-media);
   font-family: inherit;
   font-size: 12.5px;
   font-weight: 500;
   cursor: pointer;
-  transition: background var(--mk-transition), color var(--mk-transition);
+  transition: background var(--mk-transicao), color var(--mk-transicao);
 }
 .fu-periodo-btn.ativo {
-  background: var(--mk-surface);
-  color: var(--mk-text);
+  background: var(--mk-superficie);
+  color: var(--mk-tinta);
 }
 
 .fu-cards {
@@ -3123,9 +2892,9 @@ select.form-input {
   }
 }
 .fu-card {
-  background: var(--mk-surface);
-  border: 1px solid var(--mk-border);
-  border-radius: 14px;
+  background: var(--mk-superficie);
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
   padding: 16px 18px;
 }
 .fu-card-label {
@@ -3135,14 +2904,14 @@ select.form-input {
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.03em;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 .fu-card-valor {
   margin-top: 8px;
   font-size: 20px;
   font-weight: 600;
   line-height: 1;
-  color: var(--mk-text2);
+  color: var(--mk-tinta-media);
   font-variant-numeric: tabular-nums;
 }
 
@@ -3150,7 +2919,7 @@ select.form-input {
 .fu-tip {
   position: relative;
   display: inline-flex;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   cursor: help;
 }
 .fu-tip-bolha {
@@ -3160,9 +2929,9 @@ select.form-input {
   transform: translateX(-50%);
   width: 220px;
   padding: 9px 11px;
-  border-radius: 9px;
-  background: var(--mk-text);
-  color: var(--mk-bg);
+  border-radius: var(--mk-raio);
+  background: var(--mk-tinta);
+  color: var(--mk-fundo);
   font-size: 11.5px;
   font-weight: 400;
   line-height: 1.5;
@@ -3171,7 +2940,6 @@ select.form-input {
   visibility: hidden;
   transition: opacity 0.15s ease;
   z-index: 20;
-  box-shadow: var(--mk-shadow-lg);
 }
 .fu-tip:hover .fu-tip-bolha,
 .fu-tip:focus .fu-tip-bolha {
@@ -3194,30 +2962,30 @@ select.form-input {
 }
 .fu-chip {
   padding: 5px 12px;
-  border: 1px solid var(--mk-border);
+  border: 1px solid var(--mk-linha);
   border-radius: 999px;
-  background: var(--mk-surface);
-  color: var(--mk-text2);
+  background: var(--mk-superficie);
+  color: var(--mk-tinta-media);
   font-family: inherit;
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
-  transition: all var(--mk-transition);
+  transition: all var(--mk-transicao);
 }
 .fu-chip:hover {
-  border-color: var(--mk-border2);
+  border-color: var(--mk-linha);
 }
 .fu-chip.ativo {
-  background: var(--mk-accent-light);
-  border-color: var(--mk-accent);
-  color: var(--mk-accent);
+  background: var(--mk-acento-fraco);
+  border-color: var(--mk-acento);
+  color: var(--mk-acento);
 }
 .fu-select {
   padding: 6px 10px;
-  border: 1px solid var(--mk-border);
-  border-radius: 8px;
-  background: var(--mk-surface);
-  color: var(--mk-text);
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
+  background: var(--mk-superficie);
+  color: var(--mk-tinta);
   font-family: inherit;
   font-size: 12.5px;
   cursor: pointer;
@@ -3232,16 +3000,16 @@ select.form-input {
   display: block;
   width: 100%;
   text-align: left;
-  background: var(--mk-surface);
-  border: 1px solid var(--mk-border);
-  border-radius: 12px;
+  background: var(--mk-superficie);
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
   padding: 14px 16px;
   cursor: pointer;
   font-family: inherit;
-  transition: border-color var(--mk-transition);
+  transition: border-color var(--mk-transicao);
 }
 .fu-item:hover:not(:disabled) {
-  border-color: var(--mk-border2);
+  border-color: var(--mk-linha);
 }
 .fu-item:disabled {
   cursor: default;
@@ -3254,11 +3022,11 @@ select.form-input {
 .fu-item-nome {
   font-size: 14px;
   font-weight: 600;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
 }
 .fu-item-quando {
   font-size: 11.5px;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 .fu-badge {
   margin-left: auto;
@@ -3273,7 +3041,7 @@ select.form-input {
   margin-top: 7px;
   font-size: 13px;
   line-height: 1.5;
-  color: var(--mk-text2);
+  color: var(--mk-tinta-media);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -3284,7 +3052,7 @@ select.form-input {
   margin-top: 8px;
   font-size: 11px;
   font-weight: 600;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 
 .fu-vazio {
@@ -3299,7 +3067,7 @@ select.form-input {
 .fu-vazio-texto {
   font-size: 13px;
   line-height: 1.65;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   max-width: 420px;
   margin: 0 auto;
 }
@@ -3315,7 +3083,7 @@ select.form-input {
 .fu-tabela-titulo {
   font-size: 13px;
   font-weight: 600;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
   margin-bottom: 14px;
 }
 .fu-tabela-wrap {
@@ -3332,33 +3100,33 @@ select.form-input {
   text-align: left;
   font-size: 11px;
   font-weight: 700;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   padding: 0 10px 9px 0;
   white-space: nowrap;
-  border-bottom: 1px solid var(--mk-border);
+  border-bottom: 1px solid var(--mk-linha);
 }
 .fu-tabela td {
   padding: 11px 10px 11px 0;
   font-size: 13px;
-  color: var(--mk-text);
-  border-bottom: 1px solid var(--mk-border);
+  color: var(--mk-tinta);
+  border-bottom: 1px solid var(--mk-linha);
   white-space: nowrap;
 }
 .fu-tabela tr:last-child td {
   border-bottom: none;
 }
 .fu-tabela td b {
-  font-family: var(--font-jetbrains), monospace;
+  font-family: var(--font-plex-mono), monospace;
   font-size: 14px;
   font-weight: 600;
 }
 /* Linha de tipo que não disparou: presente, mas discreta */
 .fu-tabela tr.vazio td {
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 .fu-td-vazio {
   font-size: 12px;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   font-style: italic;
 }
 .fu-tabela-tipo {
@@ -3371,7 +3139,7 @@ select.form-input {
 .fu-pct {
   margin-left: 7px;
   font-size: 11.5px;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 
 /* ── Rodapé do item: tipo + a referência datada ── */
@@ -3384,7 +3152,7 @@ select.form-input {
 }
 .fu-item-ref {
   font-size: 11px;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 
 /* ── Estado vazio educativo: explica os quatro tipos ── */
@@ -3392,7 +3160,7 @@ select.form-input {
   list-style: none;
   margin: 18px auto 0;
   padding: 16px 0 0;
-  border-top: 1px solid var(--mk-border);
+  border-top: 1px solid var(--mk-linha);
   max-width: 460px;
   text-align: left;
   display: flex;
@@ -3407,12 +3175,12 @@ select.form-input {
 .fu-vazio-tipos strong {
   font-size: 12.5px;
   font-weight: 600;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
 }
 .fu-vazio-tipos span {
   font-size: 12px;
   line-height: 1.5;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 
 /* ── Visão geral: as duas LENTES de tempo ────────────────────────────────
@@ -3431,10 +3199,10 @@ select.form-input {
 .metrics-lente-titulo {
   font-size: 11.5px;
   font-weight: 500;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   margin-bottom: 10px;
   padding-bottom: 8px;
-  border-bottom: 1px solid var(--mk-border);
+  border-bottom: 1px solid var(--mk-linha);
 }
 .metrics-grid-2 {
   display: grid;
@@ -3472,9 +3240,9 @@ select.form-input {
 /* ── Lista de agendamentos (abaixo da grade) ────────────────────────────── */
 .ag-lista {
   margin-top: 14px;
-  background: var(--mk-surface);
-  border: 1px solid var(--mk-border);
-  border-radius: var(--mk-radius-lg);
+  background: var(--mk-superficie);
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
   overflow: hidden;
 }
 .ag-lista-cab {
@@ -3485,18 +3253,18 @@ select.form-input {
   padding: 14px 18px;
   border: none;
   background: none;
-  color: var(--mk-text2);
+  color: var(--mk-tinta-media);
   font-family: inherit;
   font-size: 13px;
   cursor: pointer;
-  transition: background var(--mk-transition);
+  transition: background var(--mk-transicao);
 }
 .ag-lista-cab:hover {
-  background: var(--mk-surface2);
+  background: var(--mk-superficie-2);
 }
 .ag-lista-titulo {
   font-weight: 600;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
 }
 .ag-lista-contador {
   display: grid;
@@ -3505,15 +3273,15 @@ select.form-input {
   height: 20px;
   padding: 0 7px;
   border-radius: 999px;
-  background: var(--mk-surface3);
-  font-family: var(--font-jetbrains), monospace;
+  background: var(--mk-superficie-2);
+  font-family: var(--font-plex-mono), monospace;
   font-size: 10.5px;
   font-weight: 600;
-  color: var(--mk-text2);
+  color: var(--mk-tinta-media);
 }
 .ag-lista-chev {
   margin-left: auto;
-  transition: transform var(--mk-transition);
+  transition: transform var(--mk-transicao);
 }
 .ag-lista-chev.aberta {
   transform: rotate(180deg);
@@ -3521,10 +3289,10 @@ select.form-input {
 .ag-lista-vazio {
   padding: 0 18px 18px;
   font-size: 12.5px;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 .ag-lista-corpo {
-  border-top: 1px solid var(--mk-border);
+  border-top: 1px solid var(--mk-linha);
   max-height: 460px;
   overflow-y: auto;
 }
@@ -3533,7 +3301,7 @@ select.form-input {
   align-items: baseline;
   gap: 7px;
   padding: 12px 18px 8px;
-  background: var(--mk-surface2);
+  background: var(--mk-superficie-2);
   position: sticky;
   top: 0;
   z-index: 1;
@@ -3541,22 +3309,22 @@ select.form-input {
 .ag-lista-dia-num {
   font-weight: 600;
   font-size: 16px;
-  color: var(--mk-text2);
+  color: var(--mk-tinta-media);
   line-height: 1;
   font-variant-numeric: tabular-nums;
 }
 .ag-lista-dia-mes {
   font-size: 11px;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 .ag-lista-dia-nome {
   font-size: 12px;
-  color: var(--mk-text2);
+  color: var(--mk-tinta-media);
 }
 .ag-lista-dia-qtd {
   margin-left: auto;
   font-size: 11px;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 .ag-lista-item {
   display: flex;
@@ -3565,15 +3333,15 @@ select.form-input {
   width: 100%;
   padding: 9px 18px;
   border: none;
-  border-bottom: 1px solid var(--mk-border);
+  border-bottom: 1px solid var(--mk-linha);
   background: none;
   font-family: inherit;
   text-align: left;
   cursor: pointer;
-  transition: background var(--mk-transition);
+  transition: background var(--mk-transicao);
 }
 .ag-lista-item:hover {
-  background: var(--mk-surface2);
+  background: var(--mk-superficie-2);
 }
 .ag-lista-item.cancelado {
   opacity: 0.5;
@@ -3582,16 +3350,16 @@ select.form-input {
   text-decoration: line-through;
 }
 .ag-lista-hora {
-  font-family: var(--font-jetbrains), monospace;
+  font-family: var(--font-plex-mono), monospace;
   font-size: 11.5px;
-  color: var(--mk-text2);
+  color: var(--mk-tinta-media);
   width: 42px;
   flex-shrink: 0;
 }
 .ag-lista-nome {
   font-size: 13px;
   font-weight: 500;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
   min-width: 0;
   flex: 1;
   overflow: hidden;
@@ -3600,7 +3368,7 @@ select.form-input {
 }
 .ag-lista-servico {
   font-size: 12px;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   min-width: 0;
   flex: 1;
   overflow: hidden;
@@ -3628,21 +3396,21 @@ select.form-input {
   align-items: center;
   gap: 7px;
   padding: 7px 14px;
-  border: 1px solid var(--mk-border);
-  border-radius: 20px;
-  background: var(--mk-surface);
-  color: var(--mk-text2);
-  font-family: var(--font-inter), sans-serif;
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
+  background: var(--mk-superficie);
+  color: var(--mk-tinta-media);
+  font-family: var(--font-plex), sans-serif;
   font-size: 12px;
   font-weight: 500;
   letter-spacing: 0.04em;
   cursor: pointer;
-  transition: all var(--mk-transition);
+  transition: all var(--mk-transicao);
 }
 .mini-cal-trigger:hover,
 .mini-cal-trigger.aberto {
-  border-color: var(--mk-accent);
-  color: var(--mk-text);
+  border-color: var(--mk-acento);
+  color: var(--mk-tinta);
 }
 .mini-cal-pop {
   position: absolute;
@@ -3651,10 +3419,9 @@ select.form-input {
   z-index: 40;
   width: 258px;
   padding: 12px;
-  border: 1px solid var(--mk-border);
-  border-radius: 14px;
-  background: var(--mk-surface);
-  box-shadow: var(--mk-shadow-lg);
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
+  background: var(--mk-superficie);
 }
 .mini-cal-cab {
   display: flex;
@@ -3668,20 +3435,20 @@ select.form-input {
   width: 26px;
   height: 26px;
   border: none;
-  border-radius: 7px;
+  border-radius: var(--mk-raio);
   background: none;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   cursor: pointer;
-  transition: background var(--mk-transition), color var(--mk-transition);
+  transition: background var(--mk-transicao), color var(--mk-transicao);
 }
 .mini-cal-cab button:hover {
-  background: var(--mk-surface2);
-  color: var(--mk-text);
+  background: var(--mk-superficie-2);
+  color: var(--mk-tinta);
 }
 .mini-cal-mes {
   font-size: 12.5px;
   font-weight: 600;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
   text-transform: capitalize;
 }
 .mini-cal-grade {
@@ -3695,34 +3462,34 @@ select.form-input {
   height: 22px;
   font-size: 9.5px;
   font-weight: 700;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 .mini-cal-dia {
   position: relative;
   height: 30px;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--mk-raio);
   background: none;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
   font-family: inherit;
   font-size: 12px;
   cursor: pointer;
-  transition: background var(--mk-transition), color var(--mk-transition);
+  transition: background var(--mk-transicao), color var(--mk-transicao);
 }
 .mini-cal-dia:hover {
-  background: var(--mk-surface2);
+  background: var(--mk-superficie-2);
 }
 .mini-cal-dia.fora {
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   opacity: 0.45;
 }
 .mini-cal-dia.hoje {
   font-weight: 700;
-  color: var(--mk-accent);
+  color: var(--mk-acento);
 }
 .mini-cal-dia.sel {
-  background: var(--mk-accent);
-  color: var(--mk-on-accent);
+  background: var(--mk-acento);
+  color: var(--mk-sobre-acento);
   font-weight: 600;
 }
 /* Ponto do dia com atendimento — é o que guia a navegação para frente */
@@ -3734,7 +3501,7 @@ select.form-input {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: var(--mk-green);
+  background: var(--mk-ativa);
 }
 .mini-cal-dia.sel .mini-cal-ponto {
   background: currentColor;
@@ -3751,28 +3518,28 @@ select.form-input {
   justify-content: space-between;
   margin-top: 10px;
   padding-top: 9px;
-  border-top: 1px solid var(--mk-border);
+  border-top: 1px solid var(--mk-linha);
 }
 .mini-cal-legenda {
   display: inline-flex;
   align-items: center;
   font-size: 10.5px;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 .mini-cal-hoje {
   padding: 4px 11px;
-  border: 1px solid var(--mk-border2);
-  border-radius: 7px;
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
   background: none;
-  color: var(--mk-text2);
+  color: var(--mk-tinta-media);
   font-family: inherit;
   font-size: 11.5px;
   font-weight: 500;
   cursor: pointer;
 }
 .mini-cal-hoje:hover {
-  background: var(--mk-surface2);
-  color: var(--mk-text);
+  background: var(--mk-superficie-2);
+  color: var(--mk-tinta);
 }
 
 /* ── Cabeçalho de colunas da lista ── */
@@ -3781,14 +3548,14 @@ select.form-input {
   align-items: center;
   gap: 11px;
   padding: 9px 18px;
-  border-top: 1px solid var(--mk-border);
-  background: var(--mk-surface2);
+  border-top: 1px solid var(--mk-linha);
+  background: var(--mk-superficie-2);
   font-size: 11px;
   font-weight: 700;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 .ag-lista-thead .ag-lista-hora {
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   font-family: inherit;
   font-size: 9.5px;
 }
@@ -3846,23 +3613,23 @@ select.form-input {
 .vg-saudacao {
   font-size: 11.5px;
   font-weight: 400;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   line-height: 1.25;
   margin-bottom: 1px;
 }
 .vg-titulo {
-  font-family: var(--font-inter), system-ui, sans-serif;
+  font-family: var(--font-plex), system-ui, sans-serif;
   font-size: 19.5px;
   font-weight: 600;
   letter-spacing: 0;
   line-height: 1.33;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
 }
 .vg-sub {
   margin-top: 1px;
   font-size: 11.5px;
   font-weight: 400;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   line-height: 1.43;
 }
 .vg-controles {
@@ -3871,35 +3638,35 @@ select.form-input {
   gap: 10px;
   flex-wrap: wrap;
 }
-/* Abas: controle segmentado. A ativa sobe para --mk-surface sobre o trilho em
-   --mk-surface2, então parece elevada sem sombra pesada. */
+/* Abas: controle segmentado. A ativa sobe para --mk-superficie sobre o trilho em
+   --mk-superficie-2, então parece elevada sem sombra pesada. */
 .vg-abas {
   display: inline-flex;
   gap: 2px;
   padding: 3px;
-  border: 1px solid var(--mk-border);
-  border-radius: 11px;
-  background: var(--mk-surface2);
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
+  background: var(--mk-superficie-2);
 }
 .vg-aba {
   padding: 6px 14px;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--mk-raio);
   background: transparent;
   font-family: inherit;
   font-size: 12.5px;
   font-weight: 500;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   white-space: nowrap;
   cursor: pointer;
-  transition: color var(--mk-transition), background var(--mk-transition);
+  transition: color var(--mk-transicao), background var(--mk-transicao);
 }
 .vg-aba:hover {
-  color: var(--mk-text2);
+  color: var(--mk-tinta-media);
 }
 .vg-aba.ativa {
-  background: var(--mk-surface);
-  color: var(--mk-accent);
+  background: var(--mk-superficie);
+  color: var(--mk-acento);
 }
 
 /* ── Cards ── */
@@ -3936,21 +3703,21 @@ select.form-input {
      morto no meio. */
   padding: 13px 16px;
   min-height: 94px;
-  border: 1px solid var(--mk-border);
-  border-radius: 7px;
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
   /* Fundo IGUAL ao da página: quem separa é a hairline. Card com superfície
      própria E sombra faz cada peça flutuar por conta, e é daí que vem o ar de
      slide. */
-  background: var(--mk-bg);
+  background: var(--mk-fundo);
   font-family: inherit;
   text-align: left;
-  transition: border-color var(--mk-transition), background var(--mk-transition);
+  transition: border-color var(--mk-transicao), background var(--mk-transicao);
 }
 .neg-card-btn {
   cursor: pointer;
 }
 .neg-card-btn:hover {
-  border-color: var(--mk-border2);
+  border-color: var(--mk-linha);
 }
 /* Selecionado: borda no accent + fundo um degrau acima. O `inset` anterior
    desenhava um segundo anel por dentro da borda e engrossava tudo — dois
@@ -3959,7 +3726,7 @@ select.form-input {
 /* SÓ a borda. Trocar o fundo junto reintroduzia a elevação — e um card mais
    claro que os vizinhos é dois sinais para uma informação só. */
 .neg-card.ativo {
-  border-color: var(--mk-accent);
+  border-color: var(--mk-acento);
 }
 .neg-card-rotulo {
   display: flex;
@@ -3968,7 +3735,7 @@ select.form-input {
   font-size: 11.5px;
   font-weight: 500;
   line-height: 1.25;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
 }
 .neg-card-linha {
   display: flex;
@@ -3986,13 +3753,13 @@ select.form-input {
   font-weight: 600;
   line-height: 1.22;
   letter-spacing: 0;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
   font-variant-numeric: tabular-nums;
 }
 .neg-card-apoio {
   margin-top: 3px;
   font-size: 10px;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 /* Ícone de 16px no canto, discreto. Antes eram 22px na cor do card: cinco
    ícones grandes e coloridos competiam com os próprios valores. */
@@ -4004,13 +3771,13 @@ select.form-input {
 
 /* Cor só onde ela SIGNIFICA alguma coisa: subiu, desceu. O resto é neutro. */
 .neg-tom-neutro {
-  --neg-tom: var(--mk-muted);
+  --neg-tom: var(--mk-tinta-fraca);
 }
 .neg-tom-sobe {
-  --neg-tom: var(--mk-green);
+  --neg-tom: var(--mk-ativa);
 }
 .neg-tom-desce {
-  --neg-tom: var(--mk-red);
+  --neg-tom: var(--mk-alerta);
 }
 
 /* ── (i) com balão ── */
@@ -4021,20 +3788,20 @@ select.form-input {
   flex-shrink: 0;
   width: 14px;
   height: 14px;
-  border: 1px solid var(--mk-border2);
+  border: 1px solid var(--mk-linha);
   border-radius: 50%;
   font-size: 9px;
   font-weight: 600;
   font-style: italic;
   line-height: 1;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   cursor: help;
   position: relative;
-  transition: color var(--mk-transition), border-color var(--mk-transition);
+  transition: color var(--mk-transicao), border-color var(--mk-transicao);
 }
 .neg-dica:hover {
-  color: var(--mk-text2);
-  border-color: var(--mk-text2);
+  color: var(--mk-tinta-media);
+  border-color: var(--mk-tinta-media);
 }
 .neg-dica::after {
   content: attr(data-dica);
@@ -4047,21 +3814,20 @@ select.form-input {
      da tela e sai do card. */
   max-width: 240px;
   padding: 8px 10px;
-  border: 1px solid var(--mk-border);
-  border-radius: 8px;
-  background: var(--mk-surface);
-  box-shadow: var(--mk-shadow-md);
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
+  background: var(--mk-superficie);
   font-size: 11.5px;
   font-style: normal;
   font-weight: 400;
   line-height: 1.5;
   letter-spacing: normal;
   text-transform: none;
-  color: var(--mk-text2);
+  color: var(--mk-tinta-media);
   white-space: normal;
   opacity: 0;
   visibility: hidden;
-  transition: opacity var(--mk-transition);
+  transition: opacity var(--mk-transicao);
 }
 .neg-dica:hover::after {
   opacity: 1;
@@ -4092,9 +3858,9 @@ select.form-input {
 
 .neg-painel {
   padding: 13px 16px 16px;
-  border: 1px solid var(--mk-border);
-  border-radius: 7px;
-  background: var(--mk-bg);
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
+  background: var(--mk-fundo);
 }
 .neg-painel-topo {
   display: flex;
@@ -4109,13 +3875,13 @@ select.form-input {
   font-weight: 600;
   letter-spacing: 0;
   line-height: 1.25;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
 }
 .neg-painel-nota {
   display: block;
   margin-top: 2px;
   font-size: 11px;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 .neg-painel-acoes {
   display: flex;
@@ -4128,10 +3894,10 @@ select.form-input {
 }
 .neg-select {
   padding: 5px 10px;
-  border: 1px solid var(--mk-border);
-  border-radius: 8px;
-  background: var(--mk-surface2);
-  color: var(--mk-text2);
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
+  background: var(--mk-superficie-2);
+  color: var(--mk-tinta-media);
   font-family: inherit;
   font-size: 11.5px;
   cursor: pointer;
@@ -4178,17 +3944,17 @@ select.form-input {
 }
 .neg-rosca-nome {
   overflow: hidden;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .neg-rosca-pct {
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   font-variant-numeric: tabular-nums;
 }
 .neg-rosca-valor {
   font-weight: 600;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
   font-variant-numeric: tabular-nums;
 }
 
@@ -4206,9 +3972,9 @@ select.form-input {
   flex-shrink: 0;
   width: 16px;
   text-align: center;
-  font-family: var(--font-jetbrains), monospace;
+  font-family: var(--font-plex-mono), monospace;
   font-size: 10.5px;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 .neg-linha-corpo {
   flex: 1;
@@ -4224,7 +3990,7 @@ select.form-input {
 .neg-linha-nome {
   overflow: hidden;
   font-size: 13px;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -4232,18 +3998,18 @@ select.form-input {
   flex-shrink: 0;
   font-size: 12.5px;
   font-weight: 600;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
   font-variant-numeric: tabular-nums;
 }
 .neg-linha-pct {
   font-weight: 400;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 .neg-barra-trilho {
   height: 6px;
   overflow: hidden;
   border-radius: 3px;
-  background: var(--mk-surface3);
+  background: var(--mk-superficie-2);
 }
 .neg-barra {
   height: 100%;
@@ -4251,7 +4017,7 @@ select.form-input {
   /* Neutra. A barra comunica GRANDEZA, e o comprimento faz isso sozinho — em
      dourado, uma dúzia delas disputava com o item ativo do menu, que é o
      único lugar onde essa cor precisa querer dizer alguma coisa. */
-  background: var(--mk-text2);
+  background: var(--mk-tinta-media);
   opacity: 0.4;
 }
 
@@ -4282,18 +4048,18 @@ select.form-input {
 }
 .neg-pessoa-nome {
   font-size: 13px;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
 }
 .neg-pessoa-sub {
   margin-top: 1px;
   font-size: 11px;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 .neg-pessoa-valor {
   flex-shrink: 0;
   font-size: 13px;
   font-weight: 600;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
   font-variant-numeric: tabular-nums;
 }
 
@@ -4301,7 +4067,7 @@ select.form-input {
   padding: 30px 0;
   text-align: center;
   font-size: 12.5px;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 /* Cabeçalho de categoria dentro do combobox de serviço. */
 .servico-combo-grupo {
@@ -4310,7 +4076,7 @@ select.form-input {
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -4330,16 +4096,16 @@ select.form-input {
   margin-bottom: 20px;
 }
 .lead-titulo {
-  font-family: var(--font-inter), sans-serif;
+  font-family: var(--font-plex), sans-serif;
   font-size: 19px;
   font-weight: 600;
   letter-spacing: -0.01em;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
 }
 .lead-sub {
   margin-top: 3px;
   font-size: 12.5px;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 
 .lead-topo {
@@ -4360,7 +4126,7 @@ select.form-input {
   font-size: 11.5px;
   font-weight: 400;
   letter-spacing: 0;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
 }
 .lead-input {
   width: 100%;
@@ -4368,24 +4134,24 @@ select.form-input {
   padding: 0 10px;
   /* Borda um pouco mais forte que a hairline geral: no fundo branco, o campo
      precisa se delimitar sozinho, já que perdeu o preenchimento cinza. */
-  border: 1px solid var(--mk-border2);
-  border-radius: 5px;
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
   /* Branco, não cinza: campo preenchido de cinza lê como desabilitado, e cinco
      deles empilhados eram a maior massa visual do modal. */
-  background: var(--mk-surface);
-  color: var(--mk-text);
-  font-family: var(--font-inter), sans-serif;
+  background: var(--mk-superficie);
+  color: var(--mk-tinta);
+  font-family: var(--font-plex), sans-serif;
   font-size: 12.5px;
   outline: none;
-  transition: border-color var(--mk-transition);
+  transition: border-color var(--mk-transicao);
 }
 .lead-input::placeholder {
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 .lead-input:focus {
-  border-color: var(--mk-accent);
+  border-color: var(--mk-acento);
   /* Sem halo: a cor da borda já diz onde está o cursor. */
-  background: var(--mk-surface);
+  background: var(--mk-superficie);
 }
 .lead-textarea {
   resize: vertical;
@@ -4394,7 +4160,7 @@ select.form-input {
 .lead-erro {
   margin-top: 4px;
   font-size: 11px;
-  color: var(--mk-red);
+  color: var(--mk-alerta);
 }
 
 /* ── Etiquetas (chips) ── */
@@ -4405,22 +4171,22 @@ select.form-input {
   flex-wrap: wrap;
   min-height: 37px;
   padding: 5px 8px;
-  border: 1px solid var(--mk-border);
-  border-radius: 9px;
-  background: var(--mk-surface2);
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
+  background: var(--mk-superficie-2);
 }
 .lead-chips:focus-within {
-  border-color: var(--mk-accent);
-  background: var(--mk-surface);
+  border-color: var(--mk-acento);
+  background: var(--mk-superficie);
 }
 .lead-chip {
   display: inline-flex;
   align-items: center;
   gap: 4px;
   padding: 2px 6px 2px 8px;
-  border-radius: 6px;
-  background: var(--mk-accent-light);
-  color: var(--mk-accent);
+  border-radius: var(--mk-raio);
+  background: var(--mk-acento-fraco);
+  color: var(--mk-acento);
   font-size: 11px;
   font-weight: 500;
   white-space: nowrap;
@@ -4442,13 +4208,13 @@ select.form-input {
   min-width: 90px;
   border: none;
   background: none;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
   font-family: inherit;
   font-size: 12.5px;
   outline: none;
 }
 .lead-chip-input::placeholder {
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 
 /* ── Abas ── */
@@ -4457,9 +4223,9 @@ select.form-input {
   gap: 2px;
   padding: 3px;
   margin-bottom: 14px;
-  border: 1px solid var(--mk-border);
-  border-radius: 6px;
-  background: var(--mk-surface2);
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
+  background: var(--mk-superficie-2);
   overflow-x: auto;
   max-width: 100%;
 }
@@ -4474,17 +4240,17 @@ select.form-input {
   font-family: inherit;
   font-size: 12.5px;
   font-weight: 500;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   white-space: nowrap;
   cursor: pointer;
-  transition: color var(--mk-transition), background var(--mk-transition);
+  transition: color var(--mk-transicao), background var(--mk-transicao);
 }
 .lead-aba:hover {
-  color: var(--mk-text2);
+  color: var(--mk-tinta-media);
 }
 .lead-aba.ativa {
-  background: var(--mk-surface);
-  color: var(--mk-accent);
+  background: var(--mk-superficie);
+  color: var(--mk-acento);
 }
 /* Ponto = a aba tem conteúdo. Sem ele, saber o que já foi preenchido exige
    abrir uma por uma. */
@@ -4492,7 +4258,7 @@ select.form-input {
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: var(--mk-accent);
+  background: var(--mk-acento);
   opacity: 0.75;
 }
 
@@ -4500,9 +4266,9 @@ select.form-input {
 .lead-painel {
   min-height: 210px;
   padding: 18px;
-  border: 1px solid var(--mk-border);
+  border: 1px solid var(--mk-linha);
   border-radius: 0 0 10px 10px;
-  background: var(--mk-surface);
+  background: var(--mk-superficie);
 }
 .lead-grade {
   display: grid;
@@ -4526,7 +4292,7 @@ select.form-input {
 .lead-spin {
   position: absolute;
   right: 10px;
-  color: var(--mk-accent);
+  color: var(--mk-acento);
   animation: spin 0.9s linear infinite;
 }
 @keyframes spin {
@@ -4555,13 +4321,11 @@ select.form-input {
   display: flex;
   width: 560px;
   max-width: calc(100vw - 32px);
-  border: 1px solid var(--mk-border);
-  border-radius: 10px;
-  background: var(--mk-surface);
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
+  background: var(--mk-superficie);
   /* Overlay de verdade: flutua sobre o conteúdo e sem elevação encostaria no
      que está atrás. É uma das poucas sombras que sobraram na interface. */
-  box-shadow: 0 4px 6px -1px rgba(26, 24, 20, 0.1),
-    0 10px 24px -6px rgba(26, 24, 20, 0.12);
   overflow: hidden;
 }
 
@@ -4572,13 +4336,13 @@ select.form-input {
   width: 172px;
   flex-shrink: 0;
   padding: 12px 8px;
-  border-right: 1px solid var(--mk-border);
+  border-right: 1px solid var(--mk-linha);
 }
 .drp-rail-titulo {
   padding: 0 8px 8px;
   font-size: 11.5px;
   font-weight: 600;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
 }
 .drp-atalho {
   display: block;
@@ -4591,15 +4355,15 @@ select.form-input {
   font-size: 11.5px;
   font-weight: 400;
   text-align: left;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
   cursor: pointer;
-  transition: background var(--mk-transition);
+  transition: background var(--mk-transicao);
 }
 .drp-atalho:hover {
-  background: var(--mk-surface2);
+  background: var(--mk-superficie-2);
 }
 .drp-atalho.ativo {
-  color: var(--mk-accent);
+  color: var(--mk-acento);
   font-weight: 500;
 }
 
@@ -4621,16 +4385,16 @@ select.form-input {
   width: 24px;
   height: 24px;
   flex-shrink: 0;
-  border: 1px solid var(--mk-border);
+  border: 1px solid var(--mk-linha);
   border-radius: 4px;
   background: transparent;
-  color: var(--mk-text2);
+  color: var(--mk-tinta-media);
   cursor: pointer;
-  transition: color var(--mk-transition), background var(--mk-transition);
+  transition: color var(--mk-transicao), background var(--mk-transicao);
 }
 .drp-nav:hover {
-  background: var(--mk-surface2);
-  color: var(--mk-text);
+  background: var(--mk-superficie-2);
+  color: var(--mk-tinta);
 }
 .drp-nav:last-of-type {
   margin-left: auto;
@@ -4638,10 +4402,10 @@ select.form-input {
 /* Mês e ano em <select>: é o que troca vinte cliques na setinha por dois. */
 .drp-select {
   padding: 3px 6px;
-  border: 1px solid var(--mk-border);
+  border: 1px solid var(--mk-linha);
   border-radius: 4px;
-  background: var(--mk-surface2);
-  color: var(--mk-text);
+  background: var(--mk-superficie-2);
+  color: var(--mk-tinta);
   font-family: inherit;
   font-size: 11.5px;
   cursor: pointer;
@@ -4657,7 +4421,7 @@ select.form-input {
   font-size: 11.5px;
   font-weight: 500;
   text-align: center;
-  color: var(--mk-text2);
+  color: var(--mk-tinta-media);
 }
 .drp-semana,
 .drp-grade {
@@ -4669,7 +4433,7 @@ select.form-input {
   font-size: 10px;
   font-weight: 400;
   text-align: center;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 
 /* A CÉLULA QUADRADA é o que faz o intervalo virar faixa.
@@ -4684,17 +4448,17 @@ select.form-input {
   font-family: inherit;
   font-size: 11px;
   font-variant-numeric: tabular-nums;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
   cursor: pointer;
-  transition: background var(--mk-transition), color var(--mk-transition);
+  transition: background var(--mk-transicao), color var(--mk-transicao);
 }
 .drp-dia:hover {
-  background: var(--mk-surface3);
+  background: var(--mk-superficie-2);
 }
 /* Dia de preenchimento do mês vizinho: continua clicável — quem quer 30/07 a
    02/08 não deveria ter que trocar de mês no meio da seleção. */
 .drp-dia.fora {
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   opacity: 0.5;
 }
 /* Hoje: só um sublinhado. Um círculo aqui disputaria com as pontas. */
@@ -4708,27 +4472,27 @@ select.form-input {
    react-day-picker, MUI) transforma oito dias num borrão colorido. Com o meio
    neutro, a cor sobra só para dizer onde começa e onde termina. */
 .drp-dia.dentro {
-  background: var(--mk-surface2);
-  color: var(--mk-text);
+  background: var(--mk-superficie-2);
+  color: var(--mk-tinta);
   border-radius: 0;
 }
 /* AS DUAS PONTAS — o único dourado do popover. */
 .drp-dia.ponta {
-  background: var(--mk-accent);
-  color: var(--mk-on-accent);
+  background: var(--mk-acento);
+  color: var(--mk-sobre-acento);
   font-weight: 600;
   opacity: 1;
 }
 .drp-dia.ponta:hover {
-  background: var(--mk-accent2);
+  background: var(--mk-acento-forte);
 }
 
 .drp-rodape {
   margin-top: 10px;
   padding-top: 8px;
-  border-top: 1px solid var(--mk-border);
+  border-top: 1px solid var(--mk-linha);
   font-size: 10.5px;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 
 /* Abaixo de ~620px o popover de 560 não cabe: os atalhos somem e fica um mês
@@ -4752,9 +4516,9 @@ select.form-input {
    Em mono e um degrau mais fraco, para não competir com os nomes reais da
    coluna — é um identificador provisório, não um nome. */
 .lead-sem-nome {
-  font-family: var(--font-jetbrains), monospace;
+  font-family: var(--font-plex-mono), monospace;
   font-size: 11.5px;
-  color: var(--mk-text2);
+  color: var(--mk-tinta-media);
 }
 
 /* ── Configurações → Conexão ── */
@@ -4766,20 +4530,20 @@ select.form-input {
 }
 .conexao-topo > svg {
   flex-shrink: 0;
-  color: var(--mk-text2);
+  color: var(--mk-tinta-media);
 }
 .conexao-titulo {
   font-size: 13px;
   font-weight: 600;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
 }
 .conexao-sub {
   margin-top: 2px;
   font-size: 11.5px;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 .conexao-sub code {
-  font-family: var(--font-jetbrains), monospace;
+  font-family: var(--font-plex-mono), monospace;
   font-size: 11px;
 }
 .conexao-acoes {
@@ -4795,7 +4559,7 @@ select.form-input {
   align-items: center;
   gap: 6px;
   padding: 3px 9px;
-  border: 1px solid var(--mk-border);
+  border: 1px solid var(--mk-linha);
   border-radius: 4px;
   font-size: 11px;
   font-weight: 500;
@@ -4808,31 +4572,31 @@ select.form-input {
   background: currentColor;
 }
 .conexao-selo.ok {
-  color: var(--mk-green);
-  border-color: var(--mk-green);
+  color: var(--mk-ativa);
+  border-color: var(--mk-ativa);
 }
 .conexao-selo.meio {
-  color: var(--mk-amber);
-  border-color: var(--mk-amber);
+  color: var(--mk-aviso);
+  border-color: var(--mk-aviso);
 }
 .conexao-selo.ruim {
-  color: var(--mk-red);
-  border-color: var(--mk-red);
+  color: var(--mk-alerta);
+  border-color: var(--mk-alerta);
 }
 .conexao-nota {
   margin: 0 0 12px;
   font-size: 12px;
   line-height: 1.55;
-  color: var(--mk-text2);
+  color: var(--mk-tinta-media);
 }
 .conexao-erro {
   margin: 0 0 12px;
   padding: 8px 11px;
-  border: 1px solid var(--mk-red);
-  border-radius: 5px;
+  border: 1px solid var(--mk-alerta);
+  border-radius: var(--mk-raio);
   font-size: 12px;
   line-height: 1.5;
-  color: var(--mk-red);
+  color: var(--mk-alerta);
 }
 .conexao-qr {
   display: flex;
@@ -4846,16 +4610,19 @@ select.form-input {
   width: 190px;
   height: 190px;
   padding: 8px;
-  border: 1px solid var(--mk-border);
-  border-radius: 5px;
-  background: #ffffff;
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
+  /* Branco FUNCIONAL, nao decorativo: o leitor de QR do WhatsApp precisa de
+     fundo claro para achar os marcadores. E a unica superficie clara que
+     sobra no sistema, e por isso tem token proprio. */
+  background: var(--mk-papel);
 }
 .conexao-passos {
   margin: 0;
   padding-left: 18px;
   font-size: 12px;
   line-height: 1.7;
-  color: var(--mk-text2);
+  color: var(--mk-tinta-media);
 }
 
 /* ── Configurações → Laura ── */
@@ -4864,45 +4631,45 @@ select.form-input {
   height: 8px;
   flex-shrink: 0;
   border-radius: 50%;
-  background: var(--mk-green);
+  background: var(--mk-ativa);
 }
 .laura-dot.alerta {
-  background: var(--mk-amber);
+  background: var(--mk-aviso);
 }
 .laura-numero {
   font-size: 20px;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
 }
 .laura-quem {
   margin: 0 0 12px;
   padding: 0;
   list-style: none;
-  border-top: 1px solid var(--mk-border);
+  border-top: 1px solid var(--mk-linha);
 }
 .laura-quem li {
   display: flex;
   justify-content: space-between;
   gap: 12px;
   padding: 6px 0;
-  border-bottom: 1px solid var(--mk-border);
+  border-bottom: 1px solid var(--mk-linha);
   font-size: 12px;
-  color: var(--mk-text2);
+  color: var(--mk-tinta-media);
 }
 .laura-quem-qtd {
   font-variant-numeric: tabular-nums;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
 }
 /* O rodapé virou link: precisa do cursor e do realce que os outros itens têm. */
 a.sidebar-footer {
   text-decoration: none;
-  border-radius: 5px;
+  border-radius: var(--mk-raio);
   margin: 0 8px;
-  transition: background var(--mk-transition);
+  transition: background var(--mk-transicao);
 }
 a.sidebar-footer:hover {
-  background: color-mix(in srgb, var(--mk-accent) 7%, transparent);
+  background: color-mix(in srgb, var(--mk-acento) 7%, transparent);
 }
 
 
@@ -4937,10 +4704,12 @@ a.sidebar-footer:hover {
   height: 30px;
   border: 0;
   border-radius: 999px;
-  background: var(--mk-accent);
-  color: #fff;
+  background: var(--mk-acento);
+  /* Preto sobre o acento, nao branco: com o violeta, branco da 2.32 de
+     contraste e preto da 7.72. Nao e escolha estetica. */
+  color: var(--mk-sobre-acento);
   cursor: pointer;
-  transition: opacity var(--mk-transition);
+  transition: opacity var(--mk-transicao);
 }
 .midia-audio-play:hover {
   opacity: 0.88;
@@ -4965,7 +4734,7 @@ a.sidebar-footer:hover {
   border: 0;
   padding: 0;
   border-radius: 999px;
-  background: var(--mk-border);
+  background: var(--mk-linha);
   overflow: hidden;
   cursor: pointer;
 }
@@ -4973,7 +4742,7 @@ a.sidebar-footer:hover {
 .midia-audio-progresso {
   height: 100%;
   border-radius: 999px;
-  background: var(--mk-accent);
+  background: var(--mk-acento);
   transition: width 120ms linear;
 }
 
@@ -4981,10 +4750,10 @@ a.sidebar-footer:hover {
 
 .midia-audio-tempo {
   flex: 0 0 auto;
-  font-family: var(--font-jetbrains);
+  font-family: var(--font-plex-mono);
   font-size: 10px;
   font-variant-numeric: tabular-nums;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   letter-spacing: -0.01em;
 }
 
@@ -4993,18 +4762,18 @@ a.sidebar-footer:hover {
   min-width: 26px;
   padding: 2px 4px;
   border: 0;
-  border-radius: var(--mk-radius-sm);
+  border-radius: var(--mk-raio);
   background: transparent;
   font-size: 10px;
   font-weight: 500;
   font-variant-numeric: tabular-nums;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   cursor: pointer;
-  transition: color var(--mk-transition), background var(--mk-transition);
+  transition: color var(--mk-transicao), background var(--mk-transicao);
 }
 .midia-audio-vel:hover {
-  color: var(--mk-text);
-  background: var(--mk-surface2);
+  color: var(--mk-tinta);
+  background: var(--mk-superficie-2);
 }
 
 /* ---- transcrição ---- */
@@ -5017,17 +4786,17 @@ a.sidebar-footer:hover {
   border: 0;
   background: transparent;
   font-size: 11px;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   cursor: pointer;
-  transition: color var(--mk-transition);
+  transition: color var(--mk-transicao);
 }
 .midia-audio-transcricao-btn:hover {
-  color: var(--mk-text);
+  color: var(--mk-tinta);
 }
 .midia-audio-transcricao-btn svg {
   width: 11px;
   height: 11px;
-  transition: transform var(--mk-transition);
+  transition: transform var(--mk-transicao);
 }
 /* A seta segue o aria-expanded: o estado acessível e o visual saem da MESMA
    fonte, então não há como um girar e o outro não. */
@@ -5038,10 +4807,10 @@ a.sidebar-footer:hover {
 .midia-audio-transcricao {
   margin: 0;
   padding-left: 9px;
-  border-left: 2px solid var(--mk-border);
+  border-left: 2px solid var(--mk-linha);
   font-size: 12px;
   line-height: 1.55;
-  color: var(--mk-text2);
+  color: var(--mk-tinta-media);
 }
 
 /* ---- imagem ---- */
@@ -5049,13 +4818,13 @@ a.sidebar-footer:hover {
 .midia-imagem-btn {
   display: block;
   padding: 0;
-  border: 1px solid var(--mk-border);
-  border-radius: var(--mk-radius-sm);
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
   overflow: hidden;
   background: none;
   cursor: zoom-in;
   line-height: 0;
-  transition: opacity var(--mk-transition);
+  transition: opacity var(--mk-transicao);
 }
 .midia-imagem-btn:hover {
   opacity: 0.94;
@@ -5094,7 +4863,7 @@ a.sidebar-footer:hover {
   max-height: 100%;
   max-width: 100%;
   object-fit: contain;
-  border-radius: var(--mk-radius-sm);
+  border-radius: var(--mk-raio);
   cursor: default;
 }
 .midia-lightbox-fechar {
@@ -5108,11 +4877,11 @@ a.sidebar-footer:hover {
   justify-content: center;
   border: 0;
   border-radius: 999px;
-  background: rgb(255 255 255 / 0.12);
-  color: #fff;
+  background: var(--mk-superficie-2);
+  color: var(--mk-tinta);
   line-height: 1;
   cursor: pointer;
-  transition: background var(--mk-transition);
+  transition: background var(--mk-transicao);
 }
 .midia-lightbox-fechar:hover {
   background: rgb(255 255 255 / 0.22);
@@ -5123,8 +4892,8 @@ a.sidebar-footer:hover {
 .midia-carregando {
   width: 232px;
   height: 30px;
-  border-radius: var(--mk-radius-sm);
-  background: var(--mk-surface2);
+  border-radius: var(--mk-raio);
+  background: var(--mk-superficie-2);
   animation: midia-pulso 1.4s ease-in-out infinite;
 }
 .midia-carregando.imagem {
@@ -5142,10 +4911,10 @@ a.sidebar-footer:hover {
 }
 .midia-falha {
   padding: 8px 10px;
-  border: 1px dashed var(--mk-border2);
-  border-radius: var(--mk-radius-sm);
+  border: 1px dashed var(--mk-linha);
+  border-radius: var(--mk-raio);
   font-size: 11.5px;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 
 /* ---- o balão quando o conteúdo é mídia ----
@@ -5179,7 +4948,7 @@ a.sidebar-footer:hover {
   max-width: 52ch;
   font-size: 11.5px;
   line-height: 1.55;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 .mtz-novo {
   display: inline-flex;
@@ -5193,8 +4962,8 @@ a.sidebar-footer:hover {
 .mtz-rolagem {
   overflow: auto;
   max-height: 62vh;
-  border: 1px solid var(--mk-border);
-  border-radius: var(--mk-radius);
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
 }
 .mtz-tabela {
   border-collapse: separate;
@@ -5209,8 +4978,8 @@ a.sidebar-footer:hover {
   position: sticky;
   top: 0;
   z-index: 2;
-  background: var(--mk-surface2);
-  border-bottom: 1px solid var(--mk-border);
+  background: var(--mk-superficie-2);
+  border-bottom: 1px solid var(--mk-linha);
   padding: 8px 10px;
   vertical-align: bottom;
   font-weight: 400;
@@ -5224,15 +4993,15 @@ a.sidebar-footer:hover {
   position: sticky;
   left: 0;
   z-index: 1;
-  background: var(--mk-bg);
+  background: var(--mk-fundo);
   text-align: left;
   font-weight: 400;
   padding: 0 8px 0 10px;
-  border-right: 1px solid var(--mk-border);
+  border-right: 1px solid var(--mk-linha);
 }
 .mtz-tabela tbody tr:not(:last-child) th,
 .mtz-tabela tbody tr:not(:last-child) td {
-  border-bottom: 1px solid var(--mk-border);
+  border-bottom: 1px solid var(--mk-linha);
 }
 .mtz-tabela td {
   padding: 0;
@@ -5241,7 +5010,7 @@ a.sidebar-footer:hover {
 }
 .mtz-tabela tbody tr:hover th,
 .mtz-tabela tbody tr:hover td {
-  background: var(--mk-surface2);
+  background: var(--mk-superficie-2);
 }
 
 /* ── Cabeçalho de coluna (profissional) ── */
@@ -5258,12 +5027,12 @@ a.sidebar-footer:hover {
   background: none;
   font-family: inherit;
   font-size: 11.5px;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
   cursor: pointer;
-  transition: color var(--mk-transition);
+  transition: color var(--mk-transicao);
 }
 .mtz-col-btn:hover:not(:disabled) {
-  color: var(--mk-accent);
+  color: var(--mk-acento);
 }
 .mtz-col-btn:disabled {
   cursor: not-allowed;
@@ -5282,7 +5051,7 @@ a.sidebar-footer:hover {
   margin-top: 2px;
   font-size: 10px;
   font-variant-numeric: tabular-nums;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 /* Profissional inativa não SOME — some daria a impressão de dado perdido. */
 .mtz-col.inativa,
@@ -5298,7 +5067,7 @@ a.sidebar-footer:hover {
   height: 33px;
 }
 .mtz-linha.inativo .mtz-linha-btn {
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 .mtz-linha-btn {
   flex: 1;
@@ -5312,23 +5081,23 @@ a.sidebar-footer:hover {
   font-family: inherit;
   font-size: 11.5px;
   text-align: left;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
   cursor: pointer;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  transition: color var(--mk-transition);
+  transition: color var(--mk-transicao);
 }
 .mtz-linha-btn:hover {
-  color: var(--mk-accent);
+  color: var(--mk-acento);
 }
 .mtz-selo {
   flex-shrink: 0;
   padding: 1px 5px;
-  border: 1px solid var(--mk-border2);
+  border: 1px solid var(--mk-linha);
   border-radius: 4px;
   font-size: 9px;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 
 /* ── Menu por linha ── */
@@ -5343,15 +5112,15 @@ a.sidebar-footer:hover {
   width: 22px;
   height: 22px;
   border: 0;
-  border-radius: var(--mk-radius-sm);
+  border-radius: var(--mk-raio);
   background: none;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   cursor: pointer;
-  transition: color var(--mk-transition), background var(--mk-transition);
+  transition: color var(--mk-transicao), background var(--mk-transicao);
 }
 .mtz-menu-btn:hover {
-  color: var(--mk-text);
-  background: var(--mk-surface3);
+  color: var(--mk-tinta);
+  background: var(--mk-superficie-2);
 }
 /* Camada invisível que fecha o menu ao clicar fora — sem listener global, e
    some junto com o menu. */
@@ -5367,9 +5136,9 @@ a.sidebar-footer:hover {
   z-index: 11;
   min-width: 132px;
   padding: 3px;
-  border: 1px solid var(--mk-border);
-  border-radius: var(--mk-radius-sm);
-  background: var(--mk-surface);
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
+  background: var(--mk-superficie);
 }
 .mtz-menu button {
   display: block;
@@ -5381,12 +5150,12 @@ a.sidebar-footer:hover {
   font-family: inherit;
   font-size: 11.5px;
   text-align: left;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
   cursor: pointer;
-  transition: background var(--mk-transition);
+  transition: background var(--mk-transicao);
 }
 .mtz-menu button:hover {
-  background: var(--mk-surface2);
+  background: var(--mk-superficie-2);
 }
 
 /* ── A célula ── */
@@ -5396,22 +5165,22 @@ a.sidebar-footer:hover {
   justify-content: center;
   width: 17px;
   height: 17px;
-  border: 1px solid var(--mk-border2);
+  border: 1px solid var(--mk-linha);
   border-radius: 4px;
-  background: var(--mk-surface);
+  background: var(--mk-superficie);
   color: transparent;
   cursor: pointer;
-  transition: border-color var(--mk-transition), background var(--mk-transition);
+  transition: border-color var(--mk-transicao), background var(--mk-transicao);
 }
 .mtz-check:hover:not(:disabled) {
-  border-color: var(--mk-accent);
+  border-color: var(--mk-acento);
 }
 /* Marcado é o ÚNICO lugar com dourado nesta tela, junto do item ativo do
    sub-nav. É o estado que a tela inteira existe para mostrar. */
 .mtz-check.on {
-  border-color: var(--mk-accent);
-  background: var(--mk-accent);
-  color: var(--mk-on-accent);
+  border-color: var(--mk-acento);
+  background: var(--mk-acento);
+  color: var(--mk-sobre-acento);
 }
 .mtz-check:disabled {
   cursor: not-allowed;
@@ -5424,12 +5193,12 @@ a.sidebar-footer:hover {
   background: none;
   font-family: inherit;
   font-size: 11px;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   cursor: pointer;
-  transition: color var(--mk-transition);
+  transition: color var(--mk-transicao);
 }
 .mtz-inativos:hover {
-  color: var(--mk-text);
+  color: var(--mk-tinta);
 }
 
 .mtz-vazio {
@@ -5439,7 +5208,7 @@ a.sidebar-footer:hover {
   gap: 8px;
   padding: 28px;
   font-size: 12px;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 .mtz-girando {
   animation: spin 0.9s linear infinite;
@@ -5449,7 +5218,7 @@ a.sidebar-footer:hover {
   margin-bottom: 1rem;
   font-size: 16px;
   font-weight: 600;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
 }
 .mtz-modal-acoes {
   display: flex;
@@ -5474,21 +5243,21 @@ a.sidebar-footer:hover {
   display: flex;
   align-items: center;
   padding: 0 6px;
-  border: 1px solid var(--mk-border2);
+  border: 1px solid var(--mk-linha);
   border-radius: 4px;
   background: repeating-linear-gradient(
     45deg,
-    var(--mk-surface2),
-    var(--mk-surface2) 5px,
-    var(--mk-surface3) 5px,
-    var(--mk-surface3) 10px
+    var(--mk-superficie-2),
+    var(--mk-superficie-2) 5px,
+    var(--mk-superficie-2) 5px,
+    var(--mk-superficie-2) 10px
   );
   cursor: pointer;
   overflow: hidden;
 }
 .agenda-bloqueio-txt {
   font-size: 10px;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -5499,13 +5268,13 @@ a.sidebar-footer:hover {
   margin-bottom: 1rem;
   font-size: 16px;
   font-weight: 600;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
 }
 .blq-espaco {
   margin-top: 12px;
 }
 .blq-opcional {
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 .blq-horas {
   display: grid;
@@ -5516,7 +5285,7 @@ a.sidebar-footer:hover {
 .blq-erro {
   margin: 6px 0 0;
   font-size: 11.5px;
-  color: var(--mk-red);
+  color: var(--mk-alerta);
 }
 .blq-acoes {
   display: flex;
@@ -5530,9 +5299,9 @@ a.sidebar-footer:hover {
   gap: 2px;
   margin-top: 4px;
   padding: 3px;
-  border: 1px solid var(--mk-border);
-  border-radius: 6px;
-  background: var(--mk-surface2);
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
+  background: var(--mk-superficie-2);
 }
 .blq-modo {
   padding: 5px 11px;
@@ -5541,13 +5310,13 @@ a.sidebar-footer:hover {
   background: transparent;
   font-family: inherit;
   font-size: 11.5px;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   cursor: pointer;
-  transition: color var(--mk-transition), background var(--mk-transition);
+  transition: color var(--mk-transicao), background var(--mk-transicao);
 }
 .blq-modo.ativo {
-  background: var(--mk-surface);
-  color: var(--mk-accent);
+  background: var(--mk-superficie);
+  color: var(--mk-acento);
 }
 
 /* ── Aviso de sobreposição ──
@@ -5559,16 +5328,16 @@ a.sidebar-footer:hover {
   gap: 8px;
   margin-top: 12px;
   padding: 9px 11px;
-  border: 1px solid var(--mk-amber);
-  border-radius: var(--mk-radius-sm);
+  border: 1px solid var(--mk-aviso);
+  border-radius: var(--mk-raio);
   font-size: 11.5px;
   line-height: 1.55;
-  color: var(--mk-text2);
+  color: var(--mk-tinta-media);
 }
 .blq-aviso > svg {
   flex-shrink: 0;
   margin-top: 2px;
-  color: var(--mk-amber);
+  color: var(--mk-aviso);
 }
 .blq-conflitos {
   margin: 5px 0;
@@ -5586,24 +5355,24 @@ a.sidebar-footer:hover {
   font-size: 12px;
 }
 .blq-detalhe dt {
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 .blq-detalhe dd {
   margin: 0;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
 }
 .blq-nota {
   margin: 12px 0 0;
   font-size: 11.5px;
   line-height: 1.55;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 .blq-remover {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: var(--mk-red);
-  border-color: var(--mk-red);
+  color: var(--mk-alerta);
+  border-color: var(--mk-alerta);
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -5624,9 +5393,9 @@ a.sidebar-footer:hover {
   position: fixed;
   z-index: 91;
   width: 280px;
-  border: 1px solid var(--mk-border);
-  border-radius: var(--mk-radius);
-  background: var(--mk-surface);
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
+  background: var(--mk-superficie);
   /* Sem sombra: a separação é a borda, como no resto do painel. */
 }
 
@@ -5641,7 +5410,7 @@ a.sidebar-footer:hover {
   font-size: 12px;
   font-weight: 500;
   line-height: 1.35;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
 }
 .slotp-fechar {
   flex-shrink: 0;
@@ -5651,21 +5420,21 @@ a.sidebar-footer:hover {
   width: 22px;
   height: 22px;
   border: 0;
-  border-radius: var(--mk-radius-sm);
+  border-radius: var(--mk-raio);
   background: none;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   cursor: pointer;
-  transition: color var(--mk-transition), background var(--mk-transition);
+  transition: color var(--mk-transicao), background var(--mk-transicao);
 }
 .slotp-fechar:hover {
-  color: var(--mk-text);
-  background: var(--mk-surface2);
+  color: var(--mk-tinta);
+  background: var(--mk-superficie-2);
 }
 .slotp-resumo {
   padding: 2px 12px 10px;
-  border-bottom: 1px solid var(--mk-border);
+  border-bottom: 1px solid var(--mk-linha);
   font-size: 11px;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 /* Ocupa a altura da linha enquanto a RPC não volta, para o popover não
    crescer debaixo do cursor quando o dado chega. */
@@ -5674,7 +5443,7 @@ a.sidebar-footer:hover {
   width: 62%;
   height: 11px;
   border-radius: 3px;
-  background: var(--mk-surface2);
+  background: var(--mk-superficie-2);
   animation: midia-pulso 1.4s ease-in-out infinite;
 }
 
@@ -5683,7 +5452,7 @@ a.sidebar-footer:hover {
   margin: 0;
   padding: 6px 0;
   list-style: none;
-  border-bottom: 1px solid var(--mk-border);
+  border-bottom: 1px solid var(--mk-linha);
   /* Acima de 4 a lista rola em vez de esticar o popover para fora da tela. */
   max-height: 116px;
   overflow-y: auto;
@@ -5697,17 +5466,17 @@ a.sidebar-footer:hover {
   font-size: 11.5px;
 }
 .slotp-prof-nome {
-  color: var(--mk-text);
+  color: var(--mk-tinta);
   white-space: nowrap;
 }
 .slotp-livre {
-  color: var(--mk-text);
+  color: var(--mk-tinta);
 }
 /* Com quem ela está: recuado, porque quem manda na linha é o nome da
    profissional. */
 .slotp-com {
   min-width: 0;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   text-align: right;
   white-space: nowrap;
   overflow: hidden;
@@ -5715,14 +5484,14 @@ a.sidebar-footer:hover {
 }
 .slotp-marcadas {
   padding: 7px 12px;
-  border-bottom: 1px solid var(--mk-border);
+  border-bottom: 1px solid var(--mk-linha);
   font-size: 11px;
   line-height: 1.5;
-  color: var(--mk-text2);
+  color: var(--mk-tinta-media);
 }
 .slotp-marcadas-rot {
   display: block;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 
 /* ── Ações ──
@@ -5738,28 +5507,28 @@ a.sidebar-footer:hover {
   width: 100%;
   padding: 8px;
   border: 0;
-  border-radius: var(--mk-radius-sm);
+  border-radius: var(--mk-raio);
   background: none;
   font-family: inherit;
   text-align: left;
   cursor: pointer;
-  transition: background var(--mk-transition);
+  transition: background var(--mk-transicao);
 }
 .slotp-acao:hover {
-  background: var(--mk-surface2);
+  background: var(--mk-superficie-2);
 }
 /* Alinhado à PRIMEIRA LINHA do texto, não acima dela. */
 .slotp-acao > svg {
   flex-shrink: 0;
   margin-top: 1px;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 /* O único dourado do popover: o ícone da ação primária. */
 .slotp-ic-primaria {
-  color: var(--mk-accent) !important;
+  color: var(--mk-acento) !important;
 }
 .slotp-ic-alerta {
-  color: var(--mk-red) !important;
+  color: var(--mk-alerta) !important;
 }
 .slotp-acao-txt {
   min-width: 0;
@@ -5768,7 +5537,7 @@ a.sidebar-footer:hover {
   display: block;
   font-size: 12.5px;
   font-weight: 500;
-  color: var(--mk-text);
+  color: var(--mk-tinta);
 }
 /* Sem itálico: em texto auxiliar de interface ele lê como literário, não
    como funcional. */
@@ -5779,7 +5548,7 @@ a.sidebar-footer:hover {
   font-weight: 400;
   font-style: normal;
   line-height: 1.4;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
 }
 
 /* ── Para QUEM é o horário ──
@@ -5793,7 +5562,7 @@ a.sidebar-footer:hover {
 .lead-visita-para {
   font-size: 10px;
   line-height: 1.3;
-  color: var(--mk-muted);
+  color: var(--mk-tinta-fraca);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -5811,9 +5580,10 @@ a.sidebar-footer:hover {
    SISTEMA MERAKI — Visão geral
    ═══════════════════════════════════════════════════════════════════════════
 
-   Tudo aqui está sob `[data-mk]`, que só a Visão geral carrega enquanto a
-   migração corre. O escopo some no passo 5, junto com as regras antigas que
-   estas substituem.
+   Este bloco nasceu escopado em `[data-mk]`, para a Visão geral estar no
+   sistema novo enquanto as outras telas seguiam no antigo. Com o antigo fora,
+   o escopo saiu: estas são as regras do sistema, e por virem no fim do arquivo
+   elas vencem as regras portadas do legacy que ainda descrevem a mesma peça.
 
    Não há redesenho de estrutura: o layout (grades, ordem, quantidade de
    cards) é o mesmo. O que troca é o SISTEMA — superfície, borda, tipografia
@@ -5823,30 +5593,30 @@ a.sidebar-footer:hover {
    sombra não separa nada, só suja. Quem separa é a borda de 1px. */
 
 /* ── Tipografia ──────────────────────────────────────────────────────────── */
-[data-mk] {
+{
   font-family: var(--font-plex), system-ui, sans-serif;
   color: var(--mk-tinta);
 }
 /* Número e título em Space Grotesk. Os dígitos dela têm largura constante,
    então o valor não dança de um card para o outro — que era exatamente o
    defeito do Cormorant nesta posição. */
-[data-mk] .vg-titulo,
-[data-mk] .metric-value,
-[data-mk] .neg-card-valor,
-[data-mk] .funnel-count,
-[data-mk] .card-title,
-[data-mk] .neg-painel-titulo,
-[data-mk] .metrics-lente-titulo {
+.vg-titulo,
+.metric-value,
+.neg-card-valor,
+.funnel-count,
+.card-title,
+.neg-painel-titulo,
+.metrics-lente-titulo {
   font-family: var(--font-space), system-ui, sans-serif;
 }
 /* Dado tabular: coluna de valores, percentual, contagem. */
-[data-mk] .neg-linha-qtd,
-[data-mk] .neg-linha-pct,
-[data-mk] .neg-rosca-pct,
-[data-mk] .neg-rosca-valor,
-[data-mk] .neg-pessoa-valor,
-[data-mk] .neg-card-apoio,
-[data-mk] .funnel-pct {
+.neg-linha-qtd,
+.neg-linha-pct,
+.neg-rosca-pct,
+.neg-rosca-valor,
+.neg-pessoa-valor,
+.neg-card-apoio,
+.funnel-pct {
   font-family: var(--font-plex-mono), ui-monospace, monospace;
   font-variant-numeric: tabular-nums;
 }
@@ -5857,18 +5627,18 @@ a.sidebar-footer:hover {
    monoespaçada: rótulo, nota de painel, tudo. */
 
 /* ── Cabeçalho da tela ───────────────────────────────────────────────────── */
-[data-mk] .vg-saudacao {
+.vg-saudacao {
   font-size: 11px;
   letter-spacing: 0.02em;
   color: var(--mk-tinta-fraca);
 }
-[data-mk] .vg-titulo {
+.vg-titulo {
   font-size: 22px;
   font-weight: 600;
   letter-spacing: -0.01em;
   color: var(--mk-tinta);
 }
-[data-mk] .vg-sub {
+.vg-sub {
   font-size: 12px;
   color: var(--mk-tinta-media);
 }
@@ -5876,7 +5646,7 @@ a.sidebar-footer:hover {
 /* Abas: controle segmentado. A ativa NÃO ganha fundo — muda só a cor, como o
    item de menu. Fundo na aba ativa somado a fundo no trilho cria três tons
    de superfície para dizer uma coisa só. */
-[data-mk] .vg-abas {
+.vg-abas {
   gap: 0;
   padding: 0;
   border: 1px solid var(--mk-linha);
@@ -5884,7 +5654,7 @@ a.sidebar-footer:hover {
   background: var(--mk-superficie);
   overflow: hidden;
 }
-[data-mk] .vg-aba {
+.vg-aba {
   border-radius: 0;
   padding: 0 14px;
   height: 33px;
@@ -5893,13 +5663,13 @@ a.sidebar-footer:hover {
   color: var(--mk-tinta-media);
   transition: color var(--mk-transicao);
 }
-[data-mk] .vg-aba + .vg-aba {
+.vg-aba + .vg-aba {
   border-left: 1px solid var(--mk-linha-suave);
 }
-[data-mk] .vg-aba:hover {
+.vg-aba:hover {
   color: var(--mk-tinta);
 }
-[data-mk] .vg-aba.ativa {
+.vg-aba.ativa {
   background: transparent;
   color: var(--mk-acento);
 }
@@ -5909,48 +5679,47 @@ a.sidebar-footer:hover {
    branco a 3% sobre preto, borda a 10%, nada de sombra. Como é opacidade e
    não cor, empilhar (popover sobre card) continua coerente sem calcular tom
    novo. */
-[data-mk] .card,
-[data-mk] .metric-card,
-[data-mk] .neg-card,
-[data-mk] .neg-painel {
+.card,
+.metric-card,
+.neg-card,
+.neg-painel {
   background: var(--mk-superficie);
   border: 1px solid var(--mk-linha);
   border-radius: var(--mk-raio);
-  box-shadow: none;
   transition: border-color var(--mk-transicao);
 }
-[data-mk] .neg-card-btn:hover,
-[data-mk] .card:hover {
+.neg-card-btn:hover,
+.card:hover {
   border-color: var(--mk-linha);
 }
 /* Card que É botão: só ele reage, e reagindo pela BORDA. */
-[data-mk] .neg-card-btn:hover {
+.neg-card-btn:hover {
   border-color: var(--mk-tinta-fraca);
 }
-[data-mk] .neg-card.ativo {
+.neg-card.ativo {
   border-color: var(--mk-acento);
 }
 
-[data-mk] .card-header {
+.card-header {
   margin-bottom: 14px;
 }
-[data-mk] .card-title,
-[data-mk] .neg-painel-titulo {
+.card-title,
+.neg-painel-titulo {
   font-size: 13px;
   font-weight: 600;
   color: var(--mk-tinta);
 }
-[data-mk] .card-action {
+.card-action {
   font-size: 11px;
   font-weight: 500;
   color: var(--mk-tinta-media);
 }
-[data-mk] .card-action:hover {
+.card-action:hover {
   color: var(--mk-acento);
 }
-[data-mk] .neg-painel-nota,
-[data-mk] .metric-sub,
-[data-mk] .neg-card-apoio {
+.neg-painel-nota,
+.metric-sub,
+.neg-card-apoio {
   color: var(--mk-tinta-fraca);
 }
 
@@ -5959,8 +5728,8 @@ a.sidebar-footer:hover {
    cards lado a lado: num monitor estreito 48px estoura a caixa e o valor
    quebra em duas linhas, que é pior que um número menor. O teto é o do
    sistema; o piso mantém o número como protagonista do card. */
-[data-mk] .neg-card-valor,
-[data-mk] .metric-value {
+.neg-card-valor,
+.metric-value {
   font-size: clamp(26px, 2.9vw, 48px);
   font-weight: 700;
   line-height: 1.05;
@@ -5969,21 +5738,21 @@ a.sidebar-footer:hover {
   font-variant-numeric: tabular-nums;
 }
 /* O "%" e o "R$" não são dígitos: em 48px eles dominam o número. */
-[data-mk] .metric-unidade {
+.metric-unidade {
   font-size: 0.5em;
   font-weight: 500;
   color: var(--mk-tinta-media);
 }
-[data-mk] .neg-card-rotulo,
-[data-mk] .metric-label {
+.neg-card-rotulo,
+.metric-label {
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.01em;
   color: var(--mk-tinta-media);
 }
 /* Card mais alto porque o número cresceu. Sem isto o valor encosta na borda. */
-[data-mk] .neg-card,
-[data-mk] .metric-card {
+.neg-card,
+.metric-card {
   min-height: 112px;
   padding: 14px 16px;
 }
@@ -6001,13 +5770,13 @@ a.sidebar-footer:hover {
    de um verde em 8.27, ele não lia como cinza escolhido — lia como cor que
    faltou. Em 8.04 fica no mesmo peso dos semânticos, e a ausência de matiz
    passa a ser visivelmente uma decisão. */
-[data-mk] .neg-tom-sobe {
+.neg-tom-sobe {
   --neg-tom: var(--mk-ativa);
 }
-[data-mk] .neg-tom-desce {
+.neg-tom-desce {
   --neg-tom: var(--mk-alerta);
 }
-[data-mk] .neg-tom-neutro {
+.neg-tom-neutro {
   --neg-tom: var(--mk-tinta-media);
 }
 
@@ -6035,7 +5804,7 @@ a.sidebar-footer:hover {
   font-weight: 400;
 }
 
-[data-mk] .metrics-lente-titulo {
+.metrics-lente-titulo {
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.06em;
@@ -6044,27 +5813,27 @@ a.sidebar-footer:hover {
 }
 
 /* ── Funil ───────────────────────────────────────────────────────────────── */
-[data-mk] .funnel-label {
+.funnel-label {
   font-size: 11.5px;
   color: var(--mk-tinta-media);
 }
-[data-mk] .funnel-count {
+.funnel-count {
   font-size: 16px;
   font-weight: 600;
   color: var(--mk-tinta);
 }
-[data-mk] .funnel-track {
+.funnel-track {
   height: 3px;
   border-radius: 0;
   /* Trilho é a superfície, não um cinza: sobre preto um cinza fixo vira uma
      faixa que não pertence a nada. */
   background: var(--mk-superficie-2);
 }
-[data-mk] .funnel-fill {
+.funnel-fill {
   background: var(--mk-acento);
   border-radius: 0;
 }
-[data-mk] .funnel-pct {
+.funnel-pct {
   font-size: 11px;
   color: var(--mk-tinta-fraca);
 }
@@ -6072,9 +5841,9 @@ a.sidebar-footer:hover {
 /* ── Controles: select, filtro de período ────────────────────────────────── */
 /* Campo é transparente com borda. NUNCA cinza preenchido — sobre preto o
    cinza preenchido lê como desabilitado. */
-[data-mk] .neg-select,
-[data-mk] .date-filter-trigger,
-[data-mk] .drp-select {
+.neg-select,
+.date-filter-trigger,
+.drp-select {
   height: 33px;
   padding: 0 10px;
   border: 1px solid var(--mk-linha);
@@ -6083,91 +5852,89 @@ a.sidebar-footer:hover {
   color: var(--mk-tinta-media);
   font-family: var(--font-plex), system-ui, sans-serif;
   font-size: 12px;
-  box-shadow: none;
   transition: border-color var(--mk-transicao), color var(--mk-transicao);
 }
-[data-mk] .neg-select:hover,
-[data-mk] .date-filter-trigger:hover {
+.neg-select:hover,
+.date-filter-trigger:hover {
   color: var(--mk-tinta);
   border-color: var(--mk-tinta-fraca);
 }
 /* Foco muda a COR DA BORDA. Sem anel, sem brilho. */
-[data-mk] .neg-select:focus,
-[data-mk] .date-filter-trigger:focus,
-[data-mk] .drp-select:focus {
+.neg-select:focus,
+.date-filter-trigger:focus,
+.drp-select:focus {
   outline: none;
   border-color: var(--mk-acento);
 }
 /* O menu do seletor PRECISA tapar o que está atrás — superfície translúcida
    deixaria o conteúdo aparecer através dele. É o único lugar do sistema que
    usa tom opaco. */
-[data-mk] .drp-pop {
+.drp-pop {
   background: var(--mk-elevado);
   border: 1px solid var(--mk-linha);
   border-radius: var(--mk-raio);
-  box-shadow: none;
 }
-[data-mk] .drp-atalho {
+.drp-atalho {
   color: var(--mk-tinta-media);
   border-radius: var(--mk-raio);
 }
-[data-mk] .drp-atalho:hover {
+.drp-atalho:hover {
   background: var(--mk-superficie);
   color: var(--mk-tinta);
 }
-[data-mk] .drp-atalho.ativo {
+.drp-atalho.ativo {
   color: var(--mk-acento);
   background: var(--mk-acento-fraco);
 }
 
 /* ── Gráficos ────────────────────────────────────────────────────────────── */
-[data-mk] .neg-legenda-ponto {
+.neg-legenda-ponto {
   border-radius: 2px;
 }
-[data-mk] .neg-rosca-nome {
+.neg-rosca-nome {
   color: var(--mk-tinta-media);
 }
-[data-mk] .neg-rosca-valor,
-[data-mk] .neg-linha-qtd {
+.neg-rosca-valor,
+.neg-linha-qtd {
   color: var(--mk-tinta);
 }
-[data-mk] .neg-rosca-pct,
-[data-mk] .neg-linha-pct {
+.neg-rosca-pct,
+.neg-linha-pct {
   color: var(--mk-tinta-fraca);
 }
 
 /* ── Listas (próximos agendamentos, ranking) ─────────────────────────────── */
-[data-mk] .lead-item {
+.lead-item {
   border-bottom: 1px solid var(--mk-linha-suave);
   transition: background var(--mk-transicao);
 }
-[data-mk] .lead-item:last-child {
+.lead-item:last-child {
   border-bottom: none;
 }
-[data-mk] .lead-item:hover {
+.lead-item:hover {
   background: var(--mk-superficie);
 }
-[data-mk] .lead-name,
-[data-mk] .neg-linha-nome,
-[data-mk] .neg-pessoa-nome {
+.lead-name,
+.neg-linha-nome,
+.neg-pessoa-nome {
   color: var(--mk-tinta);
 }
-[data-mk] .lead-meta,
-[data-mk] .neg-pessoa-sub {
+.lead-meta,
+.neg-pessoa-sub {
   color: var(--mk-tinta-fraca);
 }
-[data-mk] .neg-barra-trilho {
+.neg-barra-trilho {
   background: var(--mk-superficie-2);
 }
-[data-mk] .neg-pos {
+.neg-pos {
   color: var(--mk-tinta-fraca);
   font-family: var(--font-plex-mono), ui-monospace, monospace;
 }
-[data-mk] .neg-vazio,
-[data-mk] .empty {
+.neg-vazio,
+.empty {
   color: var(--mk-tinta-fraca);
 }
-[data-mk] .spinner {
+.spinner {
   border-color: var(--mk-linha);
   border-top-color: var(--mk-acento);
 }
@@ -6175,60 +5942,58 @@ a.sidebar-footer:hover {
 /* ── Chrome: sidebar, topbar e nav ───────────────────────────────────────── */
 /* O frame acompanha a tela convertida — sidebar clara com conteúdo preto
    leria como bug, não como transição. */
-:root:has([data-mk]) .sidebar {
+.sidebar {
   background: var(--mk-fundo);
   border-right: 1px solid var(--mk-linha);
-  box-shadow: none;
 }
-:root:has([data-mk]) .sidebar-logo,
-:root:has([data-mk]) .topbar {
+.sidebar-logo,
+.topbar {
   border-color: var(--mk-linha);
   background: var(--mk-fundo);
 }
-:root:has([data-mk]) .sidebar-logo .logo-mark {
+.sidebar-logo .logo-mark {
   font-family: var(--font-space), system-ui, sans-serif;
   font-size: 17px;
   font-weight: 600;
   letter-spacing: -0.01em;
   color: var(--mk-tinta);
 }
-:root:has([data-mk]) .sidebar-logo .logo-mark em {
+.sidebar-logo .logo-mark em {
   font-style: normal;
   color: var(--mk-acento);
 }
 /* Item ativo muda SÓ de cor. Sem fundo, sem barra lateral: numa lista curta
    a cor já é o sinal, e fundo+barra somam dois enfeites para dizer o mesmo. */
-:root:has([data-mk]) .nav-item {
+.nav-item {
   color: var(--mk-tinta-media);
   background: transparent;
   border-radius: var(--mk-raio);
   font-family: var(--font-plex), system-ui, sans-serif;
   transition: color var(--mk-transicao);
 }
-:root:has([data-mk]) .nav-item:hover {
+.nav-item:hover {
   color: var(--mk-tinta);
   background: transparent;
 }
-:root:has([data-mk]) .nav-item.active {
+.nav-item.active {
   color: var(--mk-acento);
   background: transparent;
 }
-:root:has([data-mk]) .nav-item.active::before,
-:root:has([data-mk]) .nav-item.active::after {
+.nav-item.active::before,
+.nav-item.active::after {
   background: transparent;
 }
-:root:has([data-mk]) .nav-icon {
+.nav-icon {
   color: currentColor;
 }
-:root:has([data-mk]) .content {
+.content {
   background: var(--mk-fundo);
 }
-:root:has([data-mk]) .bottom-nav {
+.bottom-nav {
   background: var(--mk-fundo);
   border-top: 1px solid var(--mk-linha);
-  box-shadow: none;
 }
-:root:has([data-mk]) .tenant-sel-campo {
+.tenant-sel-campo {
   background: transparent;
   border-color: var(--mk-linha);
   color: var(--mk-tinta);

@@ -290,49 +290,107 @@ institucional fica em `(site)/`.
 
 ## Regras visuais
 
-O sistema é **superfície única com separação por hairline de 1px**. Vale como
-está:
+O sistema é **superfície como OPACIDADE, não como cor**, sobre preto real.
+Cabe em três linhas:
 
-- **Densidade**: `:root:has(.layout) { font-size: 13px }` — a escala rem do
-  painel encolhe 0.8125×. Fica preso ao chrome do CRM **de propósito**: `rem`
-  resolve na raiz, então pôr isso em `html` encolheria junto a ficha da paciente
-  (formulário de saúde no celular) e a landing.
-- **Zero `box-shadow` no plano da página.** Card, painel e linha de tabela se
-  separam por borda, nunca por sombra. Sombra existe só em camada **flutuante**
-  — modal, dropdown, tooltip, popover — e sempre pelos tokens `--mk-shadow-*`.
-- **Altura de controle 33px.** Raio **5px** em controle (`--mk-radius-sm`),
-  **8px** em container (`--mk-radius`).
-- **Campo de texto é branco com borda** — nunca cinza preenchido. **Foco muda a
-  cor da borda**, sem anel e sem brilho (`outline: none` + `border-color`).
+```
+fundo       #000000     preto real, não cinza-escuro
+superfície  #ffffff08   branco a 3% SOBRE o preto
+borda       #ffffff1a   branco a 10%
+```
+
+Funciona porque o fundo é preto **de verdade**: 3% de branco parece iluminado
+por dentro, não pintado por cima. E sendo opacidade em vez de cor fixa, tudo
+empilha coerente — card sobre card, popover sobre card — sem ninguém calcular
+tom novo a cada camada.
+
+**Consequência que é regra, não gosto: ZERO `box-shadow`, em todo lugar.**
+Sobre preto com superfície translúcida a sombra não separa — mancha. A
+separação é 100% borda de 1px. (O site institucional em `(site)/` tem sistema
+próprio, claro e com sombra; ele não segue nada disto.)
+
+- **Densidade**: raiz em **16px**. Eram 13px no sistema claro — no escuro o
+  texto miúdo some. Mora em `:root` porque `rem` resolve na raiz: **não há como
+  escopar escala tipográfica por ancestral.**
+- **Um raio só: 6px** (`--mk-raio`). Valores de 1–4px sobrevivem em ponta de
+  barra e chip minúsculo, que são detalhe de sub-componente, não o raio do
+  sistema.
+- **Altura de controle 33px.**
+- **Campo de texto é transparente com borda** — nunca cinza preenchido, que
+  sobre preto lê como desabilitado. **Foco muda a cor da borda**, sem anel e
+  sem brilho (`outline: none` + `border-color`).
+- **Um botão primário sólido por tela.** Item de menu ativo muda **só de cor** —
+  sem fundo, sem barra lateral.
+
+### Tipografia
+
+**Space Grotesk** em número e título · **IBM Plex Sans** no corpo · **IBM Plex
+Mono** em dado tabular. A Space Grotesk tem dígito de largura constante — o
+Cormorant, que estava ali antes, tem largura variável e fazia o valor dançar de
+um card para o outro.
+
+Número grande: **48px / 700**, com `clamp` — cinco cards lado a lado estouram
+a caixa em tela estreita, e valor quebrado em duas linhas é pior que valor
+menor.
+
+⚠️ **`.neg-fill` NÃO é um elemento de valor** — é o wrapper da aba Negócios
+inteira. Pôr `font-family` nele joga a aba toda em monoespaçada. Já aconteceu.
+
+### Cor
+
+```
+--mk-acento    #a78bfa   violeta; ação e estado ativo. UM só.
+--mk-ativa     #3fb950   está funcionando
+--mk-pausada   #7dd3fc   está parado
+--mk-alerta    #f85149   erro e perda
+--mk-aviso     #d9a441   precisa de atenção, mas não é erro
+--mk-serie-1..5          categoria em gráfico
+--mk-pessoa-1..6         avatar sem foto
+```
+
+**Cor semântica nunca é decoração, e categoria nunca usa cor semântica.** Foi
+assim que a rosca de serviços virou arco-íris no painel antigo.
+
+O acento vive em **quatro linhas** de `globals.css`. Trocar a identidade depois
+é mexer só nelas. O dourado `#8a6a2f` da LINS não sobreviveria a esta troca de
+qualquer forma: dá 4.18 sobre preto e reprova no AA de texto pequeno.
+
+⚠️ **`--mk-pausada` não é o `#58a6ff` da referência.** Aquele azul ficava a
+**dE 0.107** do acento violeta — metade da separação de qualquer outro par do
+sistema, e abaixo do degrau `tinta-media`↔`tinta-fraca` (0.194), que já é a
+distinção mais sutil da paleta. Duas cores com **significados diferentes** não
+podem ficar mais próximas que dois cinzas que só diferem em ênfase.
+
+**A rampa de série foi escolhida em OKLab, não por contraste WCAG.** Contraste
+mede legibilidade de *texto*; dois setores vizinhos de uma rosca podem ter a
+mesma luminância e serem obviamente distintos. A primeira tentativa (rampa de
+um matiz só) dava 1.38 de contraste entre dois passos — invisível. A que ficou
+tem pior par em dE 0.135 e vizinhos em 0.168, e **a ordem faz parte da
+definição**.
+
+⚠️ **Três lugares montam o nome do token por string**, e busca por `bg-mk-` não
+os pega: `dashboard/service-chart.tsx` (`` `--mk-serie-${i}` ``),
+`lib/format.ts` (array `--mk-pessoa-1..6`) e `lib/atribuicao.ts` (array
+`--mk-serie-1..5`). O renome de ago/2026 passou batido no primeiro deles e a
+rosca ficou sem cor até o verificador de tokens apontar.
+
+### Nada de hex literal fora do bloco de tokens
+
+As exceções são todas nomeadas e têm razão: `--mk-papel` (branco funcional — o
+leitor de QR do WhatsApp precisa de fundo claro) e a lista `CORES` de
+`profissional-modal.tsx` (identidade gravada em `profissionais.cor`, então é
+dado, não estilo).
+
+### Aparência é uma só
+
+O `<html>` ainda carrega `data-mode` e `data-theme`, mas o catálogo
+(`src/lib/tema.ts`) tem **uma** entrada. Não é preguiça: o sistema não tem
+versão clara — branco a 3% *sobre branco* não é superfície, é nada. A estrutura
+fica de pé para o dia em que houver um segundo sistema.
 
 **CSS semântico é o padrão da casa**: as regras moram em `globals.css`
 (`.neg-card`, `.nav-item`, `.mtz-*`). Tailwind só em layout pontual.
 **Se nomear uma classe, escreva o CSS dela na mesma alteração.**
-
-**Tokens `--mk-*`** (renomeados em ago/2026, junto com a marca). Expostos como
-utilitários Tailwind (`bg-mk-surface`, `text-mk-accent`) pelo bloco
-`@theme inline` no topo de `globals.css`.
-
-⚠️ **Três lugares montam o nome do token por string**, e um replace ingênuo de
-`bg-mk-` não os pega: `dashboard/service-chart.tsx` (`` `--mk-cat-${i}` ``),
-`lib/format.ts` (array `--mk-av-1..6`) e `lib/atribuicao.ts` (array
-`--mk-cat-1..5`).
-
-### Modo e paleta são coisas SEPARADAS
-
-O `<html>` carrega **dois** atributos: **`data-mode="light|dark"`** (o
-estrutural — contraste, sombras, e o variant `dark:` do Tailwind) e
-**`data-theme="<id>"`** (a paleta). Um tema novo **só declara tokens `--mk-*`**;
-não escreve regra de CSS nova. Catálogo em `src/lib/tema.ts` (`TEMAS`,
-`ehTema`, `modoDoTema`) — fonte única: o `ThemeScript` gera dele o mapa id→modo
-do script anti-flash, e Configurações → Aparência renderiza a partir dele.
-
-**A cor de acento (`--mk-accent`, dourado `#8a6a2f`) era a marca da LINS.**
-O Meraki é plataforma, não clínica de estética. A identidade ainda **não foi
-decidida** — o dourado fica, isolado no token, para trocar num lugar só quando
-for a hora. Não espalhe hex de acento pelo CSS.
-
----
 
 ## Defeitos conhecidos (herdados, não são regressão)
 
@@ -349,10 +407,13 @@ for a hora. Não espalhe hex de acento pelo CSS.
   mais `laura/route.ts` (a contagem de leads pausados), `ficha-db.ts`,
   `promocao-db.ts`, `bloqueios.tsx`, `secao-profissionais.tsx`. Lista com
   linha em `INVENTARIO.md` §5.
-- **Classe CSS nomeada sem regra correspondente**: `.metrics-lente`
-  (`dashboard/metrics-grid.tsx`) e `.nav-item-footer` (`app-shell.tsx`) são
-  usadas no `className` e não têm regra em lugar nenhum. Renderizam sem estilo
-  próprio. É a razão da regra "se nomear uma classe, escreva o CSS dela".
+- ~~Classe CSS nomeada sem regra~~ — **resolvido em ago/2026.** Eram três, não
+  duas: `.metrics-lente`, `.nav-item-footer` e `.drp-mes` (o CSS tinha
+  `.drp-meses` e `.drp-mes-nome`, e a do meio faltava). Classe sem regra não
+  quebra build nem teste — o elemento só renderiza sem estilo, e um player de
+  áudio já foi para produção assim. Por isso a conferência virou mecânica:
+  **ao terminar qualquer alteração de CSS, confira que toda classe nomeada tem
+  regra.**
 - **`/privacidade`**: a constante `CONTATO` está vazia. Não divulgar o link
   antes de preencher.
 - **Migrations do painel antigo em `supabase/migrations/_legado/`**: cinco

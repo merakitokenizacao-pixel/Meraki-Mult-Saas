@@ -1,16 +1,19 @@
 "use client";
 
-import { Check, Contrast, Moon, Sun } from "lucide-react";
+import { Check, Contrast } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { useTheme } from "@/components/theme-provider";
 import { TEMAS, type Tema } from "@/lib/tema";
 
-// As opções vêm do catálogo (lib/tema.ts) — tema novo lá aparece aqui sozinho.
-// Só o ícone mora nesta camada, que é a única que desenha.
+// As opções vêm do catálogo (lib/tema.ts) — sistema novo lá aparece aqui
+// sozinho. Só o ícone mora nesta camada, que é a única que desenha.
+//
+// Hoje o catálogo tem UMA entrada: o sistema Meraki não tem versão clara
+// (superfície é branco a 3% SOBRE preto; sobre branco isso não é nada). O
+// cartão então mostra a aparência EM USO em vez de oferecer uma escolha que
+// não existe — ver a nota no rodapé.
 const ICONES: Record<Tema, LucideIcon> = {
-  light: Sun,
-  dark: Moon,
-  graphite: Contrast,
+  meraki: Contrast,
 };
 
 export function SecaoAparencia() {
@@ -72,9 +75,11 @@ export function SecaoAparencia() {
       </div>
 
       <p className="config-nota">
-        A preferência fica salva neste navegador. A ficha que a cliente recebe
-        pelo WhatsApp <strong>não</strong> segue este tema — ela é sempre clara,
-        com a identidade da clínica.
+        O painel tem <strong>um</strong> sistema visual. Ele nasce escuro por
+        construção: a superfície é branco a 3% sobre preto, e sobre um fundo
+        claro isso deixa de ser superfície. A ficha que a cliente recebe pelo
+        WhatsApp segue caminho próprio — é sempre clara, com a identidade da
+        clínica.
       </p>
     </div>
   );

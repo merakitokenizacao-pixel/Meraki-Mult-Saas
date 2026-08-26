@@ -36,7 +36,7 @@ export function NewAgendModal({
   const [status, setStatus] = useState("pendente");
   const [msg, setMsg] = useState<{ text: string; color: string }>({
     text: "",
-    color: "var(--mk-muted)",
+    color: "var(--mk-tinta-fraca)",
   });
 
   // Aplica o prefill (data/hora) e zera o formulário ao abrir.
@@ -47,7 +47,7 @@ export function NewAgendModal({
       setStatus("pendente");
       setData(prefill.data);
       setHora(prefill.hora);
-      setMsg({ text: "", color: "var(--mk-muted)" });
+      setMsg({ text: "", color: "var(--mk-tinta-fraca)" });
     }
   }, [open, prefill.data, prefill.hora]);
 
@@ -86,19 +86,19 @@ export function NewAgendModal({
 
   async function salvar() {
     if (!leadId || !servico || !data || !hora) {
-      setMsg({ text: "Preencha todos os campos!", color: "var(--mk-red)" });
+      setMsg({ text: "Preencha todos os campos!", color: "var(--mk-alerta)" });
       return;
     }
     // Revalida no submit: o horário pode ter lotado com o modal aberto (outra
     // pessoa marcando, ou a Laura pelo WhatsApp).
-    setMsg({ text: "Conferindo o horário...", color: "var(--mk-muted)" });
+    setMsg({ text: "Conferindo o horário...", color: "var(--mk-tinta-fraca)" });
     const check = await checarHorario(`${data}T${hora}:00`);
     if (!check.ok) {
-      setMsg({ text: check.motivo, color: "var(--mk-red)" });
+      setMsg({ text: check.motivo, color: "var(--mk-alerta)" });
       setChecagem({ ok: false, motivo: check.motivo });
       return;
     }
-    setMsg({ text: "Salvando...", color: "var(--mk-muted)" });
+    setMsg({ text: "Salvando...", color: "var(--mk-tinta-fraca)" });
     try {
       await insertAgendamento({
         lead_id: leadId,
@@ -112,14 +112,14 @@ export function NewAgendModal({
       // para `agendado` toda vez que ele marcava uma nova sessão — foi o que
       // aconteceu com um cliente real de 5 procedimentos. Quem promove o lead
       // é o TRIGGER do banco, quando um agendamento vira 'realizado'.
-      setMsg({ text: "Agendamento salvo!", color: "var(--mk-green)" });
+      setMsg({ text: "Agendamento salvo!", color: "var(--mk-ativa)" });
       showToast("Agendamento criado com sucesso", "success");
       setTimeout(() => {
         onClose();
         onCreated();
       }, 1000);
     } catch (err) {
-      setMsg({ text: "Erro: " + (err as Error).message, color: "var(--mk-red)" });
+      setMsg({ text: "Erro: " + (err as Error).message, color: "var(--mk-alerta)" });
     }
   }
 
@@ -140,7 +140,7 @@ export function NewAgendModal({
           {leadsLoading && leads.length === 0 ? (
             <div
               className="form-input"
-              style={{ color: "var(--mk-muted)", fontSize: 12 }}
+              style={{ color: "var(--mk-tinta-fraca)", fontSize: 12 }}
             >
               Carregando clientes…
             </div>
@@ -201,8 +201,8 @@ export function NewAgendModal({
               alignItems: "flex-start",
               padding: "10px 12px",
               borderRadius: 10,
-              background: "var(--mk-red-bg)",
-              color: "var(--mk-red)",
+              background: "var(--mk-alerta-fraca)",
+              color: "var(--mk-alerta)",
               fontSize: 12.5,
               lineHeight: 1.4,
             }}
@@ -215,7 +215,7 @@ export function NewAgendModal({
           <div
             style={{
               fontSize: 12,
-              color: "var(--mk-green)",
+              color: "var(--mk-ativa)",
               textAlign: "center",
             }}
           >
@@ -224,7 +224,7 @@ export function NewAgendModal({
         )}
         {checando && (
           <div
-            style={{ fontSize: 12, color: "var(--mk-muted)", textAlign: "center" }}
+            style={{ fontSize: 12, color: "var(--mk-tinta-fraca)", textAlign: "center" }}
           >
             Conferindo disponibilidade…
           </div>

@@ -61,7 +61,7 @@ export function Clientes() {
         }}
       >
         <div className="search-bar" style={{ flex: 1, minWidth: 200 }}>
-          <span style={{ color: "var(--mk-muted)", fontSize: 15 }}>⌕</span>
+          <span style={{ color: "var(--mk-tinta-fraca)", fontSize: 15 }}>⌕</span>
           <input
             type="text"
             placeholder="Buscar por nome ou telefone..."

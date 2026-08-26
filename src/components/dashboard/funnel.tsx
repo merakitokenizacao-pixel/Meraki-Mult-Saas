@@ -43,18 +43,18 @@ export function Funnel({
 
   const pct = (n: number) => (total ? Math.round((n / total) * 100) : 0);
   const steps = [
-    { label: "Clientes", count: total, pct: 100, color: "var(--mk-blue)" },
+    { label: "Clientes", count: total, pct: 100, color: "var(--mk-pausada)" },
     {
       label: "Agendaram",
       count: leadsAgendaram.size,
       pct: pct(leadsAgendaram.size),
-      color: "var(--mk-gold)",
+      color: "var(--mk-acento)",
     },
     {
       label: "Compareceram",
       count: leadsCompareceram.size,
       pct: pct(leadsCompareceram.size),
-      color: "var(--mk-green)",
+      color: "var(--mk-ativa)",
     },
   ];
 

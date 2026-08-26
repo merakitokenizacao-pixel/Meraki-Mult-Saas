@@ -50,21 +50,23 @@ export function LoginForm() {
   }
 
   return (
-    <div className="flex min-h-dvh items-center justify-center bg-mk-bg px-4 py-10">
+    <div className="flex min-h-dvh items-center justify-center bg-mk-fundo px-4 py-10">
       <div className="w-full max-w-[380px]">
         <div className="mb-8 text-center">
-          <div className="font-[family-name:var(--font-cormorant)] text-[34px] font-light tracking-wide text-mk-text">
-            Merak<em className="text-mk-accent not-italic">i</em>
+          <div className="font-[family-name:var(--font-cormorant)] text-[34px] font-light tracking-wide text-mk-tinta">
+            Merak<em className="text-mk-acento not-italic">i</em>
           </div>
-          <p className="mt-2 text-[13px] text-mk-muted">
+          <p className="mt-2 text-[13px] text-mk-tinta-fraca">
             Acesso restrito à equipe da clínica
           </p>
         </div>
 
+        {/* Sem sombra, e com o raio do sistema: sobre preto a sombra não
+            separa — mancha. Quem separa é a borda. */}
         <form
           onSubmit={onSubmit}
-          className="rounded-2xl border border-mk-border bg-mk-surface p-7"
-          style={{ boxShadow: "var(--mk-shadow-lg)" }}
+          className="border border-mk-linha bg-mk-superficie p-7"
+          style={{ borderRadius: "var(--mk-raio)" }}
         >
           <div className="mb-4">
             <label className="form-label" htmlFor="email">
@@ -74,7 +76,7 @@ export function LoginForm() {
               <Mail
                 size={15}
                 strokeWidth={1.5}
-                className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-mk-muted"
+                className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-mk-tinta-fraca"
               />
               <input
                 id="email"
@@ -99,7 +101,7 @@ export function LoginForm() {
               <Lock
                 size={15}
                 strokeWidth={1.5}
-                className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-mk-muted"
+                className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-mk-tinta-fraca"
               />
               <input
                 id="senha"
@@ -116,7 +118,7 @@ export function LoginForm() {
           </div>
 
           {erro && (
-            <div className="mb-4 flex items-start gap-2 rounded-xl bg-mk-red-bg px-3.5 py-2.5 text-[12.5px] leading-snug text-mk-red">
+            <div className="mb-4 flex items-start gap-2 rounded-xl bg-mk-alerta-fraca px-3.5 py-2.5 text-[12.5px] leading-snug text-mk-alerta">
               <TriangleAlert size={15} strokeWidth={1.8} className="mt-px shrink-0" />
               <span>{erro}</span>
             </div>
@@ -142,7 +144,7 @@ export function LoginForm() {
           </button>
         </form>
 
-        <p className="mt-6 text-center text-[11.5px] leading-relaxed text-mk-muted">
+        <p className="mt-6 text-center text-[11.5px] leading-relaxed text-mk-tinta-fraca">
           Não há cadastro aberto. Para liberar um acesso, fale com o
           administrador do sistema.
         </p>

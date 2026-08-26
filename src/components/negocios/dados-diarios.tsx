@@ -21,12 +21,12 @@ export type SerieId = "criado" | "ganho" | "perdido";
 export type Modo = "valor" | "qtd";
 
 // Verde e vermelho ficam porque aqui eles SIGNIFICAM: ganho e perda. Já
-// "criado" não tem cor natural — era --mk-blue, um matiz que não dizia nada e
+// "criado" não tem cor natural — era --mk-pausada, um matiz que não dizia nada e
 // que vinha de uma segunda paleta. Passa a sair da rampa, a mesma da rosca.
 const SERIES: ReadonlyArray<{ id: SerieId; label: string; cor: string }> = [
-  { id: "criado", label: "Criados", cor: "--mk-cat-1" },
-  { id: "ganho", label: "Ganhos", cor: "--mk-green" },
-  { id: "perdido", label: "Perdidos", cor: "--mk-red" },
+  { id: "criado", label: "Criados", cor: "--mk-serie-1" },
+  { id: "ganho", label: "Ganhos", cor: "--mk-ativa" },
+  { id: "perdido", label: "Perdidos", cor: "--mk-alerta" },
 ];
 
 function lerVar(nome: string): string {
@@ -154,12 +154,12 @@ export function DadosDiarios({
         plugins: {
           legend: { display: false },
           tooltip: {
-            // Superfície + texto2 + borda2 (não --mk-border como fundo, que
+            // Superfície + texto2 + borda2 (não --mk-linha como fundo, que
             // deixava a caixa sem contorno e o texto no limite do contraste).
-            backgroundColor: lerVar("--mk-surface2"),
-            titleColor: lerVar("--mk-text"),
-            bodyColor: lerVar("--mk-text2"),
-            borderColor: lerVar("--mk-border2"),
+            backgroundColor: lerVar("--mk-superficie-2"),
+            titleColor: lerVar("--mk-tinta"),
+            bodyColor: lerVar("--mk-tinta-media"),
+            borderColor: lerVar("--mk-linha"),
             borderWidth: 1,
             padding: 10,
             cornerRadius: 8,

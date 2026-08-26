@@ -22,12 +22,12 @@ export function getInitials(name?: string | null): string {
  * cor por color-mix, então nunca mais há um segundo valor para desencontrar.
  */
 export const AVATAR_PALETTE: ReadonlyArray<string> = [
-  "--mk-av-1",
-  "--mk-av-2",
-  "--mk-av-3",
-  "--mk-av-4",
-  "--mk-av-5",
-  "--mk-av-6",
+  "--mk-pessoa-1",
+  "--mk-pessoa-2",
+  "--mk-pessoa-3",
+  "--mk-pessoa-4",
+  "--mk-pessoa-5",
+  "--mk-pessoa-6",
 ];
 
 /** Sempre a mesma cor para o mesmo nome — a pessoa não muda de cor entre

@@ -9,12 +9,12 @@ export function PagePlaceholder({
   return (
     <div
       style={{
-        border: "1px solid var(--mk-border)",
-        background: "var(--mk-surface)",
-        borderRadius: "var(--mk-radius-lg)",
+        border: "1px solid var(--mk-linha)",
+        background: "var(--mk-superficie)",
+        borderRadius: "var(--mk-raio)",
         padding: "3rem",
         textAlign: "center",
-        color: "var(--mk-muted)",
+        color: "var(--mk-tinta-fraca)",
       }}
     >
       <h2
@@ -22,7 +22,7 @@ export function PagePlaceholder({
           fontFamily: "var(--font-cormorant), serif",
           fontSize: "28px",
           fontWeight: 300,
-          color: "var(--mk-text)",
+          color: "var(--mk-tinta)",
           marginBottom: "8px",
         }}
       >

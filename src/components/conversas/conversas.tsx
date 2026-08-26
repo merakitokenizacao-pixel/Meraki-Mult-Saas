@@ -382,7 +382,7 @@ export function Conversas() {
   return (
     <div className="page-fade">
       <div
-        className={`conversas-fill grid min-h-0 grid-cols-1 grid-rows-[minmax(0,1fr)] overflow-hidden bg-mk-surface ${
+        className={`conversas-fill grid min-h-0 grid-cols-1 grid-rows-[minmax(0,1fr)] overflow-hidden bg-mk-superficie ${
           panelOpen
             ? "lg:grid-cols-[340px_minmax(0,1fr)_360px]"
             : "lg:grid-cols-[340px_minmax(0,1fr)]"
@@ -449,9 +449,10 @@ export function Conversas() {
             className="absolute inset-0 bg-black/40 backdrop-blur-sm"
             onClick={() => setPanelOpen(false)}
           />
+          {/* Gaveta do mobile. A separação vem da borda esquerda e do véu
+              escuro atrás — sombra sobre preto não faria nada. */}
           <aside
-            className="absolute right-0 top-0 h-full w-[85%] max-w-sm"
-            style={{ boxShadow: "var(--mk-shadow-lg)" }}
+            className="absolute right-0 top-0 h-full w-[85%] max-w-sm border-l border-mk-linha"
           >
             <DetailsPanel
               lead={currentLead}

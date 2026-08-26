@@ -24,13 +24,13 @@ type FichaPainel = {
 
 // Cores por severidade, via tokens da paleta (sem cor hardcoded).
 const TOM: Record<FichaTone, { bg: string; fg: string; border: string }> = {
-  amber: { bg: "var(--mk-amber-bg)", fg: "var(--mk-amber)", border: "var(--mk-amber)" },
-  green: { bg: "var(--mk-green-bg)", fg: "var(--mk-green)", border: "var(--mk-green)" },
-  red: { bg: "var(--mk-red-bg)", fg: "var(--mk-red)", border: "var(--mk-red)" },
+  amber: { bg: "var(--mk-aviso-fraca)", fg: "var(--mk-aviso)", border: "var(--mk-aviso)" },
+  green: { bg: "var(--mk-ativa-fraca)", fg: "var(--mk-ativa)", border: "var(--mk-ativa)" },
+  red: { bg: "var(--mk-alerta-fraca)", fg: "var(--mk-alerta)", border: "var(--mk-alerta)" },
   "red-strong": {
-    bg: "var(--mk-red)",
+    bg: "var(--mk-alerta)",
     fg: "#fff",
-    border: "var(--mk-red)",
+    border: "var(--mk-alerta)",
   },
 };
 
@@ -63,7 +63,7 @@ export function FichaSection({ leadId }: { leadId: string }) {
     return (
       <>
         <div className="modal-section">Ficha do laser</div>
-        <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 0", fontSize: 12, color: "var(--mk-muted)" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 0", fontSize: 12, color: "var(--mk-tinta-fraca)" }}>
           <Loader2 size={14} className="animate-spin" /> Carregando…
         </div>
       </>
@@ -73,7 +73,7 @@ export function FichaSection({ leadId }: { leadId: string }) {
     return (
       <>
         <div className="modal-section">Ficha do laser</div>
-        <div style={{ fontSize: 12, color: "var(--mk-muted)", padding: "8px 0" }}>
+        <div style={{ fontSize: 12, color: "var(--mk-tinta-fraca)", padding: "8px 0" }}>
           Não foi possível carregar a ficha.
         </div>
       </>
@@ -134,7 +134,7 @@ function FichaCard({
   return (
     <div
       style={{
-        border: "1px solid var(--mk-border)",
+        border: "1px solid var(--mk-linha)",
         borderRadius: 12,
         overflow: "hidden",
       }}
@@ -147,8 +147,8 @@ function FichaCard({
           justifyContent: "space-between",
           gap: 8,
           padding: "10px 12px",
-          background: "var(--mk-surface2)",
-          borderBottom: "1px solid var(--mk-border)",
+          background: "var(--mk-superficie-2)",
+          borderBottom: "1px solid var(--mk-linha)",
         }}
       >
         <span
@@ -168,7 +168,7 @@ function FichaCard({
           {visual.tone === "red-strong" && <AlertTriangle size={12} />}
           {visual.label}
         </span>
-        <span style={{ fontSize: 10.5, color: "var(--mk-muted)", fontFamily: "var(--font-jetbrains)" }}>
+        <span style={{ fontSize: 10.5, color: "var(--mk-tinta-fraca)", fontFamily: "var(--font-jetbrains)" }}>
           laser
         </span>
       </div>
@@ -183,7 +183,7 @@ function FichaCard({
               gap: 4,
               padding: "10px 12px",
               borderRadius: 10,
-              background: "var(--mk-red)",
+              background: "var(--mk-alerta)",
               color: "#fff",
               marginBottom: 10,
             }}
@@ -217,8 +217,8 @@ function FichaCard({
                   fontWeight: 600,
                   padding: "3px 8px",
                   borderRadius: 999,
-                  background: "var(--mk-red-bg)",
-                  color: "var(--mk-red)",
+                  background: "var(--mk-alerta-fraca)",
+                  color: "var(--mk-alerta)",
                 }}
               >
                 {alertaLabel(a)}
@@ -240,20 +240,20 @@ function FichaCard({
                   padding: "6px 0",
                   borderBottom:
                     i < linhasRespostas(ficha.respostas!).length - 1
-                      ? "1px solid var(--mk-border)"
+                      ? "1px solid var(--mk-linha)"
                       : "none",
                   fontSize: 12.5,
                 }}
               >
-                <span style={{ color: "var(--mk-text2)" }}>{l.label}</span>
-                <span style={{ fontWeight: 600, color: "var(--mk-text)", textAlign: "right" }}>
+                <span style={{ color: "var(--mk-tinta-media)" }}>{l.label}</span>
+                <span style={{ fontWeight: 600, color: "var(--mk-tinta)", textAlign: "right" }}>
                   {l.valor}
                 </span>
               </div>
             ))}
           </div>
         ) : (
-          <div style={{ fontSize: 12, color: "var(--mk-muted)" }}>
+          <div style={{ fontSize: 12, color: "var(--mk-tinta-fraca)" }}>
             Aguardando a cliente preencher.
           </div>
         )}
@@ -273,9 +273,9 @@ function FichaCard({
               gap: 6,
               padding: "10px 12px",
               borderRadius: 10,
-              border: "1px solid var(--mk-border2)",
-              background: "var(--mk-surface)",
-              color: "var(--mk-text)",
+              border: "1px solid var(--mk-linha)",
+              background: "var(--mk-superficie)",
+              color: "var(--mk-tinta)",
               fontSize: 13,
               fontWeight: 600,
               cursor: revisando ? "default" : "pointer",
@@ -295,7 +295,7 @@ function FichaCard({
               gap: 6,
               fontSize: 12,
               fontWeight: 600,
-              color: "var(--mk-green)",
+              color: "var(--mk-ativa)",
             }}
           >
             <Check size={14} /> Revisada pela equipe

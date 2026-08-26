@@ -6,16 +6,37 @@ import { Modal } from "@/components/modal";
 import { supabase } from "@/lib/supabase";
 import { showToast } from "@/lib/toast";
 
-// Cores da paleta da marca — distinguíveis entre si e legíveis nos dois temas.
+// Cor de IDENTIDADE de cada profissional. Vira um ponto de 8px ao lado do
+// nome — na escala, na matriz, nos bloqueios.
+//
+// ⚠️ TROCADA na virada para o sistema escuro. As oito anteriores foram
+// escolhidas para fundo branco e sobre preto vão de 2.58 a 5.47 de contraste:
+// o azul (#2a5278) e o roxo (#5c4fa0) simplesmente somem como ponto pequeno.
+// O próprio `atribuicao.ts` já registrava isso.
+//
+// Escolhidas por distância perceptual em OKLab: o pior par é 0.195 de dE —
+// mais separado que a própria rampa de série (0.135) —, e todas passam de 5.0
+// de contraste sobre preto.
+//
+// A violeta fica a 0.106 do acento, e aqui isso é aceitável — foi rejeitado
+// quando a mesma distância apareceu no azul de "pausada". A diferença é o
+// papel: `pausada` é ESTADO e aparece numa fileira de badges onde a cor é o
+// que se lê; esta é IDENTIDADE e vive colada a um nome, que desambigua. Um
+// ponto violeta ao lado de "Camila" não disputa leitura com um item de menu.
+//
+// ⚠️ O valor é gravado em `profissionais.cor`. Trocar esta lista muda o que se
+// OFERECE daqui em diante; quem já tem cor salva mantém a antiga até ser
+// reeditada. Migrar as existentes é escrita em dado de cliente, e não se faz
+// de passagem.
 const CORES = [
-  "#9b7d5a", // dourado (accent)
-  "#3a6b4f", // verde
-  "#2a5278", // azul
-  "#5c4fa0", // roxo
-  "#b5600a", // âmbar
-  "#a3342a", // vermelho terroso
-  "#4a7c7e", // petróleo
-  "#7a5c8a", // ameixa
+  "#cc5745", // telha
+  "#f5a98e", // pêssego
+  "#f5f553", // amarelo
+  "#45cc45", // verde
+  "#7af5f5", // ciano
+  "#66aacc", // azul
+  "#8367f5", // violeta
+  "#f553f5", // magenta
 ];
 
 export type ProfissionalEdit = {
@@ -184,8 +205,8 @@ export function ProfissionalModal({
               alignItems: "flex-start",
               padding: "10px 12px",
               borderRadius: 10,
-              background: "var(--mk-red-bg)",
-              color: "var(--mk-red)",
+              background: "var(--mk-alerta-fraca)",
+              color: "var(--mk-alerta)",
               fontSize: 12.5,
               lineHeight: 1.45,
             }}
@@ -213,7 +234,7 @@ export function ProfissionalModal({
         )}
 
         {editando && (
-          <div style={{ paddingTop: 12, borderTop: "1px solid var(--mk-border)" }}>
+          <div style={{ paddingTop: 12, borderTop: "1px solid var(--mk-linha)" }}>
             {!confirmandoExclusao ? (
               <button
                 className="btn-ghost"
@@ -223,15 +244,15 @@ export function ProfissionalModal({
                   display: "inline-flex",
                   alignItems: "center",
                   gap: 6,
-                  color: "var(--mk-red)",
-                  borderColor: "var(--mk-red)",
+                  color: "var(--mk-alerta)",
+                  borderColor: "var(--mk-alerta)",
                 }}
               >
                 <Trash2 size={14} strokeWidth={1.8} /> Excluir profissional
               </button>
             ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                <p style={{ fontSize: 12.5, color: "var(--mk-text2)", lineHeight: 1.5, margin: 0 }}>
+                <p style={{ fontSize: 12.5, color: "var(--mk-tinta-media)", lineHeight: 1.5, margin: 0 }}>
                   Isso apaga <strong>a escala e as folgas</strong> de{" "}
                   {profissional?.nome}. Não dá pra desfazer.
                 </p>
@@ -243,7 +264,7 @@ export function ProfissionalModal({
                     className="btn-primary"
                     onClick={excluir}
                     disabled={salvando}
-                    style={{ background: "var(--mk-red)", display: "inline-flex", alignItems: "center", gap: 6 }}
+                    style={{ background: "var(--mk-alerta)", display: "inline-flex", alignItems: "center", gap: 6 }}
                   >
                     {salvando ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
                     Excluir mesmo assim

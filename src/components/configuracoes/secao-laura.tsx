@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { PauseCircle, Smartphone } from "lucide-react";
 import { getRelativeTime } from "@/lib/format";
+import { fetchPainel } from "@/lib/api-painel";
 
 // Saúde da Laura.
 //
@@ -33,7 +34,7 @@ export function SecaoLaura() {
     let vivo = true;
     const puxar = async () => {
       try {
-        const r = await fetch("/api/painel/laura", { cache: "no-store" });
+        const r = await fetchPainel("/api/painel/laura", { cache: "no-store" });
         if (!r.ok) throw new Error();
         const j = await r.json();
         if (vivo) {

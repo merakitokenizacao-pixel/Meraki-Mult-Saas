@@ -6,8 +6,9 @@ import type { FollowUp } from "@/lib/followup";
 // Leitura da view `follow_ups_resultado` (calcula o resultado ao vivo).
 // Somente leitura: quem escreve em `follow_ups` é o n8n. Ver AGENTE.md.
 //
-// A view respeita RLS; acesso via service role, como o resto do painel.
-export async function listarFollowUps(): Promise<FollowUp[]> {
+// TENANT: service_role ignora RLS, entao o filtro por clinica e obrigacao
+// daqui. O tenant chega JA VALIDADO por resolverTenant().
+export async function listarFollowUps(tenant: string): Promise<FollowUp[]> {
   const db = getSupabaseAdmin();
   // Paginada: quem escreve aqui é o n8n, uma linha por disparo, então a tabela
   // cresce sozinha e passaria do teto de 1.000 do PostgREST sem avisar (ver
@@ -20,6 +21,7 @@ export async function listarFollowUps(): Promise<FollowUp[]> {
       .select(
         "id, lead_id, nome, telefone, tipo, referencia, status, mensagem, contexto, enviado_em, primeira_resposta_em, agendou_em, resultado"
       )
+      .eq("tenant_id", tenant)
       .order("enviado_em", { ascending: false, nullsFirst: false })
       .order("id", { ascending: false })
       .range(de, ate)

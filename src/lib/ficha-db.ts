@@ -3,10 +3,12 @@ import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { calcularAlertas } from "@/lib/ficha";
 import type { FichaRespostas, FichaStatus } from "@/types/db";
 
-// ── Lado do painel (Entrega 2) ──────────────────────────────────────────────
-// ATENÇÃO: estas funções servem a rotas SEM autenticação (o app não tem login).
-// Elas expõem dado de saúde no mesmo nível que leads/conversas já ficam hoje.
-// Dívida registrada para a Etapa 7 (login + RLS por clínica). Ver CLAUDE.md.
+// ── Lado do painel ──────────────────────────────────────────────────────────
+// Dado de SAÚDE lido com service_role, que ignora a RLS. Duas travas, e as
+// duas são necessárias: o middleware exige sessão em /api/painel/*, e o
+// `tenant` abaixo — já validado por `resolverTenant()` — garante que a sessão
+// só alcança a ficha da PRÓPRIA clínica. Sessão sem tenant deixaria qualquer
+// conta ler a ficha de qualquer paciente de qualquer clínica.
 
 export type FichaPainel = {
   id: string;
@@ -18,14 +20,25 @@ export type FichaPainel = {
   dataAgendamento: string | null;
 };
 
-/** Todas as fichas de um lead (mais recentes primeiro). Normalmente 0 ou 1. */
-export async function getFichasByLead(leadId: string): Promise<FichaPainel[]> {
+/**
+ * Todas as fichas de um lead (mais recentes primeiro). Normalmente 0 ou 1.
+ *
+ * `leadId` vem da querystring, ou seja, do cliente. O par
+ * tenant_id + lead_id é o que impede que conhecer um uuid de lead alheio
+ * devolva a ficha de saúde dele.
+ */
+export async function getFichasByLead(
+  tenant: string,
+  leadId: string
+): Promise<FichaPainel[]> {
   const db = getSupabaseAdmin();
   const { data, error } = await db
     .from("fichas_avaliacao")
     .select("id, status, tipo, alertas, respostas, criado_em, agendamento_id")
+    .eq("tenant_id", tenant)
     .eq("lead_id", leadId)
-    .order("criado_em", { ascending: false });
+    .order("criado_em", { ascending: false })
+    .limit(200);
 
   if (error) throw error;
 
@@ -45,12 +58,16 @@ export async function getFichasByLead(leadId: string): Promise<FichaPainel[]> {
 }
 
 /** preenchida → revisada. Idempotente: revisar de novo afeta 0 linhas. */
-export async function revisarFicha(fichaId: string): Promise<boolean> {
+export async function revisarFicha(
+  tenant: string,
+  fichaId: string
+): Promise<boolean> {
   const db = getSupabaseAdmin();
   const { data, error } = await db
     .from("fichas_avaliacao")
     .update({ status: "revisada" })
     .eq("id", fichaId)
+    .eq("tenant_id", tenant)
     .eq("status", "preenchida")
     .select("id");
 
@@ -58,7 +75,12 @@ export async function revisarFicha(fichaId: string): Promise<boolean> {
   return (data?.length ?? 0) > 0;
 }
 
-// Acesso à tabela `fichas_avaliacao` (RLS ligada, sem policies → service role).
+// ── Lado PÚBLICO (a paciente, sem conta) ────────────────────────────────────
+// Aqui NÃO há tenant da sessão, e é correto que não haja: quem abre o link não
+// tem conta. O escopo vem do próprio token — que É o id da ficha —, então o
+// cliente não escolhe clínica nenhuma; ele apresenta uma linha específica e o
+// banco devolve aquela linha ou nada.
+//
 // Regra de LGPD deste módulo: as RESPOSTAS nunca sobem para a página pública,
 // e nada de conteúdo de ficha vai para log.
 

@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
+import {
+  resolverTenant,
+  respostaErroTenant,
+} from "@/lib/tenant-server";
 
 export const dynamic = "force-dynamic";
 
@@ -21,8 +25,12 @@ export const dynamic = "force-dynamic";
 const PAGINA = 1000;
 const TETO_PAGINAS = 50;
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
+    // service_role ignora RLS: sem este filtro a lista misturaria os leads
+    // ativos de todas as clínicas, e a métrica de captação de uma contaria a
+    // conversa da outra.
+    const { tenant_id } = await resolverTenant(req);
     const db = getSupabaseAdmin();
     const ids = new Set<string>();
 
@@ -30,6 +38,7 @@ export async function GET() {
       const { data, error } = await db
         .from("conversas")
         .select("lead_id")
+        .eq("tenant_id", tenant_id)
         .eq("origem", "cliente")
         // Ordenação determinística: sem ela o Postgres pode devolver ordem
         // diferente a cada página, duplicando umas linhas e perdendo outras.
@@ -45,7 +54,7 @@ export async function GET() {
       { ids: [...ids] },
       { headers: { "Cache-Control": "no-store" } }
     );
-  } catch {
-    return NextResponse.json({ erro: "erro_interno" }, { status: 500 });
+  } catch (e) {
+    return respostaErroTenant(e);
   }
 }

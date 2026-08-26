@@ -172,11 +172,43 @@ nenhum insert do código atual preenche.
   `sem clinica vinculada a esta conta` e a conta não vê nada. A policy de
   `usuarios_tenant` é só `SELECT`: o vínculo se cria por SQL/service_role, não
   pelo painel.
-- **Seletor de clínica** (`src/components/tenant-provider.tsx`): carrega
-  `minhas_clinicas()` uma vez. Uma clínica → sem seletor visível, tenant
-  implícito. Mais de uma → seletor no topo da sidebar, escolha persistida em
-  `localStorage`. O valor persistido **nunca** é fonte de verdade sozinho: vai
-  como parâmetro e o banco valida.
+- **Seletor de clínica** (`src/components/tenant-provider.tsx` +
+  `tenant-selector.tsx`): carrega `minhas_clinicas()` uma vez. Uma clínica →
+  sem seletor visível, tenant implícito. Mais de uma → seletor no topo da
+  sidebar, escolha persistida em `localStorage`. O valor persistido **nunca** é
+  fonte de verdade sozinho: vai no cabeçalho e o banco valida.
+
+### Como o tenant chega no servidor
+
+Um caminho só, e é o que torna a regra de ouro verificável:
+
+```
+navegador   fetchPainel()          src/lib/api-painel.ts
+              ↳ cabeçalho x-meraki-tenant (da escolha no localStorage)
+servidor    resolverTenant(req)    src/lib/tenant-server.ts
+              ↳ getUser()          sessão existe?
+              ↳ minhas_clinicas()  universo permitido desta conta
+              ↳ tenant_valido()    o banco confirma, ou levanta exceção
+rota        .eq("tenant_id", …)    com o valor já validado
+```
+
+**Toda chamada do painel usa `fetchPainel`, não `fetch` cru.** Esquecer o
+cabeçalho não quebra a tela de quem tem UMA clínica — o servidor resolve o
+implícito — e é justamente isso que torna o esquecimento difícil de notar:
+funciona no desenvolvimento e falha só na conta que atende duas.
+
+⚠️ **`tenant_valido(null)` não é usado para resolver o implícito.** Com mais de
+um vínculo, aquela função pega a primeira linha que o Postgres devolver — sem
+ordenação e sem erro. `resolverTenant` responde `400 tenant_nao_informado` em
+vez de deixar a conta ver a clínica errada achando que funcionou.
+
+**A vitrine é a exceção, e a única.** `/api/site/agenda-demo` é pública e usa
+service_role, então não há sessão de onde derivar tenant: ele vem de
+`MERAKI_TENANT_DEMO` (slug, no servidor) via `tenantDaVitrine()`. Aceitar o
+slug por querystring deixaria qualquer visitante ler a agenda de qualquer
+cliente do Meraki trocando uma palavra na URL. Sem a variável, a rota responde
+`503 indisponivel` — o padrão seguro é não mostrar nada, não mostrar a
+primeira que aparecer.
 
 ⚠️ **Armadilha de build**: `useSearchParams()` exige `<Suspense>`. O build
 *compila* e só o **export** quebra — grepar `✓ Compiled` esconde a falha.
@@ -193,9 +225,10 @@ SUPABASE_SERVICE_ROLE_KEY=          # sem NEXT_PUBLIC_, jamais
 EVOLUTION_API_URL=
 EVOLUTION_API_KEY=
 EVOLUTION_INSTANCE=
+MERAKI_TENANT_DEMO=                 # slug da clínica da vitrine (opcional)
 ```
 
-São essas seis, e só essas. As três da Evolution **não** levam `NEXT_PUBLIC_`:
+São essas sete, e só essas. As três da Evolution **não** levam `NEXT_PUBLIC_`:
 a chave manda mensagem em nome da clínica.
 
 **Trava de banco** (`src/lib/env.ts`, importada pelo `next.config.ts`): a
@@ -214,10 +247,26 @@ estética — URL pública ali significaria a foto de uma paciente acessível pa
 sempre, sem login. Por isso a leitura passa por `/api/painel/midia`, que assina
 URLs de vida curta (10 min) com service_role.
 
-**Caminho: `{slug-do-tenant}/{telefone}/{msgId}.jpg`.** A rota que assina valida
-que todo caminho começa com o slug do tenant **da sessão** — nunca com um slug
-recebido do cliente. Sem essa trava, uma conta de uma clínica assinaria a mídia
-de outra.
+**Caminho: `{slug-do-tenant}/{telefone}/{msgId}.{ext}`**, montado por
+`caminhoMidia()` em `src/lib/storage.ts`.
+
+A rota assina o que o cliente pedir — é uma lista de caminhos no corpo — e
+service_role assina qualquer objeto do bucket. Sessão, portanto, não basta:
+`dentroDoTenant()` exige que a **primeira pasta** seja o slug do tenant **da
+sessão**, nunca um slug recebido do cliente.
+
+⚠️ **Compara a pasta inteira, não `startsWith`.** Um prefixo solto aprovaria
+`lins-antiga/…` para o tenant `lins` — dois slugs em que um começa com o outro
+deixariam de estar separados. 24 asserts cobrindo isso, travessia de diretório
+e arquivo na raiz do bucket.
+
+Caminho fora do escopo é descartado **em silêncio**, sem 403: responder
+"existe, mas não é sua" confirmaria a existência do arquivo para quem estivesse
+adivinhando.
+
+As policies do bucket repetem a mesma regra com `storage.foldername(name)[1]`.
+Elas não são o que protege o dia a dia (service_role não passa por policy) —
+existem para que ler o bucket com a sessão do usuário dê o mesmo resultado.
 
 ---
 

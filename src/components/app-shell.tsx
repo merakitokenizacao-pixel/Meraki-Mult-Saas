@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { ChevronsLeft, ChevronsRight } from "lucide-react";
 import { NAV_ITEMS, SETTINGS_ITEM, titleForPath } from "@/lib/nav";
 import { LogoutButton } from "@/components/auth/logout-button";
+import { TenantSelector } from "@/components/tenant-selector";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -48,7 +49,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <div className="sidebar-logo">
             <div className="logo-mark">
               {collapsed ? (
-                "V"
+                "M"
               ) : (
                 <>
                   Merak<em>i</em>
@@ -72,7 +73,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               POSIÇÃO: este bloco cresce e empurra o rodapé para baixo. Um
               rótulo de seção em dourado disputava com o único dourado que
               precisa significar alguma coisa aqui — "você está aqui". */}
-          <nav className="sidebar-nav">
+          <TenantSelector collapsed={collapsed} />
+
+        <nav className="sidebar-nav">
             {NAV_ITEMS.map((item) => {
               const Icon = item.icon;
               return (

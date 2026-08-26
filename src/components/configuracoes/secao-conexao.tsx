@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { QrCode, RefreshCw, Smartphone } from "lucide-react";
+import { fetchPainel } from "@/lib/api-painel";
 
 // Conexão do WhatsApp.
 //
@@ -34,7 +35,7 @@ export function SecaoConexao() {
     setCarregando(true);
     setErro(null);
     try {
-      const r = await fetch("/api/painel/conexao", { cache: "no-store" });
+      const r = await fetchPainel("/api/painel/conexao", { cache: "no-store" });
       const j = await r.json();
       if (!r.ok) {
         // "Não consegui perguntar" ≠ "está desconectado". Dizer que caiu sem
@@ -69,7 +70,7 @@ export function SecaoConexao() {
     setPedindoQr(true);
     setErro(null);
     try {
-      const r = await fetch("/api/painel/conexao", { method: "POST" });
+      const r = await fetchPainel("/api/painel/conexao", { method: "POST" });
       const j = await r.json();
       if (!r.ok) setErro(j.erro ?? "Não foi possível pedir o QR");
       else if (j.qr) setQr(j.qr);

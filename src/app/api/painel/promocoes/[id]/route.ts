@@ -2,6 +2,14 @@ import { NextResponse } from "next/server";
 import { atualizarPromocao, alternarAtiva } from "@/lib/promocao-db";
 import { isTokenValido } from "@/lib/ficha";
 import { validarPromocao, type CamposPromocao } from "@/lib/promocao";
+import {
+  resolverTenant,
+  respostaErroTenant,
+} from "@/lib/tenant-server";
+
+// O `id` vem da URL, ou seja, do cliente. Validar a sessão não basta: sem o
+// tenant no WHERE, conhecer o uuid de uma promoção de outra clínica bastaria
+// para reescrevê-la. Quem faz o par id+tenant é o promocao-db.
 
 export const dynamic = "force-dynamic";
 
@@ -37,6 +45,13 @@ export async function PUT(
     return NextResponse.json({ erro: "id_invalido" }, { status: 400 });
   }
 
+  let tenant: string;
+  try {
+    tenant = (await resolverTenant(req)).tenant_id;
+  } catch (e) {
+    return respostaErroTenant(e);
+  }
+
   let body: unknown;
   try {
     body = await req.json();
@@ -51,7 +66,9 @@ export async function PUT(
   }
 
   try {
-    return NextResponse.json({ promocao: await atualizarPromocao(id, campos) });
+    return NextResponse.json({
+      promocao: await atualizarPromocao(tenant, id, campos),
+    });
   } catch {
     return NextResponse.json({ erro: "erro_interno" }, { status: 500 });
   }
@@ -77,13 +94,20 @@ export async function PATCH(
     return NextResponse.json({ erro: "payload_invalido" }, { status: 400 });
   }
 
+  let tenant: string;
+  try {
+    tenant = (await resolverTenant(req)).tenant_id;
+  } catch (e) {
+    return respostaErroTenant(e);
+  }
+
   const ativa = (body as { ativa?: unknown })?.ativa;
   if (typeof ativa !== "boolean") {
     return NextResponse.json({ erro: "ativa_invalida" }, { status: 400 });
   }
 
   try {
-    await alternarAtiva(id, ativa);
+    await alternarAtiva(tenant, id, ativa);
     return NextResponse.json({ ok: true });
   } catch {
     return NextResponse.json({ erro: "erro_interno" }, { status: 500 });

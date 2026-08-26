@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
+import {
+  resolverTenant,
+  respostaErroTenant,
+} from "@/lib/tenant-server";
+import { BUCKET_MIDIA, dentroDoTenant } from "@/lib/storage";
 
 export const dynamic = "force-dynamic";
 
@@ -10,8 +15,17 @@ export const dynamic = "force-dynamic";
 // pública ali significaria que qualquer um com o link vê a foto de uma
 // paciente, para sempre e sem login. Por isso a leitura passa por aqui, com
 // service role, atrás do middleware que exige sessão em /api/painel/*.
+//
+// ⚠️ Esta rota ASSINA o que o cliente pedir. Sessão não basta: o corpo é uma
+// lista de caminhos, e service_role assina qualquer objeto do bucket. Sem a
+// trava de prefixo abaixo, uma conta autenticada de uma clínica montaria a
+// lista com o caminho da mídia de OUTRA e receberia URLs válidas para as
+// fotos das pacientes dela.
+//
+// O prefixo permitido é o slug do tenant DA SESSÃO — nunca um slug recebido
+// do cliente, que seria só pedir educadamente o mesmo vazamento.
 
-const BUCKET = "midia-conversas";
+const BUCKET = BUCKET_MIDIA;
 
 /** 10 minutos. Curto de propósito: o link vaza junto com qualquer print da
  *  aba de rede, e o custo de reassinar é uma requisição. */
@@ -22,6 +36,13 @@ const VALIDADE_S = 600;
 const MAX_CAMINHOS = 200;
 
 export async function POST(req: Request) {
+  let slug: string;
+  try {
+    slug = (await resolverTenant(req)).slug;
+  } catch (e) {
+    return respostaErroTenant(e);
+  }
+
   let caminhos: unknown;
   try {
     ({ caminhos } = (await req.json()) as { caminhos?: unknown });
@@ -33,8 +54,13 @@ export async function POST(req: Request) {
     return NextResponse.json({ erro: "caminhos_invalidos" }, { status: 400 });
   }
 
-  // Só strings, sem duplicata e sem subir de diretório. `..` num caminho
-  // assinado é o caminho clássico para ler o que não era para ser lido.
+  // Só strings, sem duplicata, sem subir de diretório e DENTRO da pasta do
+  // tenant. `..` num caminho assinado é o jeito clássico de ler o que não era
+  // para ser lido; o prefixo do slug é o que fecha o resto.
+  //
+  // Caminho fora do escopo é descartado em silêncio, sem 403: responder
+  // "existe, mas não é sua" confirmaria a existência do arquivo para quem
+  // estivesse tentando adivinhar.
   const limpos = [
     ...new Set(
       caminhos.filter(
@@ -42,7 +68,8 @@ export async function POST(req: Request) {
           typeof c === "string" &&
           c.length > 0 &&
           c.length < 512 &&
-          !c.includes("..")
+          !c.includes("..") &&
+          dentroDoTenant(c, slug)
       )
     ),
   ].slice(0, MAX_CAMINHOS);

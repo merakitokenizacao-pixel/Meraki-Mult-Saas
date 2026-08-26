@@ -1,20 +1,27 @@
 import { NextResponse } from "next/server";
 import { listarPromocoes, criarPromocao } from "@/lib/promocao-db";
 import { validarPromocao, type CamposPromocao } from "@/lib/promocao";
+import {
+  resolverTenant,
+  respostaErroTenant,
+} from "@/lib/tenant-server";
 
 export const dynamic = "force-dynamic";
 
-// `promocoes` tem RLS ligada e nenhuma policy: só service role lê/escreve.
-// O middleware já exige sessão em /api/painel/* (401 sem login).
+// Leitura e escrita com service_role, que IGNORA a RLS — por isso o tenant
+// vem de `resolverTenant()` antes de qualquer consulta, e não do corpo. O
+// middleware já exige sessão em /api/painel/* (401 sem login), mas sessão
+// diz QUEM é, não QUAL clínica: as duas coisas precisam ser checadas.
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
+    const { tenant_id } = await resolverTenant(req);
     return NextResponse.json(
-      { promocoes: await listarPromocoes() },
+      { promocoes: await listarPromocoes(tenant_id) },
       { headers: { "Cache-Control": "no-store" } }
     );
-  } catch {
-    return NextResponse.json({ erro: "erro_interno" }, { status: 500 });
+  } catch (e) {
+    return respostaErroTenant(e);
   }
 }
 
@@ -42,6 +49,13 @@ function lerCampos(body: unknown): CamposPromocao {
 }
 
 export async function POST(req: Request) {
+  let tenant: string;
+  try {
+    tenant = (await resolverTenant(req)).tenant_id;
+  } catch (e) {
+    return respostaErroTenant(e);
+  }
+
   let body: unknown;
   try {
     body = await req.json();
@@ -59,7 +73,7 @@ export async function POST(req: Request) {
   }
 
   try {
-    return NextResponse.json({ promocao: await criarPromocao(campos) });
+    return NextResponse.json({ promocao: await criarPromocao(tenant, campos) });
   } catch {
     return NextResponse.json({ erro: "erro_interno" }, { status: 500 });
   }

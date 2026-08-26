@@ -466,6 +466,43 @@
   transition: color var(--mk-transition);
 }
 
+/* Seletor de clínica. Só existe para conta que atende mais de uma — ver
+   tenant-selector.tsx. Fica ACIMA da navegação de propósito: qual clínica
+   você está vendo muda o significado de todo item abaixo, então precede o
+   menu em vez de se misturar a ele. */
+.tenant-sel {
+  padding: 12px 20px 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.tenant-sel-rotulo {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mk-muted);
+}
+.tenant-sel-campo {
+  width: 100%;
+  height: 33px;
+  padding: 0 8px;
+  border: 1px solid var(--mk-border2);
+  border-radius: var(--mk-radius-sm);
+  /* Campo é claro com borda, nunca cinza preenchido — regra da casa. */
+  background: var(--mk-surface);
+  color: var(--mk-text);
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  transition: border-color var(--mk-transition);
+}
+/* Foco muda a COR DA BORDA. Sem anel, sem brilho. */
+.tenant-sel-campo:focus {
+  outline: none;
+  border-color: var(--mk-accent);
+}
+
 /* O grupo de baixo (status, Configurações, Sair) se separa dos itens de
    operação pela POSIÇÃO — o `.sidebar-nav` cresce e empurra. Sem título de
    seção, sem divisor extra. */

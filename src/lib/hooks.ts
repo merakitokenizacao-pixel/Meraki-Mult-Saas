@@ -1,6 +1,7 @@
 "use client";
 
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { fetchPainel } from "@/lib/api-painel";
 import {
   CONVERSAS_PAGINA,
   getAgendaSlots,
@@ -112,7 +113,7 @@ export function useCatalogoServicos() {
   return useQuery({
     queryKey: ["catalogo-servicos"],
     queryFn: async () => {
-      const r = await fetch("/api/painel/servicos");
+      const r = await fetchPainel("/api/painel/servicos");
       if (!r.ok) throw new Error("Não foi possível carregar os serviços");
       return (await r.json()) as {
         servicos: ServicoCatalogo[];
@@ -138,7 +139,7 @@ export function useFollowUps() {
   return useQuery({
     queryKey: ["follow-ups"],
     queryFn: async () => {
-      const r = await fetch("/api/painel/follow-ups");
+      const r = await fetchPainel("/api/painel/follow-ups");
       if (!r.ok) throw new Error("Não foi possível carregar os follow-ups");
       const j = (await r.json()) as {
         followups: Array<{
@@ -167,7 +168,7 @@ export function useLeadsQueResponderam() {
   return useQuery({
     queryKey: ["leads-ativos"],
     queryFn: async () => {
-      const r = await fetch("/api/painel/leads-ativos");
+      const r = await fetchPainel("/api/painel/leads-ativos");
       if (!r.ok) throw new Error("Não foi possível carregar quem respondeu");
       const j = (await r.json()) as { ids: string[] };
       return new Set(j.ids);

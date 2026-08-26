@@ -7,21 +7,26 @@ import {
   type ServicoCatalogo,
 } from "@/lib/servicos";
 
-// `documentos_lins` e `promocoes` têm RLS ligada e NENHUMA policy: o cliente do
-// navegador recebe zero linhas. Só service role lê — daí a leitura ser
-// server-side, como já acontece com as Promoções.
-// O middleware exige sessão em /api/painel/* (401 sem login).
+// Leitura com service_role, que IGNORA a RLS — daí toda função exigir o
+// tenant, JÁ VALIDADO por `resolverTenant()`. Catálogo e preço são por
+// clínica: sem o filtro, uma veria a tabela de preços da outra.
+//
+// ⚠️ A tabela de catálogo mudou de nome no banco novo (`documentos_lins` →
+// `documentos`) — ver CLAUDE.md, "O código ainda não conhece este banco".
 
 /** Só o que precisa ser lido; `conteudo` é grande e `embedding` é enorme. */
 const COLUNAS = "id, nome, categoria, conteudo, tags";
 /** A base tem 39 documentos; o teto é folga, não limite de negócio. */
 const TETO = 500;
 
-export async function listarCatalogoServicos(): Promise<ServicoCatalogo[]> {
+export async function listarCatalogoServicos(
+  tenant: string
+): Promise<ServicoCatalogo[]> {
   const db = getSupabaseAdmin();
   const { data, error } = await db
     .from("documentos_lins")
     .select(COLUNAS)
+    .eq("tenant_id", tenant)
     // "informacoes" é o documento de como chegar na clínica — não é serviço.
     .neq("categoria", "informacoes")
     .order("categoria", { ascending: true })
@@ -31,11 +36,14 @@ export async function listarCatalogoServicos(): Promise<ServicoCatalogo[]> {
   return (data ?? []).map(montarServico);
 }
 
-export async function listarPromocoesPreco(): Promise<PromocaoPreco[]> {
+export async function listarPromocoesPreco(
+  tenant: string
+): Promise<PromocaoPreco[]> {
   const db = getSupabaseAdmin();
   const { data, error } = await db
     .from("promocoes")
     .select("titulo, valor_promocional")
+    .eq("tenant_id", tenant)
     .eq("ativa", true)
     .order("criado_em", { ascending: false })
     .limit(TETO);

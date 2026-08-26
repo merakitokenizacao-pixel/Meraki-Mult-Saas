@@ -1,13 +1,20 @@
 import { NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
+import { tenantDaVitrine } from "@/lib/tenant-server";
 
 export const dynamic = "force-dynamic";
 
-// Agenda real da LINS, para o visitante do site consultar.
+// Agenda real de UMA clínica, para o visitante do site consultar.
 //
 // É a única coisa desta página que o concorrente não consegue imitar: ele
 // deixa arrastar cartão de mentira, aqui a pessoa consulta a agenda de
 // produção e vê o horário sumir quando ninguém faz aquele procedimento.
+//
+// ⚠️ Rota PÚBLICA com service_role, que ignora a RLS. Qual clínica ela mostra
+// vem de `MERAKI_TENANT_DEMO` — configuração de servidor —, e NUNCA da
+// querystring: um parâmetro deixaria qualquer visitante ler a agenda de
+// qualquer cliente do Meraki trocando uma palavra na URL. Sem a variável, a
+// rota responde "indisponível" em vez de escolher uma clínica sozinha.
 //
 // A DISPONIBILIDADE JÁ É PÚBLICA — qualquer um descobre perguntando à Laura no
 // WhatsApp. O que não pode vazar é QUEM está marcado, e é por isso que a
@@ -61,6 +68,11 @@ export async function GET(req: Request) {
   const url = new URL(req.url);
   const procedimento = (url.searchParams.get("procedimento") ?? "").trim().slice(0, 120);
 
+  const vitrine = await tenantDaVitrine();
+  if (!vitrine) {
+    return NextResponse.json({ erro: "indisponivel" }, { status: 503 });
+  }
+
   try {
     const db = getSupabaseAdmin();
     const hoje = new Date();
@@ -68,12 +80,19 @@ export async function GET(req: Request) {
 
     const [slots, procs] = await Promise.all([
       db.rpc("agenda_slots", {
+        p_tenant: vitrine.tenant_id,
         p_de: diaLocal(hoje),
         p_ate: diaLocal(ate),
         p_duracao_min: 60,
         p_servico: procedimento || null,
       }),
-      db.from("procedimentos").select("nome").eq("ativo", true).order("nome").limit(200),
+      db
+        .from("procedimentos")
+        .select("nome")
+        .eq("tenant_id", vitrine.tenant_id)
+        .eq("ativo", true)
+        .order("nome")
+        .limit(200),
     ]);
     if (slots.error) throw slots.error;
 

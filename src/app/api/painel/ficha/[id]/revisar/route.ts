@@ -1,12 +1,16 @@
 import { NextResponse } from "next/server";
 import { isTokenValido } from "@/lib/ficha";
 import { revisarFicha } from "@/lib/ficha-db";
+import {
+  resolverTenant,
+  respostaErroTenant,
+} from "@/lib/tenant-server";
 
 export const dynamic = "force-dynamic";
 
 // POST /api/painel/ficha/<id>/revisar — marca a ficha como revisada.
 export async function POST(
-  _req: Request,
+  req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
@@ -15,10 +19,13 @@ export async function POST(
   }
 
   try {
-    const ok = await revisarFicha(id);
+    // O id vem da URL. Sem o tenant no WHERE, marcar como revisada a ficha de
+    // outra clínica seria só questão de conhecer o uuid.
+    const { tenant_id } = await resolverTenant(req);
+    const ok = await revisarFicha(tenant_id, id);
     // ok=false: já estava revisada ou não estava preenchida. Idempotente.
     return NextResponse.json({ ok });
-  } catch {
-    return NextResponse.json({ erro: "erro_interno" }, { status: 500 });
+  } catch (e) {
+    return respostaErroTenant(e);
   }
 }

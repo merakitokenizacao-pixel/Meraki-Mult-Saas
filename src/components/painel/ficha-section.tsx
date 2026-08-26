@@ -10,6 +10,7 @@ import {
   type FichaTone,
 } from "@/lib/ficha";
 import type { FichaRespostas, FichaStatus } from "@/types/db";
+import { fetchPainel } from "@/lib/api-painel";
 
 type FichaPainel = {
   id: string;
@@ -45,7 +46,7 @@ export function FichaSection({ leadId }: { leadId: string }) {
     setErro(false);
     (async () => {
       try {
-        const res = await fetch(`/api/painel/ficha?lead_id=${leadId}`);
+        const res = await fetchPainel(`/api/painel/ficha?lead_id=${leadId}`);
         if (!res.ok) throw new Error();
         const json = (await res.json()) as { fichas: FichaPainel[] };
         if (ativo) setFichas(json.fichas);
@@ -121,7 +122,7 @@ function FichaCard({
   async function marcarRevisada() {
     setRevisando(true);
     try {
-      const res = await fetch(`/api/painel/ficha/${ficha.id}/revisar`, {
+      const res = await fetchPainel(`/api/painel/ficha/${ficha.id}/revisar`, {
         method: "POST",
       });
       if (res.ok) onRevisada();

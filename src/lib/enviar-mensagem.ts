@@ -7,6 +7,8 @@
 // OPTIONS; e a URL ficava no bundle, então dava para disparar WhatsApp pela
 // clínica sem login. Saindo do servidor, os três somem de uma vez.
 
+import { fetchPainel } from "@/lib/api-painel";
+
 export class EnvioErro extends Error {}
 
 export async function enviarMensagem(payload: {
@@ -16,7 +18,7 @@ export async function enviarMensagem(payload: {
 }): Promise<{ aviso?: string }> {
   let r: Response;
   try {
-    r = await fetch("/api/painel/enviar-mensagem", {
+    r = await fetchPainel("/api/painel/enviar-mensagem", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),

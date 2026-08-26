@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { EvolutionErro, enviarTexto } from "@/lib/evolution";
+import {
+  resolverTenant,
+  respostaErroTenant,
+} from "@/lib/tenant-server";
 
 export const dynamic = "force-dynamic";
 
@@ -17,6 +21,11 @@ export const dynamic = "force-dynamic";
 // O middleware já exige sessão em /api/painel/* e devolve 401 JSON sem ela.
 
 const LIMITE_TEXTO = 4096; // limite prático do WhatsApp
+
+/** Compara telefone pelo que ele é — dígitos — e não pela formatação. */
+function soDigitos(v: unknown): string {
+  return typeof v === "string" ? v.replace(/[^0-9]/g, "") : "";
+}
 
 export async function POST(req: Request) {
   let body: unknown;
@@ -36,6 +45,46 @@ export async function POST(req: Request) {
   }
   if (mensagem.length > LIMITE_TEXTO) {
     return NextResponse.json({ erro: "mensagem_longa" }, { status: 400 });
+  }
+
+  // O tenant ANTES do envio, de propósito.
+  //
+  // Esta rota manda WhatsApp em nome da clínica e depois grava no histórico.
+  // Se o escopo fosse conferido só na hora de gravar, uma requisição com
+  // lead_id/telefone de outra clínica já teria ENTREGADO a mensagem quando o
+  // erro aparecesse — e mensagem entregue não volta atrás.
+  let tenant: string;
+  try {
+    tenant = (await resolverTenant(req)).tenant_id;
+  } catch (e) {
+    return respostaErroTenant(e);
+  }
+
+  // O lead precisa ser DESTA clínica. `lead_id` e `telefone` vêm do corpo:
+  // sem esta conferência, bastaria um uuid alheio para disparar WhatsApp pelo
+  // número da clínica para o cliente de outra — e o histórico ficaria na
+  // conversa errada.
+  //
+  // Confere também o telefone: os dois campos vêm do cliente e nada obriga
+  // que combinem entre si. Aceitar o par sem casar permitiria usar um lead
+  // válido como passe para mandar mensagem a um número qualquer.
+  try {
+    const db = getSupabaseAdmin();
+    const { data: lead, error } = await db
+      .from("leads")
+      .select("id, telefone")
+      .eq("id", leadId)
+      .eq("tenant_id", tenant)
+      .maybeSingle();
+    if (error) throw error;
+    if (!lead) {
+      return NextResponse.json({ erro: "lead_nao_encontrado" }, { status: 404 });
+    }
+    if (soDigitos(lead.telefone) !== soDigitos(telefone)) {
+      return NextResponse.json({ erro: "telefone_divergente" }, { status: 400 });
+    }
+  } catch {
+    return NextResponse.json({ erro: "erro_interno" }, { status: 500 });
   }
 
   let idExterno: string | null = null;
@@ -60,6 +109,7 @@ export async function POST(req: Request) {
   try {
     const db = getSupabaseAdmin();
     const { error } = await db.from("conversas").insert({
+      tenant_id: tenant,
       lead_id: leadId,
       mensagem,
       origem: "humano",

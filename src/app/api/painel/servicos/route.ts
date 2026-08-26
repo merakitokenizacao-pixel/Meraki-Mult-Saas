@@ -3,6 +3,10 @@ import {
   listarCatalogoServicos,
   listarPromocoesPreco,
 } from "@/lib/servicos-db";
+import {
+  resolverTenant,
+  respostaErroTenant,
+} from "@/lib/tenant-server";
 
 export const dynamic = "force-dynamic";
 
@@ -10,20 +14,22 @@ export const dynamic = "force-dynamic";
 // a Laura consulta no WhatsApp. Se o preço do CRM viesse de outro lugar, a
 // agente diria um valor e a tela mostraria outro.
 //
-// Precisa ser server-side: `documentos_lins` e `promocoes` têm RLS ligada sem
-// policy, então só service role lê. O middleware exige sessão em /api/painel/*.
+// Server-side com service_role, que ignora a RLS — daí o tenant vir de
+// `resolverTenant()`. Catálogo é dado por clínica: sem o filtro, uma veria o
+// preço da outra.
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
+    const { tenant_id } = await resolverTenant(req);
     const [servicos, promocoes] = await Promise.all([
-      listarCatalogoServicos(),
-      listarPromocoesPreco(),
+      listarCatalogoServicos(tenant_id),
+      listarPromocoesPreco(tenant_id),
     ]);
     return NextResponse.json(
       { servicos, promocoes },
       { headers: { "Cache-Control": "no-store" } }
     );
-  } catch {
-    return NextResponse.json({ erro: "erro_interno" }, { status: 500 });
+  } catch (e) {
+    return respostaErroTenant(e);
   }
 }

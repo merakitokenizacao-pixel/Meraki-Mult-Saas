@@ -14,9 +14,10 @@ import {
   type Promocao,
 } from "@/lib/promocao";
 import { PromocaoModal } from "@/components/promocoes/promocao-modal";
+import { fetchPainel } from "@/lib/api-painel";
 
 async function getPromocoes(): Promise<Promocao[]> {
-  const res = await fetch("/api/painel/promocoes");
+  const res = await fetchPainel("/api/painel/promocoes");
   if (!res.ok) throw new Error("falha");
   const j = (await res.json()) as { promocoes: Promocao[] };
   return j.promocoes;
@@ -62,7 +63,7 @@ export function Promocoes() {
   const recarregar = () => qc.invalidateQueries({ queryKey: ["promocoes"] });
 
   async function alternar(p: Promocao) {
-    const res = await fetch(`/api/painel/promocoes/${p.id}`, {
+    const res = await fetchPainel(`/api/painel/promocoes/${p.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ativa: !p.ativa }),

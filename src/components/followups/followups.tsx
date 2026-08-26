@@ -21,9 +21,10 @@ import {
   type Periodo,
   type Tom,
 } from "@/lib/followup";
+import { fetchPainel } from "@/lib/api-painel";
 
 async function getFollowUps(): Promise<FollowUp[]> {
-  const res = await fetch("/api/painel/follow-ups");
+  const res = await fetchPainel("/api/painel/follow-ups");
   if (!res.ok) throw new Error("falha");
   const j = (await res.json()) as { followups: FollowUp[] };
   return j.followups;

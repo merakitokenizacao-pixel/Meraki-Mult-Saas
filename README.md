@@ -29,6 +29,10 @@ Copie `.env.example` para `.env.local` e preencha. São seis, e só essas:
 | `EVOLUTION_API_URL` | painel da Evolution API | **não** |
 | `EVOLUTION_API_KEY` | idem | **não** |
 | `EVOLUTION_INSTANCE` | nome da instância conectada | **não** |
+| `MERAKI_TENANT_DEMO` | slug da clínica que a landing mostra (opcional) | **não** |
+
+`MERAKI_TENANT_DEMO` é opcional: vazia, a agenda da landing responde
+"indisponível" em vez de escolher uma clínica sozinha.
 
 A `anon key` é pública por design do Supabase — quem protege os dados é a RLS.
 A `service_role` **ignora a RLS**: ela nunca leva o prefixo `NEXT_PUBLIC_`, e é

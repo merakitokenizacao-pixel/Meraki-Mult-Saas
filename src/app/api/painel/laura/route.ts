@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
+import {
+  resolverTenant,
+  respostaErroTenant,
+} from "@/lib/tenant-server";
 
 export const dynamic = "force-dynamic";
 
@@ -13,8 +17,12 @@ export const dynamic = "force-dynamic";
 // no navegador significaria baixar tudo — o teto de 1.000 do PostgREST cortaria
 // em silêncio e a conta sairia errada sem avisar (ver `paginar.ts`).
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
+    // Todas as contagens abaixo saem por service_role, que ignora RLS. Sem o
+    // tenant no WHERE, "última resposta da Laura" viria da clínica mais
+    // movimentada, não desta.
+    const { tenant_id } = await resolverTenant(req);
     const db = getSupabaseAdmin();
 
     // `head: true` traz só o total, sem uma única linha no corpo.
@@ -22,6 +30,7 @@ export async function GET() {
       db
         .from("conversas")
         .select("enviado_em")
+        .eq("tenant_id", tenant_id)
         .eq("origem", "agente")
         .order("enviado_em", { ascending: false })
         .limit(1)
@@ -29,6 +38,7 @@ export async function GET() {
       db
         .from("conversas")
         .select("enviado_em")
+        .eq("tenant_id", tenant_id)
         .eq("origem", "cliente")
         .order("enviado_em", { ascending: false })
         .limit(1)
@@ -36,10 +46,21 @@ export async function GET() {
       db
         .from("leads")
         .select("id", { count: "exact", head: true })
+        .eq("tenant_id", tenant_id)
         .eq("ia_pausada", true),
-      db.from("leads").select("id", { count: "exact", head: true }),
-      // Quem pausou: só os pausados, e são dezenas — cabe sem paginar.
-      db.from("leads").select("pausada_por").eq("ia_pausada", true),
+      db
+        .from("leads")
+        .select("id", { count: "exact", head: true })
+        .eq("tenant_id", tenant_id),
+      // Quem pausou. `.limit()` explícito porque o PostgREST corta em 1.000
+      // SEM avisar — e esta consulta vira uma CONTAGEM logo abaixo, então o
+      // corte não encurtaria uma lista, faria o número mentir.
+      db
+        .from("leads")
+        .select("pausada_por")
+        .eq("tenant_id", tenant_id)
+        .eq("ia_pausada", true)
+        .limit(5000),
     ]);
 
     const motivos = new Map<string, number>();
@@ -60,7 +81,7 @@ export async function GET() {
       },
       { headers: { "Cache-Control": "no-store" } }
     );
-  } catch {
-    return NextResponse.json({ erro: "erro_interno" }, { status: 500 });
+  } catch (e) {
+    return respostaErroTenant(e);
   }
 }

@@ -12,6 +12,7 @@ import {
 import { createPortal } from "react-dom";
 import { ChevronDown, Pause, Play, X } from "lucide-react";
 import { textoReal } from "@/lib/midia";
+import { fetchPainel } from "@/lib/api-painel";
 
 // Foto e áudio dentro da conversa.
 //
@@ -57,7 +58,7 @@ export function MidiaProvider({
 
     let vivo = true;
     setCarregando(true);
-    fetch("/api/painel/midia", {
+    fetchPainel("/api/painel/midia", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ caminhos: faltando }),

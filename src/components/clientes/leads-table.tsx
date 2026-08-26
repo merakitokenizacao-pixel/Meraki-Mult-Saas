@@ -92,7 +92,7 @@ export function LeadsTable({
                         <div
                           style={{
                             fontSize: 11,
-                            color: "var(--vx-muted)",
+                            color: "var(--mk-muted)",
                             maxWidth: 160,
                             overflow: "hidden",
                             textOverflow: "ellipsis",

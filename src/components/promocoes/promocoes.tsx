@@ -23,9 +23,9 @@ async function getPromocoes(): Promise<Promocao[]> {
 }
 
 const TOM: Record<string, { bg: string; fg: string }> = {
-  vigente: { bg: "var(--vx-green-bg)", fg: "var(--vx-green)" },
-  vencida: { bg: "var(--vx-surface3)", fg: "var(--vx-muted)" },
-  desativada: { bg: "var(--vx-surface3)", fg: "var(--vx-muted)" },
+  vigente: { bg: "var(--mk-green-bg)", fg: "var(--mk-green)" },
+  vencida: { bg: "var(--mk-surface3)", fg: "var(--mk-muted)" },
+  desativada: { bg: "var(--mk-surface3)", fg: "var(--mk-muted)" },
 };
 const ROTULO: Record<string, string> = {
   vigente: "VIGENTE",
@@ -143,18 +143,18 @@ export function Promocoes() {
         </div>
       ) : error ? (
         <div className="card" style={{ padding: 20 }}>
-          <div style={{ display: "flex", gap: 9, color: "var(--vx-red)", fontSize: 13 }}>
+          <div style={{ display: "flex", gap: 9, color: "var(--mk-red)", fontSize: 13 }}>
             <TriangleAlert size={16} strokeWidth={1.8} style={{ flexShrink: 0, marginTop: 1 }} />
             Não foi possível carregar as promoções.
           </div>
         </div>
       ) : lista.length === 0 ? (
         <div className="card" style={{ padding: 32, textAlign: "center" }}>
-          <Tag size={26} strokeWidth={1.4} style={{ color: "var(--vx-accent)", margin: "0 auto 12px" }} />
+          <Tag size={26} strokeWidth={1.4} style={{ color: "var(--mk-accent)", margin: "0 auto 12px" }} />
           <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>
             Nenhuma promoção cadastrada
           </div>
-          <p style={{ fontSize: 13, color: "var(--vx-muted)", maxWidth: 380, margin: "0 auto 16px", lineHeight: 1.6 }}>
+          <p style={{ fontSize: 13, color: "var(--mk-muted)", maxWidth: 380, margin: "0 auto 16px", lineHeight: 1.6 }}>
             Enquanto não houver promoção ativa, a Laura fala só o preço normal
             dos procedimentos.
           </p>
@@ -195,7 +195,7 @@ export function Promocoes() {
                   {p.anuncio_ativo && (
                     <span
                       className="promo-badge"
-                      style={{ background: "var(--vx-amber-bg)", color: "var(--vx-amber)" }}
+                      style={{ background: "var(--mk-amber-bg)", color: "var(--mk-amber)" }}
                     >
                       <Megaphone size={10} strokeWidth={2.2} /> NO ANÚNCIO
                     </span>

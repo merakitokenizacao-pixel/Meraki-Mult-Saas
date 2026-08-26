@@ -3,7 +3,7 @@
    =============================================================================
    Não importa o globals.css do painel: a landing não deve baixar o CSS do CRM
    nem ser afetada pelo tema escuro que a dona tenha salvo no navegador.
-   Tokens sob o prefixo --s-* (site), sem colisão com os --vx-* (painel) nem
+   Tokens sob o prefixo --s-* (site), sem colisão com os --mk-* (painel) nem
    com os --f-* (ficha da paciente).
    ============================================================================= */
 @import "tailwindcss";

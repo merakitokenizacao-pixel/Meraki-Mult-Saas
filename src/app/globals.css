@@ -16,7 +16,7 @@
   --font-mono: var(--font-jetbrains);
   --font-heading: var(--font-cormorant);
 
-  /* ── Tokens semânticos do shadcn (derivam da paleta VoraX) ── */
+  /* ── Tokens semânticos do shadcn (derivam da paleta Meraki) ── */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -49,63 +49,63 @@
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
 
-  /* ── Paleta da marca VoraX (utilitários: bg-vx-surface, text-vx-accent, …) ── */
-  --color-vx-bg: var(--vx-bg);
-  --color-vx-surface: var(--vx-surface);
-  --color-vx-surface2: var(--vx-surface2);
-  --color-vx-surface3: var(--vx-surface3);
-  --color-vx-border: var(--vx-border);
-  --color-vx-border2: var(--vx-border2);
-  --color-vx-text: var(--vx-text);
-  --color-vx-text2: var(--vx-text2);
-  --color-vx-muted: var(--vx-muted);
-  --color-vx-accent: var(--vx-accent);
-  --color-vx-accent2: var(--vx-accent2);
-  --color-vx-accent-light: var(--vx-accent-light);
-  --color-vx-on-accent: var(--vx-on-accent);
-  --color-vx-gold: var(--vx-gold);
-  --color-vx-gold-light: var(--vx-gold-light);
-  --color-vx-green: var(--vx-green);
-  --color-vx-green-bg: var(--vx-green-bg);
-  --color-vx-amber: var(--vx-amber);
-  --color-vx-amber-bg: var(--vx-amber-bg);
-  --color-vx-red: var(--vx-red);
-  --color-vx-red-bg: var(--vx-red-bg);
-  --color-vx-blue: var(--vx-blue);
-  --color-vx-blue-bg: var(--vx-blue-bg);
-  --color-vx-purple: var(--vx-purple);
-  --color-vx-purple-bg: var(--vx-purple-bg);
+  /* ── Paleta da marca Meraki (utilitários: bg-mk-surface, text-mk-accent, …) ── */
+  --color-mk-bg: var(--mk-bg);
+  --color-mk-surface: var(--mk-surface);
+  --color-mk-surface2: var(--mk-surface2);
+  --color-mk-surface3: var(--mk-surface3);
+  --color-mk-border: var(--mk-border);
+  --color-mk-border2: var(--mk-border2);
+  --color-mk-text: var(--mk-text);
+  --color-mk-text2: var(--mk-text2);
+  --color-mk-muted: var(--mk-muted);
+  --color-mk-accent: var(--mk-accent);
+  --color-mk-accent2: var(--mk-accent2);
+  --color-mk-accent-light: var(--mk-accent-light);
+  --color-mk-on-accent: var(--mk-on-accent);
+  --color-mk-gold: var(--mk-gold);
+  --color-mk-gold-light: var(--mk-gold-light);
+  --color-mk-green: var(--mk-green);
+  --color-mk-green-bg: var(--mk-green-bg);
+  --color-mk-amber: var(--mk-amber);
+  --color-mk-amber-bg: var(--mk-amber-bg);
+  --color-mk-red: var(--mk-red);
+  --color-mk-red-bg: var(--mk-red-bg);
+  --color-mk-blue: var(--mk-blue);
+  --color-mk-blue-bg: var(--mk-blue-bg);
+  --color-mk-purple: var(--mk-purple);
+  --color-mk-purple-bg: var(--mk-purple-bg);
 
   /* Raios e sombras do legacy */
-  --radius-vx-sm: var(--vx-radius-sm);
-  --radius-vx: var(--vx-radius);
-  --radius-vx-lg: var(--vx-radius-lg);
-  --shadow-vx-sm: var(--vx-shadow-sm);
-  --shadow-vx-md: var(--vx-shadow-md);
-  --shadow-vx-lg: var(--vx-shadow-lg);
+  --radius-mk-sm: var(--mk-radius-sm);
+  --radius-mk: var(--mk-radius);
+  --radius-mk-lg: var(--mk-radius-lg);
+  --shadow-mk-sm: var(--mk-shadow-sm);
+  --shadow-mk-md: var(--mk-shadow-md);
+  --shadow-mk-lg: var(--mk-shadow-lg);
 }
 
 /* ── TEMA CLARO (:root) — valores extraídos do legacy ── */
 :root {
-  /* Paleta VoraX */
-  --vx-bg: #ffffff;
-  --vx-surface: #ffffff;
-  --vx-surface2: #f4f4f5;
-  --vx-surface3: #e4e4e7;
-  --vx-border: #e7e5e4;
-  --vx-border2: #d4d4d8;
-  --vx-text: #18181b;
-  --vx-text2: #3f3f46;
+  /* Paleta Meraki */
+  --mk-bg: #ffffff;
+  --mk-surface: #ffffff;
+  --mk-surface2: #f4f4f5;
+  --mk-surface3: #e4e4e7;
+  --mk-border: #e7e5e4;
+  --mk-border2: #d4d4d8;
+  --mk-text: #18181b;
+  --mk-text2: #3f3f46;
   /* 4.83 sobre branco. O #8a8478 de antes dava 3.44 e reprovava no AA — e ele
      era usado em rótulo, subtexto e nota de painel, ou seja, em texto pequeno,
      que é onde a norma menos perdoa. */
-  --vx-muted: #71717a;
-  /* 4.65 de contraste sobre --vx-bg (o #9b7d5a de antes dava 3.55 e reprovava
+  --mk-muted: #71717a;
+  /* 4.65 de contraste sobre --mk-bg (o #9b7d5a de antes dava 3.55 e reprovava
      no AA). Mais escuro E mais saturado: é o que faz o dourado virar tinta em
      vez de afundar num fundo que também é quente. */
-  --vx-accent: #8a6a2f;
-  --vx-accent2: #6e5423;
-  --vx-accent-light: #faf5ea;
+  --mk-accent: #8a6a2f;
+  --mk-accent2: #6e5423;
+  --mk-accent-light: #faf5ea;
   /* Cores do avatar sem foto. Uma cor por pessoa, e o FUNDO é derivado dela
      por color-mix — não um segundo hex fixo.
 
@@ -113,15 +113,15 @@
      escura a 13% e o TEXTO com a clarinha: quase-branco sobre quase-branco,
      1,03 de contraste. Invisível nos dois temas, e sem jeito de consertar sem
      separar os passos por tema — que é o que estes tokens fazem. */
-  --vx-av-1: #8b5e3c;
-  --vx-av-2: #2d6a4f;
-  --vx-av-3: #1a5276;
-  --vx-av-4: #5c4fa0;
-  --vx-av-5: #a8322b;
-  --vx-av-6: #96470a;
+  --mk-av-1: #8b5e3c;
+  --mk-av-2: #2d6a4f;
+  --mk-av-3: #1a5276;
+  --mk-av-4: #5c4fa0;
+  --mk-av-5: #a8322b;
+  --mk-av-6: #96470a;
 
   /* Rampa do dourado — UMA paleta categórica só.
-     Existiam duas concorrentes (--chart-1..5 e --vx-cat-1..5), e era por isso
+     Existiam duas concorrentes (--chart-1..5 e --mk-cat-1..5), e era por isso
      que a linha desenhava em navy enquanto a rosca desenhava em magenta e
      oliva. Agora --chart-* aponta para cá.
 
@@ -132,131 +132,131 @@
      últimos passos ficam abaixo do piso de 3:1 e quase somem no branco. Os
      valores são os do brief; a variante comprimida (que mantém todos acima de
      3:1) está registrada na mensagem do commit. */
-  --vx-cat-1: #8a6a2f;
-  --vx-cat-2: #ab8b4d;
-  --vx-cat-3: #c9ad7c;
-  --vx-cat-4: #e0cdad;
-  --vx-cat-5: #efe4d0;
+  --mk-cat-1: #8a6a2f;
+  --mk-cat-2: #ab8b4d;
+  --mk-cat-3: #c9ad7c;
+  --mk-cat-4: #e0cdad;
+  --mk-cat-5: #efe4d0;
 
-  --vx-gold: #b8955a;
-  --vx-gold-light: #fbf7f0;
-  --vx-green: #3a6b4f;
-  --vx-green-bg: #e8f4ed;
-  --vx-amber: #b5600a;
-  --vx-amber-bg: #fdf0e0;
-  --vx-red: #b03030;
-  --vx-red-bg: #fce8e8;
+  --mk-gold: #b8955a;
+  --mk-gold-light: #fbf7f0;
+  --mk-green: #3a6b4f;
+  --mk-green-bg: #e8f4ed;
+  --mk-amber: #b5600a;
+  --mk-amber-bg: #fdf0e0;
+  --mk-red: #b03030;
+  --mk-red-bg: #fce8e8;
   /* Agenda: hora em que a clínica não atende (fundo + listras). */
-  --vx-fechado-bg: rgba(26, 24, 20, 0.045);
-  --vx-fechado-stripe: rgba(26, 24, 20, 0.07);
-  --vx-blue: #2a5278;
-  --vx-blue-bg: #e8f0f8;
-  --vx-purple: #5c4fa0;
-  --vx-purple-bg: #eeebf8;
-  --vx-shadow-sm: 0 1px 3px rgba(26, 24, 20, 0.05);
-  --vx-shadow-md: 0 6px 20px rgba(26, 24, 20, 0.07);
-  --vx-shadow-lg: 0 16px 48px rgba(26, 24, 20, 0.1);
+  --mk-fechado-bg: rgba(26, 24, 20, 0.045);
+  --mk-fechado-stripe: rgba(26, 24, 20, 0.07);
+  --mk-blue: #2a5278;
+  --mk-blue-bg: #e8f0f8;
+  --mk-purple: #5c4fa0;
+  --mk-purple-bg: #eeebf8;
+  --mk-shadow-sm: 0 1px 3px rgba(26, 24, 20, 0.05);
+  --mk-shadow-md: 0 6px 20px rgba(26, 24, 20, 0.07);
+  --mk-shadow-lg: 0 16px 48px rgba(26, 24, 20, 0.1);
   /* Texto sobre superfície pintada de accent (botão primário, dia selecionado).
      No claro o accent é escuro → texto branco; nos escuros, o inverso. */
-  --vx-on-accent: #ffffff;
+  --mk-on-accent: #ffffff;
   /* A sidebar é sempre escura, mas o TOM acompanha a paleta. */
-  --vx-radius: 8px;
-  --vx-radius-sm: 5px;
-  --vx-radius-lg: 10px;
-  --vx-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --mk-radius: 8px;
+  --mk-radius-sm: 5px;
+  --mk-radius-lg: 10px;
+  --mk-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 
-  /* shadcn ← VoraX */
+  /* shadcn ← Meraki */
   --radius: 0.75rem; /* 12px */
-  --background: var(--vx-bg);
-  --foreground: var(--vx-text);
-  --card: var(--vx-surface);
-  --card-foreground: var(--vx-text);
-  --popover: var(--vx-surface);
-  --popover-foreground: var(--vx-text);
-  --primary: var(--vx-accent2);
+  --background: var(--mk-bg);
+  --foreground: var(--mk-text);
+  --card: var(--mk-surface);
+  --card-foreground: var(--mk-text);
+  --popover: var(--mk-surface);
+  --popover-foreground: var(--mk-text);
+  --primary: var(--mk-accent2);
   --primary-foreground: #ffffff;
-  --secondary: var(--vx-surface2);
-  --secondary-foreground: var(--vx-text);
-  --muted: var(--vx-surface2);
-  --muted-foreground: var(--vx-muted);
-  --accent: var(--vx-accent-light);
-  --accent-foreground: var(--vx-accent);
-  --destructive: var(--vx-red);
-  --border: var(--vx-border);
-  --input: var(--vx-border);
-  --ring: var(--vx-accent);
+  --secondary: var(--mk-surface2);
+  --secondary-foreground: var(--mk-text);
+  --muted: var(--mk-surface2);
+  --muted-foreground: var(--mk-muted);
+  --accent: var(--mk-accent-light);
+  --accent-foreground: var(--mk-accent);
+  --destructive: var(--mk-red);
+  --border: var(--mk-border);
+  --input: var(--mk-border);
+  --ring: var(--mk-accent);
   /* Mesma paleta da rosca — eram duas listas concorrentes. */
-  --chart-1: var(--vx-cat-1);
-  --chart-2: var(--vx-cat-2);
-  --chart-3: var(--vx-cat-3);
-  --chart-4: var(--vx-cat-4);
-  --chart-5: var(--vx-cat-5);
-  --sidebar: var(--vx-surface);
-  --sidebar-foreground: var(--vx-text);
-  --sidebar-primary: var(--vx-accent2);
+  --chart-1: var(--mk-cat-1);
+  --chart-2: var(--mk-cat-2);
+  --chart-3: var(--mk-cat-3);
+  --chart-4: var(--mk-cat-4);
+  --chart-5: var(--mk-cat-5);
+  --sidebar: var(--mk-surface);
+  --sidebar-foreground: var(--mk-text);
+  --sidebar-primary: var(--mk-accent2);
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: var(--vx-accent-light);
-  --sidebar-accent-foreground: var(--vx-accent);
-  --sidebar-border: var(--vx-border);
-  --sidebar-ring: var(--vx-accent);
+  --sidebar-accent: var(--mk-accent-light);
+  --sidebar-accent-foreground: var(--mk-accent);
+  --sidebar-border: var(--mk-border);
+  --sidebar-ring: var(--mk-accent);
 }
 
 /* ── TEMA ESCURO ([data-theme="dark"]) — valores do legacy ── */
 [data-theme="dark"] {
-  --vx-bg: #111009;
-  --vx-surface: #1a1814;
-  --vx-surface2: #222018;
-  --vx-surface3: #2e2b22;
-  --vx-border: #38352a;
-  --vx-border2: #4a4638;
-  --vx-text: #f0ece4;
-  --vx-text2: #c4bfb4;
-  --vx-muted: #8a8478;
-  --vx-accent: #d4af63;
-  --vx-accent2: #e0bd7a;
-  --vx-accent-light: #2a2218;
+  --mk-bg: #111009;
+  --mk-surface: #1a1814;
+  --mk-surface2: #222018;
+  --mk-surface3: #2e2b22;
+  --mk-border: #38352a;
+  --mk-border2: #4a4638;
+  --mk-text: #f0ece4;
+  --mk-text2: #c4bfb4;
+  --mk-muted: #8a8478;
+  --mk-accent: #d4af63;
+  --mk-accent2: #e0bd7a;
+  --mk-accent-light: #2a2218;
   /* Passo claro das cores de avatar: no escuro a cor cheia precisa subir,
      senão ela some no próprio tint. Medido sobre a superfície: 5,6–6,8. */
-  --vx-av-1: #c9a27a;
-  --vx-av-2: #6fc493;
-  --vx-av-3: #7fb3e0;
-  --vx-av-4: #a893e8;
-  --vx-av-5: #e88a84;
-  --vx-av-6: #e0a45c;
+  --mk-av-1: #c9a27a;
+  --mk-av-2: #6fc493;
+  --mk-av-3: #7fb3e0;
+  --mk-av-4: #a893e8;
+  --mk-av-5: #e88a84;
+  --mk-av-6: #e0a45c;
 
   /* Passo escuro da paleta categórica — escolhido, não invertido: a banda de
      luminosidade no escuro é 0,48–0,67, mais estreita que a do claro. */
-  --vx-cat-1: #4d88e0;
-  --vx-cat-2: #cf5aa4;
-  --vx-cat-3: #88991f;
-  --vx-cat-4: #2b9fbd;
-  --vx-cat-5: #d66c4a;
+  --mk-cat-1: #4d88e0;
+  --mk-cat-2: #cf5aa4;
+  --mk-cat-3: #88991f;
+  --mk-cat-4: #2b9fbd;
+  --mk-cat-5: #d66c4a;
 
-  --vx-gold: #c8a060;
-  --vx-gold-light: #261f10;
-  --vx-green: #5ab87a;
-  --vx-green-bg: #182a20;
-  --vx-amber: #e89040;
-  --vx-amber-bg: #28200a;
-  --vx-red: #e05050;
-  --vx-red-bg: #281010;
+  --mk-gold: #c8a060;
+  --mk-gold-light: #261f10;
+  --mk-green: #5ab87a;
+  --mk-green-bg: #182a20;
+  --mk-amber: #e89040;
+  --mk-amber-bg: #28200a;
+  --mk-red: #e05050;
+  --mk-red-bg: #281010;
   /* No escuro, "fechado" ESCURECE a célula (o fundo já é escuro, então
      clarear leria como disponível). As listras clareiam de leve pra dar textura. */
-  --vx-fechado-bg: rgba(0, 0, 0, 0.32);
-  --vx-fechado-stripe: rgba(240, 236, 228, 0.04);
-  --vx-blue: #60a0d0;
-  --vx-blue-bg: #101e2e;
-  --vx-purple: #9080d0;
-  --vx-purple-bg: #1a1630;
-  --vx-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
-  --vx-shadow-md: 0 6px 20px rgba(0, 0, 0, 0.4);
-  --vx-shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.5);
-  --vx-on-accent: #1a1814;
+  --mk-fechado-bg: rgba(0, 0, 0, 0.32);
+  --mk-fechado-stripe: rgba(240, 236, 228, 0.04);
+  --mk-blue: #60a0d0;
+  --mk-blue-bg: #101e2e;
+  --mk-purple: #9080d0;
+  --mk-purple-bg: #1a1630;
+  --mk-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --mk-shadow-md: 0 6px 20px rgba(0, 0, 0, 0.4);
+  --mk-shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.5);
+  --mk-on-accent: #1a1814;
 
   /* Ajustes de contraste shadcn no escuro (btn-primary usa texto escuro) */
-  --primary: var(--vx-accent);
+  --primary: var(--mk-accent);
   --primary-foreground: #1a1814;
-  --sidebar-primary: var(--vx-accent);
+  --sidebar-primary: var(--mk-accent);
   --sidebar-primary-foreground: #1a1814;
 }
 
@@ -268,59 +268,59 @@
    contraste com o cinza frio, fica mais forte do que nos outros dois temas.
    ─────────────────────────────────────────────────────────────────────────── */
 [data-theme="graphite"] {
-  --vx-bg: #0a0a0c;
-  --vx-surface: #131316;
-  --vx-surface2: #1a1a1e;
-  --vx-surface3: #232328;
-  --vx-border: #26262c;
-  --vx-border2: #3a3a42;
-  --vx-text: #f4f4f5;
-  --vx-text2: #c7c7ce;
-  --vx-muted: #85858f;
-  --vx-accent: #d9b45f;
-  --vx-accent2: #e5c477;
-  --vx-accent-light: #211c14;
+  --mk-bg: #0a0a0c;
+  --mk-surface: #131316;
+  --mk-surface2: #1a1a1e;
+  --mk-surface3: #232328;
+  --mk-border: #26262c;
+  --mk-border2: #3a3a42;
+  --mk-text: #f4f4f5;
+  --mk-text2: #c7c7ce;
+  --mk-muted: #85858f;
+  --mk-accent: #d9b45f;
+  --mk-accent2: #e5c477;
+  --mk-accent-light: #211c14;
   /* Passo claro das cores de avatar: no escuro a cor cheia precisa subir,
      senão ela some no próprio tint. Medido sobre a superfície: 5,6–6,8. */
-  --vx-av-1: #c9a27a;
-  --vx-av-2: #6fc493;
-  --vx-av-3: #7fb3e0;
-  --vx-av-4: #a893e8;
-  --vx-av-5: #e88a84;
-  --vx-av-6: #e0a45c;
+  --mk-av-1: #c9a27a;
+  --mk-av-2: #6fc493;
+  --mk-av-3: #7fb3e0;
+  --mk-av-4: #a893e8;
+  --mk-av-5: #e88a84;
+  --mk-av-6: #e0a45c;
 
   /* Passo escuro da paleta categórica — escolhido, não invertido: a banda de
      luminosidade no escuro é 0,48–0,67, mais estreita que a do claro. */
-  --vx-cat-1: #4d88e0;
-  --vx-cat-2: #cf5aa4;
-  --vx-cat-3: #88991f;
-  --vx-cat-4: #2b9fbd;
-  --vx-cat-5: #d66c4a;
+  --mk-cat-1: #4d88e0;
+  --mk-cat-2: #cf5aa4;
+  --mk-cat-3: #88991f;
+  --mk-cat-4: #2b9fbd;
+  --mk-cat-5: #d66c4a;
 
-  --vx-gold: #d9b978;
-  --vx-gold-light: #1e1a11;
+  --mk-gold: #d9b978;
+  --mk-gold-light: #1e1a11;
   /* Cores funcionais saturadas: aqui elas são informação, não decoração. */
-  --vx-green: #3ecf8e;
-  --vx-green-bg: #0e2119;
-  --vx-amber: #f0a83c;
-  --vx-amber-bg: #241a09;
-  --vx-red: #f2565c;
-  --vx-red-bg: #281114;
-  --vx-blue: #5aa2f5;
-  --vx-blue-bg: #0e1a2e;
-  --vx-purple: #a68bfa;
-  --vx-purple-bg: #191333;
+  --mk-green: #3ecf8e;
+  --mk-green-bg: #0e2119;
+  --mk-amber: #f0a83c;
+  --mk-amber-bg: #241a09;
+  --mk-red: #f2565c;
+  --mk-red-bg: #281114;
+  --mk-blue: #5aa2f5;
+  --mk-blue-bg: #0e1a2e;
+  --mk-purple: #a68bfa;
+  --mk-purple-bg: #191333;
   /* "Fechado" escurece (o fundo já é escuro); a listra clareia de leve. */
-  --vx-fechado-bg: rgba(0, 0, 0, 0.36);
-  --vx-fechado-stripe: rgba(244, 244, 245, 0.045);
-  --vx-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
-  --vx-shadow-md: 0 6px 20px rgba(0, 0, 0, 0.55);
-  --vx-shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.65);
-  --vx-on-accent: #12100c;
+  --mk-fechado-bg: rgba(0, 0, 0, 0.36);
+  --mk-fechado-stripe: rgba(244, 244, 245, 0.045);
+  --mk-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
+  --mk-shadow-md: 0 6px 20px rgba(0, 0, 0, 0.55);
+  --mk-shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.65);
+  --mk-on-accent: #12100c;
 
-  --primary: var(--vx-accent);
+  --primary: var(--mk-accent);
   --primary-foreground: #12100c;
-  --sidebar-primary: var(--vx-accent);
+  --sidebar-primary: var(--mk-accent);
   --sidebar-primary-foreground: #12100c;
 }
 
@@ -337,7 +337,7 @@
 
 /* ══════════════════════════════════════════════════════════════
    CHROME DA APLICAÇÃO — sidebar, topbar e nav mobile
-   Portado fielmente do legacy (var(--X) → var(--vx-X)).
+   Portado fielmente do legacy (var(--X) → var(--mk-X)).
    ══════════════════════════════════════════════════════════════ */
 ::-webkit-scrollbar {
   width: 4px;
@@ -347,20 +347,20 @@
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--vx-border2);
+  background: var(--mk-border2);
   border-radius: 2px;
 }
 
 .layout {
   display: flex;
   min-height: 100vh;
-  --vx-sidebar-w: 208px; /* largura da sidebar; muda ao colapsar */
-  --vx-nav-margem: 8px; /* recuo lateral dos itens; a barra do ativo segue ele */
+  --mk-sidebar-w: 208px; /* largura da sidebar; muda ao colapsar */
+  --mk-nav-margem: 8px; /* recuo lateral dos itens; a barra do ativo segue ele */
 }
 
 /* ── SIDEBAR LUXO ── */
 .sidebar {
-  width: var(--vx-sidebar-w, 260px);
+  width: var(--mk-sidebar-w, 260px);
   flex-shrink: 0;
   /* Sem fundo: mesma superfície do conteúdo. Quem separa é a hairline da
      direita, e só ela. */
@@ -372,7 +372,7 @@
   top: 0;
   left: 0;
   overflow: hidden;
-  border-right: 1px solid var(--vx-border);
+  border-right: 1px solid var(--mk-border);
   transition: transform 0.3s ease, width 0.3s ease;
   z-index: 40;
 }
@@ -382,7 +382,7 @@
 .sidebar-logo {
   height: 64px;
   padding: 0 20px;
-  border-bottom: 1px solid var(--vx-border);
+  border-bottom: 1px solid var(--mk-border);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -400,13 +400,13 @@
   border-radius: 6px;
   background: transparent;
   border: 1px solid transparent;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   cursor: pointer;
-  transition: color var(--vx-transition), background var(--vx-transition);
+  transition: color var(--mk-transition), background var(--mk-transition);
 }
 .sidebar-toggle:hover {
-  color: var(--vx-text);
-  background: var(--vx-surface2);
+  color: var(--mk-text);
+  background: var(--mk-surface2);
 }
 /* O wordmark é a única serifa que sobrou na UI — e é de propósito: numa tela
    inteira de grotesca, a forma da letra já basta como assinatura, sem precisar
@@ -415,13 +415,13 @@
   font-family: var(--font-cormorant), serif;
   font-size: 22px;
   font-weight: 400;
-  color: var(--vx-text);
+  color: var(--mk-text);
   letter-spacing: 0.02em;
   line-height: 1;
 }
 .sidebar-logo .logo-mark em {
   font-style: italic;
-  color: var(--vx-gold);
+  color: var(--mk-gold);
 }
 
 /* Sem header de seção. "PRINCIPAL" era um rótulo dourado no meio da mesma
@@ -434,14 +434,14 @@
   gap: 12px;
   height: 33px;
   padding: 0 10px;
-  color: var(--vx-text);
+  color: var(--mk-text);
   cursor: pointer;
-  transition: color var(--vx-transition), background var(--vx-transition);
+  transition: color var(--mk-transition), background var(--mk-transition);
   font-size: 11.5px;
   font-weight: 400;
   letter-spacing: 0;
   /* 33 + 3 = 36px de passo entre itens. */
-  margin: 1.5px var(--vx-nav-margem);
+  margin: 1.5px var(--mk-nav-margem);
   border-radius: 5px;
   position: relative;
   text-decoration: none;
@@ -450,12 +450,12 @@
    continua sendo lido com o mesmo peso, e a única diferença fica sendo o
    estado. */
 .nav-item:hover {
-  background: color-mix(in srgb, var(--vx-accent) 7%, transparent);
+  background: color-mix(in srgb, var(--mk-accent) 7%, transparent);
 }
 /* O ativo troca SÓ de matiz. Sem fundo, sem barra lateral, sem pill: quatro
    sinais simultâneos não somam, dividem. */
 .nav-item.active {
-  color: var(--vx-accent);
+  color: var(--mk-accent);
 }
 .nav-icon {
   width: 16px;
@@ -463,7 +463,7 @@
   flex-shrink: 0;
   /* Segue a cor do item — é o mesmo sinal, não um segundo. */
   color: currentColor;
-  transition: color var(--vx-transition);
+  transition: color var(--mk-transition);
 }
 
 /* O grupo de baixo (status, Configurações, Sair) se separa dos itens de
@@ -503,18 +503,18 @@
   gap: 12px;
   height: 33px;
   padding: 0 10px;
-  margin: 1.5px var(--vx-nav-margem);
+  margin: 1.5px var(--mk-nav-margem);
   border-radius: 5px;
   background: none;
   border: none;
   cursor: pointer;
   font-family: inherit;
   font-size: 11.5px;
-  color: var(--vx-text);
-  transition: color var(--vx-transition), background var(--vx-transition);
+  color: var(--mk-text);
+  transition: color var(--mk-transition), background var(--mk-transition);
 }
 .sidebar-logout:hover {
-  background: color-mix(in srgb, var(--vx-accent) 7%, transparent);
+  background: color-mix(in srgb, var(--mk-accent) 7%, transparent);
 }
 @keyframes pulse-dot {
   0%,
@@ -527,28 +527,28 @@
 }
 .sidebar-status-text {
   font-size: 10px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   letter-spacing: 0;
 }
 
 /* ── MAIN / TOPBAR ── */
 .main {
-  margin-left: var(--vx-sidebar-w, 260px);
+  margin-left: var(--mk-sidebar-w, 260px);
   flex: 1;
   min-width: 0;
   transition: margin-left 0.3s ease;
 }
 .topbar {
   height: 64px;
-  border-bottom: 1px solid var(--vx-border);
+  border-bottom: 1px solid var(--mk-border);
   display: flex;
   align-items: center;
   padding: 0 2.5rem;
-  background: var(--vx-surface);
+  background: var(--mk-surface);
   position: sticky;
   top: 0;
   z-index: 10;
-  transition: background var(--vx-transition), border-color var(--vx-transition);
+  transition: background var(--mk-transition), border-color var(--mk-transition);
 }
 /* Telas que já mostram o próprio título não precisam da barra repetindo-o.
    No mobile ela FICA, porque é onde mora o hambúrguer — some só a partir do
@@ -566,7 +566,7 @@
 .topbar-title {
   font-size: 19.5px;
   font-weight: 600;
-  color: var(--vx-text);
+  color: var(--mk-text);
 }
 /* .topbar-right / .topbar-date / .theme-toggle foram REMOVIDOS: a data e o
    botão de tema saíram da topbar. O tema agora mora em Configurações →
@@ -592,8 +592,8 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background: var(--vx-surface);
-  border-top: 1px solid var(--vx-border);
+  background: var(--mk-surface);
+  border-top: 1px solid var(--mk-border);
   z-index: 50;
   padding: 8px 0 env(safe-area-inset-bottom, 8px);
 }
@@ -608,10 +608,10 @@
   gap: 3px;
   padding: 4px 12px;
   cursor: pointer;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   font-size: 10px;
   font-weight: 500;
-  transition: color var(--vx-transition);
+  transition: color var(--mk-transition);
   letter-spacing: 0.04em;
   text-decoration: none;
 }
@@ -619,13 +619,13 @@
   font-size: 18px;
 }
 .bottom-nav-item.active {
-  color: var(--vx-accent);
+  color: var(--mk-accent);
 }
 .hamburger {
   display: none;
   background: none;
   border: none;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   cursor: pointer;
   font-size: 22px;
   padding: 4px;
@@ -646,7 +646,7 @@
 /* ── Sidebar colapsada (só desktop; no mobile ela é slide-over) ── */
 @media (min-width: 641px) {
   .layout.collapsed {
-    --vx-sidebar-w: 64px;
+    --mk-sidebar-w: 64px;
   }
   .layout.collapsed .sidebar {
     overflow: visible;
@@ -685,18 +685,18 @@
     left: calc(100% + 14px);
     top: 50%;
     transform: translateY(-50%);
-    background: var(--vx-surface);
-    color: var(--vx-text);
-    border: 1px solid var(--vx-border);
+    background: var(--mk-surface);
+    color: var(--mk-text);
+    border: 1px solid var(--mk-border);
     padding: 6px 12px;
     border-radius: 8px;
     font-size: 12px;
     font-weight: 500;
     white-space: nowrap;
-    box-shadow: var(--vx-shadow-md);
+    box-shadow: var(--mk-shadow-md);
     opacity: 0;
     pointer-events: none;
-    transition: opacity var(--vx-transition);
+    transition: opacity var(--mk-transition);
     z-index: 60;
   }
   .layout.collapsed .nav-item:hover::after {
@@ -707,7 +707,7 @@
 /* Tablet / narrow desktop */
 @media (max-width: 1100px) {
   .layout {
-    --vx-sidebar-w: 192px;
+    --mk-sidebar-w: 192px;
   }
   .content {
     padding: 1.75rem;
@@ -729,7 +729,7 @@
     transform: translateX(-100%);
     z-index: 40;
     width: 260px;
-    background: var(--vx-bg);
+    background: var(--mk-bg);
   }
   .sidebar.open {
     transform: translateX(0);
@@ -754,7 +754,7 @@
 
 /* ══════════════════════════════════════════════════════════════
    COMPONENTES COMPARTILHADOS — avatar, badges, loading/empty
-   Portados do legacy (var(--X) → var(--vx-X)).
+   Portados do legacy (var(--X) → var(--mk-X)).
    ══════════════════════════════════════════════════════════════ */
 .avatar {
   border-radius: 50%;
@@ -775,58 +775,58 @@
   flex-shrink: 0;
 }
 .badge-novo {
-  background: var(--vx-blue-bg);
-  color: var(--vx-blue);
+  background: var(--mk-blue-bg);
+  color: var(--mk-blue);
 }
 /* Ciclo de vida do lead (LeadStatusBadge). Ver lib/status.ts. */
 .badge-lead-novo {
-  background: var(--vx-blue-bg);
-  color: var(--vx-blue);
+  background: var(--mk-blue-bg);
+  color: var(--mk-blue);
 }
 .badge-lead-cliente {
-  background: var(--vx-green-bg);
-  color: var(--vx-green);
+  background: var(--mk-green-bg);
+  color: var(--mk-green);
 }
 .badge-lead-inativo {
-  background: var(--vx-surface3);
-  color: var(--vx-muted);
+  background: var(--mk-surface3);
+  color: var(--mk-muted);
 }
 .badge-agendado {
-  background: var(--vx-gold-light);
-  color: var(--vx-gold);
+  background: var(--mk-gold-light);
+  color: var(--mk-gold);
 }
 .badge-convertido,
 .badge-realizado {
-  background: var(--vx-green-bg);
-  color: var(--vx-green);
+  background: var(--mk-green-bg);
+  color: var(--mk-green);
 }
 .badge-cancelado {
-  background: var(--vx-red-bg);
-  color: var(--vx-red);
+  background: var(--mk-red-bg);
+  color: var(--mk-red);
 }
 .badge-confirmado {
-  background: var(--vx-purple-bg);
-  color: var(--vx-purple);
+  background: var(--mk-purple-bg);
+  color: var(--mk-purple);
 }
 .badge-pendente {
-  background: var(--vx-amber-bg);
-  color: var(--vx-amber);
+  background: var(--mk-amber-bg);
+  color: var(--mk-amber);
 }
 .badge-enviando {
-  background: var(--vx-amber-bg);
-  color: var(--vx-amber);
+  background: var(--mk-amber-bg);
+  color: var(--mk-amber);
 }
 .badge-concluida {
-  background: var(--vx-green-bg);
-  color: var(--vx-green);
+  background: var(--mk-green-bg);
+  color: var(--mk-green);
 }
 .badge-rascunho {
-  background: var(--vx-surface3);
-  color: var(--vx-muted);
+  background: var(--mk-surface3);
+  color: var(--mk-muted);
 }
 .badge-pausada {
-  background: var(--vx-blue-bg);
-  color: var(--vx-blue);
+  background: var(--mk-blue-bg);
+  color: var(--mk-blue);
 }
 
 .loading {
@@ -834,7 +834,7 @@
   align-items: center;
   justify-content: center;
   padding: 3rem;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   gap: 10px;
   font-size: 12px;
   letter-spacing: 0.05em;
@@ -842,8 +842,8 @@
 .spinner {
   width: 16px;
   height: 16px;
-  border: 1.5px solid var(--vx-border2);
-  border-top-color: var(--vx-accent);
+  border: 1.5px solid var(--mk-border2);
+  border-top-color: var(--mk-accent);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -855,7 +855,7 @@
 .empty {
   text-align: center;
   padding: 3rem;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   font-size: 13px;
 }
 .empty-icon {
@@ -866,7 +866,7 @@
 }
 
 /* ══════════════════════════════════════════════════════════════
-   DASHBOARD (Visão geral) — portado do legacy (var(--X) → var(--vx-X))
+   DASHBOARD (Visão geral) — portado do legacy (var(--X) → var(--mk-X))
    ══════════════════════════════════════════════════════════════ */
 @keyframes fadeUp {
   from {
@@ -902,23 +902,23 @@
   gap: 10px;
   min-height: 94px;
   padding: 13px 16px;
-  border: 1px solid var(--vx-border);
+  border: 1px solid var(--mk-border);
   border-radius: 7px;
-  background: var(--vx-bg);
-  transition: border-color var(--vx-transition);
+  background: var(--mk-bg);
+  transition: border-color var(--mk-transition);
 }
 .metric-label {
   font-size: 11.5px;
   font-weight: 500;
   line-height: 1.25;
-  color: var(--vx-text);
+  color: var(--mk-text);
 }
 .metric-value {
   font-size: 20px;
   font-weight: 600;
   line-height: 1.22;
   letter-spacing: 0;
-  color: var(--vx-text);
+  color: var(--mk-text);
   font-variant-numeric: tabular-nums;
 }
 /* O "%" não é dígito: em 30px ele domina o número. */
@@ -926,12 +926,12 @@
   margin-left: 1px;
   font-size: 0.62em;
   font-weight: 500;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 .metric-sub {
   margin-top: 3px;
   font-size: 10px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 
 /* ── Cards / grids ── */
@@ -947,11 +947,11 @@
   gap: 20px;
 }
 .card {
-  background: var(--vx-bg);
-  border: 1px solid var(--vx-border);
+  background: var(--mk-bg);
+  border: 1px solid var(--mk-border);
   border-radius: 7px;
   padding: 13px 16px 16px;
-  transition: border-color var(--vx-transition);
+  transition: border-color var(--mk-transition);
 }
 .card-header {
   display: flex;
@@ -963,17 +963,17 @@
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 0;
-  color: var(--vx-text);
+  color: var(--mk-text);
 }
 .card-action {
   font-size: 11px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   cursor: pointer;
   transition: color 0.15s;
   font-weight: 600;
 }
 .card-action:hover {
-  color: var(--vx-text);
+  color: var(--mk-text);
 }
 .chart-container {
   position: relative;
@@ -1003,18 +1003,18 @@
 }
 .funnel-label {
   font-size: 11.5px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   font-weight: 400;
 }
 .funnel-count {
   font-size: 15px;
   font-weight: 600;
-  color: var(--vx-text);
+  color: var(--mk-text);
   font-variant-numeric: tabular-nums;
 }
 .funnel-track {
   height: 2px;
-  background: var(--vx-surface3);
+  background: var(--mk-surface3);
   border-radius: 1px;
   overflow: hidden;
 }
@@ -1025,7 +1025,7 @@
 }
 .funnel-pct {
   font-size: 10px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   text-align: right;
   font-family: var(--font-jetbrains), monospace;
 }
@@ -1041,14 +1041,14 @@
   align-items: center;
   gap: 14px;
   padding: 12px 14px;
-  border-radius: var(--vx-radius);
+  border-radius: var(--mk-radius);
   border: 1px solid transparent;
   cursor: pointer;
-  transition: all var(--vx-transition);
+  transition: all var(--mk-transition);
 }
 .lead-item:hover {
-  background: var(--vx-surface2);
-  border-color: var(--vx-border);
+  background: var(--mk-surface2);
+  border-color: var(--mk-border);
 }
 .lead-info {
   flex: 1;
@@ -1063,7 +1063,7 @@
 }
 .lead-meta {
   font-size: 11px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   margin-top: 2px;
 }
 
@@ -1072,31 +1072,31 @@
    (viraram a caixinha de intervalo). `.filter-btn` FICA: os modais de Agenda e
    Campanhas ainda usam, com wrapper próprio. */
 .filter-btn {
-  background: var(--vx-surface);
-  border: 1px solid var(--vx-border);
-  color: var(--vx-muted);
+  background: var(--mk-surface);
+  border: 1px solid var(--mk-border);
+  color: var(--mk-muted);
   padding: 6px 16px;
   border-radius: 20px;
   font-size: 11px;
   font-weight: 500;
   cursor: pointer;
-  transition: all var(--vx-transition);
+  transition: all var(--mk-transition);
   font-family: var(--font-inter), sans-serif;
   letter-spacing: 0.04em;
 }
 .filter-btn:hover {
-  border-color: var(--vx-border2);
-  color: var(--vx-text2);
-  background: var(--vx-surface2);
+  border-color: var(--mk-border2);
+  color: var(--mk-text2);
+  background: var(--mk-surface2);
 }
 .filter-btn.active {
-  background: var(--vx-accent2);
-  border-color: var(--vx-accent2);
-  color: var(--vx-on-accent);
+  background: var(--mk-accent2);
+  border-color: var(--mk-accent2);
+  color: var(--mk-on-accent);
 }
 [data-mode="dark"] .filter-btn.active {
-  background: var(--vx-accent);
-  border-color: var(--vx-accent);
+  background: var(--mk-accent);
+  border-color: var(--mk-accent);
 }
 
 /* ── Responsivo do dashboard ── */
@@ -1121,7 +1121,7 @@
 
 /* ══════════════════════════════════════════════════════════════
    CLIENTES — search bar, tabela, modal de detalhe e bolhas de msg
-   Portado do legacy (var(--X) → var(--vx-X)).
+   Portado do legacy (var(--X) → var(--mk-X)).
    ══════════════════════════════════════════════════════════════ */
 @keyframes fadeIn {
   from {
@@ -1148,26 +1148,26 @@
   align-items: center;
   gap: 8px;
   height: 33px;
-  background: var(--vx-surface);
-  border: 1px solid var(--vx-border2);
+  background: var(--mk-surface);
+  border: 1px solid var(--mk-border2);
   border-radius: 5px;
   padding: 0 10px;
-  transition: border-color var(--vx-transition);
+  transition: border-color var(--mk-transition);
 }
 .search-bar:focus-within {
-  border-color: var(--vx-accent);
+  border-color: var(--mk-accent);
 }
 .search-bar input {
   flex: 1;
   background: none;
   border: none;
   outline: none;
-  color: var(--vx-text);
+  color: var(--mk-text);
   font-size: 13px;
   font-family: var(--font-inter), sans-serif;
 }
 .search-bar input::placeholder {
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 
 /* ── Tabela (escopo .table-wrap para não vazar em outras tabelas) ── */
@@ -1182,25 +1182,25 @@
   text-align: left;
   padding: 10px 16px;
   font-size: 11px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   font-weight: 600;
-  border-bottom: 1px solid var(--vx-border);
-  background: var(--vx-surface);
+  border-bottom: 1px solid var(--mk-border);
+  background: var(--mk-surface);
 }
 .table-wrap tbody tr {
-  border-bottom: 1px solid var(--vx-border);
-  transition: background var(--vx-transition);
+  border-bottom: 1px solid var(--mk-border);
+  transition: background var(--mk-transition);
   cursor: pointer;
 }
 .table-wrap tbody tr:hover {
-  background: var(--vx-surface2);
+  background: var(--mk-surface2);
 }
 .table-wrap tbody td {
   padding: 14px 16px;
   font-size: 13px;
 }
 .table-wrap tbody td.muted {
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   font-family: var(--font-jetbrains), monospace;
   font-size: 11px;
 }
@@ -1222,8 +1222,8 @@
   animation: fadeIn 0.2s ease;
 }
 .modal {
-  background: var(--vx-surface);
-  border: 1px solid var(--vx-border);
+  background: var(--mk-surface);
+  border: 1px solid var(--mk-border);
   /* 8px: canto redondo faz o modal parecer cartaz. Formulário pede cara de
      ficha de trabalho. */
   border-radius: 8px;
@@ -1232,16 +1232,16 @@
   overflow-y: auto;
   padding: 1.5rem;
   position: relative;
-  box-shadow: var(--vx-shadow-lg);
+  box-shadow: var(--mk-shadow-lg);
   animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .modal-close {
   position: absolute;
   top: 1.25rem;
   right: 1.25rem;
-  background: var(--vx-surface2);
-  border: 1px solid var(--vx-border);
-  color: var(--vx-muted);
+  background: var(--mk-surface2);
+  border: 1px solid var(--mk-border);
+  color: var(--mk-muted);
   width: 30px;
   height: 30px;
   border-radius: 8px;
@@ -1250,11 +1250,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all var(--vx-transition);
+  transition: all var(--mk-transition);
 }
 .modal-close:hover {
-  background: var(--vx-surface3);
-  color: var(--vx-text);
+  background: var(--mk-surface3);
+  color: var(--mk-text);
 }
 .modal-name {
   font-size: 18px;
@@ -1263,16 +1263,16 @@
 }
 .modal-phone {
   font-size: 12px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   font-family: var(--font-jetbrains), monospace;
 }
 .modal-section {
   font-size: 11px;
   font-weight: 600;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   margin: 1.25rem 0 10px;
   padding-bottom: 8px;
-  border-bottom: 1px solid var(--vx-border);
+  border-bottom: 1px solid var(--mk-border);
 }
 @media (max-width: 640px) {
   .modal {
@@ -1308,25 +1308,25 @@
   white-space: pre-wrap;
 }
 .msg-bubble.cliente .msg-text {
-  background: var(--vx-surface);
-  border: 1px solid var(--vx-border);
-  color: var(--vx-text);
+  background: var(--mk-surface);
+  border: 1px solid var(--mk-border);
+  color: var(--mk-text);
   border-radius: 4px 16px 16px 16px;
 }
 .msg-bubble.agente .msg-text {
-  background: var(--vx-accent);
-  color: var(--vx-on-accent);
+  background: var(--mk-accent);
+  color: var(--mk-on-accent);
   border-radius: 16px 4px 16px 16px;
   border: 1px solid transparent;
 }
 [data-mode="dark"] .msg-bubble.agente .msg-text {
-  background: var(--vx-accent-light);
-  color: var(--vx-accent);
-  border-color: var(--vx-accent);
+  background: var(--mk-accent-light);
+  color: var(--mk-accent);
+  border-color: var(--mk-accent);
 }
 .msg-time {
   font-size: 10px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   margin-top: 4px;
   font-family: var(--font-jetbrains), monospace;
   padding: 0 2px;
@@ -1341,19 +1341,19 @@
 
 /* ══════════════════════════════════════════════════════════════
    BOTÕES E FORMULÁRIOS COMPARTILHADOS (btn-primary, form-*)
-   Portado do legacy (var(--X) → var(--vx-X)).
+   Portado do legacy (var(--X) → var(--mk-X)).
    ══════════════════════════════════════════════════════════════ */
 .btn-primary {
-  background: var(--vx-accent2);
+  background: var(--mk-accent2);
   border: none;
-  color: var(--vx-on-accent);
+  color: var(--mk-on-accent);
   height: 33px;
   padding: 0 13px;
   border-radius: 5px;
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
-  transition: background var(--vx-transition);
+  transition: background var(--mk-transition);
   font-family: var(--font-inter), sans-serif;
   letter-spacing: 0;
 }
@@ -1362,13 +1362,13 @@
   transform: translateY(-1px);
 }
 [data-mode="dark"] .btn-primary {
-  background: var(--vx-accent);
+  background: var(--mk-accent);
 }
 .form-label {
   display: block;
   font-size: 11px;
   font-weight: 600;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   margin-bottom: 6px;
 }
 .form-input {
@@ -1376,19 +1376,19 @@
   height: 33px;
   /* Branco com borda, como no modal: campo preenchido de cinza lê como
      desabilitado. */
-  background: var(--vx-surface);
-  border: 1px solid var(--vx-border2);
-  border-radius: var(--vx-radius-sm);
+  background: var(--mk-surface);
+  border: 1px solid var(--mk-border2);
+  border-radius: var(--mk-radius-sm);
   padding: 0 10px;
-  color: var(--vx-text);
+  color: var(--mk-text);
   font-size: 12.5px;
   font-family: var(--font-inter), sans-serif;
   outline: none;
-  transition: border-color var(--vx-transition);
+  transition: border-color var(--mk-transition);
 }
 .form-input:focus {
-  border-color: var(--vx-accent);
-  background: var(--vx-surface);
+  border-color: var(--mk-accent);
+  background: var(--mk-surface);
 }
 textarea.form-input {
   resize: vertical;
@@ -1401,7 +1401,7 @@ select.form-input {
 
 /* ══════════════════════════════════════════════════════════════
    AGENDA — grade semanal (horas × dias) com eventos
-   Portado do legacy (var(--X) → var(--vx-X)).
+   Portado do legacy (var(--X) → var(--mk-X)).
    ══════════════════════════════════════════════════════════════ */
 .agenda-header {
   display: flex;
@@ -1417,9 +1417,9 @@ select.form-input {
   gap: 10px;
 }
 .agenda-arrow {
-  background: var(--vx-surface);
-  border: 1px solid var(--vx-border);
-  color: var(--vx-muted);
+  background: var(--mk-surface);
+  border: 1px solid var(--mk-border);
+  color: var(--mk-muted);
   width: 32px;
   height: 32px;
   border-radius: 50%;
@@ -1428,17 +1428,17 @@ select.form-input {
   align-items: center;
   justify-content: center;
   font-size: 16px;
-  transition: all var(--vx-transition);
+  transition: all var(--mk-transition);
 }
 .agenda-arrow:hover {
-  background: var(--vx-surface2);
-  color: var(--vx-text);
-  border-color: var(--vx-border2);
+  background: var(--mk-surface2);
+  color: var(--mk-text);
+  border-color: var(--mk-border2);
 }
 .agenda-month {
   font-size: 16px;
   font-weight: 600;
-  color: var(--vx-text);
+  color: var(--mk-text);
   margin-left: 8px;
   text-transform: capitalize;
 }
@@ -1451,15 +1451,15 @@ select.form-input {
   min-width: 900px;
 }
 .agenda-corner {
-  background: var(--vx-surface);
-  border-bottom: 1px solid var(--vx-border);
-  border-right: 1px solid var(--vx-border);
+  background: var(--mk-surface);
+  border-bottom: 1px solid var(--mk-border);
+  border-right: 1px solid var(--mk-border);
   height: 64px;
 }
 .agenda-day-head {
-  background: var(--vx-surface);
-  border-bottom: 1px solid var(--vx-border);
-  border-right: 1px solid var(--vx-border);
+  background: var(--mk-surface);
+  border-bottom: 1px solid var(--mk-border);
+  border-right: 1px solid var(--mk-border);
   padding: 12px 8px;
   text-align: center;
   display: flex;
@@ -1473,21 +1473,21 @@ select.form-input {
 }
 .agenda-weekday {
   font-size: 11px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   font-weight: 500;
 }
 .agenda-daynum {
   font-size: 16px;
   font-weight: 600;
-  color: var(--vx-text);
+  color: var(--mk-text);
   line-height: 1;
   font-variant-numeric: tabular-nums;
 }
 .agenda-day-head.today .agenda-daynum {
-  color: var(--vx-accent);
+  color: var(--mk-accent);
   width: 36px;
   height: 36px;
-  background: var(--vx-accent-light);
+  background: var(--mk-accent-light);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -1495,16 +1495,16 @@ select.form-input {
   font-size: 16px;
 }
 .agenda-day-head.today .agenda-weekday {
-  color: var(--vx-accent);
+  color: var(--mk-accent);
 }
 .agenda-hour {
-  background: var(--vx-surface);
-  border-right: 1px solid var(--vx-border);
-  border-top: 1px solid var(--vx-border);
+  background: var(--mk-surface);
+  border-right: 1px solid var(--mk-border);
+  border-top: 1px solid var(--mk-border);
   padding: 4px 8px 0;
   height: 60px;
   font-size: 10px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   font-family: var(--font-jetbrains), monospace;
   text-align: right;
   position: relative;
@@ -1513,22 +1513,22 @@ select.form-input {
   position: absolute;
   top: -7px;
   right: 8px;
-  background: var(--vx-surface);
+  background: var(--mk-surface);
   padding: 0 4px;
 }
 .agenda-cell {
-  border-right: 1px solid var(--vx-border);
-  border-top: 1px solid var(--vx-border);
+  border-right: 1px solid var(--mk-border);
+  border-top: 1px solid var(--mk-border);
   height: 60px;
   position: relative;
   cursor: pointer;
-  transition: background var(--vx-transition);
+  transition: background var(--mk-transition);
 }
 .agenda-cell:last-child {
   border-right: none;
 }
 .agenda-cell:hover {
-  background: var(--vx-surface2);
+  background: var(--mk-surface2);
 }
 .agenda-cell.today {
   background: rgba(155, 125, 90, 0.03);
@@ -1544,19 +1544,19 @@ select.form-input {
 .agenda-cell.fechado.today,
 .agenda-cell.fechado:hover {
   cursor: not-allowed;
-  background-color: var(--vx-fechado-bg);
+  background-color: var(--mk-fechado-bg);
   background-image: repeating-linear-gradient(
     45deg,
     transparent 0 6px,
-    var(--vx-fechado-stripe) 6px 7px
+    var(--mk-fechado-stripe) 6px 7px
   );
 }
 .agenda-cell.lotado {
   cursor: not-allowed;
-  background: var(--vx-red-bg);
+  background: var(--mk-red-bg);
 }
 .agenda-cell.lotado:hover {
-  background: var(--vx-red-bg);
+  background: var(--mk-red-bg);
 }
 /* Motivo do bloqueio, escrito uma vez por bloco (não em toda célula). */
 .agenda-fechado-label {
@@ -1567,7 +1567,7 @@ select.form-input {
   z-index: 1;
   font-size: 11px;
   font-weight: 600;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   opacity: 0.75;
   line-height: 1.2;
   pointer-events: none;
@@ -1583,11 +1583,11 @@ select.form-input {
   font-size: 9px;
   font-weight: 500;
   letter-spacing: 0.02em;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   pointer-events: none;
 }
 .agenda-cell.lotado .agenda-vagas {
-  color: var(--vx-red);
+  color: var(--mk-red);
   font-weight: 700;
 }
 
@@ -1595,13 +1595,13 @@ select.form-input {
   position: absolute;
   left: 3px;
   right: 3px;
-  background: var(--vx-accent-light);
-  border-left: 2px solid var(--vx-border2);
+  background: var(--mk-accent-light);
+  border-left: 2px solid var(--mk-border2);
   border-radius: 4px;
   padding: 4px 8px;
   cursor: pointer;
   overflow: hidden;
-  transition: all var(--vx-transition);
+  transition: all var(--mk-transition);
   z-index: 2;
 }
 .agenda-event:hover {
@@ -1611,14 +1611,14 @@ select.form-input {
 .agenda-event-time {
   font-size: 10px;
   font-family: var(--font-jetbrains), monospace;
-  color: var(--vx-text2);
+  color: var(--mk-text2);
   font-weight: 500;
   line-height: 1.2;
 }
 .agenda-event-name {
   font-size: 11px;
   font-weight: 500;
-  color: var(--vx-text);
+  color: var(--mk-text);
   line-height: 1.3;
   margin-top: 2px;
   white-space: nowrap;
@@ -1627,7 +1627,7 @@ select.form-input {
 }
 .agenda-event-service {
   font-size: 10px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   line-height: 1.3;
   margin-top: 1px;
   white-space: nowrap;
@@ -1635,33 +1635,33 @@ select.form-input {
   text-overflow: ellipsis;
 }
 .agenda-event.pendente {
-  background: var(--vx-amber-bg);
-  border-left-color: var(--vx-amber);
+  background: var(--mk-amber-bg);
+  border-left-color: var(--mk-amber);
 }
 .agenda-event.pendente .agenda-event-time {
-  color: var(--vx-amber);
+  color: var(--mk-amber);
 }
 .agenda-event.confirmado {
-  background: var(--vx-purple-bg);
-  border-left-color: var(--vx-purple);
+  background: var(--mk-purple-bg);
+  border-left-color: var(--mk-purple);
 }
 .agenda-event.confirmado .agenda-event-time {
-  color: var(--vx-purple);
+  color: var(--mk-purple);
 }
 .agenda-event.realizado {
-  background: var(--vx-green-bg);
-  border-left-color: var(--vx-green);
+  background: var(--mk-green-bg);
+  border-left-color: var(--mk-green);
 }
 .agenda-event.realizado .agenda-event-time {
-  color: var(--vx-green);
+  color: var(--mk-green);
 }
 .agenda-event.cancelado {
-  background: var(--vx-red-bg);
-  border-left-color: var(--vx-red);
+  background: var(--mk-red-bg);
+  border-left-color: var(--mk-red);
   opacity: 0.6;
 }
 .agenda-event.cancelado .agenda-event-time {
-  color: var(--vx-red);
+  color: var(--mk-red);
 }
 .agenda-event.cancelado .agenda-event-name {
   text-decoration: line-through;
@@ -1671,7 +1671,7 @@ select.form-input {
   left: 0;
   right: 0;
   height: 2px;
-  background: var(--vx-red);
+  background: var(--mk-red);
   z-index: 4;
   pointer-events: none;
 }
@@ -1683,7 +1683,7 @@ select.form-input {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: var(--vx-red);
+  background: var(--mk-red);
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -1710,9 +1710,9 @@ select.form-input {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: var(--vx-surface);
-  border: 1px solid var(--vx-border);
-  color: var(--vx-text2);
+  background: var(--mk-surface);
+  border: 1px solid var(--mk-border);
+  color: var(--mk-text2);
   padding: 7px 16px;
   border-radius: 20px;
   font-size: 12px;
@@ -1720,14 +1720,14 @@ select.form-input {
   cursor: pointer;
   font-family: var(--font-inter), sans-serif;
   letter-spacing: 0.04em;
-  transition: all var(--vx-transition);
+  transition: all var(--mk-transition);
 }
 .date-filter-trigger:hover {
-  border-color: var(--vx-border2);
-  background: var(--vx-surface2);
+  border-color: var(--mk-border2);
+  background: var(--mk-surface2);
 }
 .date-filter-trigger .chev {
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   transition: transform 0.2s;
 }
 .date-filter-trigger.open .chev {
@@ -1739,10 +1739,10 @@ select.form-input {
   right: 0;
   z-index: 30;
   min-width: 160px;
-  background: var(--vx-surface);
-  border: 1px solid var(--vx-border);
+  background: var(--mk-surface);
+  border: 1px solid var(--mk-border);
   border-radius: 12px;
-  box-shadow: var(--vx-shadow-md);
+  box-shadow: var(--mk-shadow-md);
   padding: 6px;
   display: flex;
   flex-direction: column;
@@ -1753,19 +1753,19 @@ select.form-input {
   text-align: left;
   background: transparent;
   border: none;
-  color: var(--vx-text);
+  color: var(--mk-text);
   padding: 8px 12px;
   border-radius: 8px;
   font-size: 13px;
   cursor: pointer;
   font-family: var(--font-inter), sans-serif;
-  transition: background var(--vx-transition);
+  transition: background var(--mk-transition);
 }
 .date-filter-item:hover {
-  background: var(--vx-surface2);
+  background: var(--mk-surface2);
 }
 .date-filter-item.active {
-  color: var(--vx-accent);
+  color: var(--mk-accent);
   font-weight: 600;
 }
 
@@ -1773,18 +1773,18 @@ select.form-input {
 .agenda-month-grid {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
-  border-top: 1px solid var(--vx-border);
-  border-left: 1px solid var(--vx-border);
+  border-top: 1px solid var(--mk-border);
+  border-left: 1px solid var(--mk-border);
 }
 .agenda-mday-head {
   padding: 10px 8px;
   text-align: center;
   font-size: 11px;
   font-weight: 600;
-  color: var(--vx-muted);
-  background: var(--vx-surface);
-  border-right: 1px solid var(--vx-border);
-  border-bottom: 1px solid var(--vx-border);
+  color: var(--mk-muted);
+  background: var(--mk-surface);
+  border-right: 1px solid var(--mk-border);
+  border-bottom: 1px solid var(--mk-border);
 }
 .agenda-mcell {
   min-height: 104px;
@@ -1793,28 +1793,28 @@ select.form-input {
   flex-direction: column;
   gap: 4px;
   cursor: pointer;
-  border-right: 1px solid var(--vx-border);
-  border-bottom: 1px solid var(--vx-border);
-  transition: background var(--vx-transition);
+  border-right: 1px solid var(--mk-border);
+  border-bottom: 1px solid var(--mk-border);
+  transition: background var(--mk-transition);
 }
 .agenda-mcell:hover {
-  background: var(--vx-surface2);
+  background: var(--mk-surface2);
 }
 .agenda-mcell.out {
-  background: var(--vx-bg);
+  background: var(--mk-bg);
 }
 .agenda-mday-num {
   font-family: var(--font-jetbrains), monospace;
   font-size: 12px;
   font-weight: 500;
-  color: var(--vx-text);
+  color: var(--mk-text);
 }
 .agenda-mcell.out .agenda-mday-num {
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   opacity: 0.5;
 }
 .agenda-mcell.today .agenda-mday-num {
-  color: var(--vx-accent);
+  color: var(--mk-accent);
   font-weight: 700;
 }
 .agenda-mevents {
@@ -1828,35 +1828,35 @@ select.form-input {
   line-height: 1.4;
   padding: 2px 6px;
   border-radius: 4px;
-  border-left: 2px solid var(--vx-border2);
-  background: var(--vx-accent-light);
-  color: var(--vx-text);
+  border-left: 2px solid var(--mk-border2);
+  background: var(--mk-accent-light);
+  color: var(--mk-text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   cursor: pointer;
 }
 .agenda-mevent.pendente {
-  background: var(--vx-amber-bg);
-  border-left-color: var(--vx-amber);
+  background: var(--mk-amber-bg);
+  border-left-color: var(--mk-amber);
 }
 .agenda-mevent.confirmado {
-  background: var(--vx-purple-bg);
-  border-left-color: var(--vx-purple);
+  background: var(--mk-purple-bg);
+  border-left-color: var(--mk-purple);
 }
 .agenda-mevent.realizado {
-  background: var(--vx-green-bg);
-  border-left-color: var(--vx-green);
+  background: var(--mk-green-bg);
+  border-left-color: var(--mk-green);
 }
 .agenda-mevent.cancelado {
-  background: var(--vx-red-bg);
-  border-left-color: var(--vx-red);
+  background: var(--mk-red-bg);
+  border-left-color: var(--mk-red);
   opacity: 0.6;
   text-decoration: line-through;
 }
 .agenda-mmore {
   font-size: 10px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   padding: 0 6px;
 }
 
@@ -1871,11 +1871,11 @@ select.form-input {
   cursor: text;
 }
 .lead-combo-control:focus-within {
-  border-color: var(--vx-accent);
-  background: var(--vx-surface);
+  border-color: var(--mk-accent);
+  background: var(--mk-surface);
 }
 .lead-combo-icon {
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   flex-shrink: 0;
 }
 .lead-combo-control input {
@@ -1884,24 +1884,24 @@ select.form-input {
   background: none;
   border: none;
   outline: none;
-  color: var(--vx-text);
+  color: var(--mk-text);
   font-size: 13px;
   font-family: var(--font-inter), sans-serif;
 }
 .lead-combo-control input::placeholder {
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 .lead-combo-clear {
   display: flex;
   background: none;
   border: none;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   cursor: pointer;
   flex-shrink: 0;
-  transition: color var(--vx-transition);
+  transition: color var(--mk-transition);
 }
 .lead-combo-clear:hover {
-  color: var(--vx-text);
+  color: var(--mk-text);
 }
 .lead-combo-menu {
   position: absolute;
@@ -1911,10 +1911,10 @@ select.form-input {
   z-index: 40;
   max-height: 240px;
   overflow-y: auto;
-  background: var(--vx-surface);
-  border: 1px solid var(--vx-border);
-  border-radius: var(--vx-radius-sm);
-  box-shadow: var(--vx-shadow-md);
+  background: var(--mk-surface);
+  border: 1px solid var(--mk-border);
+  border-radius: var(--mk-radius-sm);
+  box-shadow: var(--mk-shadow-md);
   padding: 4px;
   display: flex;
   flex-direction: column;
@@ -1933,28 +1933,28 @@ select.form-input {
   padding: 8px 10px;
   border-radius: 6px;
   font-family: var(--font-inter), sans-serif;
-  transition: background var(--vx-transition);
+  transition: background var(--mk-transition);
 }
 .lead-combo-item:hover {
-  background: var(--vx-surface2);
+  background: var(--mk-surface2);
 }
 .lead-combo-item.active {
-  background: var(--vx-accent-light);
+  background: var(--mk-accent-light);
 }
 .lead-combo-item .nome {
   font-size: 13px;
-  color: var(--vx-text);
+  color: var(--mk-text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .lead-combo-item.active .nome {
-  color: var(--vx-accent);
+  color: var(--mk-accent);
   font-weight: 600;
 }
 .lead-combo-item .tel {
   font-size: 11px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   font-family: var(--font-jetbrains), monospace;
   flex-shrink: 0;
 }
@@ -1962,7 +1962,7 @@ select.form-input {
 .lead-combo-hint {
   padding: 10px;
   font-size: 12px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   text-align: center;
 }
 
@@ -1977,7 +1977,7 @@ select.form-input {
 /* ========================================================================
    FICHA DE AVALIAÇÃO — página pública (/ficha/[token])
    Paleta própria (--f-*), injetada em (publico)/layout.tsx a partir de
-   CLINICA.cores. NÃO usa os tokens --vx-*: a ficha não segue o tema do
+   CLINICA.cores. NÃO usa os tokens --mk-*: a ficha não segue o tema do
    painel, então continua clara mesmo se a dona abrir o link no navegador
    dela com o tema escuro salvo.
    ======================================================================== */
@@ -2054,34 +2054,34 @@ select.form-input {
   font-family: inherit;
   font-size: 12.5px;
   line-height: 1.3;
-  color: var(--vx-text2);
+  color: var(--mk-text2);
   text-align: left;
   white-space: nowrap;
-  transition: background var(--vx-transition), color var(--vx-transition);
+  transition: background var(--mk-transition), color var(--mk-transition);
 }
 .config-nav-item svg {
   flex-shrink: 0;
   opacity: 0.75;
 }
 .config-nav-item:hover {
-  background: var(--vx-surface2);
-  color: var(--vx-text);
+  background: var(--mk-surface2);
+  color: var(--mk-text);
 }
 .config-nav-item:hover svg {
   opacity: 1;
 }
 .config-nav-item.active {
-  color: var(--vx-accent);
+  color: var(--mk-accent);
   font-weight: 600;
 }
 .config-nav-item.active svg {
   opacity: 1;
-  color: var(--vx-accent);
+  color: var(--mk-accent);
 }
 
 /* Divisória entre a sub-navegação e a seção aberta */
 .config-content {
-  border-left: 1px solid var(--vx-border);
+  border-left: 1px solid var(--mk-border);
   padding-left: 30px;
   min-height: 60vh;
 }
@@ -2090,7 +2090,7 @@ select.form-input {
     border-left: none;
     padding-left: 0;
     padding-top: 18px;
-    border-top: 1px solid var(--vx-border);
+    border-top: 1px solid var(--mk-border);
     min-height: 0;
   }
 }
@@ -2101,17 +2101,17 @@ select.form-input {
 .config-title {
   font-size: 19.5px;
   font-weight: 600;
-  color: var(--vx-text);
+  color: var(--mk-text);
 }
 .config-subtitle {
   margin-top: 4px;
   font-size: 13px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 
 .config-card {
-  background: var(--vx-surface);
-  border: 1px solid var(--vx-border);
+  background: var(--mk-surface);
+  border: 1px solid var(--mk-border);
   border-radius: 14px;
   padding: 20px;
 }
@@ -2128,10 +2128,10 @@ select.form-input {
 .config-nota {
   margin-top: 16px;
   padding-top: 14px;
-  border-top: 1px solid var(--vx-border);
+  border-top: 1px solid var(--mk-border);
   font-size: 12px;
   line-height: 1.6;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 .config-linha {
   display: flex;
@@ -2144,19 +2144,19 @@ select.form-input {
   width: 34px;
   height: 34px;
   border-radius: 10px;
-  background: var(--vx-surface2);
-  color: var(--vx-text2);
+  background: var(--mk-surface2);
+  color: var(--mk-text2);
   flex-shrink: 0;
 }
 .config-linha-label {
   font-size: 11px;
   font-weight: 700;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 .config-linha-valor {
   margin-top: 2px;
   font-size: 14px;
-  color: var(--vx-text);
+  color: var(--mk-text);
 }
 
 /* ── Aparência: cartões de tema com miniatura ── */
@@ -2180,19 +2180,19 @@ select.form-input {
   flex-direction: column;
   gap: 12px;
   padding: 14px;
-  border: 1px solid var(--vx-border);
+  border: 1px solid var(--mk-border);
   border-radius: 12px;
-  background: var(--vx-surface);
+  background: var(--mk-surface);
   cursor: pointer;
   font-family: inherit;
   text-align: left;
-  transition: border-color var(--vx-transition);
+  transition: border-color var(--mk-transition);
 }
 .tema-opcao:hover {
-  border-color: var(--vx-border2);
+  border-color: var(--mk-border2);
 }
 .tema-opcao.active {
-  border-color: var(--vx-accent);
+  border-color: var(--mk-accent);
 }
 .tema-preview {
   height: 96px;
@@ -2257,15 +2257,15 @@ select.form-input {
   gap: 6px;
   font-size: 13.5px;
   font-weight: 600;
-  color: var(--vx-text);
+  color: var(--mk-text);
 }
 .tema-check {
   margin-left: auto;
-  color: var(--vx-accent);
+  color: var(--mk-accent);
 }
 .tema-desc {
   font-size: 12px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 
 /* ── Profissionais: cabeçalho + grade da escala ── */
@@ -2284,7 +2284,7 @@ select.form-input {
 .prof-nome {
   font-size: 15px;
   font-weight: 600;
-  color: var(--vx-text);
+  color: var(--mk-text);
 }
 .prof-escala {
   display: grid;
@@ -2301,20 +2301,20 @@ select.form-input {
 .prof-dia-nome {
   font-size: 10.5px;
   font-weight: 400;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 /* Dia com turno: barra preenchida. Dia de folga: linha de 1px. A diferença
    entre "trabalha" e "não trabalha" fica sendo massa, não texto. */
 .prof-dia-barra {
   height: 5px;
   border-radius: 2px;
-  background: var(--vx-accent);
+  background: var(--mk-accent);
   opacity: 0.75;
 }
 .prof-dia-barra.folga {
   height: 1px;
   margin: 2px 0;
-  background: var(--vx-border2);
+  background: var(--mk-border2);
   opacity: 1;
 }
 /* O horário continua legível, mas em segundo plano — quem quer o número lê;
@@ -2323,10 +2323,10 @@ select.form-input {
   font-family: var(--font-jetbrains), monospace;
   font-size: 9.5px;
   line-height: 1.35;
-  color: var(--vx-text2);
+  color: var(--mk-text2);
 }
 .prof-dia-faixa.vazio {
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   opacity: 0.45;
 }
 
@@ -2343,7 +2343,7 @@ select.form-input {
 .escala-titulo {
   font-size: 15px;
   font-weight: 600;
-  color: var(--vx-text);
+  color: var(--mk-text);
 }
 .escala-dica {
   display: flex;
@@ -2351,7 +2351,7 @@ select.form-input {
   gap: 4px;
   margin-top: 3px;
   font-size: 11.5px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   flex-wrap: wrap;
 }
 
@@ -2367,7 +2367,7 @@ select.form-input {
 .escala-dia-head {
   font-size: 11px;
   font-weight: 700;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   text-align: center;
   padding-bottom: 5px;
 }
@@ -2378,19 +2378,19 @@ select.form-input {
   padding-right: 8px;
   font-family: var(--font-jetbrains), monospace;
   font-size: 9.5px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 .escala-celula {
   height: 26px;
-  border: 1px solid var(--vx-border);
+  border: 1px solid var(--mk-border);
   border-radius: 5px;
-  background: var(--vx-surface2);
+  background: var(--mk-surface2);
   cursor: pointer;
   padding: 0;
   transition: background 0.1s ease, border-color 0.1s ease;
 }
 .escala-celula:hover {
-  border-color: var(--vx-border2);
+  border-color: var(--mk-border2);
 }
 .escala-celula.on {
   /* cor da profissional vem inline */
@@ -2399,7 +2399,7 @@ select.form-input {
 .escala-resumo {
   margin-top: 16px;
   padding-top: 14px;
-  border-top: 1px solid var(--vx-border);
+  border-top: 1px solid var(--mk-border);
   display: grid;
   gap: 3px;
 }
@@ -2413,12 +2413,12 @@ select.form-input {
 .escala-resumo-dia {
   font-weight: 700;
   font-size: 11px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   padding-top: 2px;
 }
 .escala-resumo-faixas {
   font-family: var(--font-jetbrains), monospace;
-  color: var(--vx-text);
+  color: var(--mk-text);
 }
 
 .escala-rodape {
@@ -2431,35 +2431,35 @@ select.form-input {
 }
 .escala-total {
   font-size: 12px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 
 /* Botão secundário (cancelar / desativar) */
 .btn-ghost {
   height: 33px;
   padding: 0 11px;
-  border: 1px solid var(--vx-border2);
+  border: 1px solid var(--mk-border2);
   border-radius: 5px;
-  background: var(--vx-surface);
-  color: var(--vx-text2);
+  background: var(--mk-surface);
+  color: var(--mk-text2);
   font-family: inherit;
   font-size: 12.5px;
   font-weight: 500;
   cursor: pointer;
-  transition: background var(--vx-transition), color var(--vx-transition);
+  transition: background var(--mk-transition), color var(--mk-transition);
 }
 .btn-ghost:hover {
-  background: var(--vx-surface2);
-  color: var(--vx-text);
+  background: var(--mk-surface2);
+  color: var(--mk-text);
 }
 /* Desabilitado é CINZA NEUTRO, não a cor do botão com opacity.
    Um sólido dourado a 50% continua lendo como "clicável, só que apagado" — e
    o dourado desbotado é o pior tom da paleta. Cinza chapado diz "aqui não". */
 .btn-primary:disabled,
 .btn-ghost:disabled {
-  background: var(--vx-surface3);
-  border-color: var(--vx-border);
-  color: var(--vx-muted);
+  background: var(--mk-surface3);
+  border-color: var(--mk-border);
+  color: var(--mk-muted);
   opacity: 1;
   cursor: not-allowed;
 }
@@ -2471,22 +2471,22 @@ select.form-input {
   gap: 12px;
   padding: 14px;
   margin-bottom: 14px;
-  border: 1px solid var(--vx-border);
+  border: 1px solid var(--mk-border);
   border-radius: 12px;
-  background: var(--vx-surface2);
+  background: var(--mk-surface2);
 }
 .bloqueio-check {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   font-size: 13px;
-  color: var(--vx-text2);
+  color: var(--mk-text2);
   cursor: pointer;
 }
 .bloqueio-check input {
   width: 15px;
   height: 15px;
-  accent-color: var(--vx-accent);
+  accent-color: var(--mk-accent);
   cursor: pointer;
 }
 .bloqueio-lista {
@@ -2500,22 +2500,22 @@ select.form-input {
   gap: 10px;
   padding: 10px 12px;
   border-radius: 10px;
-  background: var(--vx-surface2);
+  background: var(--mk-surface2);
 }
 .bloqueio-quando {
   font-size: 13px;
-  color: var(--vx-text);
+  color: var(--mk-text);
 }
 .bloqueio-faixa {
   margin-left: 8px;
   font-family: var(--font-jetbrains), monospace;
   font-size: 11px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 .bloqueio-motivo {
   margin-top: 2px;
   font-size: 12px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 .bloqueio-remover {
   display: grid;
@@ -2525,14 +2525,14 @@ select.form-input {
   border: none;
   border-radius: 8px;
   background: none;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   cursor: pointer;
   flex-shrink: 0;
-  transition: background var(--vx-transition), color var(--vx-transition);
+  transition: background var(--mk-transition), color var(--mk-transition);
 }
 .bloqueio-remover:hover {
-  background: var(--vx-red-bg);
-  color: var(--vx-red);
+  background: var(--mk-red-bg);
+  color: var(--mk-red);
 }
 
 /* ── Seletor de cor da profissional ── */
@@ -2555,7 +2555,7 @@ select.form-input {
 /* Selecionado: a borda de 2px já está reservada transparente, então acender
    a cor não desloca nada. Era um anel duplo de sombra antes. */
 .cor-opcao.active {
-  border-color: var(--vx-text2);
+  border-color: var(--mk-text2);
 }
 .cor-opcao:hover {
   transform: scale(1.08);
@@ -2579,20 +2579,20 @@ select.form-input {
   align-items: baseline;
   gap: 9px;
   font-size: 15px;
-  color: var(--vx-text);
+  color: var(--mk-text);
 }
 .promo-contador-num {
   font-size: 20px;
   font-weight: 600;
   line-height: 1;
-  color: var(--vx-text2);
+  color: var(--mk-text2);
   font-variant-numeric: tabular-nums;
 }
 .promo-sub {
   margin-top: 5px;
   font-size: 12.5px;
   line-height: 1.5;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   max-width: 46ch;
 }
 
@@ -2603,20 +2603,20 @@ select.form-input {
 }
 .promo-card {
   position: relative;
-  background: var(--vx-surface);
-  border: 1px solid var(--vx-border);
+  background: var(--mk-surface);
+  border: 1px solid var(--mk-border);
   border-radius: 14px;
   padding: 16px;
   cursor: pointer;
-  transition: border-color var(--vx-transition);
+  transition: border-color var(--mk-transition);
 }
 .promo-card:hover {
-  border-color: var(--vx-border2);
+  border-color: var(--mk-border2);
 }
 /* Vencida/desativada: presente, mas visivelmente fora do ar */
 .promo-card.fora {
   opacity: 0.62;
-  background: var(--vx-surface2);
+  background: var(--mk-surface2);
 }
 .promo-badges {
   display: flex;
@@ -2638,13 +2638,13 @@ select.form-input {
   font-size: 14.5px;
   font-weight: 600;
   line-height: 1.35;
-  color: var(--vx-text);
+  color: var(--mk-text);
 }
 .promo-valor {
   font-weight: 600;
   margin-top: 5px;
   font-size: 16px;
-  color: var(--vx-text2);
+  color: var(--mk-text2);
   line-height: 1.2;
   font-variant-numeric: tabular-nums;
 }
@@ -2652,7 +2652,7 @@ select.form-input {
   margin-top: 8px;
   font-size: 12.5px;
   line-height: 1.5;
-  color: var(--vx-text2);
+  color: var(--mk-text2);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -2661,12 +2661,12 @@ select.form-input {
 .promo-meta {
   margin-top: 12px;
   padding-top: 10px;
-  border-top: 1px solid var(--vx-border);
+  border-top: 1px solid var(--mk-border);
   display: flex;
   align-items: center;
   gap: 7px;
   font-size: 11.5px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 .promo-meta-sep {
   opacity: 0.5;
@@ -2675,19 +2675,19 @@ select.form-input {
   margin-top: 12px;
   width: 100%;
   padding: 7px;
-  border: 1px solid var(--vx-border2);
+  border: 1px solid var(--mk-border2);
   border-radius: 8px;
-  background: var(--vx-surface);
-  color: var(--vx-text2);
+  background: var(--mk-surface);
+  color: var(--mk-text2);
   font-family: inherit;
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
-  transition: background var(--vx-transition), color var(--vx-transition);
+  transition: background var(--mk-transition), color var(--mk-transition);
 }
 .promo-toggle:hover {
-  background: var(--vx-surface2);
-  color: var(--vx-text);
+  background: var(--mk-surface2);
+  color: var(--mk-text);
 }
 
 /* ── Modal ── */
@@ -2711,21 +2711,21 @@ select.form-input {
   font-weight: 400;
   letter-spacing: 0;
   text-transform: none;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   margin-left: 6px;
 }
 .form-erro {
   margin-top: 5px;
   font-size: 12px;
-  color: var(--vx-red);
+  color: var(--mk-red);
 }
 
 /* Prévia do que o agente recebe — a defesa contra texto ruim */
 .promo-preview {
-  border: 1px dashed var(--vx-border2);
+  border: 1px dashed var(--mk-border2);
   border-radius: 12px;
   padding: 12px 14px;
-  background: var(--vx-surface2);
+  background: var(--mk-surface2);
 }
 .promo-preview-cab {
   display: flex;
@@ -2734,13 +2734,13 @@ select.form-input {
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.11em;
-  color: var(--vx-text2);
+  color: var(--mk-text2);
   margin-bottom: 7px;
 }
 .promo-preview-texto {
   font-size: 12.5px;
   line-height: 1.6;
-  color: var(--vx-text);
+  color: var(--mk-text);
   word-break: break-word;
 }
 
@@ -2754,7 +2754,7 @@ select.form-input {
   width: 16px;
   height: 16px;
   margin-top: 2px;
-  accent-color: var(--vx-accent);
+  accent-color: var(--mk-accent);
   cursor: pointer;
   flex-shrink: 0;
 }
@@ -2762,14 +2762,14 @@ select.form-input {
   display: block;
   font-size: 13.5px;
   font-weight: 600;
-  color: var(--vx-text);
+  color: var(--mk-text);
 }
 .promo-switch-dica {
   display: block;
   margin-top: 2px;
   font-size: 11.5px;
   line-height: 1.45;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 
 .promo-aviso {
@@ -2777,8 +2777,8 @@ select.form-input {
   gap: 9px;
   padding: 11px 13px;
   border-radius: 10px;
-  background: var(--vx-amber-bg);
-  color: var(--vx-amber);
+  background: var(--mk-amber-bg);
+  color: var(--mk-amber);
   font-size: 12.5px;
   line-height: 1.5;
 }
@@ -2787,7 +2787,7 @@ select.form-input {
   align-items: center;
   gap: 6px;
   font-size: 11.5px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 
 /* Explicação na própria promoção vencida (a dona não a desativou — ela venceu) */
@@ -2795,7 +2795,7 @@ select.form-input {
   margin-top: 10px;
   font-size: 11.5px;
   line-height: 1.45;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   font-style: italic;
 }
 
@@ -2806,9 +2806,9 @@ select.form-input {
   padding: 14px 16px;
   margin-bottom: 1.25rem;
   border-radius: 12px;
-  border: 1px solid var(--vx-amber);
-  background: var(--vx-amber-bg);
-  color: var(--vx-amber);
+  border: 1px solid var(--mk-amber);
+  background: var(--mk-amber-bg);
+  color: var(--mk-amber);
 }
 .promo-alerta-anuncio strong {
   display: block;
@@ -2825,19 +2825,19 @@ select.form-input {
 .promo-alerta-acao {
   margin-top: 9px;
   padding: 6px 14px;
-  border: 1px solid var(--vx-amber);
+  border: 1px solid var(--mk-amber);
   border-radius: 8px;
   background: transparent;
-  color: var(--vx-amber);
+  color: var(--mk-amber);
   font-family: inherit;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
-  transition: background var(--vx-transition), color var(--vx-transition);
+  transition: background var(--mk-transition), color var(--mk-transition);
 }
 .promo-alerta-acao:hover {
-  background: var(--vx-amber);
-  color: var(--vx-surface);
+  background: var(--mk-amber);
+  color: var(--mk-surface);
 }
 
 /* ========================================================================
@@ -2855,14 +2855,14 @@ select.form-input {
 .fu-sub {
   font-size: 13px;
   line-height: 1.55;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   max-width: 52ch;
 }
 .fu-periodo {
   display: inline-flex;
   gap: 3px;
   padding: 3px;
-  background: var(--vx-surface2);
+  background: var(--mk-surface2);
   border-radius: 10px;
 }
 .fu-periodo-btn {
@@ -2870,16 +2870,16 @@ select.form-input {
   border: none;
   border-radius: 8px;
   background: transparent;
-  color: var(--vx-text2);
+  color: var(--mk-text2);
   font-family: inherit;
   font-size: 12.5px;
   font-weight: 500;
   cursor: pointer;
-  transition: background var(--vx-transition), color var(--vx-transition);
+  transition: background var(--mk-transition), color var(--mk-transition);
 }
 .fu-periodo-btn.ativo {
-  background: var(--vx-surface);
-  color: var(--vx-text);
+  background: var(--mk-surface);
+  color: var(--mk-text);
 }
 
 .fu-cards {
@@ -2894,8 +2894,8 @@ select.form-input {
   }
 }
 .fu-card {
-  background: var(--vx-surface);
-  border: 1px solid var(--vx-border);
+  background: var(--mk-surface);
+  border: 1px solid var(--mk-border);
   border-radius: 14px;
   padding: 16px 18px;
 }
@@ -2906,14 +2906,14 @@ select.form-input {
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.03em;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 .fu-card-valor {
   margin-top: 8px;
   font-size: 20px;
   font-weight: 600;
   line-height: 1;
-  color: var(--vx-text2);
+  color: var(--mk-text2);
   font-variant-numeric: tabular-nums;
 }
 
@@ -2921,7 +2921,7 @@ select.form-input {
 .fu-tip {
   position: relative;
   display: inline-flex;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   cursor: help;
 }
 .fu-tip-bolha {
@@ -2932,8 +2932,8 @@ select.form-input {
   width: 220px;
   padding: 9px 11px;
   border-radius: 9px;
-  background: var(--vx-text);
-  color: var(--vx-bg);
+  background: var(--mk-text);
+  color: var(--mk-bg);
   font-size: 11.5px;
   font-weight: 400;
   line-height: 1.5;
@@ -2942,7 +2942,7 @@ select.form-input {
   visibility: hidden;
   transition: opacity 0.15s ease;
   z-index: 20;
-  box-shadow: var(--vx-shadow-lg);
+  box-shadow: var(--mk-shadow-lg);
 }
 .fu-tip:hover .fu-tip-bolha,
 .fu-tip:focus .fu-tip-bolha {
@@ -2965,30 +2965,30 @@ select.form-input {
 }
 .fu-chip {
   padding: 5px 12px;
-  border: 1px solid var(--vx-border);
+  border: 1px solid var(--mk-border);
   border-radius: 999px;
-  background: var(--vx-surface);
-  color: var(--vx-text2);
+  background: var(--mk-surface);
+  color: var(--mk-text2);
   font-family: inherit;
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
-  transition: all var(--vx-transition);
+  transition: all var(--mk-transition);
 }
 .fu-chip:hover {
-  border-color: var(--vx-border2);
+  border-color: var(--mk-border2);
 }
 .fu-chip.ativo {
-  background: var(--vx-accent-light);
-  border-color: var(--vx-accent);
-  color: var(--vx-accent);
+  background: var(--mk-accent-light);
+  border-color: var(--mk-accent);
+  color: var(--mk-accent);
 }
 .fu-select {
   padding: 6px 10px;
-  border: 1px solid var(--vx-border);
+  border: 1px solid var(--mk-border);
   border-radius: 8px;
-  background: var(--vx-surface);
-  color: var(--vx-text);
+  background: var(--mk-surface);
+  color: var(--mk-text);
   font-family: inherit;
   font-size: 12.5px;
   cursor: pointer;
@@ -3003,16 +3003,16 @@ select.form-input {
   display: block;
   width: 100%;
   text-align: left;
-  background: var(--vx-surface);
-  border: 1px solid var(--vx-border);
+  background: var(--mk-surface);
+  border: 1px solid var(--mk-border);
   border-radius: 12px;
   padding: 14px 16px;
   cursor: pointer;
   font-family: inherit;
-  transition: border-color var(--vx-transition);
+  transition: border-color var(--mk-transition);
 }
 .fu-item:hover:not(:disabled) {
-  border-color: var(--vx-border2);
+  border-color: var(--mk-border2);
 }
 .fu-item:disabled {
   cursor: default;
@@ -3025,11 +3025,11 @@ select.form-input {
 .fu-item-nome {
   font-size: 14px;
   font-weight: 600;
-  color: var(--vx-text);
+  color: var(--mk-text);
 }
 .fu-item-quando {
   font-size: 11.5px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 .fu-badge {
   margin-left: auto;
@@ -3044,7 +3044,7 @@ select.form-input {
   margin-top: 7px;
   font-size: 13px;
   line-height: 1.5;
-  color: var(--vx-text2);
+  color: var(--mk-text2);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -3055,7 +3055,7 @@ select.form-input {
   margin-top: 8px;
   font-size: 11px;
   font-weight: 600;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 
 .fu-vazio {
@@ -3070,7 +3070,7 @@ select.form-input {
 .fu-vazio-texto {
   font-size: 13px;
   line-height: 1.65;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   max-width: 420px;
   margin: 0 auto;
 }
@@ -3086,7 +3086,7 @@ select.form-input {
 .fu-tabela-titulo {
   font-size: 13px;
   font-weight: 600;
-  color: var(--vx-text);
+  color: var(--mk-text);
   margin-bottom: 14px;
 }
 .fu-tabela-wrap {
@@ -3103,16 +3103,16 @@ select.form-input {
   text-align: left;
   font-size: 11px;
   font-weight: 700;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   padding: 0 10px 9px 0;
   white-space: nowrap;
-  border-bottom: 1px solid var(--vx-border);
+  border-bottom: 1px solid var(--mk-border);
 }
 .fu-tabela td {
   padding: 11px 10px 11px 0;
   font-size: 13px;
-  color: var(--vx-text);
-  border-bottom: 1px solid var(--vx-border);
+  color: var(--mk-text);
+  border-bottom: 1px solid var(--mk-border);
   white-space: nowrap;
 }
 .fu-tabela tr:last-child td {
@@ -3125,11 +3125,11 @@ select.form-input {
 }
 /* Linha de tipo que não disparou: presente, mas discreta */
 .fu-tabela tr.vazio td {
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 .fu-td-vazio {
   font-size: 12px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   font-style: italic;
 }
 .fu-tabela-tipo {
@@ -3142,7 +3142,7 @@ select.form-input {
 .fu-pct {
   margin-left: 7px;
   font-size: 11.5px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 
 /* ── Rodapé do item: tipo + a referência datada ── */
@@ -3155,7 +3155,7 @@ select.form-input {
 }
 .fu-item-ref {
   font-size: 11px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 
 /* ── Estado vazio educativo: explica os quatro tipos ── */
@@ -3163,7 +3163,7 @@ select.form-input {
   list-style: none;
   margin: 18px auto 0;
   padding: 16px 0 0;
-  border-top: 1px solid var(--vx-border);
+  border-top: 1px solid var(--mk-border);
   max-width: 460px;
   text-align: left;
   display: flex;
@@ -3178,12 +3178,12 @@ select.form-input {
 .fu-vazio-tipos strong {
   font-size: 12.5px;
   font-weight: 600;
-  color: var(--vx-text);
+  color: var(--mk-text);
 }
 .fu-vazio-tipos span {
   font-size: 12px;
   line-height: 1.5;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 
 /* ── Visão geral: as duas LENTES de tempo ────────────────────────────────
@@ -3202,10 +3202,10 @@ select.form-input {
 .metrics-lente-titulo {
   font-size: 11.5px;
   font-weight: 500;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   margin-bottom: 10px;
   padding-bottom: 8px;
-  border-bottom: 1px solid var(--vx-border);
+  border-bottom: 1px solid var(--mk-border);
 }
 .metrics-grid-2 {
   display: grid;
@@ -3243,9 +3243,9 @@ select.form-input {
 /* ── Lista de agendamentos (abaixo da grade) ────────────────────────────── */
 .ag-lista {
   margin-top: 14px;
-  background: var(--vx-surface);
-  border: 1px solid var(--vx-border);
-  border-radius: var(--vx-radius-lg);
+  background: var(--mk-surface);
+  border: 1px solid var(--mk-border);
+  border-radius: var(--mk-radius-lg);
   overflow: hidden;
 }
 .ag-lista-cab {
@@ -3256,18 +3256,18 @@ select.form-input {
   padding: 14px 18px;
   border: none;
   background: none;
-  color: var(--vx-text2);
+  color: var(--mk-text2);
   font-family: inherit;
   font-size: 13px;
   cursor: pointer;
-  transition: background var(--vx-transition);
+  transition: background var(--mk-transition);
 }
 .ag-lista-cab:hover {
-  background: var(--vx-surface2);
+  background: var(--mk-surface2);
 }
 .ag-lista-titulo {
   font-weight: 600;
-  color: var(--vx-text);
+  color: var(--mk-text);
 }
 .ag-lista-contador {
   display: grid;
@@ -3276,15 +3276,15 @@ select.form-input {
   height: 20px;
   padding: 0 7px;
   border-radius: 999px;
-  background: var(--vx-surface3);
+  background: var(--mk-surface3);
   font-family: var(--font-jetbrains), monospace;
   font-size: 10.5px;
   font-weight: 600;
-  color: var(--vx-text2);
+  color: var(--mk-text2);
 }
 .ag-lista-chev {
   margin-left: auto;
-  transition: transform var(--vx-transition);
+  transition: transform var(--mk-transition);
 }
 .ag-lista-chev.aberta {
   transform: rotate(180deg);
@@ -3292,10 +3292,10 @@ select.form-input {
 .ag-lista-vazio {
   padding: 0 18px 18px;
   font-size: 12.5px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 .ag-lista-corpo {
-  border-top: 1px solid var(--vx-border);
+  border-top: 1px solid var(--mk-border);
   max-height: 460px;
   overflow-y: auto;
 }
@@ -3304,7 +3304,7 @@ select.form-input {
   align-items: baseline;
   gap: 7px;
   padding: 12px 18px 8px;
-  background: var(--vx-surface2);
+  background: var(--mk-surface2);
   position: sticky;
   top: 0;
   z-index: 1;
@@ -3312,22 +3312,22 @@ select.form-input {
 .ag-lista-dia-num {
   font-weight: 600;
   font-size: 16px;
-  color: var(--vx-text2);
+  color: var(--mk-text2);
   line-height: 1;
   font-variant-numeric: tabular-nums;
 }
 .ag-lista-dia-mes {
   font-size: 11px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 .ag-lista-dia-nome {
   font-size: 12px;
-  color: var(--vx-text2);
+  color: var(--mk-text2);
 }
 .ag-lista-dia-qtd {
   margin-left: auto;
   font-size: 11px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 .ag-lista-item {
   display: flex;
@@ -3336,15 +3336,15 @@ select.form-input {
   width: 100%;
   padding: 9px 18px;
   border: none;
-  border-bottom: 1px solid var(--vx-border);
+  border-bottom: 1px solid var(--mk-border);
   background: none;
   font-family: inherit;
   text-align: left;
   cursor: pointer;
-  transition: background var(--vx-transition);
+  transition: background var(--mk-transition);
 }
 .ag-lista-item:hover {
-  background: var(--vx-surface2);
+  background: var(--mk-surface2);
 }
 .ag-lista-item.cancelado {
   opacity: 0.5;
@@ -3355,14 +3355,14 @@ select.form-input {
 .ag-lista-hora {
   font-family: var(--font-jetbrains), monospace;
   font-size: 11.5px;
-  color: var(--vx-text2);
+  color: var(--mk-text2);
   width: 42px;
   flex-shrink: 0;
 }
 .ag-lista-nome {
   font-size: 13px;
   font-weight: 500;
-  color: var(--vx-text);
+  color: var(--mk-text);
   min-width: 0;
   flex: 1;
   overflow: hidden;
@@ -3371,7 +3371,7 @@ select.form-input {
 }
 .ag-lista-servico {
   font-size: 12px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   min-width: 0;
   flex: 1;
   overflow: hidden;
@@ -3399,21 +3399,21 @@ select.form-input {
   align-items: center;
   gap: 7px;
   padding: 7px 14px;
-  border: 1px solid var(--vx-border);
+  border: 1px solid var(--mk-border);
   border-radius: 20px;
-  background: var(--vx-surface);
-  color: var(--vx-text2);
+  background: var(--mk-surface);
+  color: var(--mk-text2);
   font-family: var(--font-inter), sans-serif;
   font-size: 12px;
   font-weight: 500;
   letter-spacing: 0.04em;
   cursor: pointer;
-  transition: all var(--vx-transition);
+  transition: all var(--mk-transition);
 }
 .mini-cal-trigger:hover,
 .mini-cal-trigger.aberto {
-  border-color: var(--vx-accent);
-  color: var(--vx-text);
+  border-color: var(--mk-accent);
+  color: var(--mk-text);
 }
 .mini-cal-pop {
   position: absolute;
@@ -3422,10 +3422,10 @@ select.form-input {
   z-index: 40;
   width: 258px;
   padding: 12px;
-  border: 1px solid var(--vx-border);
+  border: 1px solid var(--mk-border);
   border-radius: 14px;
-  background: var(--vx-surface);
-  box-shadow: var(--vx-shadow-lg);
+  background: var(--mk-surface);
+  box-shadow: var(--mk-shadow-lg);
 }
 .mini-cal-cab {
   display: flex;
@@ -3441,18 +3441,18 @@ select.form-input {
   border: none;
   border-radius: 7px;
   background: none;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   cursor: pointer;
-  transition: background var(--vx-transition), color var(--vx-transition);
+  transition: background var(--mk-transition), color var(--mk-transition);
 }
 .mini-cal-cab button:hover {
-  background: var(--vx-surface2);
-  color: var(--vx-text);
+  background: var(--mk-surface2);
+  color: var(--mk-text);
 }
 .mini-cal-mes {
   font-size: 12.5px;
   font-weight: 600;
-  color: var(--vx-text);
+  color: var(--mk-text);
   text-transform: capitalize;
 }
 .mini-cal-grade {
@@ -3466,7 +3466,7 @@ select.form-input {
   height: 22px;
   font-size: 9.5px;
   font-weight: 700;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 .mini-cal-dia {
   position: relative;
@@ -3474,26 +3474,26 @@ select.form-input {
   border: none;
   border-radius: 8px;
   background: none;
-  color: var(--vx-text);
+  color: var(--mk-text);
   font-family: inherit;
   font-size: 12px;
   cursor: pointer;
-  transition: background var(--vx-transition), color var(--vx-transition);
+  transition: background var(--mk-transition), color var(--mk-transition);
 }
 .mini-cal-dia:hover {
-  background: var(--vx-surface2);
+  background: var(--mk-surface2);
 }
 .mini-cal-dia.fora {
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   opacity: 0.45;
 }
 .mini-cal-dia.hoje {
   font-weight: 700;
-  color: var(--vx-accent);
+  color: var(--mk-accent);
 }
 .mini-cal-dia.sel {
-  background: var(--vx-accent);
-  color: var(--vx-on-accent);
+  background: var(--mk-accent);
+  color: var(--mk-on-accent);
   font-weight: 600;
 }
 /* Ponto do dia com atendimento — é o que guia a navegação para frente */
@@ -3505,7 +3505,7 @@ select.form-input {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: var(--vx-green);
+  background: var(--mk-green);
 }
 .mini-cal-dia.sel .mini-cal-ponto {
   background: currentColor;
@@ -3522,28 +3522,28 @@ select.form-input {
   justify-content: space-between;
   margin-top: 10px;
   padding-top: 9px;
-  border-top: 1px solid var(--vx-border);
+  border-top: 1px solid var(--mk-border);
 }
 .mini-cal-legenda {
   display: inline-flex;
   align-items: center;
   font-size: 10.5px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 .mini-cal-hoje {
   padding: 4px 11px;
-  border: 1px solid var(--vx-border2);
+  border: 1px solid var(--mk-border2);
   border-radius: 7px;
   background: none;
-  color: var(--vx-text2);
+  color: var(--mk-text2);
   font-family: inherit;
   font-size: 11.5px;
   font-weight: 500;
   cursor: pointer;
 }
 .mini-cal-hoje:hover {
-  background: var(--vx-surface2);
-  color: var(--vx-text);
+  background: var(--mk-surface2);
+  color: var(--mk-text);
 }
 
 /* ── Cabeçalho de colunas da lista ── */
@@ -3552,14 +3552,14 @@ select.form-input {
   align-items: center;
   gap: 11px;
   padding: 9px 18px;
-  border-top: 1px solid var(--vx-border);
-  background: var(--vx-surface2);
+  border-top: 1px solid var(--mk-border);
+  background: var(--mk-surface2);
   font-size: 11px;
   font-weight: 700;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 .ag-lista-thead .ag-lista-hora {
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   font-family: inherit;
   font-size: 9.5px;
 }
@@ -3617,7 +3617,7 @@ select.form-input {
 .vg-saudacao {
   font-size: 11.5px;
   font-weight: 400;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   line-height: 1.25;
   margin-bottom: 1px;
 }
@@ -3627,13 +3627,13 @@ select.form-input {
   font-weight: 600;
   letter-spacing: 0;
   line-height: 1.33;
-  color: var(--vx-text);
+  color: var(--mk-text);
 }
 .vg-sub {
   margin-top: 1px;
   font-size: 11.5px;
   font-weight: 400;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   line-height: 1.43;
 }
 .vg-controles {
@@ -3642,15 +3642,15 @@ select.form-input {
   gap: 10px;
   flex-wrap: wrap;
 }
-/* Abas: controle segmentado. A ativa sobe para --vx-surface sobre o trilho em
-   --vx-surface2, então parece elevada sem sombra pesada. */
+/* Abas: controle segmentado. A ativa sobe para --mk-surface sobre o trilho em
+   --mk-surface2, então parece elevada sem sombra pesada. */
 .vg-abas {
   display: inline-flex;
   gap: 2px;
   padding: 3px;
-  border: 1px solid var(--vx-border);
+  border: 1px solid var(--mk-border);
   border-radius: 11px;
-  background: var(--vx-surface2);
+  background: var(--mk-surface2);
 }
 .vg-aba {
   padding: 6px 14px;
@@ -3660,17 +3660,17 @@ select.form-input {
   font-family: inherit;
   font-size: 12.5px;
   font-weight: 500;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   white-space: nowrap;
   cursor: pointer;
-  transition: color var(--vx-transition), background var(--vx-transition);
+  transition: color var(--mk-transition), background var(--mk-transition);
 }
 .vg-aba:hover {
-  color: var(--vx-text2);
+  color: var(--mk-text2);
 }
 .vg-aba.ativa {
-  background: var(--vx-surface);
-  color: var(--vx-accent);
+  background: var(--mk-surface);
+  color: var(--mk-accent);
 }
 
 /* ── Cards ── */
@@ -3707,21 +3707,21 @@ select.form-input {
      morto no meio. */
   padding: 13px 16px;
   min-height: 94px;
-  border: 1px solid var(--vx-border);
+  border: 1px solid var(--mk-border);
   border-radius: 7px;
   /* Fundo IGUAL ao da página: quem separa é a hairline. Card com superfície
      própria E sombra faz cada peça flutuar por conta, e é daí que vem o ar de
      slide. */
-  background: var(--vx-bg);
+  background: var(--mk-bg);
   font-family: inherit;
   text-align: left;
-  transition: border-color var(--vx-transition), background var(--vx-transition);
+  transition: border-color var(--mk-transition), background var(--mk-transition);
 }
 .neg-card-btn {
   cursor: pointer;
 }
 .neg-card-btn:hover {
-  border-color: var(--vx-border2);
+  border-color: var(--mk-border2);
 }
 /* Selecionado: borda no accent + fundo um degrau acima. O `inset` anterior
    desenhava um segundo anel por dentro da borda e engrossava tudo — dois
@@ -3730,7 +3730,7 @@ select.form-input {
 /* SÓ a borda. Trocar o fundo junto reintroduzia a elevação — e um card mais
    claro que os vizinhos é dois sinais para uma informação só. */
 .neg-card.ativo {
-  border-color: var(--vx-accent);
+  border-color: var(--mk-accent);
 }
 .neg-card-rotulo {
   display: flex;
@@ -3739,7 +3739,7 @@ select.form-input {
   font-size: 11.5px;
   font-weight: 500;
   line-height: 1.25;
-  color: var(--vx-text);
+  color: var(--mk-text);
 }
 .neg-card-linha {
   display: flex;
@@ -3757,13 +3757,13 @@ select.form-input {
   font-weight: 600;
   line-height: 1.22;
   letter-spacing: 0;
-  color: var(--vx-text);
+  color: var(--mk-text);
   font-variant-numeric: tabular-nums;
 }
 .neg-card-apoio {
   margin-top: 3px;
   font-size: 10px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 /* Ícone de 16px no canto, discreto. Antes eram 22px na cor do card: cinco
    ícones grandes e coloridos competiam com os próprios valores. */
@@ -3775,13 +3775,13 @@ select.form-input {
 
 /* Cor só onde ela SIGNIFICA alguma coisa: subiu, desceu. O resto é neutro. */
 .neg-tom-neutro {
-  --neg-tom: var(--vx-muted);
+  --neg-tom: var(--mk-muted);
 }
 .neg-tom-sobe {
-  --neg-tom: var(--vx-green);
+  --neg-tom: var(--mk-green);
 }
 .neg-tom-desce {
-  --neg-tom: var(--vx-red);
+  --neg-tom: var(--mk-red);
 }
 
 /* ── (i) com balão ── */
@@ -3792,20 +3792,20 @@ select.form-input {
   flex-shrink: 0;
   width: 14px;
   height: 14px;
-  border: 1px solid var(--vx-border2);
+  border: 1px solid var(--mk-border2);
   border-radius: 50%;
   font-size: 9px;
   font-weight: 600;
   font-style: italic;
   line-height: 1;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   cursor: help;
   position: relative;
-  transition: color var(--vx-transition), border-color var(--vx-transition);
+  transition: color var(--mk-transition), border-color var(--mk-transition);
 }
 .neg-dica:hover {
-  color: var(--vx-text2);
-  border-color: var(--vx-text2);
+  color: var(--mk-text2);
+  border-color: var(--mk-text2);
 }
 .neg-dica::after {
   content: attr(data-dica);
@@ -3818,21 +3818,21 @@ select.form-input {
      da tela e sai do card. */
   max-width: 240px;
   padding: 8px 10px;
-  border: 1px solid var(--vx-border);
+  border: 1px solid var(--mk-border);
   border-radius: 8px;
-  background: var(--vx-surface);
-  box-shadow: var(--vx-shadow-md);
+  background: var(--mk-surface);
+  box-shadow: var(--mk-shadow-md);
   font-size: 11.5px;
   font-style: normal;
   font-weight: 400;
   line-height: 1.5;
   letter-spacing: normal;
   text-transform: none;
-  color: var(--vx-text2);
+  color: var(--mk-text2);
   white-space: normal;
   opacity: 0;
   visibility: hidden;
-  transition: opacity var(--vx-transition);
+  transition: opacity var(--mk-transition);
 }
 .neg-dica:hover::after {
   opacity: 1;
@@ -3863,9 +3863,9 @@ select.form-input {
 
 .neg-painel {
   padding: 13px 16px 16px;
-  border: 1px solid var(--vx-border);
+  border: 1px solid var(--mk-border);
   border-radius: 7px;
-  background: var(--vx-bg);
+  background: var(--mk-bg);
 }
 .neg-painel-topo {
   display: flex;
@@ -3880,13 +3880,13 @@ select.form-input {
   font-weight: 600;
   letter-spacing: 0;
   line-height: 1.25;
-  color: var(--vx-text);
+  color: var(--mk-text);
 }
 .neg-painel-nota {
   display: block;
   margin-top: 2px;
   font-size: 11px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 .neg-painel-acoes {
   display: flex;
@@ -3899,10 +3899,10 @@ select.form-input {
 }
 .neg-select {
   padding: 5px 10px;
-  border: 1px solid var(--vx-border);
+  border: 1px solid var(--mk-border);
   border-radius: 8px;
-  background: var(--vx-surface2);
-  color: var(--vx-text2);
+  background: var(--mk-surface2);
+  color: var(--mk-text2);
   font-family: inherit;
   font-size: 11.5px;
   cursor: pointer;
@@ -3949,17 +3949,17 @@ select.form-input {
 }
 .neg-rosca-nome {
   overflow: hidden;
-  color: var(--vx-text);
+  color: var(--mk-text);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .neg-rosca-pct {
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   font-variant-numeric: tabular-nums;
 }
 .neg-rosca-valor {
   font-weight: 600;
-  color: var(--vx-text);
+  color: var(--mk-text);
   font-variant-numeric: tabular-nums;
 }
 
@@ -3979,7 +3979,7 @@ select.form-input {
   text-align: center;
   font-family: var(--font-jetbrains), monospace;
   font-size: 10.5px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 .neg-linha-corpo {
   flex: 1;
@@ -3995,7 +3995,7 @@ select.form-input {
 .neg-linha-nome {
   overflow: hidden;
   font-size: 13px;
-  color: var(--vx-text);
+  color: var(--mk-text);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -4003,18 +4003,18 @@ select.form-input {
   flex-shrink: 0;
   font-size: 12.5px;
   font-weight: 600;
-  color: var(--vx-text);
+  color: var(--mk-text);
   font-variant-numeric: tabular-nums;
 }
 .neg-linha-pct {
   font-weight: 400;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 .neg-barra-trilho {
   height: 6px;
   overflow: hidden;
   border-radius: 3px;
-  background: var(--vx-surface3);
+  background: var(--mk-surface3);
 }
 .neg-barra {
   height: 100%;
@@ -4022,7 +4022,7 @@ select.form-input {
   /* Neutra. A barra comunica GRANDEZA, e o comprimento faz isso sozinho — em
      dourado, uma dúzia delas disputava com o item ativo do menu, que é o
      único lugar onde essa cor precisa querer dizer alguma coisa. */
-  background: var(--vx-text2);
+  background: var(--mk-text2);
   opacity: 0.4;
 }
 
@@ -4053,18 +4053,18 @@ select.form-input {
 }
 .neg-pessoa-nome {
   font-size: 13px;
-  color: var(--vx-text);
+  color: var(--mk-text);
 }
 .neg-pessoa-sub {
   margin-top: 1px;
   font-size: 11px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 .neg-pessoa-valor {
   flex-shrink: 0;
   font-size: 13px;
   font-weight: 600;
-  color: var(--vx-text);
+  color: var(--mk-text);
   font-variant-numeric: tabular-nums;
 }
 
@@ -4072,7 +4072,7 @@ select.form-input {
   padding: 30px 0;
   text-align: center;
   font-size: 12.5px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 /* Cabeçalho de categoria dentro do combobox de serviço. */
 .servico-combo-grupo {
@@ -4081,7 +4081,7 @@ select.form-input {
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -4105,12 +4105,12 @@ select.form-input {
   font-size: 19px;
   font-weight: 600;
   letter-spacing: -0.01em;
-  color: var(--vx-text);
+  color: var(--mk-text);
 }
 .lead-sub {
   margin-top: 3px;
   font-size: 12.5px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 
 .lead-topo {
@@ -4131,7 +4131,7 @@ select.form-input {
   font-size: 11.5px;
   font-weight: 400;
   letter-spacing: 0;
-  color: var(--vx-text);
+  color: var(--mk-text);
 }
 .lead-input {
   width: 100%;
@@ -4139,24 +4139,24 @@ select.form-input {
   padding: 0 10px;
   /* Borda um pouco mais forte que a hairline geral: no fundo branco, o campo
      precisa se delimitar sozinho, já que perdeu o preenchimento cinza. */
-  border: 1px solid var(--vx-border2);
+  border: 1px solid var(--mk-border2);
   border-radius: 5px;
   /* Branco, não cinza: campo preenchido de cinza lê como desabilitado, e cinco
      deles empilhados eram a maior massa visual do modal. */
-  background: var(--vx-surface);
-  color: var(--vx-text);
+  background: var(--mk-surface);
+  color: var(--mk-text);
   font-family: var(--font-inter), sans-serif;
   font-size: 12.5px;
   outline: none;
-  transition: border-color var(--vx-transition);
+  transition: border-color var(--mk-transition);
 }
 .lead-input::placeholder {
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 .lead-input:focus {
-  border-color: var(--vx-accent);
+  border-color: var(--mk-accent);
   /* Sem halo: a cor da borda já diz onde está o cursor. */
-  background: var(--vx-surface);
+  background: var(--mk-surface);
 }
 .lead-textarea {
   resize: vertical;
@@ -4165,7 +4165,7 @@ select.form-input {
 .lead-erro {
   margin-top: 4px;
   font-size: 11px;
-  color: var(--vx-red);
+  color: var(--mk-red);
 }
 
 /* ── Etiquetas (chips) ── */
@@ -4176,13 +4176,13 @@ select.form-input {
   flex-wrap: wrap;
   min-height: 37px;
   padding: 5px 8px;
-  border: 1px solid var(--vx-border);
+  border: 1px solid var(--mk-border);
   border-radius: 9px;
-  background: var(--vx-surface2);
+  background: var(--mk-surface2);
 }
 .lead-chips:focus-within {
-  border-color: var(--vx-accent);
-  background: var(--vx-surface);
+  border-color: var(--mk-accent);
+  background: var(--mk-surface);
 }
 .lead-chip {
   display: inline-flex;
@@ -4190,8 +4190,8 @@ select.form-input {
   gap: 4px;
   padding: 2px 6px 2px 8px;
   border-radius: 6px;
-  background: var(--vx-accent-light);
-  color: var(--vx-accent);
+  background: var(--mk-accent-light);
+  color: var(--mk-accent);
   font-size: 11px;
   font-weight: 500;
   white-space: nowrap;
@@ -4213,13 +4213,13 @@ select.form-input {
   min-width: 90px;
   border: none;
   background: none;
-  color: var(--vx-text);
+  color: var(--mk-text);
   font-family: inherit;
   font-size: 12.5px;
   outline: none;
 }
 .lead-chip-input::placeholder {
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 
 /* ── Abas ── */
@@ -4228,9 +4228,9 @@ select.form-input {
   gap: 2px;
   padding: 3px;
   margin-bottom: 14px;
-  border: 1px solid var(--vx-border);
+  border: 1px solid var(--mk-border);
   border-radius: 6px;
-  background: var(--vx-surface2);
+  background: var(--mk-surface2);
   overflow-x: auto;
   max-width: 100%;
 }
@@ -4245,17 +4245,17 @@ select.form-input {
   font-family: inherit;
   font-size: 12.5px;
   font-weight: 500;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   white-space: nowrap;
   cursor: pointer;
-  transition: color var(--vx-transition), background var(--vx-transition);
+  transition: color var(--mk-transition), background var(--mk-transition);
 }
 .lead-aba:hover {
-  color: var(--vx-text2);
+  color: var(--mk-text2);
 }
 .lead-aba.ativa {
-  background: var(--vx-surface);
-  color: var(--vx-accent);
+  background: var(--mk-surface);
+  color: var(--mk-accent);
 }
 /* Ponto = a aba tem conteúdo. Sem ele, saber o que já foi preenchido exige
    abrir uma por uma. */
@@ -4263,7 +4263,7 @@ select.form-input {
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: var(--vx-accent);
+  background: var(--mk-accent);
   opacity: 0.75;
 }
 
@@ -4271,9 +4271,9 @@ select.form-input {
 .lead-painel {
   min-height: 210px;
   padding: 18px;
-  border: 1px solid var(--vx-border);
+  border: 1px solid var(--mk-border);
   border-radius: 0 0 10px 10px;
-  background: var(--vx-surface);
+  background: var(--mk-surface);
 }
 .lead-grade {
   display: grid;
@@ -4297,7 +4297,7 @@ select.form-input {
 .lead-spin {
   position: absolute;
   right: 10px;
-  color: var(--vx-accent);
+  color: var(--mk-accent);
   animation: spin 0.9s linear infinite;
 }
 @keyframes spin {
@@ -4326,9 +4326,9 @@ select.form-input {
   display: flex;
   width: 560px;
   max-width: calc(100vw - 32px);
-  border: 1px solid var(--vx-border);
+  border: 1px solid var(--mk-border);
   border-radius: 10px;
-  background: var(--vx-surface);
+  background: var(--mk-surface);
   /* Overlay de verdade: flutua sobre o conteúdo e sem elevação encostaria no
      que está atrás. É uma das poucas sombras que sobraram na interface. */
   box-shadow: 0 4px 6px -1px rgba(26, 24, 20, 0.1),
@@ -4343,13 +4343,13 @@ select.form-input {
   width: 172px;
   flex-shrink: 0;
   padding: 12px 8px;
-  border-right: 1px solid var(--vx-border);
+  border-right: 1px solid var(--mk-border);
 }
 .drp-rail-titulo {
   padding: 0 8px 8px;
   font-size: 11.5px;
   font-weight: 600;
-  color: var(--vx-text);
+  color: var(--mk-text);
 }
 .drp-atalho {
   display: block;
@@ -4362,15 +4362,15 @@ select.form-input {
   font-size: 11.5px;
   font-weight: 400;
   text-align: left;
-  color: var(--vx-text);
+  color: var(--mk-text);
   cursor: pointer;
-  transition: background var(--vx-transition);
+  transition: background var(--mk-transition);
 }
 .drp-atalho:hover {
-  background: var(--vx-surface2);
+  background: var(--mk-surface2);
 }
 .drp-atalho.ativo {
-  color: var(--vx-accent);
+  color: var(--mk-accent);
   font-weight: 500;
 }
 
@@ -4392,16 +4392,16 @@ select.form-input {
   width: 24px;
   height: 24px;
   flex-shrink: 0;
-  border: 1px solid var(--vx-border);
+  border: 1px solid var(--mk-border);
   border-radius: 4px;
   background: transparent;
-  color: var(--vx-text2);
+  color: var(--mk-text2);
   cursor: pointer;
-  transition: color var(--vx-transition), background var(--vx-transition);
+  transition: color var(--mk-transition), background var(--mk-transition);
 }
 .drp-nav:hover {
-  background: var(--vx-surface2);
-  color: var(--vx-text);
+  background: var(--mk-surface2);
+  color: var(--mk-text);
 }
 .drp-nav:last-of-type {
   margin-left: auto;
@@ -4409,10 +4409,10 @@ select.form-input {
 /* Mês e ano em <select>: é o que troca vinte cliques na setinha por dois. */
 .drp-select {
   padding: 3px 6px;
-  border: 1px solid var(--vx-border);
+  border: 1px solid var(--mk-border);
   border-radius: 4px;
-  background: var(--vx-surface2);
-  color: var(--vx-text);
+  background: var(--mk-surface2);
+  color: var(--mk-text);
   font-family: inherit;
   font-size: 11.5px;
   cursor: pointer;
@@ -4428,7 +4428,7 @@ select.form-input {
   font-size: 11.5px;
   font-weight: 500;
   text-align: center;
-  color: var(--vx-text2);
+  color: var(--mk-text2);
 }
 .drp-semana,
 .drp-grade {
@@ -4440,7 +4440,7 @@ select.form-input {
   font-size: 10px;
   font-weight: 400;
   text-align: center;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 
 /* A CÉLULA QUADRADA é o que faz o intervalo virar faixa.
@@ -4455,17 +4455,17 @@ select.form-input {
   font-family: inherit;
   font-size: 11px;
   font-variant-numeric: tabular-nums;
-  color: var(--vx-text);
+  color: var(--mk-text);
   cursor: pointer;
-  transition: background var(--vx-transition), color var(--vx-transition);
+  transition: background var(--mk-transition), color var(--mk-transition);
 }
 .drp-dia:hover {
-  background: var(--vx-surface3);
+  background: var(--mk-surface3);
 }
 /* Dia de preenchimento do mês vizinho: continua clicável — quem quer 30/07 a
    02/08 não deveria ter que trocar de mês no meio da seleção. */
 .drp-dia.fora {
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   opacity: 0.5;
 }
 /* Hoje: só um sublinhado. Um círculo aqui disputaria com as pontas. */
@@ -4479,27 +4479,27 @@ select.form-input {
    react-day-picker, MUI) transforma oito dias num borrão colorido. Com o meio
    neutro, a cor sobra só para dizer onde começa e onde termina. */
 .drp-dia.dentro {
-  background: var(--vx-surface2);
-  color: var(--vx-text);
+  background: var(--mk-surface2);
+  color: var(--mk-text);
   border-radius: 0;
 }
 /* AS DUAS PONTAS — o único dourado do popover. */
 .drp-dia.ponta {
-  background: var(--vx-accent);
-  color: var(--vx-on-accent);
+  background: var(--mk-accent);
+  color: var(--mk-on-accent);
   font-weight: 600;
   opacity: 1;
 }
 .drp-dia.ponta:hover {
-  background: var(--vx-accent2);
+  background: var(--mk-accent2);
 }
 
 .drp-rodape {
   margin-top: 10px;
   padding-top: 8px;
-  border-top: 1px solid var(--vx-border);
+  border-top: 1px solid var(--mk-border);
   font-size: 10.5px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 
 /* Abaixo de ~620px o popover de 560 não cabe: os atalhos somem e fica um mês
@@ -4525,7 +4525,7 @@ select.form-input {
 .lead-sem-nome {
   font-family: var(--font-jetbrains), monospace;
   font-size: 11.5px;
-  color: var(--vx-text2);
+  color: var(--mk-text2);
 }
 
 /* ── Configurações → Conexão ── */
@@ -4537,17 +4537,17 @@ select.form-input {
 }
 .conexao-topo > svg {
   flex-shrink: 0;
-  color: var(--vx-text2);
+  color: var(--mk-text2);
 }
 .conexao-titulo {
   font-size: 13px;
   font-weight: 600;
-  color: var(--vx-text);
+  color: var(--mk-text);
 }
 .conexao-sub {
   margin-top: 2px;
   font-size: 11.5px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 .conexao-sub code {
   font-family: var(--font-jetbrains), monospace;
@@ -4566,7 +4566,7 @@ select.form-input {
   align-items: center;
   gap: 6px;
   padding: 3px 9px;
-  border: 1px solid var(--vx-border);
+  border: 1px solid var(--mk-border);
   border-radius: 4px;
   font-size: 11px;
   font-weight: 500;
@@ -4579,31 +4579,31 @@ select.form-input {
   background: currentColor;
 }
 .conexao-selo.ok {
-  color: var(--vx-green);
-  border-color: var(--vx-green);
+  color: var(--mk-green);
+  border-color: var(--mk-green);
 }
 .conexao-selo.meio {
-  color: var(--vx-amber);
-  border-color: var(--vx-amber);
+  color: var(--mk-amber);
+  border-color: var(--mk-amber);
 }
 .conexao-selo.ruim {
-  color: var(--vx-red);
-  border-color: var(--vx-red);
+  color: var(--mk-red);
+  border-color: var(--mk-red);
 }
 .conexao-nota {
   margin: 0 0 12px;
   font-size: 12px;
   line-height: 1.55;
-  color: var(--vx-text2);
+  color: var(--mk-text2);
 }
 .conexao-erro {
   margin: 0 0 12px;
   padding: 8px 11px;
-  border: 1px solid var(--vx-red);
+  border: 1px solid var(--mk-red);
   border-radius: 5px;
   font-size: 12px;
   line-height: 1.5;
-  color: var(--vx-red);
+  color: var(--mk-red);
 }
 .conexao-qr {
   display: flex;
@@ -4617,7 +4617,7 @@ select.form-input {
   width: 190px;
   height: 190px;
   padding: 8px;
-  border: 1px solid var(--vx-border);
+  border: 1px solid var(--mk-border);
   border-radius: 5px;
   background: #ffffff;
 }
@@ -4626,7 +4626,7 @@ select.form-input {
   padding-left: 18px;
   font-size: 12px;
   line-height: 1.7;
-  color: var(--vx-text2);
+  color: var(--mk-text2);
 }
 
 /* ── Configurações → Laura ── */
@@ -4635,45 +4635,45 @@ select.form-input {
   height: 8px;
   flex-shrink: 0;
   border-radius: 50%;
-  background: var(--vx-green);
+  background: var(--mk-green);
 }
 .laura-dot.alerta {
-  background: var(--vx-amber);
+  background: var(--mk-amber);
 }
 .laura-numero {
   font-size: 20px;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
-  color: var(--vx-text);
+  color: var(--mk-text);
 }
 .laura-quem {
   margin: 0 0 12px;
   padding: 0;
   list-style: none;
-  border-top: 1px solid var(--vx-border);
+  border-top: 1px solid var(--mk-border);
 }
 .laura-quem li {
   display: flex;
   justify-content: space-between;
   gap: 12px;
   padding: 6px 0;
-  border-bottom: 1px solid var(--vx-border);
+  border-bottom: 1px solid var(--mk-border);
   font-size: 12px;
-  color: var(--vx-text2);
+  color: var(--mk-text2);
 }
 .laura-quem-qtd {
   font-variant-numeric: tabular-nums;
-  color: var(--vx-text);
+  color: var(--mk-text);
 }
 /* O rodapé virou link: precisa do cursor e do realce que os outros itens têm. */
 a.sidebar-footer {
   text-decoration: none;
   border-radius: 5px;
   margin: 0 8px;
-  transition: background var(--vx-transition);
+  transition: background var(--mk-transition);
 }
 a.sidebar-footer:hover {
-  background: color-mix(in srgb, var(--vx-accent) 7%, transparent);
+  background: color-mix(in srgb, var(--mk-accent) 7%, transparent);
 }
 
 
@@ -4708,10 +4708,10 @@ a.sidebar-footer:hover {
   height: 30px;
   border: 0;
   border-radius: 999px;
-  background: var(--vx-accent);
+  background: var(--mk-accent);
   color: #fff;
   cursor: pointer;
-  transition: opacity var(--vx-transition);
+  transition: opacity var(--mk-transition);
 }
 .midia-audio-play:hover {
   opacity: 0.88;
@@ -4736,7 +4736,7 @@ a.sidebar-footer:hover {
   border: 0;
   padding: 0;
   border-radius: 999px;
-  background: var(--vx-border);
+  background: var(--mk-border);
   overflow: hidden;
   cursor: pointer;
 }
@@ -4744,7 +4744,7 @@ a.sidebar-footer:hover {
 .midia-audio-progresso {
   height: 100%;
   border-radius: 999px;
-  background: var(--vx-accent);
+  background: var(--mk-accent);
   transition: width 120ms linear;
 }
 
@@ -4755,7 +4755,7 @@ a.sidebar-footer:hover {
   font-family: var(--font-jetbrains);
   font-size: 10px;
   font-variant-numeric: tabular-nums;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   letter-spacing: -0.01em;
 }
 
@@ -4764,18 +4764,18 @@ a.sidebar-footer:hover {
   min-width: 26px;
   padding: 2px 4px;
   border: 0;
-  border-radius: var(--vx-radius-sm);
+  border-radius: var(--mk-radius-sm);
   background: transparent;
   font-size: 10px;
   font-weight: 500;
   font-variant-numeric: tabular-nums;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   cursor: pointer;
-  transition: color var(--vx-transition), background var(--vx-transition);
+  transition: color var(--mk-transition), background var(--mk-transition);
 }
 .midia-audio-vel:hover {
-  color: var(--vx-text);
-  background: var(--vx-surface2);
+  color: var(--mk-text);
+  background: var(--mk-surface2);
 }
 
 /* ---- transcrição ---- */
@@ -4788,17 +4788,17 @@ a.sidebar-footer:hover {
   border: 0;
   background: transparent;
   font-size: 11px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   cursor: pointer;
-  transition: color var(--vx-transition);
+  transition: color var(--mk-transition);
 }
 .midia-audio-transcricao-btn:hover {
-  color: var(--vx-text);
+  color: var(--mk-text);
 }
 .midia-audio-transcricao-btn svg {
   width: 11px;
   height: 11px;
-  transition: transform var(--vx-transition);
+  transition: transform var(--mk-transition);
 }
 /* A seta segue o aria-expanded: o estado acessível e o visual saem da MESMA
    fonte, então não há como um girar e o outro não. */
@@ -4809,10 +4809,10 @@ a.sidebar-footer:hover {
 .midia-audio-transcricao {
   margin: 0;
   padding-left: 9px;
-  border-left: 2px solid var(--vx-border);
+  border-left: 2px solid var(--mk-border);
   font-size: 12px;
   line-height: 1.55;
-  color: var(--vx-text2);
+  color: var(--mk-text2);
 }
 
 /* ---- imagem ---- */
@@ -4820,13 +4820,13 @@ a.sidebar-footer:hover {
 .midia-imagem-btn {
   display: block;
   padding: 0;
-  border: 1px solid var(--vx-border);
-  border-radius: var(--vx-radius-sm);
+  border: 1px solid var(--mk-border);
+  border-radius: var(--mk-radius-sm);
   overflow: hidden;
   background: none;
   cursor: zoom-in;
   line-height: 0;
-  transition: opacity var(--vx-transition);
+  transition: opacity var(--mk-transition);
 }
 .midia-imagem-btn:hover {
   opacity: 0.94;
@@ -4865,7 +4865,7 @@ a.sidebar-footer:hover {
   max-height: 100%;
   max-width: 100%;
   object-fit: contain;
-  border-radius: var(--vx-radius-sm);
+  border-radius: var(--mk-radius-sm);
   cursor: default;
 }
 .midia-lightbox-fechar {
@@ -4883,7 +4883,7 @@ a.sidebar-footer:hover {
   color: #fff;
   line-height: 1;
   cursor: pointer;
-  transition: background var(--vx-transition);
+  transition: background var(--mk-transition);
 }
 .midia-lightbox-fechar:hover {
   background: rgb(255 255 255 / 0.22);
@@ -4894,8 +4894,8 @@ a.sidebar-footer:hover {
 .midia-carregando {
   width: 232px;
   height: 30px;
-  border-radius: var(--vx-radius-sm);
-  background: var(--vx-surface2);
+  border-radius: var(--mk-radius-sm);
+  background: var(--mk-surface2);
   animation: midia-pulso 1.4s ease-in-out infinite;
 }
 .midia-carregando.imagem {
@@ -4913,10 +4913,10 @@ a.sidebar-footer:hover {
 }
 .midia-falha {
   padding: 8px 10px;
-  border: 1px dashed var(--vx-border2);
-  border-radius: var(--vx-radius-sm);
+  border: 1px dashed var(--mk-border2);
+  border-radius: var(--mk-radius-sm);
   font-size: 11.5px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 
 /* ---- o balão quando o conteúdo é mídia ----
@@ -4950,7 +4950,7 @@ a.sidebar-footer:hover {
   max-width: 52ch;
   font-size: 11.5px;
   line-height: 1.55;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 .mtz-novo {
   display: inline-flex;
@@ -4964,8 +4964,8 @@ a.sidebar-footer:hover {
 .mtz-rolagem {
   overflow: auto;
   max-height: 62vh;
-  border: 1px solid var(--vx-border);
-  border-radius: var(--vx-radius);
+  border: 1px solid var(--mk-border);
+  border-radius: var(--mk-radius);
 }
 .mtz-tabela {
   border-collapse: separate;
@@ -4980,8 +4980,8 @@ a.sidebar-footer:hover {
   position: sticky;
   top: 0;
   z-index: 2;
-  background: var(--vx-surface2);
-  border-bottom: 1px solid var(--vx-border);
+  background: var(--mk-surface2);
+  border-bottom: 1px solid var(--mk-border);
   padding: 8px 10px;
   vertical-align: bottom;
   font-weight: 400;
@@ -4995,15 +4995,15 @@ a.sidebar-footer:hover {
   position: sticky;
   left: 0;
   z-index: 1;
-  background: var(--vx-bg);
+  background: var(--mk-bg);
   text-align: left;
   font-weight: 400;
   padding: 0 8px 0 10px;
-  border-right: 1px solid var(--vx-border);
+  border-right: 1px solid var(--mk-border);
 }
 .mtz-tabela tbody tr:not(:last-child) th,
 .mtz-tabela tbody tr:not(:last-child) td {
-  border-bottom: 1px solid var(--vx-border);
+  border-bottom: 1px solid var(--mk-border);
 }
 .mtz-tabela td {
   padding: 0;
@@ -5012,7 +5012,7 @@ a.sidebar-footer:hover {
 }
 .mtz-tabela tbody tr:hover th,
 .mtz-tabela tbody tr:hover td {
-  background: var(--vx-surface2);
+  background: var(--mk-surface2);
 }
 
 /* ── Cabeçalho de coluna (profissional) ── */
@@ -5029,12 +5029,12 @@ a.sidebar-footer:hover {
   background: none;
   font-family: inherit;
   font-size: 11.5px;
-  color: var(--vx-text);
+  color: var(--mk-text);
   cursor: pointer;
-  transition: color var(--vx-transition);
+  transition: color var(--mk-transition);
 }
 .mtz-col-btn:hover:not(:disabled) {
-  color: var(--vx-accent);
+  color: var(--mk-accent);
 }
 .mtz-col-btn:disabled {
   cursor: not-allowed;
@@ -5053,7 +5053,7 @@ a.sidebar-footer:hover {
   margin-top: 2px;
   font-size: 10px;
   font-variant-numeric: tabular-nums;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 /* Profissional inativa não SOME — some daria a impressão de dado perdido. */
 .mtz-col.inativa,
@@ -5069,7 +5069,7 @@ a.sidebar-footer:hover {
   height: 33px;
 }
 .mtz-linha.inativo .mtz-linha-btn {
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 .mtz-linha-btn {
   flex: 1;
@@ -5083,23 +5083,23 @@ a.sidebar-footer:hover {
   font-family: inherit;
   font-size: 11.5px;
   text-align: left;
-  color: var(--vx-text);
+  color: var(--mk-text);
   cursor: pointer;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  transition: color var(--vx-transition);
+  transition: color var(--mk-transition);
 }
 .mtz-linha-btn:hover {
-  color: var(--vx-accent);
+  color: var(--mk-accent);
 }
 .mtz-selo {
   flex-shrink: 0;
   padding: 1px 5px;
-  border: 1px solid var(--vx-border2);
+  border: 1px solid var(--mk-border2);
   border-radius: 4px;
   font-size: 9px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 
 /* ── Menu por linha ── */
@@ -5114,15 +5114,15 @@ a.sidebar-footer:hover {
   width: 22px;
   height: 22px;
   border: 0;
-  border-radius: var(--vx-radius-sm);
+  border-radius: var(--mk-radius-sm);
   background: none;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   cursor: pointer;
-  transition: color var(--vx-transition), background var(--vx-transition);
+  transition: color var(--mk-transition), background var(--mk-transition);
 }
 .mtz-menu-btn:hover {
-  color: var(--vx-text);
-  background: var(--vx-surface3);
+  color: var(--mk-text);
+  background: var(--mk-surface3);
 }
 /* Camada invisível que fecha o menu ao clicar fora — sem listener global, e
    some junto com o menu. */
@@ -5138,9 +5138,9 @@ a.sidebar-footer:hover {
   z-index: 11;
   min-width: 132px;
   padding: 3px;
-  border: 1px solid var(--vx-border);
-  border-radius: var(--vx-radius-sm);
-  background: var(--vx-surface);
+  border: 1px solid var(--mk-border);
+  border-radius: var(--mk-radius-sm);
+  background: var(--mk-surface);
 }
 .mtz-menu button {
   display: block;
@@ -5152,12 +5152,12 @@ a.sidebar-footer:hover {
   font-family: inherit;
   font-size: 11.5px;
   text-align: left;
-  color: var(--vx-text);
+  color: var(--mk-text);
   cursor: pointer;
-  transition: background var(--vx-transition);
+  transition: background var(--mk-transition);
 }
 .mtz-menu button:hover {
-  background: var(--vx-surface2);
+  background: var(--mk-surface2);
 }
 
 /* ── A célula ── */
@@ -5167,22 +5167,22 @@ a.sidebar-footer:hover {
   justify-content: center;
   width: 17px;
   height: 17px;
-  border: 1px solid var(--vx-border2);
+  border: 1px solid var(--mk-border2);
   border-radius: 4px;
-  background: var(--vx-surface);
+  background: var(--mk-surface);
   color: transparent;
   cursor: pointer;
-  transition: border-color var(--vx-transition), background var(--vx-transition);
+  transition: border-color var(--mk-transition), background var(--mk-transition);
 }
 .mtz-check:hover:not(:disabled) {
-  border-color: var(--vx-accent);
+  border-color: var(--mk-accent);
 }
 /* Marcado é o ÚNICO lugar com dourado nesta tela, junto do item ativo do
    sub-nav. É o estado que a tela inteira existe para mostrar. */
 .mtz-check.on {
-  border-color: var(--vx-accent);
-  background: var(--vx-accent);
-  color: var(--vx-on-accent);
+  border-color: var(--mk-accent);
+  background: var(--mk-accent);
+  color: var(--mk-on-accent);
 }
 .mtz-check:disabled {
   cursor: not-allowed;
@@ -5195,12 +5195,12 @@ a.sidebar-footer:hover {
   background: none;
   font-family: inherit;
   font-size: 11px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   cursor: pointer;
-  transition: color var(--vx-transition);
+  transition: color var(--mk-transition);
 }
 .mtz-inativos:hover {
-  color: var(--vx-text);
+  color: var(--mk-text);
 }
 
 .mtz-vazio {
@@ -5210,7 +5210,7 @@ a.sidebar-footer:hover {
   gap: 8px;
   padding: 28px;
   font-size: 12px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 .mtz-girando {
   animation: spin 0.9s linear infinite;
@@ -5220,7 +5220,7 @@ a.sidebar-footer:hover {
   margin-bottom: 1rem;
   font-size: 16px;
   font-weight: 600;
-  color: var(--vx-text);
+  color: var(--mk-text);
 }
 .mtz-modal-acoes {
   display: flex;
@@ -5245,21 +5245,21 @@ a.sidebar-footer:hover {
   display: flex;
   align-items: center;
   padding: 0 6px;
-  border: 1px solid var(--vx-border2);
+  border: 1px solid var(--mk-border2);
   border-radius: 4px;
   background: repeating-linear-gradient(
     45deg,
-    var(--vx-surface2),
-    var(--vx-surface2) 5px,
-    var(--vx-surface3) 5px,
-    var(--vx-surface3) 10px
+    var(--mk-surface2),
+    var(--mk-surface2) 5px,
+    var(--mk-surface3) 5px,
+    var(--mk-surface3) 10px
   );
   cursor: pointer;
   overflow: hidden;
 }
 .agenda-bloqueio-txt {
   font-size: 10px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -5270,13 +5270,13 @@ a.sidebar-footer:hover {
   margin-bottom: 1rem;
   font-size: 16px;
   font-weight: 600;
-  color: var(--vx-text);
+  color: var(--mk-text);
 }
 .blq-espaco {
   margin-top: 12px;
 }
 .blq-opcional {
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 .blq-horas {
   display: grid;
@@ -5287,7 +5287,7 @@ a.sidebar-footer:hover {
 .blq-erro {
   margin: 6px 0 0;
   font-size: 11.5px;
-  color: var(--vx-red);
+  color: var(--mk-red);
 }
 .blq-acoes {
   display: flex;
@@ -5301,9 +5301,9 @@ a.sidebar-footer:hover {
   gap: 2px;
   margin-top: 4px;
   padding: 3px;
-  border: 1px solid var(--vx-border);
+  border: 1px solid var(--mk-border);
   border-radius: 6px;
-  background: var(--vx-surface2);
+  background: var(--mk-surface2);
 }
 .blq-modo {
   padding: 5px 11px;
@@ -5312,13 +5312,13 @@ a.sidebar-footer:hover {
   background: transparent;
   font-family: inherit;
   font-size: 11.5px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   cursor: pointer;
-  transition: color var(--vx-transition), background var(--vx-transition);
+  transition: color var(--mk-transition), background var(--mk-transition);
 }
 .blq-modo.ativo {
-  background: var(--vx-surface);
-  color: var(--vx-accent);
+  background: var(--mk-surface);
+  color: var(--mk-accent);
 }
 
 /* ── Aviso de sobreposição ──
@@ -5330,16 +5330,16 @@ a.sidebar-footer:hover {
   gap: 8px;
   margin-top: 12px;
   padding: 9px 11px;
-  border: 1px solid var(--vx-amber);
-  border-radius: var(--vx-radius-sm);
+  border: 1px solid var(--mk-amber);
+  border-radius: var(--mk-radius-sm);
   font-size: 11.5px;
   line-height: 1.55;
-  color: var(--vx-text2);
+  color: var(--mk-text2);
 }
 .blq-aviso > svg {
   flex-shrink: 0;
   margin-top: 2px;
-  color: var(--vx-amber);
+  color: var(--mk-amber);
 }
 .blq-conflitos {
   margin: 5px 0;
@@ -5357,24 +5357,24 @@ a.sidebar-footer:hover {
   font-size: 12px;
 }
 .blq-detalhe dt {
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 .blq-detalhe dd {
   margin: 0;
-  color: var(--vx-text);
+  color: var(--mk-text);
 }
 .blq-nota {
   margin: 12px 0 0;
   font-size: 11.5px;
   line-height: 1.55;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 .blq-remover {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: var(--vx-red);
-  border-color: var(--vx-red);
+  color: var(--mk-red);
+  border-color: var(--mk-red);
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -5395,9 +5395,9 @@ a.sidebar-footer:hover {
   position: fixed;
   z-index: 91;
   width: 280px;
-  border: 1px solid var(--vx-border);
-  border-radius: var(--vx-radius);
-  background: var(--vx-surface);
+  border: 1px solid var(--mk-border);
+  border-radius: var(--mk-radius);
+  background: var(--mk-surface);
   /* Sem sombra: a separação é a borda, como no resto do painel. */
 }
 
@@ -5412,7 +5412,7 @@ a.sidebar-footer:hover {
   font-size: 12px;
   font-weight: 500;
   line-height: 1.35;
-  color: var(--vx-text);
+  color: var(--mk-text);
 }
 .slotp-fechar {
   flex-shrink: 0;
@@ -5422,21 +5422,21 @@ a.sidebar-footer:hover {
   width: 22px;
   height: 22px;
   border: 0;
-  border-radius: var(--vx-radius-sm);
+  border-radius: var(--mk-radius-sm);
   background: none;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   cursor: pointer;
-  transition: color var(--vx-transition), background var(--vx-transition);
+  transition: color var(--mk-transition), background var(--mk-transition);
 }
 .slotp-fechar:hover {
-  color: var(--vx-text);
-  background: var(--vx-surface2);
+  color: var(--mk-text);
+  background: var(--mk-surface2);
 }
 .slotp-resumo {
   padding: 2px 12px 10px;
-  border-bottom: 1px solid var(--vx-border);
+  border-bottom: 1px solid var(--mk-border);
   font-size: 11px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 /* Ocupa a altura da linha enquanto a RPC não volta, para o popover não
    crescer debaixo do cursor quando o dado chega. */
@@ -5445,7 +5445,7 @@ a.sidebar-footer:hover {
   width: 62%;
   height: 11px;
   border-radius: 3px;
-  background: var(--vx-surface2);
+  background: var(--mk-surface2);
   animation: midia-pulso 1.4s ease-in-out infinite;
 }
 
@@ -5454,7 +5454,7 @@ a.sidebar-footer:hover {
   margin: 0;
   padding: 6px 0;
   list-style: none;
-  border-bottom: 1px solid var(--vx-border);
+  border-bottom: 1px solid var(--mk-border);
   /* Acima de 4 a lista rola em vez de esticar o popover para fora da tela. */
   max-height: 116px;
   overflow-y: auto;
@@ -5468,17 +5468,17 @@ a.sidebar-footer:hover {
   font-size: 11.5px;
 }
 .slotp-prof-nome {
-  color: var(--vx-text);
+  color: var(--mk-text);
   white-space: nowrap;
 }
 .slotp-livre {
-  color: var(--vx-text);
+  color: var(--mk-text);
 }
 /* Com quem ela está: recuado, porque quem manda na linha é o nome da
    profissional. */
 .slotp-com {
   min-width: 0;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   text-align: right;
   white-space: nowrap;
   overflow: hidden;
@@ -5486,14 +5486,14 @@ a.sidebar-footer:hover {
 }
 .slotp-marcadas {
   padding: 7px 12px;
-  border-bottom: 1px solid var(--vx-border);
+  border-bottom: 1px solid var(--mk-border);
   font-size: 11px;
   line-height: 1.5;
-  color: var(--vx-text2);
+  color: var(--mk-text2);
 }
 .slotp-marcadas-rot {
   display: block;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 
 /* ── Ações ──
@@ -5509,28 +5509,28 @@ a.sidebar-footer:hover {
   width: 100%;
   padding: 8px;
   border: 0;
-  border-radius: var(--vx-radius-sm);
+  border-radius: var(--mk-radius-sm);
   background: none;
   font-family: inherit;
   text-align: left;
   cursor: pointer;
-  transition: background var(--vx-transition);
+  transition: background var(--mk-transition);
 }
 .slotp-acao:hover {
-  background: var(--vx-surface2);
+  background: var(--mk-surface2);
 }
 /* Alinhado à PRIMEIRA LINHA do texto, não acima dela. */
 .slotp-acao > svg {
   flex-shrink: 0;
   margin-top: 1px;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 /* O único dourado do popover: o ícone da ação primária. */
 .slotp-ic-primaria {
-  color: var(--vx-accent) !important;
+  color: var(--mk-accent) !important;
 }
 .slotp-ic-alerta {
-  color: var(--vx-red) !important;
+  color: var(--mk-red) !important;
 }
 .slotp-acao-txt {
   min-width: 0;
@@ -5539,7 +5539,7 @@ a.sidebar-footer:hover {
   display: block;
   font-size: 12.5px;
   font-weight: 500;
-  color: var(--vx-text);
+  color: var(--mk-text);
 }
 /* Sem itálico: em texto auxiliar de interface ele lê como literário, não
    como funcional. */
@@ -5550,7 +5550,7 @@ a.sidebar-footer:hover {
   font-weight: 400;
   font-style: normal;
   line-height: 1.4;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
 }
 
 /* ── Para QUEM é o horário ──
@@ -5564,7 +5564,7 @@ a.sidebar-footer:hover {
 .lead-visita-para {
   font-size: 10px;
   line-height: 1.3;
-  color: var(--vx-muted);
+  color: var(--mk-muted);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

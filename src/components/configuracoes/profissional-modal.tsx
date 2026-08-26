@@ -184,8 +184,8 @@ export function ProfissionalModal({
               alignItems: "flex-start",
               padding: "10px 12px",
               borderRadius: 10,
-              background: "var(--vx-red-bg)",
-              color: "var(--vx-red)",
+              background: "var(--mk-red-bg)",
+              color: "var(--mk-red)",
               fontSize: 12.5,
               lineHeight: 1.45,
             }}
@@ -213,7 +213,7 @@ export function ProfissionalModal({
         )}
 
         {editando && (
-          <div style={{ paddingTop: 12, borderTop: "1px solid var(--vx-border)" }}>
+          <div style={{ paddingTop: 12, borderTop: "1px solid var(--mk-border)" }}>
             {!confirmandoExclusao ? (
               <button
                 className="btn-ghost"
@@ -223,15 +223,15 @@ export function ProfissionalModal({
                   display: "inline-flex",
                   alignItems: "center",
                   gap: 6,
-                  color: "var(--vx-red)",
-                  borderColor: "var(--vx-red)",
+                  color: "var(--mk-red)",
+                  borderColor: "var(--mk-red)",
                 }}
               >
                 <Trash2 size={14} strokeWidth={1.8} /> Excluir profissional
               </button>
             ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                <p style={{ fontSize: 12.5, color: "var(--vx-text2)", lineHeight: 1.5, margin: 0 }}>
+                <p style={{ fontSize: 12.5, color: "var(--mk-text2)", lineHeight: 1.5, margin: 0 }}>
                   Isso apaga <strong>a escala e as folgas</strong> de{" "}
                   {profissional?.nome}. Não dá pra desfazer.
                 </p>
@@ -243,7 +243,7 @@ export function ProfissionalModal({
                     className="btn-primary"
                     onClick={excluir}
                     disabled={salvando}
-                    style={{ background: "var(--vx-red)", display: "inline-flex", alignItems: "center", gap: 6 }}
+                    style={{ background: "var(--mk-red)", display: "inline-flex", alignItems: "center", gap: 6 }}
                   >
                     {salvando ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
                     Excluir mesmo assim

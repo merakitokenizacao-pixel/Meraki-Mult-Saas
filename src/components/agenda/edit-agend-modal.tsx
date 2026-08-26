@@ -26,13 +26,13 @@ export function EditAgendModal({
 }) {
   const [statusMsg, setStatusMsg] = useState<{ text: string; color: string }>({
     text: "",
-    color: "var(--vx-green)",
+    color: "var(--mk-green)",
   });
   const [confirmDelete, setConfirmDelete] = useState(false);
 
   useEffect(() => {
     if (agend) {
-      setStatusMsg({ text: "", color: "var(--vx-green)" });
+      setStatusMsg({ text: "", color: "var(--mk-green)" });
       setConfirmDelete(false);
     }
   }, [agend]);
@@ -53,7 +53,7 @@ export function EditAgendModal({
   async function updateStatus(status: string) {
     try {
       await updateAgendamentoStatus(agend!.id, status);
-      setStatusMsg({ text: "Status atualizado!", color: "var(--vx-green)" });
+      setStatusMsg({ text: "Status atualizado!", color: "var(--mk-green)" });
       showToast("Status atualizado", "success");
       setTimeout(() => {
         onClose();
@@ -62,7 +62,7 @@ export function EditAgendModal({
     } catch (err) {
       setStatusMsg({
         text: "Erro: " + (err as Error).message,
-        color: "var(--vx-red)",
+        color: "var(--mk-red)",
       });
     }
   }
@@ -79,13 +79,13 @@ export function EditAgendModal({
   }
 
   const box: React.CSSProperties = {
-    background: "var(--vx-surface2)",
+    background: "var(--mk-surface2)",
     borderRadius: 10,
     padding: 12,
   };
   const boxLabel: React.CSSProperties = {
     fontSize: 10,
-    color: "var(--vx-muted)",
+    color: "var(--mk-muted)",
     fontWeight: 700,
     marginBottom: 4,
   };
@@ -105,7 +105,7 @@ export function EditAgendModal({
           fotoUrl={lead?.foto_url}
           size={48}
           fontSize={15}
-          style={{ border: "2px solid var(--vx-border)" }}
+          style={{ border: "2px solid var(--mk-border)" }}
         />
         <div style={{ flex: 1 }}>
           <div className="modal-name">{nomes.exibido || "—"}</div>
@@ -131,7 +131,7 @@ export function EditAgendModal({
       >
         <div style={box}>
           <div style={boxLabel}>SERVICO</div>
-          <div style={{ fontSize: 13, fontWeight: 500, color: "var(--vx-accent)" }}>
+          <div style={{ fontSize: 13, fontWeight: 500, color: "var(--mk-accent)" }}>
             {limparServico(agend.servico)}
           </div>
         </div>
@@ -165,9 +165,9 @@ export function EditAgendModal({
           marginBottom: "1rem",
         }}
       >
-        <div style={{ ...box, background: "var(--vx-green-bg)" }}>
+        <div style={{ ...box, background: "var(--mk-green-bg)" }}>
           <div style={boxLabel}>VISITAS</div>
-          <div style={{ fontSize: 22, fontWeight: 700, color: "var(--vx-green)" }}>
+          <div style={{ fontSize: 22, fontWeight: 700, color: "var(--mk-green)" }}>
             {visitas}
           </div>
         </div>
@@ -200,15 +200,15 @@ export function EditAgendModal({
         {statusMsg.text}
       </div>
 
-      <div style={{ borderTop: "1px solid var(--vx-border)", margin: "1rem 0" }} />
+      <div style={{ borderTop: "1px solid var(--mk-border)", margin: "1rem 0" }} />
       {!confirmDelete ? (
         <button
           onClick={() => setConfirmDelete(true)}
           style={{
             width: "100%",
-            background: "var(--vx-red-bg)",
-            border: "1px solid var(--vx-red)",
-            color: "var(--vx-red)",
+            background: "var(--mk-red-bg)",
+            border: "1px solid var(--mk-red)",
+            color: "var(--mk-red)",
             padding: 10,
             borderRadius: 10,
             fontSize: 13,
@@ -223,7 +223,7 @@ export function EditAgendModal({
         <div
           style={{
             marginTop: 0,
-            background: "var(--vx-surface2)",
+            background: "var(--mk-surface2)",
             borderRadius: 10,
             padding: 14,
             textAlign: "center",
@@ -234,9 +234,9 @@ export function EditAgendModal({
             <button
               onClick={() => setConfirmDelete(false)}
               style={{
-                background: "var(--vx-surface)",
-                border: "1px solid var(--vx-border)",
-                color: "var(--vx-muted)",
+                background: "var(--mk-surface)",
+                border: "1px solid var(--mk-border)",
+                color: "var(--mk-muted)",
                 padding: "8px 16px",
                 borderRadius: 8,
                 cursor: "pointer",
@@ -248,7 +248,7 @@ export function EditAgendModal({
             <button
               onClick={excluir}
               style={{
-                background: "var(--vx-red)",
+                background: "var(--mk-red)",
                 border: "none",
                 color: "#fff",
                 padding: "8px 16px",

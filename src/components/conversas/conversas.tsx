@@ -382,7 +382,7 @@ export function Conversas() {
   return (
     <div className="page-fade">
       <div
-        className={`conversas-fill grid min-h-0 grid-cols-1 grid-rows-[minmax(0,1fr)] overflow-hidden bg-vx-surface ${
+        className={`conversas-fill grid min-h-0 grid-cols-1 grid-rows-[minmax(0,1fr)] overflow-hidden bg-mk-surface ${
           panelOpen
             ? "lg:grid-cols-[340px_minmax(0,1fr)_360px]"
             : "lg:grid-cols-[340px_minmax(0,1fr)]"
@@ -451,7 +451,7 @@ export function Conversas() {
           />
           <aside
             className="absolute right-0 top-0 h-full w-[85%] max-w-sm"
-            style={{ boxShadow: "var(--vx-shadow-lg)" }}
+            style={{ boxShadow: "var(--mk-shadow-lg)" }}
           >
             <DetailsPanel
               lead={currentLead}

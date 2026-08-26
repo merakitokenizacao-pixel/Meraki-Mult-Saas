@@ -94,7 +94,7 @@ export interface ResultadoAtribuicao {
 // tema Escuro pela revisão adversarial.
 // Paleta CATEGÓRICA própria, não os tokens de status.
 //
-// Antes esta lista começava em --vx-accent e terminava em --vx-gold: a rosca
+// Antes esta lista começava em --mk-accent e terminava em --mk-gold: a rosca
 // pintava duas fatias douradas, mais dois pontos de legenda e dois avatares,
 // tudo disputando com o item ativo do menu — que é o único lugar onde essa cor
 // precisa querer dizer alguma coisa.
@@ -103,11 +103,11 @@ export interface ResultadoAtribuicao {
 // SITUAÇÃO em toda a interface, e como paleta categórica reprovavam
 // (vermelho↔âmbar dava ΔE 11,1 para visão normal, com piso em 15).
 const TOKENS = [
-  "--vx-cat-1",
-  "--vx-cat-2",
-  "--vx-cat-3",
-  "--vx-cat-4",
-  "--vx-cat-5",
+  "--mk-cat-1",
+  "--mk-cat-2",
+  "--mk-cat-3",
+  "--mk-cat-4",
+  "--mk-cat-5",
 ];
 
 /**

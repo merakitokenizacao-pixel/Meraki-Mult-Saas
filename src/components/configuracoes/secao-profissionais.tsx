@@ -71,7 +71,7 @@ export function SecaoProfissionais() {
   if (isPending) {
     return (
       <div className="config-card">
-        <div style={{ display: "flex", alignItems: "center", gap: 8, color: "var(--vx-muted)", fontSize: 13 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, color: "var(--mk-muted)", fontSize: 13 }}>
           <Loader2 size={15} className="animate-spin" /> Carregando…
         </div>
       </div>
@@ -81,13 +81,13 @@ export function SecaoProfissionais() {
   if (error) {
     return (
       <div className="config-card">
-        <div style={{ display: "flex", gap: 9, alignItems: "flex-start", color: "var(--vx-red)", fontSize: 13 }}>
+        <div style={{ display: "flex", gap: 9, alignItems: "flex-start", color: "var(--mk-red)", fontSize: 13 }}>
           <TriangleAlert size={16} strokeWidth={1.8} style={{ marginTop: 1, flexShrink: 0 }} />
           <div>
             <div style={{ fontWeight: 600, marginBottom: 3 }}>
               Não foi possível carregar as profissionais.
             </div>
-            <div style={{ color: "var(--vx-muted)", fontSize: 12.5 }}>
+            <div style={{ color: "var(--mk-muted)", fontSize: 12.5 }}>
               As permissões de leitura ainda não foram liberadas no banco.
             </div>
           </div>
@@ -117,7 +117,7 @@ export function SecaoProfissionais() {
 
       {profissionais.length === 0 && (
         <div className="config-card">
-          <p style={{ fontSize: 13, color: "var(--vx-muted)", margin: 0, lineHeight: 1.55 }}>
+          <p style={{ fontSize: 13, color: "var(--mk-muted)", margin: 0, lineHeight: 1.55 }}>
             Nenhuma profissional cadastrada. Enquanto não houver nenhuma com
             escala, a agenda usa o <strong>comportamento antigo</strong> (uma
             marcação por horário) — cadastre a equipe para a capacidade real
@@ -169,7 +169,7 @@ export function SecaoProfissionais() {
               <p
                 style={{
                   fontSize: 12.5,
-                  color: "var(--vx-amber)",
+                  color: "var(--mk-amber)",
                   margin: "0 0 12px",
                   lineHeight: 1.5,
                 }}

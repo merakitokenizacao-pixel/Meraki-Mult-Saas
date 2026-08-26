@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 // (o build quebra em "missing-suspense-with-csr-bailout").
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="min-h-dvh bg-vx-bg" />}>
+    <Suspense fallback={<div className="min-h-dvh bg-mk-bg" />}>
       <LoginForm />
     </Suspense>
   );

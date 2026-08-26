@@ -1,7 +1,7 @@
 // Skeletons de loading das três colunas (Entrega 4).
 
 function Sk({ className = "" }: { className?: string }) {
-  return <div className={`animate-pulse rounded-md bg-vx-surface2 ${className}`} />;
+  return <div className={`animate-pulse rounded-md bg-mk-surface2 ${className}`} />;
 }
 
 export function InboxSkeleton() {
@@ -10,7 +10,7 @@ export function InboxSkeleton() {
       {Array.from({ length: 6 }).map((_, i) => (
         <div
           key={i}
-          className="flex items-center gap-3 border-b border-vx-border/50 px-6 py-3"
+          className="flex items-center gap-3 border-b border-mk-border/50 px-6 py-3"
         >
           <Sk className="h-11 w-11 shrink-0 rounded-full" />
           <div className="flex-1 space-y-2">

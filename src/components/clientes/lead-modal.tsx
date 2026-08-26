@@ -62,7 +62,7 @@ export function LeadModal({
               fotoUrl={lead.foto_url}
               size={48}
               fontSize={15}
-              style={{ border: "2px solid var(--vx-border)" }}
+              style={{ border: "2px solid var(--mk-border)" }}
             />
             <div>
               <div className="modal-name">{lead.nome || "—"}</div>
@@ -81,7 +81,7 @@ export function LeadModal({
           >
             <div
               style={{
-                background: "var(--vx-surface2)",
+                background: "var(--mk-surface2)",
                 borderRadius: 10,
                 padding: 12,
               }}
@@ -89,7 +89,7 @@ export function LeadModal({
               <div
                 style={{
                   fontSize: 10,
-                  color: "var(--vx-muted)",
+                  color: "var(--mk-muted)",
                   marginBottom: 4,
                   fontWeight: 700,
                 }}
@@ -102,7 +102,7 @@ export function LeadModal({
             </div>
             <div
               style={{
-                background: "var(--vx-surface2)",
+                background: "var(--mk-surface2)",
                 borderRadius: 10,
                 padding: 12,
               }}
@@ -110,7 +110,7 @@ export function LeadModal({
               <div
                 style={{
                   fontSize: 10,
-                  color: "var(--vx-muted)",
+                  color: "var(--mk-muted)",
                   marginBottom: 4,
                   fontWeight: 700,
                 }}
@@ -133,7 +133,7 @@ export function LeadModal({
                   justifyContent: "space-between",
                   alignItems: "center",
                   padding: "10px 12px",
-                  background: "var(--vx-surface2)",
+                  background: "var(--mk-surface2)",
                   borderRadius: 10,
                   marginBottom: 6,
                 }}
@@ -142,7 +142,7 @@ export function LeadModal({
                   <div style={{ fontSize: 13, fontWeight: 500 }}>
                     {a.servico || "—"}
                   </div>
-                  <div style={{ fontSize: 11, color: "var(--vx-muted)" }}>
+                  <div style={{ fontSize: 11, color: "var(--mk-muted)" }}>
                     {fmtDate(a.data_agendamento)}
                   </div>
                 </div>
@@ -153,7 +153,7 @@ export function LeadModal({
             <div
               style={{
                 fontSize: 12,
-                color: "var(--vx-muted)",
+                color: "var(--mk-muted)",
                 padding: "8px 0",
               }}
             >
@@ -192,7 +192,7 @@ export function LeadModal({
                 );
               })
             ) : (
-              <div style={{ fontSize: 12, color: "var(--vx-muted)" }}>
+              <div style={{ fontSize: 12, color: "var(--mk-muted)" }}>
                 Nenhuma mensagem
               </div>
             )}

@@ -5,7 +5,7 @@ export const CLINICA = {
   nome: "LINS Estética Avançada",
   nomeCurto: "LINS Estética",
   // Paleta FIXA, de propósito: a ficha não pode seguir o tema (claro/escuro)
-  // do painel, então ela não usa os tokens --vx-*.
+  // do painel, então ela não usa os tokens --mk-*.
   cores: {
     bg: "#faf8f4",
     surface: "#ffffff",

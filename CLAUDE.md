@@ -260,7 +260,7 @@ está:
 (`.neg-card`, `.nav-item`, `.mtz-*`). Tailwind só em layout pontual.
 **Se nomear uma classe, escreva o CSS dela na mesma alteração.**
 
-**Tokens `--mk-*`** (eram `--vx-*`; renomeados em ago/2026). Expostos como
+**Tokens `--mk-*`** (renomeados em ago/2026, junto com a marca). Expostos como
 utilitários Tailwind (`bg-mk-surface`, `text-mk-accent`) pelo bloco
 `@theme inline` no topo de `globals.css`.
 

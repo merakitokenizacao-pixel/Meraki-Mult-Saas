@@ -42,12 +42,12 @@ export function getChartStyle(): ChartStyle {
   const s = getComputedStyle(document.documentElement);
   const v = (name: string) => s.getPropertyValue(name).trim();
   return {
-    muted: v("--vx-muted"),
-    border: v("--vx-border"),
-    accent: v("--vx-accent"),
-    green: v("--vx-green"),
-    blue: v("--vx-blue"),
-    gold: v("--vx-gold"),
+    muted: v("--mk-muted"),
+    border: v("--mk-border"),
+    accent: v("--mk-accent"),
+    green: v("--mk-green"),
+    blue: v("--mk-blue"),
+    gold: v("--mk-gold"),
     fontSans: v("--font-inter") || "sans-serif",
     fontMono: v("--font-jetbrains") || "monospace",
   };

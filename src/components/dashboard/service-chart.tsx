@@ -45,7 +45,7 @@ export function ServiceChart({ agendamentos }: { agendamentos: Agendamento[] }) 
   // parecer de outro aplicativo.
   const raiz = getComputedStyle(document.documentElement);
   const colors = [1, 2, 3, 4, 5].map((i) =>
-    raiz.getPropertyValue(`--vx-cat-${i}`).trim()
+    raiz.getPropertyValue(`--mk-cat-${i}`).trim()
   );
 
   const data: ChartData<"doughnut"> = {

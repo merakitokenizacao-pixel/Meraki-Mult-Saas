@@ -46,9 +46,9 @@ export function PercentualProfissional({
             backgroundColor: cores,
             // Borda na cor do FUNDO DO PAINEL: abre respiro entre as fatias
             // sem desenhar linha nenhuma, e acompanha o tema sozinha. Segue
-            // `--vx-bg` porque o painel deixou de ter superfície própria —
-            // com `--vx-surface` sobraria um anel claro em volta da rosca.
-            borderColor: lerVar("--vx-bg"),
+            // `--mk-bg` porque o painel deixou de ter superfície própria —
+            // com `--mk-surface` sobraria um anel claro em volta da rosca.
+            borderColor: lerVar("--mk-bg"),
             borderWidth: 3,
             hoverOffset: 6,
           },
@@ -61,13 +61,13 @@ export function PercentualProfissional({
         plugins: {
           legend: { display: false },
           tooltip: {
-            // Superfície + texto2 + borda2. Antes o fundo era --vx-border com
-            // corpo em --vx-muted (2,7:1) e a borda igual ao próprio fundo —
+            // Superfície + texto2 + borda2. Antes o fundo era --mk-border com
+            // corpo em --mk-muted (2,7:1) e a borda igual ao próprio fundo —
             // caixa sem contorno e texto no limite da legibilidade.
-            backgroundColor: lerVar("--vx-surface2"),
-            titleColor: lerVar("--vx-text"),
-            bodyColor: lerVar("--vx-text2"),
-            borderColor: lerVar("--vx-border2"),
+            backgroundColor: lerVar("--mk-surface2"),
+            titleColor: lerVar("--mk-text"),
+            bodyColor: lerVar("--mk-text2"),
+            borderColor: lerVar("--mk-border2"),
             borderWidth: 1,
             padding: 10,
             cornerRadius: 8,

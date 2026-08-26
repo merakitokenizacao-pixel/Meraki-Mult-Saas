@@ -37,17 +37,17 @@ function bubbleClasses(kind: "cliente" | "agente" | "humano") {
   const base =
     "border px-4 py-2.5 text-[13.5px] leading-relaxed whitespace-pre-wrap break-words";
   if (kind === "cliente")
-    return `${base} rounded-[16px] rounded-tl-[4px] border-vx-border bg-vx-surface text-vx-text`;
+    return `${base} rounded-[16px] rounded-tl-[4px] border-mk-border bg-mk-surface text-mk-text`;
   // HUMANO é neutro: quem digitou foi uma pessoa da clínica, e isso não
   // precisa de cor própria — precisa só não ser confundido com a IA. Antes ele
   // dividia o roxo com a agente, então os dois lados direitos da conversa eram
   // a mesma coisa.
   if (kind === "humano")
-    return `${base} rounded-[16px] rounded-tr-[4px] border-vx-border bg-vx-surface2 text-vx-text`;
+    return `${base} rounded-[16px] rounded-tr-[4px] border-mk-border bg-mk-surface2 text-mk-text`;
   // IA na cor da marca, mas em TINT — não no accent chapado. Chapado, cada
   // resposta da Laura virava um bloco dourado, e numa conversa longa isso é a
   // maior massa de cor da tela.
-  return `${base} rounded-[16px] rounded-tr-[4px] border-vx-border bg-vx-accent-light text-vx-accent2`;
+  return `${base} rounded-[16px] rounded-tr-[4px] border-mk-border bg-mk-accent-light text-mk-accent2`;
 }
 
 // useLayoutEffect roda ANTES da pintura — é o que evita ver a tela pular ao
@@ -166,7 +166,7 @@ export function ChatPanel({
       blocks.push(
         <div
           key={"sep-" + m.id}
-          className="my-3 self-center rounded-full bg-vx-surface2 px-3.5 py-1.5 font-mono text-[10px] tracking-wide text-vx-muted"
+          className="my-3 self-center rounded-full bg-mk-surface2 px-3.5 py-1.5 font-mono text-[10px] tracking-wide text-mk-muted"
         >
           {formatDayLabel(d)}
         </div>
@@ -183,12 +183,12 @@ export function ChatPanel({
         className={`flex max-w-[65%] flex-col ${right ? "items-end self-end" : "items-start self-start"}`}
       >
         {isAgente && (
-          <div className="mb-1 flex items-center gap-1 text-[9px] font-bold tracking-wider text-vx-accent">
+          <div className="mb-1 flex items-center gap-1 text-[9px] font-bold tracking-wider text-mk-accent">
             <Bot size={12} /> A Meraki
           </div>
         )}
         {isHumano && (
-          <div className="mb-1 flex items-center gap-1 text-[9px] font-bold tracking-wider text-vx-muted">
+          <div className="mb-1 flex items-center gap-1 text-[9px] font-bold tracking-wider text-mk-muted">
             <UserRound size={12} /> Você
           </div>
         )}
@@ -209,7 +209,7 @@ export function ChatPanel({
           )}
         </div>
         <div
-          className={`mt-1 px-0.5 font-mono text-[10px] text-vx-muted ${right ? "text-right" : ""}`}
+          className={`mt-1 px-0.5 font-mono text-[10px] text-mk-muted ${right ? "text-right" : ""}`}
         >
           {hhmm(m.enviado_em)}
         </div>
@@ -218,15 +218,15 @@ export function ChatPanel({
   });
 
   return (
-    <div className="flex h-full min-h-0 flex-col border-r border-vx-border bg-vx-bg">
+    <div className="flex h-full min-h-0 flex-col border-r border-mk-border bg-mk-bg">
       {/* Header (~64px) */}
-      <div className="flex h-16 shrink-0 items-center justify-between gap-4 border-b border-vx-border bg-vx-surface px-6">
+      <div className="flex h-16 shrink-0 items-center justify-between gap-4 border-b border-mk-border bg-mk-surface px-6">
         <div className="flex min-w-0 items-center gap-3">
           {lead && (
             <button
               onClick={onBack}
               aria-label="Voltar"
-              className="grid h-8 w-8 shrink-0 place-items-center rounded-lg text-vx-muted transition-colors hover:bg-vx-surface2 hover:text-vx-text lg:hidden"
+              className="grid h-8 w-8 shrink-0 place-items-center rounded-lg text-mk-muted transition-colors hover:bg-mk-surface2 hover:text-mk-text lg:hidden"
             >
               <ArrowLeft size={18} />
             </button>
@@ -236,12 +236,12 @@ export function ChatPanel({
           )}
           <div className="min-w-0">
             <div
-              className={`truncate text-[15px] font-semibold leading-tight ${lead ? "text-vx-text" : "text-vx-muted"}`}
+              className={`truncate text-[15px] font-semibold leading-tight ${lead ? "text-mk-text" : "text-mk-muted"}`}
             >
               {lead ? lead.nome || lead.telefone || "—" : "Selecione um cliente"}
             </div>
             {lead && (
-              <div className="flex items-center gap-2 truncate font-mono text-[11px] text-vx-muted">
+              <div className="flex items-center gap-2 truncate font-mono text-[11px] text-mk-muted">
                 <span>{lead.telefone || "—"}</span>
               </div>
             )}
@@ -255,8 +255,8 @@ export function ChatPanel({
               aria-label={paused ? "Retomar a IA" : "Pausar a IA"}
               className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[10.5px] font-bold tracking-wide transition-colors ${
                 paused
-                  ? "border-vx-border2 bg-vx-surface2 text-vx-muted hover:text-vx-text"
-                  : "border-vx-accent bg-vx-accent-light text-vx-accent hover:bg-vx-accent hover:text-vx-on-accent"
+                  ? "border-mk-border2 bg-mk-surface2 text-mk-muted hover:text-mk-text"
+                  : "border-mk-accent bg-mk-accent-light text-mk-accent hover:bg-mk-accent hover:text-mk-on-accent"
               }`}
             >
               <span
@@ -271,8 +271,8 @@ export function ChatPanel({
               title="Detalhes do cliente"
               className={`grid h-8 w-8 place-items-center rounded-lg border transition-colors ${
                 panelOpen
-                  ? "border-vx-accent bg-vx-accent-light text-vx-accent"
-                  : "border-vx-border bg-vx-surface2 text-vx-muted hover:border-vx-accent hover:text-vx-text"
+                  ? "border-mk-accent bg-mk-accent-light text-mk-accent"
+                  : "border-mk-border bg-mk-surface2 text-mk-muted hover:border-mk-accent hover:text-mk-text"
               }`}
             >
               <PanelRight size={16} />
@@ -280,7 +280,7 @@ export function ChatPanel({
             <button
               title="Opções"
               aria-label="Opções"
-              className="grid h-8 w-8 place-items-center rounded-lg border border-vx-border bg-vx-surface2 text-vx-muted transition-colors hover:border-vx-accent hover:text-vx-text"
+              className="grid h-8 w-8 place-items-center rounded-lg border border-mk-border bg-mk-surface2 text-mk-muted transition-colors hover:border-mk-accent hover:text-mk-text"
             >
               <MoreVertical size={16} />
             </button>
@@ -296,18 +296,18 @@ export function ChatPanel({
       >
         {!lead ? (
           <div className="flex h-full flex-col items-center justify-center gap-4 px-8 text-center">
-            <div className="flex h-20 w-20 items-center justify-center rounded-2xl border border-vx-border bg-vx-surface2">
+            <div className="flex h-20 w-20 items-center justify-center rounded-2xl border border-mk-border bg-mk-surface2">
               <MessageCircle
                 size={32}
                 strokeWidth={1.5}
-                className="text-vx-accent opacity-70"
+                className="text-mk-accent opacity-70"
               />
             </div>
             <div>
-              <div className="text-[19.5px] font-semibold text-vx-text">
+              <div className="text-[19.5px] font-semibold text-mk-text">
                 Conversas
               </div>
-              <p className="mx-auto mt-1 max-w-xs text-[13px] text-vx-muted">
+              <p className="mx-auto mt-1 max-w-xs text-[13px] text-mk-muted">
                 Selecione uma conversa à esquerda para ver o histórico e responder.
               </p>
             </div>
@@ -315,7 +315,7 @@ export function ChatPanel({
         ) : chatLoading ? (
           <ChatSkeleton />
         ) : messages.length === 0 && pendingMsgs.length === 0 ? (
-          <div className="flex h-full flex-col items-center justify-center gap-3 text-center text-vx-muted">
+          <div className="flex h-full flex-col items-center justify-center gap-3 text-center text-mk-muted">
             <MessageCircle size={28} strokeWidth={1.5} className="opacity-30" />
             <p className="text-[13px]">Nenhuma mensagem ainda</p>
           </div>
@@ -323,7 +323,7 @@ export function ChatPanel({
           <>
             {/* Topo do histórico: buscando o lote anterior, ou o fim da linha. */}
             {carregandoAntigas ? (
-              <div className="flex shrink-0 items-center justify-center gap-2 py-3 text-[11px] text-vx-muted">
+              <div className="flex shrink-0 items-center justify-center gap-2 py-3 text-[11px] text-mk-muted">
                 <Loader2 size={13} className="animate-spin" />
                 Carregando mensagens anteriores…
               </div>
@@ -331,12 +331,12 @@ export function ChatPanel({
               <button
                 type="button"
                 onClick={onCarregarAntigas}
-                className="mx-auto shrink-0 rounded-full border border-vx-border bg-vx-surface2 px-3.5 py-1.5 text-[11px] text-vx-muted transition-colors hover:text-vx-text"
+                className="mx-auto shrink-0 rounded-full border border-mk-border bg-mk-surface2 px-3.5 py-1.5 text-[11px] text-mk-muted transition-colors hover:text-mk-text"
               >
                 Ver mensagens anteriores
               </button>
             ) : (
-              <div className="shrink-0 py-2 text-center font-mono text-[10px] tracking-wide text-vx-muted opacity-60">
+              <div className="shrink-0 py-2 text-center font-mono text-[10px] tracking-wide text-mk-muted opacity-60">
                 Início da conversa
               </div>
             )}
@@ -346,7 +346,7 @@ export function ChatPanel({
                 key={p.id}
                 className="flex max-w-[65%] flex-col items-end self-end"
               >
-                <div className="mb-1 flex items-center gap-1 text-[9px] font-bold tracking-wider text-vx-accent">
+                <div className="mb-1 flex items-center gap-1 text-[9px] font-bold tracking-wider text-mk-accent">
                   <UserRound size={12} /> Você
                 </div>
                 <div className={bubbleClasses("agente")}>
@@ -356,10 +356,10 @@ export function ChatPanel({
                   <span
                     className={
                       p.status === "enviado"
-                        ? "text-vx-green"
+                        ? "text-mk-green"
                         : p.status === "falhou"
-                          ? "text-vx-red"
-                          : "text-vx-muted"
+                          ? "text-mk-red"
+                          : "text-mk-muted"
                     }
                   >
                     {p.status === "enviado"
@@ -368,7 +368,7 @@ export function ChatPanel({
                         ? "falhou ⚠"
                         : "enviando…"}
                   </span>
-                  <span className="text-vx-muted"> · {hhmm(p.enviado_em)}</span>
+                  <span className="text-mk-muted"> · {hhmm(p.enviado_em)}</span>
                 </div>
               </div>
             ))}
@@ -378,12 +378,12 @@ export function ChatPanel({
 
       {/* Composer */}
       {lead && (
-        <div className="shrink-0 border-t border-vx-border bg-vx-surface px-6 pb-3 pt-4">
+        <div className="shrink-0 border-t border-mk-border bg-mk-surface px-6 pb-3 pt-4">
           <div className="flex items-center gap-2">
             <button
               aria-label="Anexar"
               title="Anexar"
-              className="grid h-9 w-9 shrink-0 place-items-center rounded-lg text-vx-muted transition-colors hover:bg-vx-surface2 hover:text-vx-text"
+              className="grid h-9 w-9 shrink-0 place-items-center rounded-lg text-mk-muted transition-colors hover:bg-mk-surface2 hover:text-mk-text"
             >
               <Paperclip size={18} />
             </button>
@@ -408,12 +408,12 @@ export function ChatPanel({
                 e.preventDefault();
                 handleSend();
               }}
-              className="max-h-40 w-full resize-none overflow-y-auto rounded-2xl border border-vx-border bg-vx-surface2 px-4 py-2.5 text-[13.5px] leading-relaxed text-vx-text outline-none transition-colors placeholder:text-vx-muted focus:border-vx-accent focus:bg-vx-surface"
+              className="max-h-40 w-full resize-none overflow-y-auto rounded-2xl border border-mk-border bg-mk-surface2 px-4 py-2.5 text-[13.5px] leading-relaxed text-mk-text outline-none transition-colors placeholder:text-mk-muted focus:border-mk-accent focus:bg-mk-surface"
             />
             <button
               aria-label="Gravar áudio"
               title="Gravar áudio"
-              className="grid h-9 w-9 shrink-0 place-items-center rounded-lg text-vx-muted transition-colors hover:bg-vx-surface2 hover:text-vx-text"
+              className="grid h-9 w-9 shrink-0 place-items-center rounded-lg text-mk-muted transition-colors hover:bg-mk-surface2 hover:text-mk-text"
             >
               <Mic size={18} />
             </button>
@@ -422,15 +422,15 @@ export function ChatPanel({
               title="Enviar"
               onClick={handleSend}
               disabled={sending}
-              className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-vx-accent text-vx-on-accent transition hover:opacity-85 disabled:pointer-events-none disabled:opacity-50"
+              className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-mk-accent text-mk-on-accent transition hover:opacity-85 disabled:pointer-events-none disabled:opacity-50"
             >
               <Send size={16} />
             </button>
           </div>
-          <div className="mt-2 flex flex-wrap items-center justify-center gap-1.5 text-center text-[11px] text-vx-muted">
+          <div className="mt-2 flex flex-wrap items-center justify-center gap-1.5 text-center text-[11px] text-mk-muted">
             {paused ? (
               <>
-                <UserRound size={13} className="text-vx-muted" />
+                <UserRound size={13} className="text-mk-muted" />
                 <span>
                   {lead.pausada_por === "cliente"
                     ? "O cliente pediu atendimento humano."
@@ -438,18 +438,18 @@ export function ChatPanel({
                 </span>
                 <button
                   onClick={onToggleIA}
-                  className="font-semibold text-vx-accent hover:underline"
+                  className="font-semibold text-mk-accent hover:underline"
                 >
                   Retomar a Meraki.
                 </button>
               </>
             ) : (
               <>
-                <Lock size={13} className="text-vx-muted" />
+                <Lock size={13} className="text-mk-muted" />
                 <span>A Meraki está gerenciando esta conversa automaticamente.</span>
                 <button
                   onClick={onToggleIA}
-                  className="font-semibold text-vx-accent hover:underline"
+                  className="font-semibold text-mk-accent hover:underline"
                 >
                   Clique para pausar e assumir.
                 </button>

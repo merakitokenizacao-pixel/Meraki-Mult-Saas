@@ -5,7 +5,7 @@
 //                              variant `dark:` do Tailwind)
 //   data-theme="<id>"        → qual PALETA está em uso
 // Separar os dois é o que permite existir mais de um tema escuro sem reescrever
-// nenhuma regra de CSS: um tema novo só declara seus tokens `--vx-*`.
+// nenhuma regra de CSS: um tema novo só declara seus tokens `--mk-*`.
 //
 // Os ids são os mesmos valores já gravados no localStorage ('light'/'dark'),
 // então quem já tinha preferência salva não perde nada.
@@ -35,7 +35,7 @@ export interface DefTema {
   previa: PreviaTema;
 }
 
-// As cores da prévia são LITERAIS (não var(--vx-*)): o cartão precisa mostrar o
+// As cores da prévia são LITERAIS (não var(--mk-*)): o cartão precisa mostrar o
 // tema que NÃO está aplicado. Devem espelhar os blocos de token do globals.css.
 export const TEMAS: DefTema[] = [
   {

@@ -30,10 +30,10 @@ async function getFollowUps(): Promise<FollowUp[]> {
 }
 
 const TOM_CSS: Record<Tom, { bg: string; fg: string }> = {
-  verde: { bg: "var(--vx-green-bg)", fg: "var(--vx-green)" },
-  azul: { bg: "var(--vx-blue-bg)", fg: "var(--vx-blue)" },
-  cinza: { bg: "var(--vx-surface3)", fg: "var(--vx-muted)" },
-  ambar: { bg: "var(--vx-amber-bg)", fg: "var(--vx-amber)" },
+  verde: { bg: "var(--mk-green-bg)", fg: "var(--mk-green)" },
+  azul: { bg: "var(--mk-blue-bg)", fg: "var(--mk-blue)" },
+  cinza: { bg: "var(--mk-surface3)", fg: "var(--mk-muted)" },
+  ambar: { bg: "var(--mk-amber-bg)", fg: "var(--mk-amber)" },
 };
 
 const RESULTADOS: FollowUpResultado[] = [
@@ -253,7 +253,7 @@ export function FollowUps() {
         </div>
       ) : error ? (
         <div className="card" style={{ padding: 20 }}>
-          <div style={{ display: "flex", gap: 9, color: "var(--vx-red)", fontSize: 13 }}>
+          <div style={{ display: "flex", gap: 9, color: "var(--mk-red)", fontSize: 13 }}>
             <TriangleAlert size={16} strokeWidth={1.8} style={{ flexShrink: 0, marginTop: 1 }} />
             Não foi possível carregar os follow-ups.
           </div>
@@ -266,7 +266,7 @@ export function FollowUps() {
           <Undo2
             size={28}
             strokeWidth={1.3}
-            style={{ color: "var(--vx-accent)", margin: "0 auto 14px" }}
+            style={{ color: "var(--mk-accent)", margin: "0 auto 14px" }}
           />
           <div className="fu-vazio-titulo">Nenhum follow-up ainda</div>
           <p className="fu-vazio-texto">

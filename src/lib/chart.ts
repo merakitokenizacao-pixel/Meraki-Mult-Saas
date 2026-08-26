@@ -48,7 +48,11 @@ export function getChartStyle(): ChartStyle {
     green: v("--mk-green"),
     blue: v("--mk-blue"),
     gold: v("--mk-gold"),
-    fontSans: v("--font-inter") || "sans-serif",
-    fontMono: v("--font-jetbrains") || "monospace",
+    // Sistema Meraki primeiro, sistema antigo como reserva. O gráfico tem que
+    // usar a MESMA fonte do resto da tela: rótulo de eixo numa fonte e valor
+    // do card em outra é o tipo de desalinho que ninguém nomeia mas todo mundo
+    // vê. Quando o sistema antigo sair, some o `||`.
+    fontSans: v("--font-space") || v("--font-inter") || "sans-serif",
+    fontMono: v("--font-plex-mono") || v("--font-jetbrains") || "monospace",
   };
 }

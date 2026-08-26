@@ -15,6 +15,11 @@
   --font-serif: var(--font-cormorant);
   --font-mono: var(--font-jetbrains);
   --font-heading: var(--font-cormorant);
+  /* Sistema Meraki: número/título em Space Grotesk, corpo em IBM Plex Sans,
+     dado tabular em IBM Plex Mono. */
+  --font-mk-numero: var(--font-space);
+  --font-mk-corpo: var(--font-plex);
+  --font-mk-mono: var(--font-plex-mono);
 
   /* ── Tokens semânticos do shadcn (derivam da paleta Meraki) ── */
   --color-background: var(--background);
@@ -83,6 +88,186 @@
   --shadow-mk-sm: var(--mk-shadow-sm);
   --shadow-mk-md: var(--mk-shadow-md);
   --shadow-mk-lg: var(--mk-shadow-lg);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SISTEMA MERAKI — superfície como OPACIDADE, não como cor
+   ═══════════════════════════════════════════════════════════════════════════
+
+   O sistema anterior era papel branco com hairline cinza. Este é o oposto, e
+   é troca de sistema, não ajuste de tema.
+
+   A ideia inteira cabe em três linhas:
+
+     fundo      #000000     preto real, não cinza-escuro
+     superfície #ffffff08   branco a 3% SOBRE o preto
+     borda      #ffffff1a   branco a 10%
+
+   Por que funciona: como o fundo é preto REAL, 3% de branco produz uma
+   superfície que parece iluminada por dentro em vez de pintada por cima. E
+   porque é opacidade e não cor fixa, tudo empilha coerente — card sobre card,
+   popover sobre card — sem ninguém precisar calcular um tom novo a cada
+   camada.
+
+   ⚠️ CONSEQUÊNCIA QUE NÃO DÁ PARA ESQUECER: com fundo preto e superfície
+   translúcida, `box-shadow` deixa de separar e vira mancha. A separação é
+   100% BORDA. Zero box-shadow, em todo lugar, sem exceção.
+
+   Nenhum hex literal fora deste bloco. Se precisar de uma cor que não está
+   aqui, o lugar de resolver é aqui. */
+:root {
+  /* ── Superfície ── */
+  --mk-fundo: #000000;
+  /* Único tom opaco do sistema: fica atrás de coisa que precisa TAPAR o que
+     está embaixo (menu, modal). Superfície translúcida sobre conteúdo deixa
+     o texto de baixo aparecer. */
+  --mk-elevado: #0c0d0f;
+  --mk-superficie: #ffffff08;
+  /* Segundo degrau, para o que empilha sobre um card. Não é uma cor nova —
+     é a mesma ideia, mais uma camada. */
+  --mk-superficie-2: #ffffff12;
+  --mk-linha: #ffffff1a;
+  --mk-linha-suave: #ffffff0e;
+
+  /* ── Tinta ── */
+  --mk-tinta: #ecedee;
+  --mk-tinta-media: #9ba1a6;
+  --mk-tinta-fraca: #62676d;
+
+  /* ── Acento ──
+     UM só, para ação e estado ativo. Violeta escolhido pelo dono entre três
+     medidos: 7.72 de contraste sobre preto. O dourado #8a6a2f da LINS ficou
+     para trás por medida, não por gosto — ele dá 4.18 sobre preto e REPROVA
+     no AA de texto pequeno. Era cor de clínica de estética; o Meraki é
+     plataforma.
+
+     Este é o único lugar onde o acento aparece. Trocar a identidade depois é
+     mexer nestas quatro linhas. */
+  --mk-acento: #a78bfa;
+  --mk-acento-forte: #7c5cf0;
+  /* Texto sobre o acento sólido (botão primário): 7.72 com preto contra 2.32
+     com branco. Não é escolha estética. */
+  --mk-sobre-acento: #000000;
+  /* Acento a 12%, para o fundo de um chip selecionado. Mesma lógica da
+     superfície: opacidade, não um violeta escuro inventado. */
+  --mk-acento-fraco: #a78bfa1f;
+
+  /* ── Semânticas ──
+     Cada uma diz UMA coisa e nunca é usada como decoração. Foi assim que a
+     rosca de serviços virou arco-íris no painel antigo: cor de estado usada
+     para separar categoria. */
+  --mk-ativa: #3fb950; /* está funcionando */
+  --mk-pausada: #7dd3fc; /* está parado */
+  --mk-alerta: #f85149; /* erro e perda */
+
+  /* ── Série (categoria em gráfico) ──
+     Derivada do acento, e NUNCA usa cor semântica.
+
+     Escolhida por distância perceptual em OKLab, não por contraste WCAG:
+     contraste mede legibilidade de TEXTO, e dois setores vizinhos de uma
+     rosca podem ter a mesma luminância e serem obviamente distintos. O menor
+     par aqui é 0.135 de dE, e vizinhos na ordem abaixo ficam em 0.168 — a
+     ordem é parte da definição, não acaso.
+
+     Todas a >= 0.187 de dE das três semânticas, que é o que impede um setor
+     de gráfico de parecer um estado. */
+  --mk-serie-1: #a78bfa;
+  --mk-serie-2: #8c4368;
+  --mk-serie-3: #5f54c7;
+  --mk-serie-4: #ff99db;
+  --mk-serie-5: #b24bb2;
+
+  /* ── Geometria ──
+     Um raio só. A referência usa um, e com superfície translúcida sobre preto
+     um segundo raio não se lê — o que desenha a forma é a borda de 1px. */
+  --mk-raio: 6px;
+  --mk-transicao: 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── ESCOPO DE TRANSIÇÃO ─────────────────────────────────────────────────────
+   Só as telas já convertidas carregam `[data-mk]`. Enquanto a migração corre,
+   é isto que permite a Visão geral estar no sistema novo com as outras
+   intactas, sem duplicar o CSS delas.
+
+   `:root:has(…)` porque `rem` resolve na RAIZ: dá para escopar o corpo por
+   ancestral, mas não a escala tipográfica. Com `:has`, a raiz reage ao que a
+   página declarou.
+
+   Os apelidos abaixo repontam os tokens ANTIGOS para os novos DENTRO deste
+   escopo. É o que faz as regras compartilhadas (`.card`, `.btn-primary`,
+   `.modal`) funcionarem no sistema novo sem serem reescritas todas de uma
+   vez. Some no passo 5, junto com os tokens antigos. */
+/* `html:root:` e não só `:root:` — e a diferença não é estilo.
+   `:root:has(.layout)` do sistema antigo mora MAIS ABAIXO neste arquivo e tem
+   a MESMA especificidade (0,1,0), porque `:has()` herda a do argumento e
+   `.layout` e `[data-mk]` são ambos uma classe/atributo. Empate se resolve por
+   ORDEM, e a ordem estava contra: o painel continuaria em 13px com o sistema
+   novo achando que tinha pedido 16. O `html` à frente sobe para (0,1,1) e tira
+   a regra da mão da ordem. Some no passo 5, junto com a regra antiga. */
+html:root:has([data-mk]) {
+  /* 13px → 16px. A referência usa 16 e respira melhor no escuro: no claro a
+     densidade alta ainda se lê, no escuro o texto miúdo some. */
+  font-size: 16px;
+
+  --mk-bg: var(--mk-fundo);
+  --mk-surface: var(--mk-superficie);
+  --mk-surface2: var(--mk-superficie-2);
+  --mk-surface3: var(--mk-superficie-2);
+  --mk-border: var(--mk-linha);
+  --mk-border2: var(--mk-linha);
+  --mk-text: var(--mk-tinta);
+  --mk-text2: var(--mk-tinta-media);
+  --mk-muted: var(--mk-tinta-fraca);
+  --mk-accent: var(--mk-acento);
+  --mk-accent2: var(--mk-acento-forte);
+  --mk-accent-light: var(--mk-acento-fraco);
+  --mk-on-accent: var(--mk-sobre-acento);
+  --mk-gold: var(--mk-acento);
+  --mk-gold-light: var(--mk-acento-fraco);
+  --mk-green: var(--mk-ativa);
+  --mk-green-bg: #3fb9501f;
+  --mk-blue: var(--mk-pausada);
+  --mk-blue-bg: #7dd3fc1f;
+  --mk-red: var(--mk-alerta);
+  --mk-red-bg: #f851491f;
+  --mk-amber: #d9a441;
+  --mk-amber-bg: #d9a4411f;
+  --mk-purple: var(--mk-serie-5);
+  --mk-purple-bg: #b24bb21f;
+  --mk-cat-1: var(--mk-serie-1);
+  --mk-cat-2: var(--mk-serie-2);
+  --mk-cat-3: var(--mk-serie-3);
+  --mk-cat-4: var(--mk-serie-4);
+  --mk-cat-5: var(--mk-serie-5);
+  --mk-radius: var(--mk-raio);
+  --mk-radius-sm: var(--mk-raio);
+  --mk-radius-lg: var(--mk-raio);
+  --mk-transition: var(--mk-transicao);
+  /* Sombra deixa de existir. Sobre preto com superfície translúcida ela não
+     separa — mancha. Os tokens continuam declarados só enquanto regras
+     antigas ainda os citam; somem no passo 5. */
+  --mk-shadow-sm: none;
+  --mk-shadow-md: none;
+  --mk-shadow-lg: none;
+  --mk-sidebar-bg: var(--mk-fundo);
+
+  /* Avatares sem foto: o mesmo raciocínio da superfície. Antes eram seis hex
+     escolhidos para fundo branco; sobre preto eles afundam. */
+  --mk-av-1: #a78bfa;
+  --mk-av-2: #7dd3fc;
+  --mk-av-3: #ff99db;
+  --mk-av-4: #5f54c7;
+  --mk-av-5: #b24bb2;
+  --mk-av-6: #8c4368;
+}
+
+/* O fundo é do documento, não de um contêiner: qualquer folga (overscroll,
+   área além do conteúdo) tem que ser o mesmo preto, senão aparece a borda do
+   sistema antigo por trás. */
+html:root:has([data-mk]) body {
+  background: var(--mk-fundo);
+  color: var(--mk-tinta);
+  font-family: var(--font-plex), system-ui, sans-serif;
 }
 
 /* ── TEMA CLARO (:root) — valores extraídos do legacy ── */
@@ -5620,4 +5805,416 @@ a.sidebar-footer:hover {
 .lead-visita-para {
   margin-top: 1px;
   max-width: 160px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SISTEMA MERAKI — Visão geral
+   ═══════════════════════════════════════════════════════════════════════════
+
+   Tudo aqui está sob `[data-mk]`, que só a Visão geral carrega enquanto a
+   migração corre. O escopo some no passo 5, junto com as regras antigas que
+   estas substituem.
+
+   Não há redesenho de estrutura: o layout (grades, ordem, quantidade de
+   cards) é o mesmo. O que troca é o SISTEMA — superfície, borda, tipografia
+   e cor.
+
+   Zero box-shadow, e não por gosto: sobre preto com superfície translúcida a
+   sombra não separa nada, só suja. Quem separa é a borda de 1px. */
+
+/* ── Tipografia ──────────────────────────────────────────────────────────── */
+[data-mk] {
+  font-family: var(--font-plex), system-ui, sans-serif;
+  color: var(--mk-tinta);
+}
+/* Número e título em Space Grotesk. Os dígitos dela têm largura constante,
+   então o valor não dança de um card para o outro — que era exatamente o
+   defeito do Cormorant nesta posição. */
+[data-mk] .vg-titulo,
+[data-mk] .metric-value,
+[data-mk] .neg-card-valor,
+[data-mk] .funnel-count,
+[data-mk] .card-title,
+[data-mk] .neg-painel-titulo,
+[data-mk] .metrics-lente-titulo {
+  font-family: var(--font-space), system-ui, sans-serif;
+}
+/* Dado tabular: coluna de valores, percentual, contagem. */
+[data-mk] .neg-linha-qtd,
+[data-mk] .neg-linha-pct,
+[data-mk] .neg-rosca-pct,
+[data-mk] .neg-rosca-valor,
+[data-mk] .neg-pessoa-valor,
+[data-mk] .funnel-pct,
+[data-mk] .neg-fill {
+  font-family: var(--font-plex-mono), ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Cabeçalho da tela ───────────────────────────────────────────────────── */
+[data-mk] .vg-saudacao {
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  color: var(--mk-tinta-fraca);
+}
+[data-mk] .vg-titulo {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--mk-tinta);
+}
+[data-mk] .vg-sub {
+  font-size: 12px;
+  color: var(--mk-tinta-media);
+}
+
+/* Abas: controle segmentado. A ativa NÃO ganha fundo — muda só a cor, como o
+   item de menu. Fundo na aba ativa somado a fundo no trilho cria três tons
+   de superfície para dizer uma coisa só. */
+[data-mk] .vg-abas {
+  gap: 0;
+  padding: 0;
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
+  background: var(--mk-superficie);
+  overflow: hidden;
+}
+[data-mk] .vg-aba {
+  border-radius: 0;
+  padding: 0 14px;
+  height: 33px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--mk-tinta-media);
+  transition: color var(--mk-transicao);
+}
+[data-mk] .vg-aba + .vg-aba {
+  border-left: 1px solid var(--mk-linha-suave);
+}
+[data-mk] .vg-aba:hover {
+  color: var(--mk-tinta);
+}
+[data-mk] .vg-aba.ativa {
+  background: transparent;
+  color: var(--mk-acento);
+}
+
+/* ── Superfície: cards e painéis ─────────────────────────────────────────── */
+/* O "hack" inteiro está nestas três linhas, repetidas para cada peça:
+   branco a 3% sobre preto, borda a 10%, nada de sombra. Como é opacidade e
+   não cor, empilhar (popover sobre card) continua coerente sem calcular tom
+   novo. */
+[data-mk] .card,
+[data-mk] .metric-card,
+[data-mk] .neg-card,
+[data-mk] .neg-painel {
+  background: var(--mk-superficie);
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
+  box-shadow: none;
+  transition: border-color var(--mk-transicao);
+}
+[data-mk] .neg-card-btn:hover,
+[data-mk] .card:hover {
+  border-color: var(--mk-linha);
+}
+/* Card que É botão: só ele reage, e reagindo pela BORDA. */
+[data-mk] .neg-card-btn:hover {
+  border-color: var(--mk-tinta-fraca);
+}
+[data-mk] .neg-card.ativo {
+  border-color: var(--mk-acento);
+}
+
+[data-mk] .card-header {
+  margin-bottom: 14px;
+}
+[data-mk] .card-title,
+[data-mk] .neg-painel-titulo {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--mk-tinta);
+}
+[data-mk] .card-action {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--mk-tinta-media);
+}
+[data-mk] .card-action:hover {
+  color: var(--mk-acento);
+}
+[data-mk] .neg-painel-nota,
+[data-mk] .metric-sub,
+[data-mk] .neg-card-apoio {
+  color: var(--mk-tinta-fraca);
+}
+
+/* ── O número grande ─────────────────────────────────────────────────────── */
+/* 48px / 700 / Space Grotesk é o tamanho do sistema. `clamp` porque são cinco
+   cards lado a lado: num monitor estreito 48px estoura a caixa e o valor
+   quebra em duas linhas, que é pior que um número menor. O teto é o do
+   sistema; o piso mantém o número como protagonista do card. */
+[data-mk] .neg-card-valor,
+[data-mk] .metric-value {
+  font-size: clamp(26px, 2.9vw, 48px);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--mk-tinta);
+  font-variant-numeric: tabular-nums;
+}
+/* O "%" e o "R$" não são dígitos: em 48px eles dominam o número. */
+[data-mk] .metric-unidade {
+  font-size: 0.5em;
+  font-weight: 500;
+  color: var(--mk-tinta-media);
+}
+[data-mk] .neg-card-rotulo,
+[data-mk] .metric-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--mk-tinta-media);
+}
+/* Card mais alto porque o número cresceu. Sem isto o valor encosta na borda. */
+[data-mk] .neg-card,
+[data-mk] .metric-card {
+  min-height: 112px;
+  padding: 14px 16px;
+}
+
+/* Tom da variação: verde só quando é "está funcionando", vermelho só quando é
+   perda. Nunca decoração. */
+[data-mk] .neg-tom-sobe {
+  color: var(--mk-ativa);
+}
+[data-mk] .neg-tom-desce {
+  color: var(--mk-alerta);
+}
+[data-mk] .neg-tom-neutro {
+  color: var(--mk-tinta-fraca);
+}
+
+/* ── A2: as três classes que eram nomeadas sem regra ─────────────────────── */
+/* `.metrics-lente` agrupa um par de cards sob um título. Existia no markup
+   desde o começo e nunca teve regra: os dois cards ficavam colados no título
+   e no bloco seguinte. */
+.metrics-lente {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+.metrics-lente + .metrics-lente {
+  margin-top: 0;
+}
+/* `.drp-mes` é cada mês do seletor de período. Sem `min-width: 0` a grade de
+   dias força a coluna a crescer e os dois meses estouram o popover. */
+.drp-mes {
+  min-width: 0;
+}
+/* `.nav-item-footer` distingue Configurações dos itens de operação: mesmo
+   item, peso menor, porque é destino ocasional e não parte do fluxo. */
+.nav-item-footer {
+  font-weight: 400;
+}
+
+[data-mk] .metrics-lente-titulo {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--mk-tinta-fraca);
+}
+
+/* ── Funil ───────────────────────────────────────────────────────────────── */
+[data-mk] .funnel-label {
+  font-size: 11.5px;
+  color: var(--mk-tinta-media);
+}
+[data-mk] .funnel-count {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--mk-tinta);
+}
+[data-mk] .funnel-track {
+  height: 3px;
+  border-radius: 0;
+  /* Trilho é a superfície, não um cinza: sobre preto um cinza fixo vira uma
+     faixa que não pertence a nada. */
+  background: var(--mk-superficie-2);
+}
+[data-mk] .funnel-fill {
+  background: var(--mk-acento);
+  border-radius: 0;
+}
+[data-mk] .funnel-pct {
+  font-size: 11px;
+  color: var(--mk-tinta-fraca);
+}
+
+/* ── Controles: select, filtro de período ────────────────────────────────── */
+/* Campo é transparente com borda. NUNCA cinza preenchido — sobre preto o
+   cinza preenchido lê como desabilitado. */
+[data-mk] .neg-select,
+[data-mk] .date-filter-trigger,
+[data-mk] .drp-select {
+  height: 33px;
+  padding: 0 10px;
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
+  background: transparent;
+  color: var(--mk-tinta-media);
+  font-family: var(--font-plex), system-ui, sans-serif;
+  font-size: 12px;
+  box-shadow: none;
+  transition: border-color var(--mk-transicao), color var(--mk-transicao);
+}
+[data-mk] .neg-select:hover,
+[data-mk] .date-filter-trigger:hover {
+  color: var(--mk-tinta);
+  border-color: var(--mk-tinta-fraca);
+}
+/* Foco muda a COR DA BORDA. Sem anel, sem brilho. */
+[data-mk] .neg-select:focus,
+[data-mk] .date-filter-trigger:focus,
+[data-mk] .drp-select:focus {
+  outline: none;
+  border-color: var(--mk-acento);
+}
+/* O menu do seletor PRECISA tapar o que está atrás — superfície translúcida
+   deixaria o conteúdo aparecer através dele. É o único lugar do sistema que
+   usa tom opaco. */
+[data-mk] .drp-pop {
+  background: var(--mk-elevado);
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
+  box-shadow: none;
+}
+[data-mk] .drp-atalho {
+  color: var(--mk-tinta-media);
+  border-radius: var(--mk-raio);
+}
+[data-mk] .drp-atalho:hover {
+  background: var(--mk-superficie);
+  color: var(--mk-tinta);
+}
+[data-mk] .drp-atalho.ativo {
+  color: var(--mk-acento);
+  background: var(--mk-acento-fraco);
+}
+
+/* ── Gráficos ────────────────────────────────────────────────────────────── */
+[data-mk] .neg-legenda-ponto {
+  border-radius: 2px;
+}
+[data-mk] .neg-rosca-nome {
+  color: var(--mk-tinta-media);
+}
+[data-mk] .neg-rosca-valor,
+[data-mk] .neg-linha-qtd {
+  color: var(--mk-tinta);
+}
+[data-mk] .neg-rosca-pct,
+[data-mk] .neg-linha-pct {
+  color: var(--mk-tinta-fraca);
+}
+
+/* ── Listas (próximos agendamentos, ranking) ─────────────────────────────── */
+[data-mk] .lead-item {
+  border-bottom: 1px solid var(--mk-linha-suave);
+  transition: background var(--mk-transicao);
+}
+[data-mk] .lead-item:last-child {
+  border-bottom: none;
+}
+[data-mk] .lead-item:hover {
+  background: var(--mk-superficie);
+}
+[data-mk] .lead-name,
+[data-mk] .neg-linha-nome,
+[data-mk] .neg-pessoa-nome {
+  color: var(--mk-tinta);
+}
+[data-mk] .lead-meta,
+[data-mk] .neg-pessoa-sub {
+  color: var(--mk-tinta-fraca);
+}
+[data-mk] .neg-barra-trilho {
+  background: var(--mk-superficie-2);
+}
+[data-mk] .neg-pos {
+  color: var(--mk-tinta-fraca);
+  font-family: var(--font-plex-mono), ui-monospace, monospace;
+}
+[data-mk] .neg-vazio,
+[data-mk] .empty {
+  color: var(--mk-tinta-fraca);
+}
+[data-mk] .spinner {
+  border-color: var(--mk-linha);
+  border-top-color: var(--mk-acento);
+}
+
+/* ── Chrome: sidebar, topbar e nav ───────────────────────────────────────── */
+/* O frame acompanha a tela convertida — sidebar clara com conteúdo preto
+   leria como bug, não como transição. */
+:root:has([data-mk]) .sidebar {
+  background: var(--mk-fundo);
+  border-right: 1px solid var(--mk-linha);
+  box-shadow: none;
+}
+:root:has([data-mk]) .sidebar-logo,
+:root:has([data-mk]) .topbar {
+  border-color: var(--mk-linha);
+  background: var(--mk-fundo);
+}
+:root:has([data-mk]) .sidebar-logo .logo-mark {
+  font-family: var(--font-space), system-ui, sans-serif;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--mk-tinta);
+}
+:root:has([data-mk]) .sidebar-logo .logo-mark em {
+  font-style: normal;
+  color: var(--mk-acento);
+}
+/* Item ativo muda SÓ de cor. Sem fundo, sem barra lateral: numa lista curta
+   a cor já é o sinal, e fundo+barra somam dois enfeites para dizer o mesmo. */
+:root:has([data-mk]) .nav-item {
+  color: var(--mk-tinta-media);
+  background: transparent;
+  border-radius: var(--mk-raio);
+  font-family: var(--font-plex), system-ui, sans-serif;
+  transition: color var(--mk-transicao);
+}
+:root:has([data-mk]) .nav-item:hover {
+  color: var(--mk-tinta);
+  background: transparent;
+}
+:root:has([data-mk]) .nav-item.active {
+  color: var(--mk-acento);
+  background: transparent;
+}
+:root:has([data-mk]) .nav-item.active::before,
+:root:has([data-mk]) .nav-item.active::after {
+  background: transparent;
+}
+:root:has([data-mk]) .nav-icon {
+  color: currentColor;
+}
+:root:has([data-mk]) .content {
+  background: var(--mk-fundo);
+}
+:root:has([data-mk]) .bottom-nav {
+  background: var(--mk-fundo);
+  border-top: 1px solid var(--mk-linha);
+  box-shadow: none;
+}
+:root:has([data-mk]) .tenant-sel-campo {
+  background: transparent;
+  border-color: var(--mk-linha);
+  color: var(--mk-tinta);
+  border-radius: var(--mk-raio);
 }

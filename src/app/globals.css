@@ -5845,11 +5845,16 @@ a.sidebar-footer:hover {
 [data-mk] .neg-rosca-pct,
 [data-mk] .neg-rosca-valor,
 [data-mk] .neg-pessoa-valor,
-[data-mk] .funnel-pct,
-[data-mk] .neg-fill {
+[data-mk] .neg-card-apoio,
+[data-mk] .funnel-pct {
   font-family: var(--font-plex-mono), ui-monospace, monospace;
   font-variant-numeric: tabular-nums;
 }
+/* ⚠️ `.neg-fill` NÃO entra na lista acima, e a tentação é grande: o nome
+   parece de um elemento de valor. Ele é o WRAPPER da aba Negócios inteira —
+   a regra antiga só põe `font-variant-numeric` nele, para os algarismos
+   alinharem em toda a aba. Pôr `font-family` aqui joga a aba inteira em
+   monoespaçada: rótulo, nota de painel, tudo. */
 
 /* ── Cabeçalho da tela ───────────────────────────────────────────────────── */
 [data-mk] .vg-saudacao {
@@ -5983,16 +5988,27 @@ a.sidebar-footer:hover {
   padding: 14px 16px;
 }
 
-/* Tom da variação: verde só quando é "está funcionando", vermelho só quando é
-   perda. Nunca decoração. */
+/* Tom da variação. Viaja pelo custom property `--neg-tom`, não por `color`:
+   é `.neg-card-icone` que lê. Setar `color` aqui não pintava o ícone — pintava
+   texto que já tem cor própria, ou seja, nada.
+
+   Verde só quando é "está funcionando", vermelho só quando é perda. Os outros
+   três cards ficam neutros DE PROPÓSITO: cor identifica a direção do número,
+   não o card. Cinco matizes lado a lado viram enfeite, e "azul" não diz nada
+   sobre "total criado".
+
+   O neutro sobe de tinta-fraca para tinta-média. Em 3.68 de contraste, ao lado
+   de um verde em 8.27, ele não lia como cinza escolhido — lia como cor que
+   faltou. Em 8.04 fica no mesmo peso dos semânticos, e a ausência de matiz
+   passa a ser visivelmente uma decisão. */
 [data-mk] .neg-tom-sobe {
-  color: var(--mk-ativa);
+  --neg-tom: var(--mk-ativa);
 }
 [data-mk] .neg-tom-desce {
-  color: var(--mk-alerta);
+  --neg-tom: var(--mk-alerta);
 }
 [data-mk] .neg-tom-neutro {
-  color: var(--mk-tinta-fraca);
+  --neg-tom: var(--mk-tinta-media);
 }
 
 /* ── A2: as três classes que eram nomeadas sem regra ─────────────────────── */

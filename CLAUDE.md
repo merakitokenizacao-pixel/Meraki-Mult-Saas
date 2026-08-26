@@ -355,6 +355,12 @@ for a hora. Não espalhe hex de acento pelo CSS.
   próprio. É a razão da regra "se nomear uma classe, escreva o CSS dela".
 - **`/privacidade`**: a constante `CONTATO` está vazia. Não divulgar o link
   antes de preencher.
+- **Migrations do painel antigo em `supabase/migrations/_legado/`**: cinco
+  arquivos sem uma menção a `tenant_id`. Ficam numa subpasta porque
+  `supabase db push` varre só o nível de cima — rodá-las instalaria
+  `agenda_slots`/`agenda_checar` sem filtro de clínica e um trigger de
+  validação alheio ao tenant. Ver o `LEIA-ME.md` de lá antes de aproveitar
+  qualquer coisa.
 
 ## Fora deste repositório
 

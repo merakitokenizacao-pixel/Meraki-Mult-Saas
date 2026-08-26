@@ -14,8 +14,12 @@ export const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMERO}?text=${encodeURICo
   "Olá! Quero a Laura na minha clínica."
 )}`;
 
-/** PLACEHOLDER — e-mail comercial exibido no rodapé. */
-export const EMAIL_CONTATO = "contato@vorax.solutions";
+/**
+ * E-mail comercial. VAZIO de propósito, como RAZAO_SOCIAL e CNPJ abaixo: o
+ * endereço antigo era de outro produto, e inventar um domínio para o Meraki
+ * publicaria um canal que ninguém lê.
+ */
+export const EMAIL_CONTATO = "";
 
 export const CTA_LABEL = "Quero a Laura na minha clínica";
 

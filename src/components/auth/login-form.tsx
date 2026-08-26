@@ -54,7 +54,7 @@ export function LoginForm() {
       <div className="w-full max-w-[380px]">
         <div className="mb-8 text-center">
           <div className="font-[family-name:var(--font-cormorant)] text-[34px] font-light tracking-wide text-vx-text">
-            Vora<em className="text-vx-accent not-italic">X</em>
+            Merak<em className="text-vx-accent not-italic">i</em>
           </div>
           <p className="mt-2 text-[13px] text-vx-muted">
             Acesso restrito à equipe da clínica

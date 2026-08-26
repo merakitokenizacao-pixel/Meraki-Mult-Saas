@@ -1,5 +1,6 @@
 {
-  "name": "vorax",
+  "name": "meraki",
+  "description": "Painel SaaS multi-clínica: atendimento, agenda e métricas.",
   "version": "0.1.0",
   "private": true,
   "scripts": {

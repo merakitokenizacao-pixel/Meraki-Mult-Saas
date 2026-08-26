@@ -1,6 +1,6 @@
 import { CLINICA } from "@/lib/clinica";
 
-// Moldura de toda página pública: marca da CLÍNICA, nunca do VoraX.
+// Moldura de toda página pública: marca da CLÍNICA, nunca do Meraki.
 export function FichaShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="mx-auto flex w-full max-w-[560px] flex-col px-4 pb-12 pt-8 sm:px-6 sm:pt-12">

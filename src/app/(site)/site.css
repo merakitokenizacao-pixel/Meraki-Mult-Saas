@@ -33,7 +33,7 @@
   --s-muted: #8a847c;
   --s-line: #e9e5dd;
 
-  /* Dourado da marca VoraX */
+  /* Dourado da marca Meraki */
   --s-gold: #9b7d5a;
   --s-gold2: #b8955a;
   --s-soft: #f6efe4;
@@ -583,20 +583,24 @@ html[data-abertura="vista"] .s-abertura {
 }
 
 .s-marca-traco {
-  /* pathLength=1 no <path> normaliza o contorno, então dasharray/offset são 1
-     para TODA letra — o X longo desenha na mesma velocidade que o "o". */
+  /* Era 1 porque `pathLength=1` normalizava o contorno de cada <path>. Com
+     <tspan> não há pathLength, então o valor é fixo e generoso: cobre o
+     contorno de qualquer letra desta fonte neste tamanho. Letra curta termina
+     de desenhar antes da longa — o preço de não ter mais os contornos
+     congelados (ver marca-svg.tsx). O estado final é preenchido de qualquer
+     forma, então nada fica pela metade. */
   stroke-width: 0.7;
   stroke-linecap: round;
   stroke-linejoin: round;
   fill-opacity: 0;
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
+  stroke-dasharray: 420;
+  stroke-dashoffset: 420;
   animation: s-pinta 1.15s cubic-bezier(0.65, 0, 0.35, 1) forwards;
 }
 
 @keyframes s-pinta {
   0% {
-    stroke-dashoffset: 1;
+    stroke-dashoffset: 420;
     fill-opacity: 0;
   }
   62% {

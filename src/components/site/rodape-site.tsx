@@ -11,7 +11,7 @@ export function RodapeSite() {
         <div className="s-rodape-legal">
           {RAZAO_SOCIAL && <span>{RAZAO_SOCIAL}</span>}
           {CNPJ && <span>CNPJ {CNPJ}</span>}
-          <span>© 2026 VoraX</span>
+          <span>© 2026 Meraki</span>
         </div>
         <nav className="s-rodape-links">
           <Link href="/privacidade">Política de privacidade</Link>

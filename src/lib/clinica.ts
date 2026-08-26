@@ -1,5 +1,5 @@
 // Identidade da clínica exibida nas páginas PÚBLICAS (a paciente nunca vê a
-// marca VoraX). Hoje é constante; quando o CRM virar multi-clínica, basta
+// marca Meraki). Hoje é constante; quando o CRM virar multi-clínica, basta
 // carregar este objeto por tenant — nenhum componente conhece a LINS por nome.
 export const CLINICA = {
   nome: "LINS Estética Avançada",

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "../globals.css";
 import { CLINICA, clinicaCssVars } from "@/lib/clinica";
 
-// Metadados neutros: sem "VoraX", sem indexação.
+// Metadados neutros: sem "Meraki", sem indexação.
 export const metadata: Metadata = {
   title: `Ficha de avaliação — ${CLINICA.nomeCurto}`,
   description: "Formulário de avaliação pré-procedimento.",

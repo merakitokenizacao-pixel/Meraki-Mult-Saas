@@ -1,6 +1,6 @@
 <svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-  <!-- Favicon VoraX: o X itálico dourado da marca sobre o fundo escuro da
-       sidebar. O X sozinho (não "VoraX" inteiro) porque é o que se lê num
+  <!-- Favicon Meraki: a inicial dourada da marca sobre o fundo escuro da
+       sidebar. Uma letra só (não "Meraki" inteiro) porque é o que se lê num
        quadrado de 16px. Cores: gradiente #1a1510→#0f0d09 + ouro #b8955a. -->
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
@@ -9,8 +9,8 @@
     </linearGradient>
   </defs>
   <rect width="64" height="64" rx="15" fill="url(#bg)"/>
-  <text x="33" y="45" text-anchor="middle"
+  <text x="32" y="45" text-anchor="middle"
         font-family="Georgia, 'Times New Roman', serif"
-        font-size="42" font-weight="500" font-style="italic"
-        fill="#c8a06a">X</text>
+        font-size="40" font-weight="500"
+        fill="#c8a06a">M</text>
 </svg>

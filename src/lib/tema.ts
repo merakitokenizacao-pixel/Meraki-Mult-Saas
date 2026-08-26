@@ -14,7 +14,7 @@ export type Tema = "light" | "dark" | "graphite";
 export type Modo = "light" | "dark";
 
 export const TEMA_PADRAO: Tema = "light";
-export const TEMA_STORAGE_KEY = "vorax-theme";
+export const TEMA_STORAGE_KEY = "meraki-theme";
 
 /** Amostra usada na miniatura do seletor (Configurações → Aparência). */
 export interface PreviaTema {

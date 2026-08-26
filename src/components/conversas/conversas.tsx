@@ -294,7 +294,7 @@ export function Conversas() {
       showToast(
         novoEstado
           ? "IA pausada — você está no controle"
-          : "IA retomada — A VoraX está gerenciando",
+          : "IA retomada — A Meraki está gerenciando",
         "info"
       );
     } catch {

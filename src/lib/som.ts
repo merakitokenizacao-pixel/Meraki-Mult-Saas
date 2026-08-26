@@ -7,7 +7,7 @@
 // subindo lê como "chegou algo"; descendo leria como erro. E o volume importa:
 // quem está no painel costuma estar de fone no meio de um atendimento.
 
-const CHAVE_PREFERENCIA = "vorax-som-conversas";
+const CHAVE_PREFERENCIA = "meraki-som-conversas";
 
 let ctx: AudioContext | null = null;
 let ultimoToque = 0;

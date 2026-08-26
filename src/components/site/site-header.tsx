@@ -59,7 +59,7 @@ export function SiteHeader() {
             <motion.a
               layoutId={MARCA_LAYOUT_ID}
               href="#topo"
-              aria-label="VoraX — início"
+              aria-label="Meraki — início"
               className="block w-[108px] text-s-ink"
               transition={{ duration: 0.85, ease: [0.65, 0, 0.35, 1] }}
             >

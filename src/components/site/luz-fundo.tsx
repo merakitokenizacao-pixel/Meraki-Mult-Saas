@@ -2,7 +2,7 @@
 //
 // A referência usa uma peça abstrata de luz (não uma foto): faixas largas,
 // muito borradas, quase brancas, atravessando a tela. Aqui as faixas usam a
-// paleta quente do VoraX (dourado/creme) em vez do azul — assim a atmosfera é
+// paleta quente do Meraki (dourado/creme) em vez do azul — assim a atmosfera é
 // nossa, não uma cópia.
 //
 // Como funciona: cada onda é um traço (stroke) grosso sobre uma curva, com um

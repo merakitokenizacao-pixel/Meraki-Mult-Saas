@@ -34,8 +34,8 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "VoraX",
-  description: "Atendimento e agenda com IA para clínicas de estética.",
+  title: "Meraki",
+  description: "Atendimento e agenda com IA para clínicas.",
 };
 
 // Root layout MÍNIMO: só <html>/<body> e as fontes.

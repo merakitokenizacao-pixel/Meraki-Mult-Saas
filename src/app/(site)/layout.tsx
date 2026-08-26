@@ -4,7 +4,7 @@ import { Abertura } from "@/components/site/abertura";
 import { SiteHeader } from "@/components/site/site-header";
 
 export const metadata: Metadata = {
-  title: "VoraX — sua clínica atendendo 24h no WhatsApp",
+  title: "Meraki — sua clínica atendendo 24h no WhatsApp",
   description:
     "A Laura é a atendente de IA que responde no WhatsApp da sua clínica, controla a agenda de verdade e passa pra sua equipe na hora certa.",
   robots: { index: true, follow: true },
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 //
 // Enquanto `SEMPRE = true` em abertura.tsx, a chave nunca é gravada, então
 // este script não faz nada — mas fica pronto para quando a flag mudar.
-const scriptAbertura = `(function(){try{if(sessionStorage.getItem('vorax-abertura')==='1'){document.documentElement.setAttribute('data-abertura','vista');window.__voraxAberturaVista=true;}}catch(e){}})();`;
+const scriptAbertura = `(function(){try{if(sessionStorage.getItem('meraki-abertura')==='1'){document.documentElement.setAttribute('data-abertura','vista');window.__merakiAberturaVista=true;}}catch(e){}})();`;
 
 // Site institucional. Não herda NADA do painel: nem globals.css, nem os
 // providers, nem o script de tema. Ver `src/app/layout.tsx`.

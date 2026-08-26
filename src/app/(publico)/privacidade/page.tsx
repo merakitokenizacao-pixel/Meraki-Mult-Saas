@@ -95,7 +95,7 @@ export default function PrivacidadePage() {
       <Secao titulo="Quem trata seus dados">
         <p>
           A <strong>{CLINICA.nome}</strong> é a controladora: é ela quem decide
-          quais dados são coletados e para quê. A VoraX fornece o sistema que
+          quais dados são coletados e para quê. A Meraki fornece o sistema que
           armazena e organiza essas informações, atuando como operadora, apenas
           seguindo as instruções da clínica.
         </p>

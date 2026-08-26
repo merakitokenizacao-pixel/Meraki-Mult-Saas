@@ -11,7 +11,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { MarcaSvg } from "@/components/site/marca-svg";
 
 /** id compartilhado: é ele que faz o logo VOAR da abertura para o header. */
-export const MARCA_LAYOUT_ID = "vorax-marca";
+export const MARCA_LAYOUT_ID = "meraki-marca";
 
 /**
  * `true`  → a abertura roda em TODA visita (é o que está valendo).
@@ -21,7 +21,7 @@ export const MARCA_LAYOUT_ID = "vorax-marca";
  */
 const SEMPRE = true;
 
-const CHAVE = "vorax-abertura";
+const CHAVE = "meraki-abertura";
 // A última letra (X) começa em 4×0,13s e leva 1,15s → termina em ~1,67s.
 // Mais um respiro para a marca cheia ser lida antes de voar pro header.
 const DURACAO_MS = 2150;
@@ -32,7 +32,7 @@ export const useAberturaPronta = () => useContext(Ctx);
 
 declare global {
   interface Window {
-    __voraxAberturaVista?: boolean;
+    __merakiAberturaVista?: boolean;
   }
 }
 
@@ -46,7 +46,7 @@ export function Abertura({ children }: { children: ReactNode }) {
     const jaViu =
       !SEMPRE &&
       typeof window !== "undefined" &&
-      (window.__voraxAberturaVista || sessionStorage.getItem(CHAVE) === "1");
+      (window.__merakiAberturaVista || sessionStorage.getItem(CHAVE) === "1");
 
     if (jaViu || semMovimento) {
       setPronta(true);

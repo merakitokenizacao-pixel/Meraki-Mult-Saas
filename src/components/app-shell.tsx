@@ -51,7 +51,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 "V"
               ) : (
                 <>
-                  Vora<em>X</em>
+                  Merak<em>i</em>
                 </>
               )}
             </div>

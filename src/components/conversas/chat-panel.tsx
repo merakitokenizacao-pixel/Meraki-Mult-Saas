@@ -184,7 +184,7 @@ export function ChatPanel({
       >
         {isAgente && (
           <div className="mb-1 flex items-center gap-1 text-[9px] font-bold tracking-wider text-vx-accent">
-            <Bot size={12} /> A VoraX
+            <Bot size={12} /> A Meraki
           </div>
         )}
         {isHumano && (
@@ -440,13 +440,13 @@ export function ChatPanel({
                   onClick={onToggleIA}
                   className="font-semibold text-vx-accent hover:underline"
                 >
-                  Retomar a VoraX.
+                  Retomar a Meraki.
                 </button>
               </>
             ) : (
               <>
                 <Lock size={13} className="text-vx-muted" />
-                <span>A VoraX está gerenciando esta conversa automaticamente.</span>
+                <span>A Meraki está gerenciando esta conversa automaticamente.</span>
                 <button
                   onClick={onToggleIA}
                   className="font-semibold text-vx-accent hover:underline"

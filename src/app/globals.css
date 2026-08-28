@@ -55,12 +55,17 @@
   --color-card: var(--card);
 
   /* ── Paleta da marca Meraki (utilitários: bg-mk-superficie, text-mk-acento, …) ── */
+  /* As duplicatas saíram: o renome de ago/2026 mapeava `surface2` e `surface3`
+     para o mesmo destino, e sobraram pares idênticos. */
+  --color-mk-rebaixado: var(--mk-rebaixado);
   --color-mk-fundo: var(--mk-fundo);
   --color-mk-superficie: var(--mk-superficie);
   --color-mk-superficie-2: var(--mk-superficie-2);
-  --color-mk-superficie-2: var(--mk-superficie-2);
+  --color-mk-superficie-3: var(--mk-superficie-3);
+  --color-mk-elevado: var(--mk-elevado);
+  --color-mk-elevado-2: var(--mk-elevado-2);
   --color-mk-linha: var(--mk-linha);
-  --color-mk-linha: var(--mk-linha);
+  --color-mk-linha-suave: var(--mk-linha-suave);
   --color-mk-tinta: var(--mk-tinta);
   --color-mk-tinta-media: var(--mk-tinta-media);
   --color-mk-tinta-fraca: var(--mk-tinta-fraca);
@@ -68,16 +73,12 @@
   --color-mk-acento-forte: var(--mk-acento-forte);
   --color-mk-acento-fraco: var(--mk-acento-fraco);
   --color-mk-sobre-acento: var(--mk-sobre-acento);
-  --color-mk-acento: var(--mk-acento);
-  --color-mk-acento-fraco: var(--mk-acento-fraco);
   --color-mk-ativa: var(--mk-ativa);
   --color-mk-ativa-fraca: var(--mk-ativa-fraca);
   --color-mk-aviso: var(--mk-aviso);
   --color-mk-aviso-fraca: var(--mk-aviso-fraca);
   --color-mk-alerta: var(--mk-alerta);
   --color-mk-alerta-fraca: var(--mk-alerta-fraca);
-  --color-mk-pausada: var(--mk-pausada);
-  --color-mk-pausada-fraca: var(--mk-pausada-fraca);
   --color-mk-pausada: var(--mk-pausada);
   --color-mk-pausada-fraca: var(--mk-pausada-fraca);
 
@@ -95,19 +96,23 @@
    O sistema anterior era papel branco com hairline cinza. Este é o oposto, e
    é troca de sistema, não ajuste de tema.
 
-   A ideia inteira cabe em três linhas:
+   A ideia inteira cabe em quatro linhas:
 
-     fundo      #000000     preto real, não cinza-escuro
-     superfície #ffffff08   branco a 3% SOBRE o preto
+     rebaixado  #0a0b0d     o que recua: moldura, lista, área de rolagem
+     base       #0e0f11     o fundo da página
+     superfície #ffffff07   branco a ~3% SOBRE a base
      borda      #ffffff1a   branco a 10%
 
-   Por que funciona: como o fundo é preto REAL, 3% de branco produz uma
-   superfície que parece iluminada por dentro em vez de pintada por cima. E
+   Por que funciona: a base é escura o bastante para que 3% de branco produza
+   uma superfície que parece iluminada por dentro em vez de pintada por cima. E
    porque é opacidade e não cor fixa, tudo empilha coerente — card sobre card,
-   popover sobre card — sem ninguém precisar calcular um tom novo a cada
-   camada.
+   popover sobre card — sem ninguém calcular tom novo a cada camada.
 
-   ⚠️ CONSEQUÊNCIA QUE NÃO DÁ PARA ESQUECER: com fundo preto e superfície
+   ⚠️ A BASE NÃO É PRETO PURO, e isso é decisão de ago/2026, não descuido. Com
+   `#000000` só existe um sentido: clarear. Não há como REBAIXAR uma camada, e
+   é aí que a hierarquia colapsa. Ver "A escada", logo abaixo.
+
+   ⚠️ CONSEQUÊNCIA QUE NÃO DÁ PARA ESQUECER: com fundo escuro e superfície
    translúcida, `box-shadow` deixa de separar e vira mancha. A separação é
    100% BORDA. Zero box-shadow como SEPARAÇÃO, em todo lugar.
 
@@ -118,23 +123,57 @@
    Nenhum hex literal fora deste bloco. Se precisar de uma cor que não está
    aqui, o lugar de resolver é aqui. */
 :root {
-  /* ── Superfície ── */
-  --mk-fundo: #000000;
-  /* Único tom opaco do sistema: fica atrás de coisa que precisa TAPAR o que
-     está embaixo (menu, modal). Superfície translúcida sobre conteúdo deixa
-     o texto de baixo aparecer. */
-  --mk-elevado: #0c0d0f;
-  --mk-superficie: #ffffff08;
-  /* Segundo degrau, para o que empilha sobre um card. Não é uma cor nova —
-     é a mesma ideia, mais uma camada. */
-  --mk-superficie-2: #ffffff12;
+  /* ── A escada ─────────────────────────────────────────────────────────────
+     ⚠️ O FUNDO DEIXOU DE SER #000000 EM AGO/2026. Dois motivos, e o segundo é
+     o que não tinha conserto:
+
+     1. Preto puro causa halação — texto claro "sangra" na borda — e cansa em
+        sessão longa. Quem usa este painel fica dentro dele o dia inteiro.
+     2. Sobre #000000 NÃO EXISTE DEGRAU PARA BAIXO. Só dá para clarear. Com
+        modal sobre card sobre lista não há como recuar uma camada, e a
+        hierarquia colapsa numa coisa só.
+
+     Cinco camadas, do fundo para a frente (o valor à direita é como a alpha
+     compõe SOBRE A BASE):
+
+        rebaixado    #0a0b0d    lista, sidebar, área de rolagem
+        base         #0e0f11    fundo da página
+        superfície   #ffffff07  card, painel, bolha         → #151618
+        superfície-2 #ffffff0c  o que empilha sobre card    → #191a1c
+        superfície-3 #ffffff14  o que empilha sobre aquilo  → #212224
+
+     As superfícies são ALPHA de propósito: é o que faz card sobre card e menu
+     sobre popover clarearem sozinhos, sem calcular tom novo para cada
+     combinação. A base e o rebaixado são explícitos porque alpha branco não
+     sabe escurecer. */
+  --mk-rebaixado: #0a0b0d;
+  --mk-fundo: #0e0f11;
+  --mk-superficie: #ffffff07;
+  --mk-superficie-2: #ffffff0c;
+  --mk-superficie-3: #ffffff14;
+
+  /* ── Os dois opacos ───────────────────────────────────────────────────────
+     ⚠️ NÃO SÃO COR NOVA: são `--mk-superficie-2` e `--mk-superficie-3`
+     COMPOSTAS sobre a base. Existem porque alpha não TAPA — e é isso que hoje
+     acontece com modal, dropdown e tooltip, todos em superfície translúcida
+     deixando o conteúdo de baixo atravessar.
+
+     Quem precisa OCULTAR o que está atrás usa estes; quem só precisa parecer
+     uma camada acima usa a alpha. Mudou a base? recomponha os dois. */
+  --mk-elevado: #191a1c; /* popover, modal, dropdown, tooltip, cabeçalho fixo */
+  --mk-elevado-2: #212224; /* menu que abre por cima de modal */
+
   --mk-linha: #ffffff1a;
   --mk-linha-suave: #ffffff0e;
 
   /* ── Tinta ── */
   --mk-tinta: #ecedee;
   --mk-tinta-media: #9ba1a6;
-  --mk-tinta-fraca: #62676d;
+  /* ⚠️ ERA #62676d, e REPROVAVA no AA: 3.68 sobre preto, 3.36 sobre a base
+     nova, 3.17 sobre card. É o token do subtexto dos cards e dos rótulos
+     apagados — texto pequeno, que é onde contraste baixo dói mais. #7d8288 dá
+     4.95 sobre a base e 4.67 sobre a superfície, e passa nos dois. */
+  --mk-tinta-fraca: #7d8288;
 
   /* ── Acento ──
      UM só, para ação e estado ativo. Violeta escolhido pelo dono entre três
@@ -766,7 +805,7 @@ body {
     transform: translateX(-100%);
     z-index: 40;
     width: 260px;
-    background: var(--mk-fundo);
+    background: var(--mk-rebaixado);
   }
   .sidebar.open {
     transform: translateX(0);
@@ -950,7 +989,7 @@ body {
   padding: 13px 16px;
   border: 1px solid var(--mk-linha);
   border-radius: var(--mk-raio);
-  background: var(--mk-fundo);
+  background: var(--mk-superficie);
   transition: border-color var(--mk-transicao);
 }
 .metric-label {
@@ -993,7 +1032,7 @@ body {
   gap: 20px;
 }
 .card {
-  background: var(--mk-fundo);
+  background: var(--mk-superficie);
   border: 1px solid var(--mk-linha);
   border-radius: var(--mk-raio);
   padding: 13px 16px 16px;
@@ -1267,8 +1306,11 @@ body {
   display: flex;
   animation: fadeIn 0.2s ease;
 }
+/* ⚠️ OPACO, não superfície. O modal estava em `--mk-superficie` — alpha — e a
+   tela de trás atravessava o formulário. Só não gritava porque sobre preto
+   puro o que atravessava também era quase preto. */
 .modal {
-  background: var(--mk-superficie);
+  background: var(--mk-elevado);
   border: 1px solid var(--mk-linha);
   /* 8px: canto redondo faz o modal parecer cartaz. Formulário pede cara de
      ficha de trabalho. */
@@ -1801,13 +1843,14 @@ input:-webkit-autofill {
 .date-filter-trigger.open .chev {
   transform: rotate(180deg);
 }
+/* Opaco: menu suspenso sobre lista. */
 .date-filter-menu {
   position: absolute;
   top: calc(100% + 6px);
   right: 0;
   z-index: 30;
   min-width: 160px;
-  background: var(--mk-superficie);
+  background: var(--mk-elevado);
   border: 1px solid var(--mk-linha);
   border-radius: var(--mk-raio);
   padding: 6px;
@@ -1867,8 +1910,9 @@ input:-webkit-autofill {
 .agenda-mcell:hover {
   background: var(--mk-superficie-2);
 }
+/* Dia de outro mês: agora recua de verdade, em vez de só não ter fundo. */
 .agenda-mcell.out {
-  background: var(--mk-fundo);
+  background: var(--mk-rebaixado);
 }
 .agenda-mday-num {
   font-family: var(--font-plex-mono), monospace;
@@ -1978,7 +2022,7 @@ input:-webkit-autofill {
   z-index: 40;
   max-height: 240px;
   overflow-y: auto;
-  background: var(--mk-superficie);
+  background: var(--mk-elevado);
   border: 1px solid var(--mk-linha);
   border-radius: var(--mk-raio);
   padding: 4px;
@@ -3372,7 +3416,7 @@ input:-webkit-autofill {
   align-items: baseline;
   gap: 7px;
   padding: 12px 18px 8px;
-  background: var(--mk-superficie-2);
+  background: var(--mk-elevado);
   position: sticky;
   top: 0;
   z-index: 1;
@@ -3492,7 +3536,7 @@ input:-webkit-autofill {
   padding: 12px;
   border: 1px solid var(--mk-linha);
   border-radius: var(--mk-raio);
-  background: var(--mk-superficie);
+  background: var(--mk-elevado);
 }
 .mini-cal-cab {
   display: flex;
@@ -3776,10 +3820,9 @@ input:-webkit-autofill {
   min-height: 94px;
   border: 1px solid var(--mk-linha);
   border-radius: var(--mk-raio);
-  /* Fundo IGUAL ao da página: quem separa é a hairline. Card com superfície
-     própria E sombra faz cada peça flutuar por conta, e é daí que vem o ar de
-     slide. */
-  background: var(--mk-fundo);
+  /* Superfície própria — o bloco Meraki no fim do arquivo é quem manda, e
+     esta linha existe só para não contradizê-lo se ele sair. */
+  background: var(--mk-superficie);
   font-family: inherit;
   text-align: left;
   transition: border-color var(--mk-transicao), background var(--mk-transicao);
@@ -3894,7 +3937,7 @@ input:-webkit-autofill {
   padding: 8px 10px;
   border: 1px solid var(--mk-linha);
   border-radius: var(--mk-raio);
-  background: var(--mk-superficie);
+  background: var(--mk-elevado);
   font-size: 11.5px;
   font-style: normal;
   font-weight: 400;
@@ -3938,7 +3981,7 @@ input:-webkit-autofill {
   padding: 13px 16px 16px;
   border: 1px solid var(--mk-linha);
   border-radius: var(--mk-raio);
-  background: var(--mk-fundo);
+  background: var(--mk-superficie);
 }
 .neg-painel-topo {
   display: flex;
@@ -4390,7 +4433,7 @@ input:-webkit-autofill {
   max-width: calc(100vw - 32px);
   border: 1px solid var(--mk-linha);
   border-radius: var(--mk-raio);
-  background: var(--mk-superficie);
+  background: var(--mk-elevado);
   /* Overlay de verdade: flutua sobre o conteúdo e sem elevação encostaria no
      que está atrás. É uma das poucas sombras que sobraram na interface. */
   overflow: hidden;
@@ -5041,11 +5084,14 @@ a.sidebar-footer:hover {
 
 /* Cabeçalhos fixos. O canto precisa de z-index MAIOR que os dois, senão ele
    passa por baixo quando se rola nas duas direções ao mesmo tempo. */
+/* Cabeçalho fixo é opaco pelo mesmo motivo do popover: ele fica parado
+   enquanto as linhas passam por baixo. Em alpha, as linhas apareciam através
+   dele. */
 .mtz-tabela thead th {
   position: sticky;
   top: 0;
   z-index: 2;
-  background: var(--mk-superficie-2);
+  background: var(--mk-elevado);
   border-bottom: 1px solid var(--mk-linha);
   padding: 8px 10px;
   vertical-align: bottom;
@@ -5060,7 +5106,7 @@ a.sidebar-footer:hover {
   position: sticky;
   left: 0;
   z-index: 1;
-  background: var(--mk-fundo);
+  background: var(--mk-elevado);
   text-align: left;
   font-weight: 400;
   padding: 0 8px 0 10px;
@@ -5205,7 +5251,7 @@ a.sidebar-footer:hover {
   padding: 3px;
   border: 1px solid var(--mk-linha);
   border-radius: var(--mk-raio);
-  background: var(--mk-superficie);
+  background: var(--mk-elevado);
 }
 .mtz-menu button {
   display: block;
@@ -5462,7 +5508,7 @@ a.sidebar-footer:hover {
   width: 280px;
   border: 1px solid var(--mk-linha);
   border-radius: var(--mk-raio);
-  background: var(--mk-superficie);
+  background: var(--mk-elevado);
   /* Sem sombra: a separação é a borda, como no resto do painel. */
 }
 
@@ -5656,8 +5702,9 @@ a.sidebar-footer:hover {
    cards) é o mesmo. O que troca é o SISTEMA — superfície, borda, tipografia
    e cor.
 
-   Zero box-shadow, e não por gosto: sobre preto com superfície translúcida a
-   sombra não separa nada, só suja. Quem separa é a borda de 1px. */
+   Zero box-shadow, e não por gosto: sobre base escura com superfície
+   translúcida a sombra não separa nada, só suja. Quem separa é a borda de
+   1px — e, desde ago/2026, o degrau de camada. */
 
 /* ── Tipografia ──────────────────────────────────────────────────────────── */
 /* A base (fonte do corpo e cor da tinta) mora em `body`, no topo do arquivo.
@@ -5932,18 +5979,47 @@ a.sidebar-footer:hover {
   color: var(--mk-tinta-fraca);
 }
 
+/* ── A terceira camada ───────────────────────────────────────────────────── */
+/* Menu que abre DENTRO de modal ou popover. O modal já é `--mk-elevado`; um
+   menu na mesma cor em cima dele não é camada nenhuma, é o mesmo plano com
+   uma borda no meio. Sobe um degrau — e continua opaco, porque também precisa
+   tapar o formulário atrás.
+
+   É a combinação que o preto puro não conseguia expressar: com `#000000` de
+   base, modal e menu acabavam no mesmo tom, e a única coisa separando os dois
+   era a borda de 1px. */
+.modal .lead-combo-menu,
+.modal .date-filter-menu,
+.modal .mini-cal-pop,
+.modal .drp-pop {
+  background: var(--mk-elevado-2);
+}
+
+/* Realce DENTRO de superfície elevada: aqui basta parecer uma camada acima —
+   não há o que tapar —, então é a alpha do terceiro degrau, e ela compõe
+   sozinha sobre o tom em que estiver. */
+.drp-pop .drp-dia:hover,
+.mtz-menu button:hover,
+.lead-combo-item:hover,
+.modal-close:hover {
+  background: var(--mk-superficie-3);
+}
+
 /* ── Conversas: coluna da lista ──────────────────────────────────────────── */
 /* A pergunta que a atendente faz o dia inteiro é "o que precisa de mim
    agora?". A barra de chips responde isso sem clique nenhum: os estados ficam
    TODOS visíveis, com a contagem na cara. Contagem escondida atrás de um
    dropdown é contagem que ninguém olha. */
+/* A coluna REBAIXA. É o ganho concreto que o preto puro não permitia: a lista
+   recua, o chat ao lado fica na base e as bolhas avançam para a superfície —
+   três camadas, e nenhuma precisou de borda mais forte. */
 .conv-col {
   display: flex;
   flex-direction: column;
   height: 100%;
   min-height: 0;
   border-right: 1px solid var(--mk-linha);
-  background: var(--mk-superficie);
+  background: var(--mk-rebaixado);
 }
 .conv-topo {
   display: flex;
@@ -6301,13 +6377,19 @@ a.sidebar-footer:hover {
 }
 
 /* ── Chrome: sidebar, topbar e nav ───────────────────────────────────────── */
-/* O frame acompanha a tela convertida — sidebar clara com conteúdo preto
-   leria como bug, não como transição. */
+/* A sidebar RECUA: é moldura, não conteúdo. Este é o degrau que o preto puro
+   não permitia — antes moldura e conteúdo eram o mesmo #000000 e só a borda
+   separava os dois. */
+.sidebar,
+.sidebar-logo {
+  background: var(--mk-rebaixado);
+  border-color: var(--mk-linha);
+}
 .sidebar {
-  background: var(--mk-fundo);
   border-right: 1px solid var(--mk-linha);
 }
-.sidebar-logo,
+/* A topbar fica na BASE: ela mora dentro de `.main`, é da área de conteúdo.
+   Rebaixá-la separaria o cabeçalho da tela que ele encima. */
 .topbar {
   border-color: var(--mk-linha);
   background: var(--mk-fundo);
@@ -6350,8 +6432,9 @@ a.sidebar-footer:hover {
 .content {
   background: var(--mk-fundo);
 }
+/* Mesmo papel da sidebar no mobile: moldura, e recua junto. */
 .bottom-nav {
-  background: var(--mk-fundo);
+  background: var(--mk-rebaixado);
   border-top: 1px solid var(--mk-linha);
 }
 .tenant-sel-campo {

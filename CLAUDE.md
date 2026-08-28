@@ -327,24 +327,65 @@ institucional fica em `(site)/`.
 
 ## Regras visuais
 
-O sistema é **superfície como OPACIDADE, não como cor**, sobre preto real.
-Cabe em três linhas:
+O sistema é **superfície como OPACIDADE, não como cor**, sobre uma base escura.
+São cinco camadas, e o valor à direita é como a alpha compõe **sobre a base**:
 
 ```
-fundo       #000000     preto real, não cinza-escuro
-superfície  #ffffff08   branco a 3% SOBRE o preto
-borda       #ffffff1a   branco a 10%
+--mk-rebaixado    #0a0b0d     o que RECUA: sidebar, lista, área de rolagem
+--mk-fundo        #0e0f11     o fundo da página
+--mk-superficie   #ffffff07   card, painel, bolha          → #151618
+--mk-superficie-2 #ffffff0c   empilha sobre card           → #191a1c
+--mk-superficie-3 #ffffff14   empilha sobre aquilo         → #212224
+--mk-linha        #ffffff1a   branco a 10%
 ```
 
-Funciona porque o fundo é preto **de verdade**: 3% de branco parece iluminado
-por dentro, não pintado por cima. E sendo opacidade em vez de cor fixa, tudo
-empilha coerente — card sobre card, popover sobre card — sem ninguém calcular
-tom novo a cada camada.
+As superfícies são **alpha** de propósito: é o que faz card sobre card e menu
+sobre popover clarearem sozinhos, sem ninguém calcular tom novo a cada
+combinação. O rebaixado e a base são **explícitos** porque alpha branco não
+sabe escurecer.
+
+⚠️ **A BASE NÃO É `#000000`, e isso é decisão de ago/2026.** Preto puro causa
+halação — texto claro sangra na borda — e cansa em sessão longa, que é como
+este painel é usado. Mas o motivo estrutural é outro: **sobre `#000000` não
+existe degrau para baixo.** Só dá para clarear. Com modal sobre card sobre
+lista não há como recuar uma camada, e a hierarquia colapsa numa coisa só.
+
+⚠️ **Alpha não TAPA.** Popover, modal, dropdown, tooltip e cabeçalho fixo
+precisam ocultar o que está atrás — em `--mk-superficie` o conteúdo de baixo
+atravessa, e era exatamente o que acontecia antes. Para esses existem dois
+tokens **opacos**, que não são cor nova: são a superfície-2 e a superfície-3
+já compostas sobre a base.
+
+```
+--mk-elevado    #191a1c   popover, modal, dropdown, tooltip, cabeçalho fixo
+--mk-elevado-2  #212224   menu que abre POR CIMA de modal
+```
+
+Se a base mudar, **recomponha os dois** — eles não acompanham sozinhos.
+
+**Onde cada camada entra:**
+
+| camada | quem |
+|---|---|
+| `rebaixado` | sidebar, `bottom-nav`, coluna da lista de conversas, dia fora do mês |
+| `fundo` | `body`, `.content`, `.topbar`, área de mensagens do chat |
+| `superficie` | card de KPI, painel de gráfico, bolha de mensagem, `.card` |
+| `superficie-2` | realce sobre card (hover, trilho de barra, chip) |
+| `superficie-3` | realce **dentro** de superfície elevada (item de menu em hover) |
+| `elevado` | modal, `drp-pop`, menu de filtro, combo, tooltip, cabeçalho `sticky` |
+| `elevado-2` | menu aberto **dentro** de modal |
+
+⚠️ **`--mk-tinta-fraca` mudou junto: `#62676d` → `#7d8288`.** O valor antigo
+**reprovava no AA** e já reprovava antes desta troca — 3.68 sobre preto, 3.36
+sobre a base nova, 3.17 sobre card. É o token do subtexto dos cards e dos
+rótulos apagados, ou seja, texto pequeno, que é onde contraste baixo dói mais.
+O novo dá **4.95** sobre a base e **4.67** sobre a superfície. Como
+`--mk-st-arquivado` é apelido dele, o chip apagado passou a AA de brinde.
 
 **Consequência que é regra, não gosto: ZERO `box-shadow` como SEPARAÇÃO.**
-Sobre preto com superfície translúcida a sombra não separa — mancha. A
-separação é 100% borda de 1px. (O site institucional em `(site)/` tem sistema
-próprio, claro e com sombra; ele não segue nada disto.)
+Sobre base escura com superfície translúcida a sombra não separa — mancha. A
+separação é borda de 1px mais o degrau de camada. (O site institucional em
+`(site)/` tem sistema próprio, claro e com sombra; ele não segue nada disto.)
 
 ⚠️ **Existe UMA `box-shadow` no painel, e ela não é sombra.** O Chrome pinta o
 campo preenchido pelo autofill com um amarelo-claro próprio e **ignora
@@ -375,7 +416,7 @@ que não seja esta, é regressão.
   não há CSS que mude. `src/components/segmentado.tsx` (`role="radiogroup"`,
   foco roving, setas) é o substituto; a regra é `.seg`/`.seg-opcao`.
 - **Campo de texto é transparente com borda** — nunca cinza preenchido, que
-  sobre preto lê como desabilitado. **Foco muda a cor da borda**, sem anel e
+  sobre a base lê como desabilitado. **Foco muda a cor da borda**, sem anel e
   sem brilho (`outline: none` + `border-color`).
 - **Um botão primário sólido por tela.** Item de menu ativo muda **só de cor** —
   sem fundo, sem barra lateral.

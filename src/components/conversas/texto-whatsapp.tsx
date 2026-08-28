@@ -27,7 +27,9 @@ function render(nos: No[], chave = ""): React.ReactNode[] {
         );
       case "mono":
         return (
-          <code key={k} className="rounded bg-black/15 px-1 font-mono text-[0.92em]">
+          // Camada acima da bolha, não preto literal: sobre a base nova um
+          // `black/15` escurecia a bolha em vez de destacar o código.
+          <code key={k} className="rounded bg-mk-superficie-2 px-1 font-mono text-[0.92em]">
             {filhos}
           </code>
         );

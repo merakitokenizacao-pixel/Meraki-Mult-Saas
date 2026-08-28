@@ -5,10 +5,10 @@
 // dizia o estrutural (contraste, o variant `dark:` do Tailwind) e `data-theme`
 // dizia a paleta. Trocar de paleta não mexia em regra nenhuma.
 //
-// O sistema Meraki não é uma paleta a mais: é fundo PRETO com superfície
-// translúcida (`#ffffff08` sobre `#000000`). Isso não tem versão clara — 3%
-// de branco sobre branco não é superfície, é nada. As regras que separam por
-// borda de 1px também dependem do fundo escuro para existir.
+// O sistema Meraki não é uma paleta a mais: é uma ESCADA de camadas sobre uma
+// base quase preta (`#ffffff07` sobre `#0e0f11`). Isso não tem versão clara —
+// 3% de branco sobre branco não é superfície, é nada. As regras que separam
+// por borda de 1px também dependem do fundo escuro para existir.
 //
 // Então o catálogo tem uma entrada só, e os dois atributos continuam sendo
 // estampados porque o `dark:` do Tailwind e o toast do sonner leem `data-mode`.
@@ -47,13 +47,16 @@ export const TEMAS: DefTema[] = [
   {
     id: "meraki",
     label: "Meraki",
-    descricao: "Preto real, superfície translúcida, acento violeta",
+    descricao: "Base quase preta, superfície translúcida, acento violeta",
     escuro: true,
     previa: {
-      bg: "#000000",
-      // a superfície é translúcida; na miniatura ela vai composta sobre o preto
-      surface: "#0d0d0d",
-      border: "#2b2b2b",
+      // ⚠️ Deixou de ser #000000 em ago/2026 — ver "A escada" no globals.css.
+      // Preto puro não tinha degrau para baixo, e a miniatura tem que mostrar
+      // a base real, senão ela ilustra um sistema que não existe mais.
+      bg: "#0e0f11",
+      // A superfície é translúcida; aqui ela vai COMPOSTA sobre a base.
+      surface: "#151618",
+      border: "#2b2c2e",
       text: "#ecedee",
       accent: "#a78bfa",
       cores: ["#3fb950", "#d9a441", "#f85149", "#7dd3fc"],

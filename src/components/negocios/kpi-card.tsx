@@ -19,16 +19,21 @@ import type { LucideIcon } from "lucide-react";
 // aquela série — é o que a referência faz e o que dá função à borda acesa.
 
 /**
- * A cor NÃO identifica o card — identifica a direção do número.
+ * O tom do ícone é o ESTADO que o card conta — não a direção do número, e
+ * muito menos a identidade do card.
  *
- * Antes eram cinco matizes (dourado, verde, vermelho, azul, roxo), um por
- * card: cinco cores fortes lado a lado viram enfeite, e "azul" não significa
- * nada sobre "total criado". Agora o padrão é neutro e só sobra semântica onde
- * ela é real — o que entrou (`sobe`) e o que se perdeu (`desce`). O dourado da
- * marca fica reservado para o estado SELECIONADO, que é o único destaque com
- * função nesta tela.
+ * ⚠️ Já foi das duas outras formas. Primeiro eram cinco matizes decorativos,
+ * um por card: viraram enfeite, porque "azul" não diz nada sobre "total
+ * criado". Depois virou direção (sobe/desce/neutro) e três cards ficaram
+ * cinzas. O que faltava nos dois era o mesmo: a cor precisa sair de um estado
+ * que existe. `ganho` é `resolvido`, `perdido` é `erro`, `aberto` é
+ * `agendado` — cor que carrega informação é dado, não decoração.
+ *
+ * `neutro` e `acento` não são estados, e é de propósito: "total criado" é a
+ * entrada do funil (nenhum estado ainda) e "receita recuperada" é a única
+ * coisa da tela que a IA fez sozinha.
  */
-export type TomKpi = "neutro" | "sobe" | "desce";
+export type TomKpi = "neutro" | "resolvido" | "erro" | "agendado" | "acento";
 
 export function KpiCard({
   rotulo,

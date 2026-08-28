@@ -166,7 +166,7 @@ export function ChatPanel({
       blocks.push(
         <div
           key={"sep-" + m.id}
-          className="my-3 self-center rounded-full bg-mk-superficie-2 px-3.5 py-1.5 font-mono text-[10px] tracking-wide text-mk-tinta-fraca"
+          className="my-3 self-center rounded-full bg-mk-superficie-2 px-3.5 py-1.5 text-[10px] tracking-wide text-mk-tinta-fraca"
         >
           {formatDayLabel(d)}
         </div>
@@ -336,7 +336,7 @@ export function ChatPanel({
                 Ver mensagens anteriores
               </button>
             ) : (
-              <div className="shrink-0 py-2 text-center font-mono text-[10px] tracking-wide text-mk-tinta-fraca opacity-60">
+              <div className="shrink-0 py-2 text-center text-[10px] tracking-wide text-mk-tinta-fraca opacity-60">
                 Início da conversa
               </div>
             )}

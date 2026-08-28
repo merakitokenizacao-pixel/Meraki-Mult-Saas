@@ -89,6 +89,32 @@ ausente = a profissional **não** faz aquele procedimento).
 **Não existe nenhuma view.** E não existe bucket de storage ainda —
 `midia-conversas` é criado pela migration `20260825_bucket_midia_conversas.sql`.
 
+### Em que estado uma conversa está
+
+`src/lib/estado-conversa.ts` é a fonte única. **Cinco estados, e os cinco saem
+de coluna que existe** — a ordem abaixo é prioridade, e eles formam uma
+partição: cada conversa cai em exatamente um, e as contagens da barra somam o
+total.
+
+| estado | de onde sai |
+|---|---|
+| `inativo` | `ultima_interacao` (ou `criado_em`) há mais de 30 dias |
+| `aguardando` | `ia_pausada = true` **e** `nao_lidas > 0` |
+| `atendendo` | `ia_pausada = true` e nada por ler |
+| `agendado` | tem `agendamentos` `pendente`/`confirmado` no futuro |
+| `ia` | o resto |
+
+⚠️ **Três estados do desenho NÃO existem no banco, e o chip deles ficou de
+fora.** `resolvido` — `leads.status` é texto livre (sem CHECK) e o ciclo de
+vida gravado é novo/cliente/inativo; não há "fechou bem". `erro` —
+`motivo_pausa` é texto livre e hoje só o painel escreve nele, com duas frases
+fixas; ler erro dali seria inventar enum sobre texto livre. `arquivado` — não
+existe como ação; o que existe é `inativo`, e o chip usa esse nome de propósito,
+porque dizer "arquivado" prometeria um botão que não há.
+
+Os **tokens** dos três continuam definidos: a Agenda usa `resolvido`/`erro` nas
+badges e os KPIs usam os dois nos ícones. O que não existe é o chip.
+
 ### Quem pode chamar o quê
 
 ```
@@ -403,6 +429,52 @@ inteira. Pôr `font-family` nele joga a aba toda em monoespaçada. Já aconteceu
 **Cor semântica nunca é decoração, e categoria nunca usa cor semântica.** Foi
 assim que a rosca de serviços virou arco-íris no painel antigo.
 
+#### Estado
+
+⚠️ **"Um acento só" vale para DECORAÇÃO, não para estado.** Levar a regra ao pé
+da letra foi o que deixou a tela em preto + roxo + cinza, com o violeta fazendo
+três trabalhos ao mesmo tempo. Quando a cor carrega informação que o olho
+precisa distinguir sem ler, ela é **dado**.
+
+```
+--mk-st-aguardando   = --mk-aviso        chegou e ninguém pegou
+--mk-st-atendendo    #16a7a3             humano dentro da conversa
+--mk-st-ia           = --mk-acento       a IA está conduzindo
+--mk-st-agendado     = --mk-pausada      tem horário marcado
+--mk-st-resolvido    = --mk-ativa        fechou bem
+--mk-st-erro         = --mk-alerta       falhou, precisa de gente
+--mk-st-arquivado    = --mk-tinta-fraca  saiu da fila
+```
+
+**Seis dos sete são apelido, não cor nova.** O sistema já tinha as cores; o que
+faltava era o nome do estado. Declarar um segundo hex para "verde de sucesso"
+seria dois vocabulários para a mesma coisa — o defeito que o renome de ago/2026
+tirou do arquivo. `--mk-st-atendendo` é o único hex novo, e só existe porque
+nenhuma cor do sistema significava aquilo.
+
+Cada estado entra em **duas** formas, nunca em bloco chapado:
+
+```css
+color: var(--mk-st-x);                                   /* ícone e texto */
+background: color-mix(in srgb, var(--mk-st-x) 12%, transparent);
+border-color: color-mix(in srgb, var(--mk-st-x) 35%, transparent);
+```
+
+Proibido: estado como fundo cheio, estado em elemento que não representa aquele
+estado, e cor de marca representando estado — com a exceção de `ia`, que **é** a
+marca porque a IA é o produto.
+
+⚠️ **Dois hexes do desenho original não sobreviveram à medição**, e os dois
+seriam chips vizinhos na mesma barra: `#58a6ff` para `agendado` fica a **dE
+0.107** do acento (o mesmo motivo pelo qual `--mk-pausada` deixou de ser aquele
+azul), e `#e0b341` para `atendendo` fica a **dE 0.080** do laranja de
+`aguardando` — menos da metade do piso do sistema. Rosa também não serve: todo
+rosa legível fica a ~0.065 de `--mk-serie-4`.
+
+**O piso é 0.184** — o par `--mk-alerta`/`--mk-aviso`, que já está em produção.
+Na barra de conversas o menor par ficou em **0.182**. E há teto de quantos
+matizes cabem: um oitavo estado não passa de 0.166 contra algum dos sete.
+
 O acento vive em **quatro linhas** de `globals.css`. Trocar a identidade depois
 é mexer só nelas. O dourado `#8a6a2f` da LINS não sobreviveria a esta troca de
 qualquer forma: dá 4.18 sobre preto e reprova no AA de texto pequeno.
@@ -470,6 +542,17 @@ fica de pé para o dia em que houver um segundo sistema.
   na seção de cor. Há uma exceção tolerada e documentada no próprio script:
   `.ag-lista-dia`, que é o containing block de um cabeçalho `sticky` e precisa
   continuar sendo bloco simples.
+- ⚠️ **`ConversaOrigem` não bate com o banco.** `src/types/db.ts` declara
+  `"cliente" | "agente" | "humano"`; o CHECK de `conversas.origem` é
+  `cliente | ia | humano | sistema`. `getLastMsgPreview` compara com
+  `"agente"` — que nunca vai casar, então a prévia da lista sairá sem o
+  prefixo 🤖 e `bubbleClasses("agente")` pinta a bolha errada. Não quebra: só
+  mente em silêncio. É item de A3 (as telas que ainda falam o schema antigo),
+  não regressão.
+- ~~`agendamentos.status = 'faltou'` sem badge~~ — **resolvido em ago/2026.**
+  Estava no CHECK do banco desde sempre e faltava no mapa de
+  `statusBadgeClass` e no tipo `AgendamentoStatus`: caía no fallback e um
+  não-comparecimento saía com a cara de "novo".
 - **`/privacidade`**: a constante `CONTATO` está vazia. Não divulgar o link
   antes de preencher.
 - **Migrations do painel antigo em `supabase/migrations/_legado/`**: cinco

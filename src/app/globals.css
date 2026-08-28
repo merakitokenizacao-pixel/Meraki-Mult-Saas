@@ -191,6 +191,41 @@
   --mk-aviso: #d9a441;
   --mk-aviso-fraca: #d9a4411f;
 
+  /* ── Estado ───────────────────────────────────────────────────────────────
+     A regra "um acento só" vale para DECORAÇÃO, não para estado. Quando a cor
+     carrega informação que o olho precisa distinguir sem ler, ela é dado.
+     Sobre preto isso funciona: matiz saturado a luminosidade média lê como
+     luz, não como barulho — é por isso que tema escuro aguenta mais cor.
+
+     ⚠️ SEIS DOS SETE SÃO APELIDO, não cor nova. O sistema já tinha essas
+     cores; o que faltava era o NOME do estado. Declarar um segundo hex para
+     "verde de sucesso" seria dois vocabulários para a mesma coisa — o defeito
+     que o renome de ago/2026 tirou do arquivo.
+
+     Cada estado entra em DUAS formas e nunca em bloco chapado: cor cheia no
+     ícone e no texto, `color-mix` sobre transparente no fundo e na borda. É a
+     mesma lógica do `#ffffff08` — opacidade sobre o preto, não cor calculada.
+
+     As distâncias (OKLab dE) foram medidas. Piso do sistema: 0.184, que é o
+     par `--mk-alerta`/`--mk-aviso` que já está em produção. Na barra de
+     conversas, o menor par é 0.182. */
+  --mk-st-aguardando: var(--mk-aviso); /* chegou e ninguém pegou */
+  /* O ÚNICO hex novo. Teal: "humano dentro da conversa" não é aviso nem
+     sucesso, e precisava de matiz próprio. Não é o âmbar do brief (#e0b341)
+     porque aquele fica a dE 0.080 do laranja de `aguardando` — dois chips
+     VIZINHOS, metade do piso do sistema. Também não é rosa: qualquer rosa
+     legível fica a ~0.065 de `--mk-serie-4`, e a série existe justamente
+     para não parecer estado. */
+  --mk-st-atendendo: #16a7a3;
+  --mk-st-ia: var(--mk-acento); /* a IA está conduzindo */
+  /* Não é o #58a6ff do brief: aquele azul fica a dE 0.107 do acento violeta,
+     e aqui os dois seriam chips LADO A LADO. É o mesmo motivo pelo qual
+     `--mk-pausada` deixou de ser #58a6ff — ver a seção Cor do CLAUDE.md. */
+  --mk-st-agendado: var(--mk-pausada);
+  --mk-st-resolvido: var(--mk-ativa); /* fechou bem */
+  --mk-st-erro: var(--mk-alerta); /* falhou, precisa de gente */
+  --mk-st-arquivado: var(--mk-tinta-fraca); /* saiu da fila */
+
   /* ── Avatar sem foto ──
      Uma cor por pessoa, derivada da mesma família da série. Os seis hex
      antigos foram escolhidos para fundo branco e afundavam sobre preto. */
@@ -797,22 +832,31 @@ body {
   background: var(--mk-acento-fraco);
   color: var(--mk-acento);
 }
+/* Os cinco status de `agendamentos` (o CHECK do banco: pendente, confirmado,
+   realizado, faltou, cancelado) nas cores de ESTADO. Antes `cancelado` era
+   vermelho e `faltou` NÃO EXISTIA no mapa — caía no fallback e saía com a
+   mesma cor de "novo". Cancelar é ordeiro e sai da fila (cinza); faltar é
+   perda (vermelho), e a diferença entre os dois é o que a dona quer ver. */
 .badge-convertido,
 .badge-realizado {
-  background: var(--mk-ativa-fraca);
-  color: var(--mk-ativa);
+  background: color-mix(in srgb, var(--mk-st-resolvido) 12%, transparent);
+  color: var(--mk-st-resolvido);
 }
 .badge-cancelado {
-  background: var(--mk-alerta-fraca);
-  color: var(--mk-alerta);
+  background: color-mix(in srgb, var(--mk-st-arquivado) 12%, transparent);
+  color: var(--mk-st-arquivado);
+}
+.badge-faltou {
+  background: color-mix(in srgb, var(--mk-st-erro) 12%, transparent);
+  color: var(--mk-st-erro);
 }
 .badge-confirmado {
-  background: var(--mk-pausada-fraca);
-  color: var(--mk-pausada);
+  background: color-mix(in srgb, var(--mk-st-agendado) 12%, transparent);
+  color: var(--mk-st-agendado);
 }
 .badge-pendente {
-  background: var(--mk-aviso-fraca);
-  color: var(--mk-aviso);
+  background: color-mix(in srgb, var(--mk-st-aguardando) 12%, transparent);
+  color: var(--mk-st-aguardando);
 }
 .badge-enviando {
   background: var(--mk-aviso-fraca);
@@ -3796,15 +3840,22 @@ input:-webkit-autofill {
   opacity: 0.85;
 }
 
-/* Cor só onde ela SIGNIFICA alguma coisa: subiu, desceu. O resto é neutro. */
+/* O tom do ícone é o ESTADO que o card conta. Ver o bloco no fim do arquivo,
+   que é quem vence — estas linhas ficam para o caso de o bloco Meraki sair. */
 .neg-tom-neutro {
-  --neg-tom: var(--mk-tinta-fraca);
+  --neg-tom: var(--mk-tinta-media);
 }
-.neg-tom-sobe {
-  --neg-tom: var(--mk-ativa);
+.neg-tom-resolvido {
+  --neg-tom: var(--mk-st-resolvido);
 }
-.neg-tom-desce {
-  --neg-tom: var(--mk-alerta);
+.neg-tom-erro {
+  --neg-tom: var(--mk-st-erro);
+}
+.neg-tom-agendado {
+  --neg-tom: var(--mk-st-agendado);
+}
+.neg-tom-acento {
+  --neg-tom: var(--mk-acento);
 }
 
 /* ── (i) com balão ── */
@@ -5790,24 +5841,34 @@ a.sidebar-footer:hover {
   padding: 14px 16px;
 }
 
-/* Tom da variação. Viaja pelo custom property `--neg-tom`, não por `color`:
-   é `.neg-card-icone` que lê. Setar `color` aqui não pintava o ícone — pintava
+/* Tom do ícone. Viaja pelo custom property `--neg-tom`, não por `color`: é
+   `.neg-card-icone` que lê. Setar `color` aqui não pintava o ícone — pintava
    texto que já tem cor própria, ou seja, nada.
 
-   Verde só quando é "está funcionando", vermelho só quando é perda. Os outros
-   três cards ficam neutros DE PROPÓSITO: cor identifica a direção do número,
-   não o card. Cinco matizes lado a lado viram enfeite, e "azul" não diz nada
-   sobre "total criado".
+   ⚠️ MUDOU EM AGO/2026. Antes eram três direções (sobe/desce/neutro) e três
+   cards ficavam cinzas. O argumento de então — "cinco matizes lado a lado
+   viram enfeite" — vale para DECORAÇÃO. Aqui cada ícone diz um ESTADO que o
+   card conta: ganho é `resolvido`, perdido é `erro`, em aberto é `agendado`.
+   Cor que carrega informação é dado, não enfeite.
 
-   O neutro sobe de tinta-fraca para tinta-média. Em 3.68 de contraste, ao lado
-   de um verde em 8.27, ele não lia como cinza escolhido — lia como cor que
-   faltou. Em 8.04 fica no mesmo peso dos semânticos, e a ausência de matiz
-   passa a ser visivelmente uma decisão. */
-.neg-tom-sobe {
-  --neg-tom: var(--mk-ativa);
+   Sobram dois sem matiz de estado, e é de propósito: `criado` é a entrada do
+   funil (nenhum estado ainda) e fica em tinta-média; `recuperado` é a única
+   coisa da tela que a IA fez sozinha, e usa o acento.
+
+   O neutro é tinta-MÉDIA, não tinta-fraca. Em 3.68 de contraste, ao lado de um
+   verde em 8.27, ele lia como cor que faltou; em 8.04 fica no mesmo peso dos
+   outros e a ausência de matiz passa a ser visivelmente uma decisão. */
+.neg-tom-resolvido {
+  --neg-tom: var(--mk-st-resolvido);
 }
-.neg-tom-desce {
-  --neg-tom: var(--mk-alerta);
+.neg-tom-erro {
+  --neg-tom: var(--mk-st-erro);
+}
+.neg-tom-agendado {
+  --neg-tom: var(--mk-st-agendado);
+}
+.neg-tom-acento {
+  --neg-tom: var(--mk-acento);
 }
 .neg-tom-neutro {
   --neg-tom: var(--mk-tinta-media);
@@ -5868,6 +5929,221 @@ a.sidebar-footer:hover {
 }
 .funnel-pct {
   font-size: 11px;
+  color: var(--mk-tinta-fraca);
+}
+
+/* ── Conversas: coluna da lista ──────────────────────────────────────────── */
+/* A pergunta que a atendente faz o dia inteiro é "o que precisa de mim
+   agora?". A barra de chips responde isso sem clique nenhum: os estados ficam
+   TODOS visíveis, com a contagem na cara. Contagem escondida atrás de um
+   dropdown é contagem que ninguém olha. */
+.conv-col {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  border-right: 1px solid var(--mk-linha);
+  background: var(--mk-superficie);
+}
+.conv-topo {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-shrink: 0;
+  padding: 12px 14px 10px;
+  border-bottom: 1px solid var(--mk-linha);
+}
+.conv-topo-linha {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 28px;
+}
+/* O nome da fila É o título. Antes o título era "Pesquise seus contatos" (um
+   placeholder de campo) e o nome da fila vinha numa segunda linha, com quatro
+   ícones soltos entre os dois. */
+.conv-titulo {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--mk-tinta);
+  white-space: nowrap;
+}
+.conv-titulo-contagem {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--mk-tinta-fraca);
+  font-variant-numeric: tabular-nums;
+}
+.conv-topo-acoes {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: auto;
+}
+/* Botão de ícone: altura de controle não se aplica (não é campo), mas o alvo
+   de toque continua quadrado e o hover reage pela cor, não por fundo. */
+.conv-acao {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: var(--mk-raio);
+  background: transparent;
+  color: var(--mk-tinta-fraca);
+  cursor: pointer;
+  transition: color var(--mk-transicao);
+}
+.conv-acao:hover {
+  color: var(--mk-tinta);
+}
+.conv-acao.ligada {
+  color: var(--mk-acento);
+}
+.conv-acao:focus-visible {
+  outline: none;
+  color: var(--mk-acento);
+}
+/* A busca não é a ação principal de quem abre a tela: ela nasce como ícone e
+   só ocupa a linha quando alguém pede. */
+.conv-busca {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+  height: 28px;
+  padding: 0 8px;
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
+  background: transparent;
+  transition: border-color var(--mk-transicao);
+}
+.conv-busca:focus-within {
+  border-color: var(--mk-acento);
+}
+.conv-busca-icone {
+  flex-shrink: 0;
+  color: var(--mk-tinta-fraca);
+}
+.conv-busca-campo {
+  width: 100%;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--mk-tinta);
+}
+.conv-busca-campo:focus {
+  outline: none;
+}
+.conv-busca-campo::placeholder {
+  color: var(--mk-tinta-fraca);
+}
+
+/* ── Chips de estado ─────────────────────────────────────────────────────── */
+.conv-chips {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+/* O respiro que separa FILA (com contagem) de DESTINO (sem contagem). Um
+   grupo é "o que está acontecendo", o outro é "onde a conversa foi parar" —
+   e sem a separação eles leem como uma régua só. */
+.conv-chips-sep {
+  width: 12px;
+  flex-shrink: 0;
+}
+.conv-chip {
+  --st: var(--mk-tinta-media);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 10px;
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
+  background: transparent;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--mk-tinta-media);
+  cursor: pointer;
+  transition: border-color var(--mk-transicao), background var(--mk-transicao),
+    color var(--mk-transicao), opacity var(--mk-transicao);
+}
+.conv-chip-icone {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--st);
+}
+.conv-chip:hover {
+  color: var(--mk-tinta);
+  border-color: var(--mk-tinta-fraca);
+}
+/* O ATIVO é marcado pela cor do PRÓPRIO estado, não por um destaque genérico:
+   assim se sabe qual filtro está ligado pela cor que já se aprendeu. As duas
+   formas do bloco A — 12% no fundo, 35% na borda — sobre transparente, que é
+   a mesma lógica do `#ffffff08`: opacidade sobre o preto, não cor calculada. */
+.conv-chip.ativo {
+  background: color-mix(in srgb, var(--st) 12%, transparent);
+  border-color: color-mix(in srgb, var(--st) 35%, transparent);
+  color: var(--mk-tinta);
+}
+/* Zero continua APARECENDO, só apagado, e continua clicável. Sumir com o chip
+   some com a informação de que aquele estado existe. */
+.conv-chip.vazio {
+  opacity: 0.45;
+}
+.conv-chip:focus-visible {
+  outline: none;
+  border-color: var(--mk-acento);
+}
+.conv-chip-contagem {
+  font-variant-numeric: tabular-nums;
+}
+.conv-chip[data-estado="aguardando"] {
+  --st: var(--mk-st-aguardando);
+}
+.conv-chip[data-estado="atendendo"] {
+  --st: var(--mk-st-atendendo);
+}
+.conv-chip[data-estado="ia"] {
+  --st: var(--mk-st-ia);
+}
+.conv-chip[data-estado="agendado"] {
+  --st: var(--mk-st-agendado);
+}
+.conv-chip[data-estado="inativo"] {
+  --st: var(--mk-st-arquivado);
+}
+
+/* ── Lista e vazio ───────────────────────────────────────────────────────── */
+.conv-lista {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+/* Encostado no topo, logo abaixo dos chips. Centralizado no meio de 600px de
+   coluna, o aviso ficava longe do controle que o causou — e o olho procura a
+   resposta perto da pergunta. */
+.conv-vazio {
+  padding: 22px 18px;
+}
+.conv-vazio-titulo {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--mk-tinta-media);
+}
+/* Diz o que FAZER, não só o que não tem. */
+.conv-vazio-texto {
+  margin-top: 4px;
+  font-size: 12px;
+  line-height: 1.5;
   color: var(--mk-tinta-fraca);
 }
 

@@ -12,7 +12,8 @@ import {
 } from "@/lib/hooks";
 import { supabase } from "@/lib/supabase";
 import { matchesPeriod } from "@/lib/date";
-import { isLeadInativo, isLeadPaused, lastMsgInfo } from "@/lib/conversa";
+import { isLeadPaused, lastMsgInfo } from "@/lib/conversa";
+import { classificarConversas } from "@/lib/estado-conversa";
 import { enviarMensagem as postarMensagem } from "@/lib/enviar-mensagem";
 import {
   destravarSom,
@@ -21,7 +22,10 @@ import {
   tocarNotificacao,
 } from "@/lib/som";
 import { showToast } from "@/lib/toast";
-import { InboxList, type InboxTab } from "@/components/conversas/inbox-list";
+import {
+  InboxList,
+  type FiltroConversa,
+} from "@/components/conversas/inbox-list";
 import { ChatPanel } from "@/components/conversas/chat-panel";
 import { DetailsPanel } from "@/components/conversas/details-panel";
 import type { Conversa, Lead } from "@/types/db";
@@ -51,7 +55,7 @@ export function Conversas() {
   const setConversas = (fn: (prev: Conversa[]) => Conversa[]) =>
     qc.setQueryData<Conversa[]>(["conversas"], (prev) => fn(prev ?? []));
 
-  const [tab, setTab] = useState<InboxTab>("tudo");
+  const [filtro, setFiltro] = useState<FiltroConversa>("tudo");
   const [period, setPeriod] = useState("tudo");
   const [currentLeadId, setCurrentLeadId] = useState<string | null>(null);
   const [pendingMsgs, setPendingMsgs] = useState<PendingMsg[]>([]);
@@ -208,19 +212,34 @@ export function Conversas() {
     [leads, currentLeadId]
   );
 
-  const counts = useMemo<Record<InboxTab, number>>(() => {
-    const humano = leads.filter(isLeadPaused).length;
-    const inativo = leads.filter(isLeadInativo).length;
-    const ia = leads.filter((l) => !isLeadPaused(l) && !isLeadInativo(l)).length;
-    return { tudo: leads.length, ia, humano, inativo };
-  }, [leads]);
+  // Classifica UMA vez e reaproveita na contagem e no filtro. Os cinco
+  // estados são uma partição (ver lib/estado-conversa.ts), então as contagens
+  // da barra somam exatamente `tudo` — se um dia deixarem de somar, é porque
+  // alguém quebrou a exclusividade lá.
+  const estadoPorLead = useMemo(
+    () => classificarConversas(leads, agendamentos),
+    [leads, agendamentos]
+  );
 
-  // filterByInboxTab + filtro de período (por ÚLTIMA ATIVIDADE) + ordenação.
+  const counts = useMemo<Record<FiltroConversa, number>>(() => {
+    const c: Record<FiltroConversa, number> = {
+      tudo: leads.length,
+      aguardando: 0,
+      atendendo: 0,
+      agendado: 0,
+      ia: 0,
+      inativo: 0,
+    };
+    for (const l of leads) c[estadoPorLead.get(l.id) ?? "ia"] += 1;
+    return c;
+  }, [leads, estadoPorLead]);
+
+  // Filtro de estado + filtro de período (por ÚLTIMA ATIVIDADE) + ordenação.
   const orderedLeads = useMemo(() => {
     let f = leads;
-    if (tab === "ia") f = leads.filter((l) => !isLeadPaused(l) && !isLeadInativo(l));
-    else if (tab === "humano") f = leads.filter(isLeadPaused);
-    else if (tab === "inativo") f = leads.filter(isLeadInativo);
+    if (filtro !== "tudo") {
+      f = leads.filter((l) => estadoPorLead.get(l.id) === filtro);
+    }
     if (period !== "tudo") {
       f = f.filter((l) =>
         matchesPeriod(lastMsgInfo(l, conversas).raw, period)
@@ -229,7 +248,7 @@ export function Conversas() {
     return [...f].sort(
       (a, b) => lastMsgInfo(b, conversas).ts - lastMsgInfo(a, conversas).ts
     );
-  }, [leads, tab, conversas, period]);
+  }, [leads, filtro, estadoPorLead, conversas, period]);
 
   // Abertura por URL: outras telas (ex.: Follow-ups) linkam para
   // /conversas?lead=<id> para abrir direto aquele cliente. Aditivo — só reage
@@ -393,14 +412,14 @@ export function Conversas() {
           <InboxList
             leads={orderedLeads}
             conversas={conversas}
-            tab={tab}
+            filtro={filtro}
             counts={counts}
             period={period}
             currentLeadId={currentLeadId}
             loading={loading}
             somLigado={somLigado}
             onAlternarSom={alternarSom}
-            onSelectTab={setTab}
+            onSelectFiltro={setFiltro}
             onSelectPeriod={setPeriod}
             onSelectLead={openConversa}
             onRefresh={() => {

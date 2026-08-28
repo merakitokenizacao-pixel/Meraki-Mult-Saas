@@ -5,8 +5,10 @@
 type Loose<T extends string> = T | (string & {});
 
 export type LeadStatus = Loose<"novo" | "agendado" | "convertido" | "cancelado">;
+// Os cinco do CHECK de `agendamentos`. `faltou` estava faltando aqui e no
+// mapa de badges — conferido contra o banco em ago/2026.
 export type AgendamentoStatus = Loose<
-  "pendente" | "confirmado" | "cancelado" | "realizado"
+  "pendente" | "confirmado" | "cancelado" | "realizado" | "faltou"
 >;
 export type ConversaOrigem = "cliente" | "agente" | "humano";
 

@@ -140,13 +140,20 @@ export function nomeCanal(canal?: string | null): string {
   return CANAIS[c] ?? c.charAt(0).toUpperCase() + c.slice(1);
 }
 
-// Mapeia status → classe da badge (mesma tabela do badgeHtml do legacy).
+// Mapeia status → classe da badge.
+//
+// ⚠️ `faltou` ENTROU EM AGO/2026. Ele está no CHECK de `agendamentos` desde
+// sempre (pendente, confirmado, realizado, faltou, cancelado) e não estava
+// aqui: caía no fallback e saía com a cara de "novo". Um não-comparecimento
+// pintado igual a um lead novo é o tipo de erro que ninguém nota, porque a
+// badge aparece — só aparece errada.
 const BADGE_CLASS: Record<string, string> = {
   novo: "badge-novo",
   agendado: "badge-agendado",
   convertido: "badge-convertido",
   cancelado: "badge-cancelado",
   realizado: "badge-realizado",
+  faltou: "badge-faltou",
   confirmado: "badge-confirmado",
   pendente: "badge-pendente",
 };

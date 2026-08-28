@@ -210,9 +210,20 @@ cliente do Meraki trocando uma palavra na URL. Sem a variável, a rota responde
 `503 indisponivel` — o padrão seguro é não mostrar nada, não mostrar a
 primeira que aparecer.
 
-⚠️ **Armadilha de build**: `useSearchParams()` exige `<Suspense>`. O build
-*compila* e só o **export** quebra — grepar `✓ Compiled` esconde a falha.
-**Sempre cheque o exit code do `npm run build`.**
+⚠️ **Duas armadilhas de build, e elas se contradizem:**
+
+1. `useSearchParams()` exige `<Suspense>`. O build *compila* e só o **export**
+   quebra — grepar `✓ Compiled` esconde a falha. Aqui o **exit code pega**.
+2. **Erro de CSS NÃO derruba o build.** Medido em ago/2026: um seletor vazio
+   (`{` sem nada antes) faz o `next build` imprimir `Invalid empty selector`
+   e **sair com código 0**. Com o cache do Turbopack quente, ele nem imprime.
+   O `next dev` falha, e a tela some para quem abrir.
+
+   Ou seja: o exit code é necessário e **não é suficiente**. Para CSS existe
+   `npm run verificar:css` (`scripts/verificar-css.mjs`), que pega seletor
+   vazio, combinador solto e chave desbalanceada — os defeitos que uma edição
+   por script deixa para trás. Rode depois de qualquer alteração em massa no
+   `globals.css`.
 
 ---
 

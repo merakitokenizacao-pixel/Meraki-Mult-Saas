@@ -5593,10 +5593,8 @@ a.sidebar-footer:hover {
    sombra não separa nada, só suja. Quem separa é a borda de 1px. */
 
 /* ── Tipografia ──────────────────────────────────────────────────────────── */
-{
-  font-family: var(--font-plex), system-ui, sans-serif;
-  color: var(--mk-tinta);
-}
+/* A base (fonte do corpo e cor da tinta) mora em `body`, no topo do arquivo.
+   Aqui ficou só o que é específico de peça. */
 /* Número e título em Space Grotesk. Os dígitos dela têm largura constante,
    então o valor não dança de um card para o outro — que era exatamente o
    defeito do Cormorant nesta posição. */

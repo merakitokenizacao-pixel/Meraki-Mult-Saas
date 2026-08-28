@@ -221,9 +221,9 @@ primeira que aparecer.
 
    Ou seja: o exit code é necessário e **não é suficiente**. Para CSS existe
    `npm run verificar:css` (`scripts/verificar-css.mjs`), que pega seletor
-   vazio, combinador solto e chave desbalanceada — os defeitos que uma edição
-   por script deixa para trás. Rode depois de qualquer alteração em massa no
-   `globals.css`.
+   vazio, combinador solto, chave desbalanceada **e classe nomeada sem regra**
+   — os defeitos que uma edição por script deixa para trás. Rode depois de
+   qualquer alteração em massa no `globals.css`.
 
 ---
 
@@ -339,7 +339,15 @@ que não seja esta, é regressão.
 - **Um raio só: 6px** (`--mk-raio`). Valores de 1–4px sobrevivem em ponta de
   barra e chip minúsculo, que são detalhe de sub-componente, não o raio do
   sistema.
-- **Altura de controle 33px.**
+- **Altura de controle 33px.** A raiz em 16px não mexe nisso: as alturas são
+  em `px`. O que **inchou** 23% foi todo espaçamento em `rem` (`margin-bottom:
+  2.5rem` virou 40px) e o `--radius` do shadcn (0.75rem → 12px, contra os 6px
+  do sistema). Fica registrado, não corrigido — é varredura de arquivo
+  inteiro, não desta alteração.
+- **Escolha entre poucas opções é segmentado, não `<select>`.** O `<select>`
+  nativo abre a lista com o widget do sistema operacional, que é **claro**, e
+  não há CSS que mude. `src/components/segmentado.tsx` (`role="radiogroup"`,
+  foco roving, setas) é o substituto; a regra é `.seg`/`.seg-opcao`.
 - **Campo de texto é transparente com borda** — nunca cinza preenchido, que
   sobre preto lê como desabilitado. **Foco muda a cor da borda**, sem anel e
   sem brilho (`outline: none` + `border-color`).
@@ -353,9 +361,29 @@ Mono** em dado tabular. A Space Grotesk tem dígito de largura constante — o
 Cormorant, que estava ali antes, tem largura variável e fazia o valor dançar de
 um card para o outro.
 
-Número grande: **48px / 700**, com `clamp` — cinco cards lado a lado estouram
-a caixa em tela estreita, e valor quebrado em duas linhas é pior que valor
-menor.
+Valor de card: **26px / 700**, sem `clamp`. Já foi 48px, copiado da
+referência — mas lá o 48px é o número herói de **um** card ocupando meia tela,
+e aqui são **cinco lado a lado**. Herói repetido cinco vezes deixa de ser
+herói: some a hierarquia entre a fileira de KPIs e o resto da página.
+
+E não era só estética. Medido no `.woff2` que o `next/font` baixa (Space
+Grotesk 700, figuras tabulares, tracking -0.02em), `R$ 12.078,17` dá **276px**
+a 44,5px e **161px** a 26px — a caixa útil do valor tem **181px** (239 do
+card, menos 32 de padding, menos 16 do ícone e 10 do gap). Com dado real o
+número quebrava em duas linhas. O teto que ainda cabe é `R$ 128.400,50`
+(177px); acima disso quebra.
+
+O 48px fica **guardado** para quando existir um card herói de verdade, sozinho
+na largura.
+
+**A altura do card é consequência, não causa.** Com o valor em 26px o conteúdo
+empilhado dá ~96px sozinho. Não se ajusta altura comprimindo padding — 14/16
+fica, senão o card aperta justamente quando o número real entrar.
+
+⚠️ **Mono é para dado tabular; frase é sans.** Vale para valor de eixo, tabela
+numérica, horário e código. Subtexto de card, label e descrição vão em IBM
+Plex Sans — `0 marcações feitas` em monoespaçada tem cara de log de terminal.
+`.neg-card-apoio` já esteve na lista errada.
 
 ⚠️ **`.neg-fill` NÃO é um elemento de valor** — é o wrapper da aba Negócios
 inteira. Pôr `font-family` nele joga a aba toda em monoespaçada. Já aconteceu.
@@ -435,9 +463,13 @@ fica de pé para o dia em que houver um segundo sistema.
   duas: `.metrics-lente`, `.nav-item-footer` e `.drp-mes` (o CSS tinha
   `.drp-meses` e `.drp-mes-nome`, e a do meio faltava). Classe sem regra não
   quebra build nem teste — o elemento só renderiza sem estilo, e um player de
-  áudio já foi para produção assim. Por isso a conferência virou mecânica:
-  **ao terminar qualquer alteração de CSS, confira que toda classe nomeada tem
-  regra.**
+  áudio já foi para produção assim. A conferência deixou de ser manual: o
+  `npm run verificar:css` cruza toda classe da casa usada no markup contra as
+  regras do CSS e falha se sobrar alguma. Nome montado por string
+  (`` `neg-tom-${tom}` ``) ele **não** pega — esses três lugares estão listados
+  na seção de cor. Há uma exceção tolerada e documentada no próprio script:
+  `.ag-lista-dia`, que é o containing block de um cabeçalho `sticky` e precisa
+  continuar sendo bloco simples.
 - **`/privacidade`**: a constante `CONTATO` está vazia. Não divulgar o link
   antes de preencher.
 - **Migrations do painel antigo em `supabase/migrations/_legado/`**: cinco

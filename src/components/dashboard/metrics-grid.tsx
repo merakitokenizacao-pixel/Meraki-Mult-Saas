@@ -103,10 +103,6 @@ export function MetricsGrid({
     receita > 0
       ? receita.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
       : "R$ 0,00";
-  // Só encolhe quando a string é mesmo longa. Com o valor em 30px (e não nos
-  // 46px de antes) o degrau agressivo virava três tamanhos de fonte no mesmo
-  // grid, e cards vizinhos com alturas de número diferentes desalinham a linha.
-  const receitaSize = receita >= 100000 ? "24px" : undefined;
 
   return (
     <div className="metrics-dupla">
@@ -172,9 +168,12 @@ export function MetricsGrid({
           </div>
           <div className="metric-card">
             <div className="metric-label">Receita estimada</div>
-            <div className="metric-value" style={{ fontSize: receitaSize }}>
-              {receitaFmt}
-            </div>
+            {/* Já teve um degrau de fonte aqui (24px acima de 100 mil), de
+                quando o valor era 30px. Com 26px ele deixou de fazer sentido:
+                `R$ 128.400,50` mede 177px nos 266px úteis do card, e um único
+                card com número menor que os vizinhos desalinha a linha para
+                resolver um problema que não existe mais. */}
+            <div className="metric-value">{receitaFmt}</div>
             {/* Quantos ficaram de fora da soma: o serviço deles não está no
                 catálogo (Botox e Preenchimento, por exemplo), então o total é
                 PISO. Sem esta linha, o número seria lido como fechamento. */}

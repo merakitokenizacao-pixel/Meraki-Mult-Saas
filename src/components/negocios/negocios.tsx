@@ -31,6 +31,7 @@ import {
   type Modo,
   type SerieId,
 } from "@/components/negocios/dados-diarios";
+import { OPCOES_BASE, Segmentado } from "@/components/segmentado";
 import { PercentualProfissional } from "@/components/negocios/percentual-profissional";
 import { ServicosVendidos } from "@/components/negocios/servicos-vendidos";
 import { ProfissionaisVendas } from "@/components/negocios/profissionais-vendas";
@@ -253,15 +254,12 @@ export function Negocios({ period }: { period: string }) {
               </span>
             </div>
             <div className="neg-painel-acoes">
-              <select
-                className="neg-select"
-                value={modo}
-                onChange={(e) => setModo(e.target.value as Modo)}
-                aria-label="Base do gráfico"
-              >
-                <option value="valor">Valor</option>
-                <option value="qtd">Quantidade</option>
-              </select>
+              <Segmentado
+                valor={modo}
+                onChange={setModo}
+                opcoes={OPCOES_BASE}
+                rotulo="Base do gráfico"
+              />
             </div>
           </header>
           {carregando ? (
@@ -292,15 +290,12 @@ export function Negocios({ period }: { period: string }) {
               </span>
             </div>
             <div className="neg-painel-acoes">
-              <select
-                className="neg-select"
-                value={modoProf}
-                onChange={(e) => setModoProf(e.target.value as Modo)}
-                aria-label="Base da divisão por profissional"
-              >
-                <option value="valor">Valor</option>
-                <option value="qtd">Quantidade</option>
-              </select>
+              <Segmentado
+                valor={modoProf}
+                onChange={setModoProf}
+                opcoes={OPCOES_BASE}
+                rotulo="Base da divisão por profissional"
+              />
             </div>
           </header>
           {carregando ? (
@@ -319,15 +314,12 @@ export function Negocios({ period }: { period: string }) {
               <span className="neg-painel-nota">Procedimentos realizados</span>
             </div>
             <div className="neg-painel-acoes">
-              <select
-                className="neg-select"
-                value={modoServ}
-                onChange={(e) => setModoServ(e.target.value as Modo)}
-                aria-label="Base do ranking de serviços"
-              >
-                <option value="valor">Valor</option>
-                <option value="qtd">Quantidade</option>
-              </select>
+              <Segmentado
+                valor={modoServ}
+                onChange={setModoServ}
+                opcoes={OPCOES_BASE}
+                rotulo="Base do ranking de serviços"
+              />
             </div>
           </header>
           {carregando ? (

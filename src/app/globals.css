@@ -109,7 +109,11 @@
 
    ⚠️ CONSEQUÊNCIA QUE NÃO DÁ PARA ESQUECER: com fundo preto e superfície
    translúcida, `box-shadow` deixa de separar e vira mancha. A separação é
-   100% BORDA. Zero box-shadow, em todo lugar, sem exceção.
+   100% BORDA. Zero box-shadow como SEPARAÇÃO, em todo lugar.
+
+   Existe UMA no arquivo, e ela não é sombra: a que tapa o amarelo do autofill
+   do Chrome (procure por `-webkit-autofill`). É pintura, não elevação. Se
+   aparecer uma segunda que não seja aquela, é regressão.
 
    Nenhum hex literal fora deste bloco. Se precisar de uma cor que não está
    aqui, o lugar de resolver é aqui. */
@@ -3915,17 +3919,6 @@ input:-webkit-autofill {
 .neg-fill {
   font-variant-numeric: tabular-nums;
 }
-.neg-select {
-  padding: 5px 10px;
-  border: 1px solid var(--mk-linha);
-  border-radius: var(--mk-raio);
-  background: var(--mk-superficie-2);
-  color: var(--mk-tinta-media);
-  font-family: inherit;
-  font-size: 11.5px;
-  cursor: pointer;
-}
-
 .neg-legenda-ponto {
   width: 8px;
   height: 8px;
@@ -5630,13 +5623,16 @@ a.sidebar-footer:hover {
 .metrics-lente-titulo {
   font-family: var(--font-space), system-ui, sans-serif;
 }
-/* Dado tabular: coluna de valores, percentual, contagem. */
+/* Dado tabular: coluna de valores, percentual, contagem, horário, código.
+   ⚠️ E SÓ ISSO. Mono existe para número que precisa alinhar em coluna. Em
+   FRASE ela vira log de terminal — foi o que aconteceu com `.neg-card-apoio`
+   ("0 marcações feitas"), que estava nesta lista e saiu. A regra que decide:
+   se dá para ler em voz alta como frase, é sans. */
 .neg-linha-qtd,
 .neg-linha-pct,
 .neg-rosca-pct,
 .neg-rosca-valor,
 .neg-pessoa-valor,
-.neg-card-apoio,
 .funnel-pct {
   font-family: var(--font-plex-mono), ui-monospace, monospace;
   font-variant-numeric: tabular-nums;
@@ -5744,23 +5740,34 @@ a.sidebar-footer:hover {
   color: var(--mk-tinta-fraca);
 }
 
-/* ── O número grande ─────────────────────────────────────────────────────── */
-/* 48px / 700 / Space Grotesk é o tamanho do sistema. `clamp` porque são cinco
-   cards lado a lado: num monitor estreito 48px estoura a caixa e o valor
-   quebra em duas linhas, que é pior que um número menor. O teto é o do
-   sistema; o piso mantém o número como protagonista do card. */
+/* ── O número do card ────────────────────────────────────────────────────── */
+/* 26px / 700 / Space Grotesk.
+   ⚠️ JÁ FOI 48px (na prática ~44,5 — o clamp raramente chegava ao teto),
+   copiado da referência. Lá o 48px é o número herói de UM card ocupando meia
+   tela; aqui são CINCO lado a lado, e herói repetido cinco vezes deixa de ser
+   herói: some a hierarquia entre a fileira de KPIs e o resto da página.
+   E era defeito latente, não só estética. Medido no próprio .woff2 que o
+   next/font baixou (Space Grotesk 700, figuras tabulares `.tf`, tracking
+   -0.02em): `R$ 12.078,17` dá 276px a 44,5px e 161px a 26px — e a caixa útil
+   do valor tem 181px (239 do card, menos 32 de padding, menos 16 do ícone e
+   10 do gap). Com dado real o número quebrava em duas linhas.
+   Os 26px são MAIORES que os 20px do sistema claro de propósito: fundo preto
+   e Space Grotesk pedem mais corpo que fundo branco e Inter.
+   O 48px fica guardado para quando existir um card herói de verdade, sozinho
+   na largura — aí ele volta a significar alguma coisa. */
 .neg-card-valor,
 .metric-value {
-  font-size: clamp(26px, 2.9vw, 48px);
+  font-size: 26px;
   font-weight: 700;
   line-height: 1.05;
   letter-spacing: -0.02em;
   color: var(--mk-tinta);
   font-variant-numeric: tabular-nums;
 }
-/* O "%" e o "R$" não são dígitos: em 48px eles dominam o número. */
+/* O "%" não é dígito, mas com o valor em 26px ele já não domina nada — a
+   0.5em de antes, feita para 48px, devolvia um sinal de 13px pendurado. */
 .metric-unidade {
-  font-size: 0.5em;
+  font-size: 0.62em;
   font-weight: 500;
   color: var(--mk-tinta-media);
 }
@@ -5771,10 +5778,15 @@ a.sidebar-footer:hover {
   letter-spacing: 0.01em;
   color: var(--mk-tinta-media);
 }
-/* Card mais alto porque o número cresceu. Sem isto o valor encosta na borda. */
+/* A altura é CONSEQUÊNCIA do valor, não causa. Com o número em 26px o
+   conteúdo empilhado dá ~96px (14+14 de padding, 13,75 do rótulo, 10 do gap,
+   27 do valor, 3+15 do apoio) e o card volta sozinho para a faixa da
+   referência. O padding NÃO foi comprimido para chegar lá: apertar 14/16 para
+   compensar troca um problema por outro — o card fica sem ar justamente
+   quando o número real entrar. */
 .neg-card,
 .metric-card {
-  min-height: 112px;
+  min-height: 96px;
   padding: 14px 16px;
 }
 
@@ -5859,10 +5871,64 @@ a.sidebar-footer:hover {
   color: var(--mk-tinta-fraca);
 }
 
+/* ── Segmentado: escolha entre poucas opções ─────────────────────────────── */
+/* Substituiu os `<select>` nativos dos painéis. Dois motivos, e o segundo é o
+   que não tinha conserto: duas opções é toggle, não dropdown; e `<select>`
+   nativo abre a lista com o widget do SISTEMA OPERACIONAL, que é claro, sem
+   CSS que mude. Era a única peça da tela fora do tema.
+
+   Mesma linguagem das abas Negócios / Multiatendimento, com uma diferença
+   deliberada: aqui a opção marcada ganha um degrau de fundo (`--mk-linha-suave`,
+   branco a ~5%). Na aba a marca é só cor porque a aba troca o painel inteiro e
+   o conteúdo abaixo já confirma a escolha; aqui as duas opções ficam lado a
+   lado sem nada mudando de forma, e cor sozinha em 13px não segura o estado. */
+.seg {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px;
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
+  background: var(--mk-superficie);
+  transition: border-color var(--mk-transicao);
+}
+/* Foco muda a COR DA BORDA do trilho — a mesma regra do campo de texto. Sem
+   anel e sem brilho. Não precisa marcar QUAL opção tem foco: o foco é roving,
+   então a opção focada é sempre a marcada, e a marca já está visível. */
+.seg:focus-within {
+  border-color: var(--mk-acento);
+}
+.seg-opcao {
+  height: 28px;
+  padding: 0 10px;
+  border: none;
+  /* 4px e não 6: é o raio do trilho menos os 2px de padding — canto interno
+     concêntrico. Detalhe de sub-componente, que é a exceção que o sistema já
+     abre para ponta de barra e chip. */
+  border-radius: 4px;
+  background: transparent;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--mk-tinta-media);
+  cursor: pointer;
+  transition: color var(--mk-transicao), background var(--mk-transicao);
+}
+.seg-opcao:hover {
+  color: var(--mk-tinta);
+}
+.seg-opcao:focus-visible {
+  outline: none;
+}
+.seg-opcao.marcada {
+  background: var(--mk-linha-suave);
+  color: var(--mk-tinta);
+}
+
 /* ── Controles: select, filtro de período ────────────────────────────────── */
 /* Campo é transparente com borda. NUNCA cinza preenchido — sobre preto o
    cinza preenchido lê como desabilitado. */
-.neg-select,
 .date-filter-trigger,
 .drp-select {
   height: 33px;
@@ -5875,13 +5941,11 @@ a.sidebar-footer:hover {
   font-size: 12px;
   transition: border-color var(--mk-transicao), color var(--mk-transicao);
 }
-.neg-select:hover,
 .date-filter-trigger:hover {
   color: var(--mk-tinta);
   border-color: var(--mk-tinta-fraca);
 }
 /* Foco muda a COR DA BORDA. Sem anel, sem brilho. */
-.neg-select:focus,
 .date-filter-trigger:focus,
 .drp-select:focus {
   outline: none;

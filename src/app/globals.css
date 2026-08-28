@@ -1371,7 +1371,7 @@ body {
 .form-input {
   width: 100%;
   height: 33px;
-  /* Branco com borda, como no modal: campo preenchido de cinza lê como
+  /* Transparente com borda: campo preenchido de cinza, sobre preto, lê como
      desabilitado. */
   background: var(--mk-superficie);
   border: 1px solid var(--mk-linha);
@@ -1394,6 +1394,29 @@ textarea.form-input {
 }
 select.form-input {
   cursor: pointer;
+}
+
+/* ── Preenchimento automático do navegador ───────────────────────────────────
+   O Chrome pinta o campo preenchido pelo autofill com um amarelo-claro
+   próprio e IGNORA `background` — sobre preto o resultado é um campo branco
+   no meio do formulário escuro, que foi exatamente o que apareceu na tela de
+   login.
+
+   Não há como sobrescrever a cor diretamente: o único jeito é uma sombra
+   interna gorda o bastante para cobrir o campo inteiro. É a ÚNICA
+   `box-shadow` do sistema, e não é decoração — é pintura. O `transition` de
+   uma hora é o truque conhecido para adiar a cor do autofill quase
+   indefinidamente nos navegadores que ignoram o `inset`. */
+.form-input:-webkit-autofill,
+.form-input:-webkit-autofill:hover,
+.form-input:-webkit-autofill:focus,
+.tenant-sel-campo:-webkit-autofill,
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 40px var(--mk-elevado) inset;
+  box-shadow: 0 0 0 40px var(--mk-elevado) inset;
+  -webkit-text-fill-color: var(--mk-tinta);
+  caret-color: var(--mk-tinta);
+  transition: background-color 3600s ease-in-out 0s;
 }
 
 /* ══════════════════════════════════════════════════════════════

@@ -5,13 +5,26 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2, Lock, Mail, TriangleAlert } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
-// Mensagens de erro genéricas de propósito: não confirmar se um e-mail existe
-// (isso entrega a lista de usuários para quem estiver tentando adivinhar).
-function mensagemErro(codigo: string | undefined): string {
+// Mensagens genéricas de propósito quando o erro é sobre a CREDENCIAL: não
+// confirmar se um e-mail existe entrega a lista de usuários para quem estiver
+// adivinhando.
+//
+// Erro de CONFIGURAÇÃO é outra história e precisa ser específico. Com a
+// `NEXT_PUBLIC_SUPABASE_ANON_KEY` errada, o Supabase responde 401 "Invalid API
+// key" e a mensagem genérica manda a pessoa redigitar a senha para sempre —
+// aconteceu, e custou uma sessão inteira até alguém olhar o `.env.local`.
+// Aqui quem lê a tela é a equipe da clínica ou quem instalou; dizer o nome da
+// variável não entrega nada e resolve na hora.
+function mensagemErro(
+  codigo: string | undefined,
+  status: number | undefined
+): string {
   if (codigo === "invalid_credentials") return "E-mail ou senha incorretos.";
   if (codigo === "email_not_confirmed") return "E-mail ainda não confirmado.";
   if (codigo === "over_request_rate_limit")
     return "Muitas tentativas. Aguarde um instante.";
+  if (status === 401)
+    return "Configuração do servidor: a chave do Supabase está inválida ou ausente. Confira NEXT_PUBLIC_SUPABASE_ANON_KEY.";
   return "Não foi possível entrar. Tente novamente.";
 }
 
@@ -36,7 +49,7 @@ export function LoginForm() {
         password: senha,
       });
       if (error) {
-        setErro(mensagemErro(error.code));
+        setErro(mensagemErro(error.code, error.status));
         setEntrando(false);
         return;
       }

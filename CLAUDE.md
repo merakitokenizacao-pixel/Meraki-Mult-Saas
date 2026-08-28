@@ -315,10 +315,23 @@ por dentro, não pintado por cima. E sendo opacidade em vez de cor fixa, tudo
 empilha coerente — card sobre card, popover sobre card — sem ninguém calcular
 tom novo a cada camada.
 
-**Consequência que é regra, não gosto: ZERO `box-shadow`, em todo lugar.**
+**Consequência que é regra, não gosto: ZERO `box-shadow` como SEPARAÇÃO.**
 Sobre preto com superfície translúcida a sombra não separa — mancha. A
 separação é 100% borda de 1px. (O site institucional em `(site)/` tem sistema
 próprio, claro e com sombra; ele não segue nada disto.)
+
+⚠️ **Existe UMA `box-shadow` no painel, e ela não é sombra.** O Chrome pinta o
+campo preenchido pelo autofill com um amarelo-claro próprio e **ignora
+`background`** — sobre preto vira um campo branco no meio do formulário
+escuro. Não há propriedade que sobrescreva aquilo; o único caminho é uma
+sombra interna gorda o bastante para cobrir o campo:
+
+```css
+input:-webkit-autofill { box-shadow: 0 0 0 40px var(--mk-elevado) inset; }
+```
+
+É pintura, não elevação. Se aparecer uma segunda `box-shadow` no `globals.css`
+que não seja esta, é regressão.
 
 - **Densidade**: raiz em **16px**. Eram 13px no sistema claro — no escuro o
   texto miúdo some. Mora em `:root` porque `rem` resolve na raiz: **não há como

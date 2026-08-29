@@ -114,20 +114,20 @@ export function tracoDuplo(
 }
 
 /**
- * Rótulo da série na PONTA da linha + o último valor.
- *
- * Substitui a legenda: o olho lê o nome onde a linha termina, sem a ida e volta
- * até uma caixinha de cores.
- */
-/**
- * Rótulo da série na PONTA da linha, com o último valor.
+ * Rótulo da série na PONTA da linha — só o NOME.
  *
  * Substitui a legenda: o olho lê o nome onde a linha termina, sem a ida e
  * volta até uma caixinha de cores.
  *
- * ⚠️ A primeira versão disto ESTAVA QUEBRADA — os rótulos se sobrepunham
- * ("Ganhos R$ 578,0" por cima de "Criados R$ 0,00") e vazavam pela borda
- * direita do card. Ficou pior que a legenda que substituiu. Duas correções:
+ * ⚠️ O VALOR SAIU EM AGO/2026, junto com a volta do eixo Y. Ele estava ali
+ * porque não havia calha nenhuma — sem eixo, o único jeito de ler grandeza era
+ * pendurar o número na ponta. Com o eixo de volta, o valor na margem passa a
+ * ser a terceira grafia do mesmo número (eixo, ponta e tooltip) e era ele que
+ * fazia duas séries terminando perto disputarem espaço com a própria linha.
+ *
+ * ⚠️ A primeira versão disto ESTAVA QUEBRADA — os rótulos se sobrepunham e
+ * vazavam pela borda direita do card. Ficou pior que a legenda que substituiu.
+ * Duas correções, que continuam valendo:
  *
  * 1. O ESPAÇO é reservado no `layout.padding.right` do gráfico, então a linha
  *    termina antes e o texto cabe dentro da área. Nada desenha fora.
@@ -136,19 +136,17 @@ export function tracoDuplo(
  *    conjunto inteiro na mesma medida — senão o de baixo sai pelo rodapé.
  */
 export function pluginRotuloNaPonta(
-  formatar: (v: number) => string,
   fonteSans: string,
-  fonteMono: string,
   corContexto: string
 ): Plugin<"line"> {
-  const ALTURA = 22; // nome + valor
+  const ALTURA = 12; // só o nome
   const FOLGA = 4;
   return {
     id: "rotulo-na-ponta",
     afterDatasetsDraw(chart: Chart<"line">) {
       const { ctx, chartArea } = chart;
 
-      type Rot = { y: number; nome: string; valor: string | null; cor: string; x: number };
+      type Rot = { y: number; nome: string; x: number };
       const rots: Rot[] = [];
       chart.data.datasets.forEach((ds, i) => {
         const rotulo = String(ds.label ?? "");
@@ -156,20 +154,7 @@ export function pluginRotuloNaPonta(
         const meta = chart.getDatasetMeta(i);
         if (meta.hidden || meta.data.length === 0) return;
         const ultimo = meta.data[meta.data.length - 1];
-        const protagonista = ds.fill === "origin";
-        rots.push({
-          y: ultimo.y,
-          nome: rotulo,
-          // A de CONTEXTO leva só o nome: três valores na margem devolveriam
-          // a poluição que a legenda tinha.
-          valor: protagonista
-            ? formatar(Number(ds.data[ds.data.length - 1] ?? 0))
-            : null,
-          cor: protagonista
-            ? (typeof ds.borderColor === "string" ? ds.borderColor : corContexto)
-            : corContexto,
-          x: ultimo.x + 8,
-        });
+        rots.push({ y: ultimo.y, nome: rotulo, x: ultimo.x + 8 });
       });
       if (rots.length === 0) return;
 
@@ -189,16 +174,9 @@ export function pluginRotuloNaPonta(
       ctx.save();
       ctx.textBaseline = "middle";
       ctx.textAlign = "left";
-      for (const r of rots) {
-        ctx.fillStyle = corContexto;
-        ctx.font = `10px ${fonteSans}`;
-        ctx.fillText(r.nome, r.x, r.valor ? r.y - 6 : r.y);
-        if (r.valor) {
-          ctx.fillStyle = r.cor;
-          ctx.font = `600 11px ${fonteMono}`;
-          ctx.fillText(r.valor, r.x, r.y + 7);
-        }
-      }
+      ctx.fillStyle = corContexto;
+      ctx.font = `10px ${fonteSans}`;
+      for (const r of rots) ctx.fillText(r.nome, r.x, r.y);
       ctx.restore();
     },
   };
@@ -243,20 +221,20 @@ export function areaVertical(cor: string) {
 }
 
 /**
- * Linha de base no zero e o valor do PICO flutuando junto dele.
+ * A linha de base no zero, mais forte que a grade.
  *
- * Substitui a calha do eixo Y — ~60px de largura ocupados por quatro números
- * que ninguém lê. O único valor do eixo que alguém procura é o máximo, e ele
- * fica mais útil ao lado do próprio pico do que numa coluna à esquerda.
+ * ⚠️ ISTO JÁ FOI `base-e-pico`, e desenhava também o valor do PICO flutuando
+ * junto do ponto máximo. Aquilo era o SUBSTITUTO da calha do eixo Y, que tinha
+ * sido removida: sem eixo, o máximo era o único número de grandeza na tela.
+ * Com o eixo de volta em ago/2026 o pico virou número solto — o eixo já diz a
+ * escala e o tooltip já diz o valor exato do ponto sob o cursor.
+ *
+ * O zero continua sendo desenhado à mão, e não pela grade: ele é a referência,
+ * não mais uma divisão. Em `--mk-linha` contra a grade em `--mk-linha-suave`.
  */
-export function pluginBaseEPico(
-  formatar: (v: number) => string,
-  corLinha: string,
-  corTexto: string,
-  fonteMono: string
-): Plugin<"line"> {
+export function pluginLinhaBase(corLinha: string): Plugin<"line"> {
   return {
-    id: "base-e-pico",
+    id: "linha-base",
     beforeDatasetsDraw(chart: Chart<"line">) {
       const { ctx, chartArea, scales } = chart;
       const y0 = scales.y?.getPixelForValue(0);
@@ -268,30 +246,6 @@ export function pluginBaseEPico(
       ctx.lineWidth = 1;
       ctx.strokeStyle = corLinha;
       ctx.stroke();
-      ctx.restore();
-    },
-    afterDatasetsDraw(chart: Chart<"line">) {
-      // O pico da PROTAGONISTA — a que tem área. As de contexto não recebem
-      // número: seriam três valores flutuando e a hierarquia se perderia.
-      const i = chart.data.datasets.findIndex(
-        (d) => d.fill === "origin" && !String(d.label ?? "").endsWith("__halo")
-      );
-      if (i < 0) return;
-      const dados = chart.data.datasets[i].data as number[];
-      if (dados.length === 0) return;
-      let iMax = 0;
-      for (let k = 1; k < dados.length; k++) if (dados[k] > dados[iMax]) iMax = k;
-      if (dados[iMax] === 0) return; // série zerada: nada a destacar
-
-      const ponto = chart.getDatasetMeta(i).data[iMax];
-      if (!ponto) return;
-      const { ctx } = chart;
-      ctx.save();
-      ctx.fillStyle = corTexto;
-      ctx.font = `10px ${fonteMono}`;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "bottom";
-      ctx.fillText(formatar(dados[iMax]), ponto.x, ponto.y - 6);
       ctx.restore();
     },
   };

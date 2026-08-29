@@ -10,8 +10,8 @@ import {
   CURVA_HONESTA,
   comAlfa as alfa,
   gradienteHorizontal,
-  pluginBaseEPico,
   pluginCursorVertical,
+  pluginLinhaBase,
   pluginRotuloNaPonta,
   raioAncora,
   tracoDuplo,
@@ -131,18 +131,8 @@ export function DadosDiarios({
       // ponta e o cursor não devem vazar para a rosca nem para os outros
       // gráficos.
       plugins: [
-        pluginRotuloNaPonta(
-          (v) => (modo === "valor" ? moedaCurta(v) : String(v)),
-          est.fontSans,
-          est.fontMono,
-          est.muted
-        ),
-        pluginBaseEPico(
-          (v) => (modo === "valor" ? moedaCurta(v) : String(v)),
-          est.border,
-          est.muted,
-          est.fontMono
-        ),
+        pluginRotuloNaPonta(est.fontSans, est.muted),
+        pluginLinhaBase(est.border),
         pluginCursorVertical(est.border),
       ],
       options: {
@@ -154,8 +144,10 @@ export function DadosDiarios({
         // Quem pediu menos movimento recebe zero — a troca continua
         // acontecendo, só sem a transição.
         animation: { duration: reduzirMovimento() ? 0 : 200 },
-        // Espaço à direita para o rótulo da ponta caber sem sair da área.
-        layout: { padding: { right: 96 } },
+        // Espaço à direita para o rótulo da ponta caber sem sair da área. Caiu
+        // de 96 para 64: sem o valor pendurado, sobra o nome da série, e
+        // "Perdidos" a 10px não passa de ~48px.
+        layout: { padding: { right: 64 } },
         plugins: {
           legend: { display: false },
           tooltip: {
@@ -195,16 +187,41 @@ export function DadosDiarios({
               autoSkipPadding: 18,
             },
           },
-          // A CALHA DO Y SAIU. Eram ~60px de largura ocupados só por
-          // "R$ 6 mil / R$ 4 mil / R$ 2 mil / R$ 0,00" — quatro números que
-          // ninguém lê, roubando espaço da própria plotagem. Fica UMA linha de
-          // base no zero, e o valor do PICO flutua junto do pico (plugin
-          // abaixo), que é o único número do eixo que alguém procura.
+          // ⚠️ A CALHA DO Y VOLTOU em ago/2026. Ela tinha saído para liberar
+          // ~60px de largura, com o valor do pico flutuando no lugar dela — e
+          // o que se perdeu foi a REFERÊNCIA DE ESCALA: sem eixo, a linha
+          // mostra a forma e esconde a grandeza, e o gráfico vira desenho. Os
+          // rótulos de ponta que entraram no lugar ainda disputavam espaço com
+          // a própria linha quando duas séries terminavam perto.
+          //
+          // Mono aqui é o certo, e não contradiz "frase é sans": rótulo de eixo
+          // é dado tabular — uma coluna de números que precisa alinhar.
           y: {
             beginAtZero: true,
-            grid: { display: false },
+            grid: {
+              display: true,
+              color: lerVar("--mk-linha-suave"),
+              lineWidth: 1,
+              // O tique curto entre calha e grade não acrescenta informação —
+              // a própria linha já leva o olho até o número.
+              drawTicks: false,
+            },
             border: { display: false },
-            ticks: { display: false },
+            ticks: {
+              display: true,
+              color: est.muted,
+              font: { family: est.fontMono, size: 10 },
+              padding: 8,
+              // Alinha os rótulos à DIREITA dentro da calha, encostados na
+              // grade: "R$ 0,00" e "R$ 12 mil" têm larguras diferentes, e
+              // alinhados à esquerda o eixo fica com a borda serrilhada.
+              crossAlign: "far",
+              // Quatro linhas é a leitura da referência. Mais que isso vira
+              // pauta de caderno; menos deixa de dar escala.
+              maxTicksLimit: 4,
+              callback: (v) =>
+                modo === "valor" ? moedaCurta(Number(v)) : String(v),
+            },
           },
         },
       },

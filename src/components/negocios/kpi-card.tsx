@@ -88,16 +88,17 @@ export function KpiCard({
           </span>
         )}
       </span>
-      {/* O ícone alinha pela BASE do valor, não pelo canto do card: com o
-          subtexto abaixo, "canto inferior direito" o deixaria flutuando um
-          degrau abaixo do número que ele representa. */}
+      <div className="neg-card-valor">{valor}</div>
+      {/* O ícone fecha a ÚLTIMA LINHA, ao lado do subtexto. Antes ele ficava
+          na linha do valor, e as três linhas do card tinham começo mas só duas
+          tinham fim — um elemento pendurado fora do fluxo. Aqui cada linha tem
+          início e término, que é o que faz o card parecer resolvido. */}
       <div className="neg-card-linha">
-        <div className="neg-card-valor">{valor}</div>
+        <div className="neg-card-apoio">{apoio}</div>
         <span className="neg-card-icone" aria-hidden="true">
           <Icone size={16} strokeWidth={2} />
         </span>
       </div>
-      <div className="neg-card-apoio">{apoio}</div>
     </>
   );
 

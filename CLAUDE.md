@@ -479,16 +479,35 @@ a 26px e **124px** em Plex Sans 600 a 20px.
 O 48px fica **guardado** para quando existir um card herói de verdade, sozinho
 na largura.
 
-**A altura do card é consequência, não causa.** A anatomia é `94 × padding
-13/16 × gap 12`, e a conta fecha: 26 de padding + 12,65 do rótulo + 12 + 21 do
-valor + 12 + 11 do apoio = 94,65. As três alturas de linha são **explícitas**
-porque a padrão do documento (1,5) sozinha jogaria o card para 101px. Não se
-ajusta altura comprimindo padding — 13/16 fica, senão o card aperta justamente
-quando o número real entrar.
+**A altura do card é consequência, não causa.** A anatomia é `padding 13/16 ·
+gap 12` e **três linhas, cada uma com começo e fim**: rótulo (+ `ⓘ`), valor, e
+subtexto + ícone na MESMA linha. O ícone fechando a última linha é o que faz o
+card parecer resolvido — na linha do valor ele ficava pendurado fora do fluxo.
+
+As três alturas de linha são **explícitas** (1,1 / 1,05 / 1,1) porque a padrão
+do documento (1,5) sozinha jogaria o card para 101px. Não se ajusta altura
+comprimindo padding — 13/16 fica, senão o card aperta quando o número real
+entrar.
+
+⚠️ **O alvo de 94px não fecha com ícone na última linha, e a conta prova:**
+
+```
+Negócios         26 padding + 12,65 + 12 + 21 + 12 + 16 (o ícone manda) = 99,65
+Multiatendimento 26 padding + 12,65 + 12 + 21 + 12 + 11 (sem ícone)     = 94,65
+```
+
+Com padding 13 e gap 12 sobram **44px** para as três linhas, e rótulo + valor +
+ícone em `line-height: 1` já pedem 47,5. Os quatro números da referência (94 de
+altura, 13 de padding, 12 de gap, 16 de ícone) são **sobredeterminados** — não
+existe combinação que satisfaça os quatro. Ficaram os três visíveis; a altura é
+o que sobra. `min-height: 94px` continua declarado como piso, mas não chega a
+valer.
 
 ⚠️ **A SELEÇÃO DO CARD USA A COR DO PRÓPRIO CARD**, e é isso que a torna
-navegação em vez de enfeite: borda de 1px, faixa de 2px no topo e a **linha
-protagonista do gráfico** saem todas do mesmo token.
+navegação em vez de enfeite: a borda de 1px e a **linha protagonista do
+gráfico** saem do mesmo token. **UM traço só** — já teve borda *e* faixa de 2px
+no topo, e os dois marcavam a mesma coisa duas vezes, deixando a aresta
+superior pesada e fora de alinhamento com os cards vizinhos.
 
 ```
 Total criado        --mk-acento          roxo
@@ -505,6 +524,21 @@ o hex — o canvas do gráfico não herda CSS, então a cor é lida com
 Antes a borda era sempre `--mk-acento`: clicar em qualquer um dos cinco dava a
 mesma borda roxa, e a cor do card só existia num ícone de 16px. Nunca fundo
 colorido — a cor entra em traço, não em massa.
+
+⚠️ **O gráfico de linha tem calha de eixo Y, e ela não sai de novo.** Já saiu
+uma vez, para liberar ~60px de largura, com o valor do pico flutuando junto do
+ponto máximo no lugar dela. O que se perdeu foi a **referência de escala**: sem
+eixo a linha mostra a forma e esconde a grandeza, e o gráfico vira desenho. Os
+rótulos de ponta que entraram como compensação ainda disputavam espaço com a
+própria linha quando duas séries terminavam perto.
+
+Voltou em ago/2026: rótulos à esquerda em **IBM Plex Mono 10px**
+(`--mk-tinta-fraca`), grade horizontal em `--mk-linha-suave`, `maxTicksLimit: 4`,
+e o zero desenhado à mão em `--mk-linha` — ele é referência, não mais uma
+divisão. Mono aqui **não** contradiz "frase é sans": rótulo de eixo é coluna de
+números que precisa alinhar. Junto voltaram a sair o pico flutuante e o valor
+no rótulo de ponta, que existiam só porque não havia eixo — com ele, os dois
+viravam a terceira grafia do mesmo número.
 
 ⚠️ **`ⓘ` não é para todo card.** Ajuda em tudo é ajuda em nada: com os cinco
 marcados, o ícone virava parte do desenho. Ficam **"Total em aberto"** e

@@ -5811,27 +5811,21 @@ a.sidebar-footer:hover {
   border-color: var(--mk-tinta-fraca);
 }
 /* A SELEÇÃO ASSUME A COR DO PRÓPRIO CARD, e é isso que a torna navegação em
-   vez de enfeite: a borda acesa, a faixa do topo e a linha protagonista do
-   gráfico saem todas do mesmo token.
+   vez de enfeite: a borda acesa e a linha protagonista do gráfico saem do
+   mesmo token.
 
    ⚠️ Antes a borda era SEMPRE `--mk-acento`. Clicar em qualquer um dos cinco
    dava a mesma borda roxa, e a cor do card só existia num ícone de 16px — que
    some na tela. Cor que não distingue nada é decoração.
 
-   Nunca fundo colorido: a cor entra em traço, não em massa. */
+   ⚠️ E JÁ TEVE UMA FAIXA DE 2px NO TOPO junto com a borda. Os dois marcavam a
+   mesma coisa duas vezes, e o resultado era uma aresta superior pesada,
+   desalinhada com os cards vizinhos. UM traço basta: a borda.
+
+   Nunca fundo colorido, nunca faixa, nunca sombra — a cor entra em traço, não
+   em massa. */
 .neg-card.ativo {
   border-color: var(--neg-tom);
-}
-.neg-card.ativo::before {
-  content: "";
-  position: absolute;
-  /* -1px nos três lados para cobrir a borda, não encostar nela. */
-  top: -1px;
-  left: -1px;
-  right: -1px;
-  height: 2px;
-  border-radius: var(--mk-raio) var(--mk-raio) 0 0;
-  background: var(--neg-tom);
 }
 
 .card-header {
@@ -5925,8 +5919,6 @@ a.sidebar-footer:hover {
   padding: 13px 16px;
   gap: 12px;
   justify-content: flex-start;
-  /* Âncora da faixa de 2px do topo, abaixo. */
-  position: relative;
 }
 .neg-card-rotulo,
 .metric-label {
@@ -5941,11 +5933,12 @@ a.sidebar-footer:hover {
   margin-top: 0;
   line-height: 1.1;
 }
-/* O ícone alinha pela BASE do valor. `flex-end` alinhava pelo fim do bloco
-   inteiro (valor + subtexto), e o ícone descia um degrau abaixo do número que
-   ele representa. */
+/* A última linha: subtexto à esquerda, ícone à direita, bases alinhadas.
+   `baseline` alinharia a base do ÍCONE com a do texto e a linha cresceria para
+   16 + a descida das letras; `flex-end` encosta os dois fundos e a linha fica
+   nos 16px do ícone. */
 .neg-card-linha {
-  align-items: baseline;
+  align-items: flex-end;
 }
 
 /* Tom do ícone. Viaja pelo custom property `--neg-tom`, não por `color`: é

@@ -1,5 +1,6 @@
 import "server-only";
 import { NextResponse } from "next/server";
+import { registrarErro } from "@/lib/log-erro";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { CABECALHO_TENANT, ehTenantId, type Clinica } from "@/lib/tenant";
 
@@ -101,9 +102,15 @@ export async function resolverTenantPorId(
  * tem duas clínicas procurar um problema de permissão que não existe.
  */
 function erroDoBanco(
-  erro: { code?: string; message?: string },
+  erro: { code?: string; message?: string; details?: string; hint?: string },
   informado?: string | null
 ): TenantErro {
+  // ⚠️ O `code` MORRE AQUI, e era isso que fazia a exceção sumir do terminal:
+  // o `TenantErro` que sai desta função só carrega mensagem, então quem loga
+  // lá na rota recebe `code: undefined` e não tem como saber se foi 42501,
+  // 22023 ou um erro de SQL que ninguém previu. O log fica no ponto em que a
+  // informação ainda existe. Não muda a resposta — segue traduzindo igual.
+  registrarErro("tenant_valido", erro);
   // 42501 = insufficient_privilege. Vem de dois pontos de `tenant_valido`:
   // tenant informado que não é da conta, e conta sem vínculo nenhum.
   if (erro.code === "42501") {

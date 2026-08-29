@@ -7,6 +7,7 @@ import {
   resolverTenant,
   respostaErroTenant,
 } from "@/lib/tenant-server";
+import { registrarErro } from "@/lib/log-erro";
 
 export const dynamic = "force-dynamic";
 
@@ -30,6 +31,9 @@ export async function GET(req: Request) {
       { headers: { "Cache-Control": "no-store" } }
     );
   } catch (e) {
+    // O comportamento da resposta NÃO muda: continua 500 genérico, sem vazar
+    // mensagem do Postgres. O que muda é o terminal deixar de ficar mudo.
+    registrarErro("servicos", e);
     return respostaErroTenant(e);
   }
 }

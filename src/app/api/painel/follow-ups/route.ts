@@ -4,6 +4,7 @@ import {
   resolverTenant,
   respostaErroTenant,
 } from "@/lib/tenant-server";
+import { registrarErro } from "@/lib/log-erro";
 
 export const dynamic = "force-dynamic";
 
@@ -17,6 +18,7 @@ export async function GET(req: Request) {
       { headers: { "Cache-Control": "no-store" } }
     );
   } catch (e) {
+    registrarErro("follow-ups", e);
     return respostaErroTenant(e);
   }
 }

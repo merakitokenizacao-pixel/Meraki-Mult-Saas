@@ -80,6 +80,13 @@ indexados por `identificador`) · `documentos` (base de conhecimento, com
 **Operação** — `leads` · `conversas` (com `msg_id` e os campos `media_*`) ·
 `agendamentos` · `promocoes` · `follow_ups` · `fichas_avaliacao`.
 
+**Kanban** — `kanban_colunas` (uma linha por status × clínica: `rotulo`,
+`descricao`, `ordem`, `visivel` e `cor`). ⚠️ `cor` guarda **nome de token**, e
+no vocabulário do desenho (`--st-erro`), não no da casa (`--mk-st-erro`).
+`tokenDaColuna()` em `src/lib/kanban.ts` traduz **por lista fixa** — o valor vem
+do banco e termina dentro de um `var()`, e token inexistente não quebra nada:
+a cor só some.
+
 **Agenda e catálogo** — `profissionais` · `profissional_horarios` (padrão
 semanal) · `profissional_excecoes` (exceção por data) · `profissional_bloqueios`
 · `procedimentos` (com `duracao_min` e `preco`) · `procedimento_apelidos`
@@ -127,7 +134,20 @@ authenticated (painel, via anon key + RLS)
 service_role (só n8n e route handler)
   agenda_consultar / agenda_marcar / agenda_alterar
   montar_prompt / tenant_por_canal / procedimento_resolver / agenda_escala
+
+⚠️ CONCEDIDAS A `authenticated`, MAS NÃO VALIDAM O TENANT — só de route handler
+  kanban(p_tenant, de, ate)               cartões, já agrupados e ordenados
+  kanban_mover(p_tenant, agend, status, por)  move e devolve codigo + motivo
+  taxa_no_show(p_tenant, de, ate)         realizados, faltas, cancelamentos
 ```
+
+⚠️ **As três do Kanban são a mesma armadilha do `agenda_consultar`, e uma delas
+ESCREVE.** São `SECURITY DEFINER` (ignoram RLS), recebem `p_tenant uuid` cru,
+não chamam `tenant_valido()` — e estão concedidas a `authenticated`. Chamá-las
+do navegador deixaria qualquer conta logada ler *e mover* a agenda de qualquer
+clínica, trocando um uuid no console. Por isso o Kanban passa por
+`/api/painel/kanban`, onde `resolverTenant()` valida antes. **Não chame
+`supabase.rpc("kanban…")` de componente.**
 
 **`agenda_consultar` não é chamável pelo painel de propósito**: ela recebe
 `p_tenant` e **não valida**, porque quem a usa é o n8n, que já resolveu o tenant
@@ -423,28 +443,38 @@ que não seja esta, é regressão.
 
 ### Tipografia
 
-**Space Grotesk** em número e título · **IBM Plex Sans** no corpo · **IBM Plex
-Mono** em dado tabular. A Space Grotesk tem dígito de largura constante — o
-Cormorant, que estava ali antes, tem largura variável e fazia o valor dançar de
-um card para o outro.
+**Space Grotesk** em **título** · **IBM Plex Sans** no corpo **e no número** ·
+**IBM Plex Mono** em dado tabular.
 
-Valor de card: **26px / 700**, sem `clamp`. Já foi 48px, copiado da
-referência — mas lá o 48px é o número herói de **um** card ocupando meia tela,
-e aqui são **cinco lado a lado**. Herói repetido cinco vezes deixa de ser
-herói: some a hierarquia entre a fileira de KPIs e o resto da página.
+⚠️ **A Space Grotesk saiu do número do KPI em ago/2026.** Ela é fonte de
+display — geométrica, feita para corpo grande —, e numa fileira densa de cinco
+cards pesa mais que uma grotesca neutra no mesmo corpo. A Plex Sans já está no
+projeto e tem algarismo **tabular por padrão** (todos os dígitos em 600/1000,
+medido no `.woff2`), então não entrou família nova. Em título a Space Grotesk
+fica.
 
-E não era só estética. Medido no `.woff2` que o `next/font` baixa (Space
-Grotesk 700, figuras tabulares, tracking -0.02em), `R$ 12.078,17` dá **276px**
-a 44,5px e **161px** a 26px — a caixa útil do valor tem **181px** (239 do
-card, menos 32 de padding, menos 16 do ícone e 10 do gap). Com dado real o
-número quebrava em duas linhas. O teto que ainda cabe é `R$ 128.400,50`
-(177px); acima disso quebra.
+**A escala do card é 20 / 11,5 / 10:**
+
+```
+valor      20px · peso 600 · Plex Sans · letter-spacing -0.01em · tabular-nums
+rótulo     11.5px · peso 500
+subtexto   10px · peso 400 · --mk-tinta-fraca
+```
+
+O defeito que isso corrigiu: o `root` foi de 13px para 16px, **o valor cresceu
+junto e rótulo e subtexto ficaram para trás**. Em 26px o valor tinha 2,6× o
+subtexto; a proporção da referência é 2×.
+
+A caixa útil do valor é **181px** (239 do card, menos 32 de padding, menos 16
+do ícone e 10 do gap). Medido no `.woff2` que o `next/font` baixa,
+`R$ 12.078,17` dá **276px** em Space Grotesk 700 a 44,5px (não cabia), **161px**
+a 26px e **124px** em Plex Sans 600 a 20px.
 
 O 48px fica **guardado** para quando existir um card herói de verdade, sozinho
 na largura.
 
-**A altura do card é consequência, não causa.** Com o valor em 26px o conteúdo
-empilhado dá ~96px sozinho. Não se ajusta altura comprimindo padding — 14/16
+**A altura do card é consequência, não causa.** Com o valor em 20px o conteúdo
+empilhado dá ~92px sozinho. Não se ajusta altura comprimindo padding — 14/16
 fica, senão o card aperta justamente quando o número real entrar.
 
 ⚠️ **Mono é para dado tabular; frase é sans.** Vale para valor de eixo, tabela
@@ -594,6 +624,12 @@ fica de pé para o dia em que houver um segundo sistema.
   Estava no CHECK do banco desde sempre e faltava no mapa de
   `statusBadgeClass` e no tipo `AgendamentoStatus`: caía no fallback e um
   não-comparecimento saía com a cara de "novo".
+- **Kanban**: `Faltou` e `Cancelado` são colunas **diferentes** e isso não é
+  negociável — quem avisa dá chance de revender o horário, quem não aparece
+  leva a receita junto. Juntar as duas apaga a taxa de no-show, que é o número
+  do cabeçalho. E `kanban_mover` **não bloqueia transição nenhuma** de
+  propósito: ela avisa (`REALIZADO_ANTES_DA_HORA`) e move. Kanban rígido é como
+  se volta a anotar no caderno.
 - **`/privacidade`**: a constante `CONTATO` está vazia. Não divulgar o link
   antes de preencher.
 - **Migrations do painel antigo em `supabase/migrations/_legado/`**: cinco

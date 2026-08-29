@@ -5709,13 +5709,19 @@ a.sidebar-footer:hover {
 /* ── Tipografia ──────────────────────────────────────────────────────────── */
 /* A base (fonte do corpo e cor da tinta) mora em `body`, no topo do arquivo.
    Aqui ficou só o que é específico de peça. */
-/* Número e título em Space Grotesk. Os dígitos dela têm largura constante,
-   então o valor não dança de um card para o outro — que era exatamente o
-   defeito do Cormorant nesta posição. */
+/* Space Grotesk em TÍTULO — e só. Ela é fonte de display: geométrica, feita
+   para corpo grande e pouco texto. Ali ela trabalha.
+
+   ⚠️ SAIU DO NÚMERO DO KPI em ago/2026. Numa fileira densa de cinco cards a
+   geométrica pesa mais que uma grotesca neutra no mesmo corpo — e o número
+   deixou de ser display quando caiu para 20px. O valor herda a IBM Plex Sans
+   do `body`, que já está no projeto, é neutra e tem algarismo tabular por
+   padrão (todos os dígitos em 600/1000 — medido no .woff2). Não entra fonte
+   nova para isso.
+
+   E a largura não era o problema: `R$ 12.078,17` dá 161px em Space Grotesk
+   700 a 26px e 161px em Plex Sans 600 a 26px. Praticamente idêntico. */
 .vg-titulo,
-.metric-value,
-.neg-card-valor,
-.funnel-count,
 .card-title,
 .neg-painel-titulo,
 .metrics-lente-titulo {
@@ -5839,27 +5845,35 @@ a.sidebar-footer:hover {
 }
 
 /* ── O número do card ────────────────────────────────────────────────────── */
-/* 26px / 700 / Space Grotesk.
-   ⚠️ JÁ FOI 48px (na prática ~44,5 — o clamp raramente chegava ao teto),
-   copiado da referência. Lá o 48px é o número herói de UM card ocupando meia
-   tela; aqui são CINCO lado a lado, e herói repetido cinco vezes deixa de ser
-   herói: some a hierarquia entre a fileira de KPIs e o resto da página.
-   E era defeito latente, não só estética. Medido no próprio .woff2 que o
-   next/font baixou (Space Grotesk 700, figuras tabulares `.tf`, tracking
-   -0.02em): `R$ 12.078,17` dá 276px a 44,5px e 161px a 26px — e a caixa útil
-   do valor tem 181px (239 do card, menos 32 de padding, menos 16 do ícone e
-   10 do gap). Com dado real o número quebrava em duas linhas.
-   Os 26px são MAIORES que os 20px do sistema claro de propósito: fundo preto
-   e Space Grotesk pedem mais corpo que fundo branco e Inter.
-   O 48px fica guardado para quando existir um card herói de verdade, sozinho
-   na largura — aí ele volta a significar alguma coisa. */
+/* 20px / 600 / IBM Plex Sans.
+
+   ⚠️ SEGUNDA REDUÇÃO, e a causa é a mesma da primeira: o `root` foi de 13px
+   para 16px, o valor cresceu junto e RÓTULO E SUBTEXTO FICARAM PARA TRÁS.
+   Em 26px o valor tinha 2,6× o subtexto; a proporção da referência é 2×.
+   Os três voltam para a mesma escala: 20 / 11,5 / 10.
+
+   A caixa útil do valor tem 181px: 239 do card, menos 32 de padding, menos 16
+   do ícone e 10 do gap. Medido no .woff2 que o next/font baixa,
+   `R$ 12.078,17` fica em:
+
+     Space Grotesk 700 @44,5px   276px   NÃO CABE
+     Space Grotesk 700 @26px     161px
+     IBM Plex Sans 600 @20px     124px   ← agora
+
+   ⚠️ O 48px original (na prática ~44,5 — o clamp raramente chegava ao teto)
+   veio da referência, onde é o número herói de UM card ocupando meia tela.
+   Aqui são CINCO lado a lado: herói repetido cinco vezes deixa de ser herói,
+   e com dado real ele ainda quebrava em duas linhas. Fica guardado para
+   quando existir um card herói de verdade, sozinho na largura. */
 .neg-card-valor,
 .metric-value {
-  font-size: 26px;
-  font-weight: 700;
-  line-height: 1.05;
-  letter-spacing: -0.02em;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
   color: var(--mk-tinta);
+  /* Redundante na Plex Sans, que já é tabular por padrão — fica porque a
+     regra é do SISTEMA, não da fonte, e sobrevive a uma troca de família. */
   font-variant-numeric: tabular-nums;
 }
 /* O "%" não é dígito, mas com o valor em 26px ele já não domina nada — a
@@ -5871,20 +5885,27 @@ a.sidebar-footer:hover {
 }
 .neg-card-rotulo,
 .metric-label {
-  font-size: 11px;
+  font-size: 11.5px;
   font-weight: 500;
   letter-spacing: 0.01em;
   color: var(--mk-tinta-media);
 }
-/* A altura é CONSEQUÊNCIA do valor, não causa. Com o número em 26px o
-   conteúdo empilhado dá ~96px (14+14 de padding, 13,75 do rótulo, 10 do gap,
-   27 do valor, 3+15 do apoio) e o card volta sozinho para a faixa da
-   referência. O padding NÃO foi comprimido para chegar lá: apertar 14/16 para
-   compensar troca um problema por outro — o card fica sem ar justamente
-   quando o número real entrar. */
+/* Subtexto: 10px/400. O peso é explícito porque ele é o piso da escala do
+   card — 20 / 11,5 / 10 — e um `font-weight` herdado de outro lugar
+   desalinharia a proporção que esta alteração existe para consertar. */
+.neg-card-apoio,
+.metric-sub {
+  font-size: 10px;
+  font-weight: 400;
+}
+/* A altura é CONSEQUÊNCIA do valor, não causa. Com o número em 20px o
+   conteúdo empilhado dá ~92px (14+14 de padding, 14,4 do rótulo, 10 do gap,
+   22 do valor, 3+15 do apoio) e o card cai sozinho para a faixa de 90.
+   O padding NÃO é comprimido para chegar lá: apertar 14/16 troca um problema
+   por outro — o card fica sem ar justamente quando o número real entrar. */
 .neg-card,
 .metric-card {
-  min-height: 96px;
+  min-height: 90px;
   padding: 14px 16px;
 }
 
@@ -6003,6 +6024,276 @@ a.sidebar-footer:hover {
 .lead-combo-item:hover,
 .modal-close:hover {
   background: var(--mk-superficie-3);
+}
+
+/* ── Kanban da agenda ────────────────────────────────────────────────────── */
+/* A COLUNA RECUA e o CARTÃO AVANÇA — é o degrau que a base cinza destravou.
+   Sobre preto puro os dois teriam que ser o mesmo tom, e a única separação
+   possível era borda. Zero box-shadow, como no resto do painel. */
+.kb-tela {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.kb-topo {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.kb-titulo {
+  font-family: var(--font-space), system-ui, sans-serif;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--mk-tinta);
+}
+.kb-sub {
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--mk-tinta-media);
+}
+.kb-topo-acoes {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+/* A taxa de no-show em destaque: é o número que a dona não tem de nenhuma
+   outra fonte. Fica ao lado do filtro porque depende do período. */
+.kb-taxa {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 7px;
+  height: 33px;
+  padding: 0 12px;
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
+  background: var(--mk-superficie);
+}
+.kb-taxa-rotulo {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--mk-st-erro);
+}
+.kb-taxa-valor {
+  font-size: 12px;
+  color: var(--mk-tinta-media);
+  font-variant-numeric: tabular-nums;
+}
+.kb-taxa-pct {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--mk-tinta);
+  font-variant-numeric: tabular-nums;
+}
+
+.kb-quadro {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(228px, 1fr);
+  gap: 10px;
+  /* Cinco colunas não cabem em tela estreita, e espremer a quinta até sumir é
+     pior que rolar: o quadro inteiro é a informação. */
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+.kb-coluna {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
+  background: var(--mk-rebaixado);
+  transition: border-color var(--mk-transicao), background var(--mk-transicao);
+}
+/* Alvo do arrasto: a borda assume a cor DA COLUNA, que a pessoa já aprendeu
+   no título. Fundo cheio de cor de estado é proibido — aqui é a mesma mistura
+   a 12% usada nos chips. */
+.kb-coluna.alvo {
+  border-color: color-mix(in srgb, var(--kb-cor) 55%, transparent);
+  background: color-mix(in srgb, var(--kb-cor) 6%, var(--mk-rebaixado));
+}
+.kb-coluna-topo {
+  padding: 11px 12px 9px;
+  border-bottom: 1px solid var(--mk-linha);
+}
+.kb-coluna-linha {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+/* Cor entra AQUI e na borda do cartão atrasado. Em nenhum outro lugar. */
+.kb-coluna-titulo {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--kb-cor);
+}
+.kb-coluna-contagem {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--mk-tinta-fraca);
+  font-variant-numeric: tabular-nums;
+}
+.kb-coluna-desc {
+  margin-top: 2px;
+  font-size: 10.5px;
+  line-height: 1.4;
+  color: var(--mk-tinta-fraca);
+}
+.kb-coluna-corpo {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 8px;
+  /* Rola por dentro: com 40 marcações num dia a coluna não pode empurrar a
+     página inteira para baixo. */
+  min-height: 90px;
+  max-height: calc(100vh - 250px);
+  overflow-y: auto;
+}
+.kb-coluna-vazia {
+  padding: 6px 4px;
+  font-size: 11.5px;
+  color: var(--mk-tinta-fraca);
+}
+
+.kb-cartao {
+  position: relative;
+  padding: 9px 10px;
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
+  background: var(--mk-superficie);
+  cursor: grab;
+  transition: border-color var(--mk-transicao), opacity var(--mk-transicao);
+}
+.kb-cartao:hover {
+  border-color: var(--mk-tinta-fraca);
+}
+/* Ficou para trás: já passou do horário e continua em coluna de espera. É a
+   fila de trabalho do fim do dia da dona, então tem que saltar sem virar
+   alarme — borda esquerda, sem fundo colorido. */
+.kb-cartao.atrasado {
+  border-left: 2px solid var(--mk-st-erro);
+}
+.kb-cartao.arrastando {
+  opacity: 0.4;
+}
+.kb-cartao-topo {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 6px;
+}
+.kb-cartao-quem {
+  min-width: 0;
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--mk-tinta);
+  overflow-wrap: anywhere;
+}
+.kb-cartao-menu {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin: -2px -3px 0 0;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--mk-tinta-fraca);
+  cursor: pointer;
+  transition: color var(--mk-transicao);
+}
+.kb-cartao-menu:hover {
+  color: var(--mk-tinta);
+}
+.kb-cartao-menu:focus-visible {
+  outline: none;
+  color: var(--mk-acento);
+}
+/* Quem marcou, quando é diferente de quem vai ser atendida. */
+.kb-cartao-via {
+  margin-top: 1px;
+  font-size: 10px;
+  color: var(--mk-tinta-fraca);
+}
+.kb-cartao-linha {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 5px;
+  font-size: 11.5px;
+  line-height: 1.35;
+  color: var(--mk-tinta-media);
+  overflow-wrap: anywhere;
+}
+.kb-cartao-sino {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--mk-st-aguardando);
+}
+.kb-cartao-prof {
+  margin-top: 3px;
+  font-size: 10.5px;
+  color: var(--mk-tinta-fraca);
+}
+
+/* O menu do `⋯`. `fixed` porque o corpo da coluna rola e um `absolute` seria
+   cortado na borda; opaco porque ele TAPA os cartões de trás. */
+.kb-menu {
+  position: fixed;
+  z-index: 60;
+  min-width: 168px;
+  transform: translateX(-100%);
+  padding: 5px;
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
+  background: var(--mk-elevado);
+}
+.kb-menu-titulo {
+  padding: 4px 8px 6px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--mk-tinta-fraca);
+}
+.kb-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 8px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  font-family: inherit;
+  font-size: 12.5px;
+  text-align: left;
+  color: var(--mk-tinta-media);
+  cursor: pointer;
+  transition: background var(--mk-transicao), color var(--mk-transicao);
+}
+.kb-menu-item:hover,
+.kb-menu-item:focus-visible {
+  outline: none;
+  background: var(--mk-superficie-3);
+  color: var(--mk-tinta);
+}
+.kb-menu-ponto {
+  width: 7px;
+  height: 7px;
+  flex-shrink: 0;
+  border-radius: 2px;
+}
+.kb-vazio {
+  padding: 28px 4px;
+  font-size: 13px;
+  color: var(--mk-tinta-fraca);
 }
 
 /* ── Conversas: coluna da lista ──────────────────────────────────────────── */

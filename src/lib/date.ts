@@ -82,6 +82,16 @@ export function getDateRange(
         from: new Date(now.getFullYear(), now.getMonth(), 1),
         to: new Date(now.getFullYear(), now.getMonth() + 1, 1),
       };
+    // Janelas para FRENTE. Todo o resto deste arquivo olha para trás, porque
+    // painel de negócio compara o que já aconteceu. O Kanban da agenda é a
+    // exceção: ele é fila de trabalho, e fila de trabalho é sobre o que ainda
+    // vem. Incluem HOJE, pela mesma regra das janelas para trás.
+    case "prox7":
+      return { from: today, to: new Date(today.getTime() + 7 * 86400000) };
+    case "prox15":
+      return { from: today, to: new Date(today.getTime() + 15 * 86400000) };
+    case "prox30":
+      return { from: today, to: new Date(today.getTime() + 30 * 86400000) };
     default:
       return null;
   }

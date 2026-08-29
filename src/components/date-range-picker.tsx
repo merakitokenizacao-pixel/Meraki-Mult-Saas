@@ -50,9 +50,14 @@ const ATALHOS: ReadonlyArray<readonly [string, string]> = [
 export function DateRangePicker({
   value,
   onChange,
+  atalhos = ATALHOS,
 }: {
   value: string;
   onChange: (v: string) => void;
+  /** Os atalhos da coluna da esquerda. A lista padrão olha para TRÁS; o
+   *  Kanban passa uma que olha para frente, porque fila de trabalho é sobre o
+   *  que ainda vem. O calendário e o intervalo à mão não mudam. */
+  atalhos?: ReadonlyArray<readonly [string, string]>;
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -185,7 +190,7 @@ export function DateRangePicker({
         <div className="drp-pop" role="dialog" aria-label="Escolher período">
           <div className="drp-rail">
             <div className="drp-rail-titulo">Selecione</div>
-            {ATALHOS.map(([v, label]) => (
+            {atalhos.map(([v, label]) => (
               <button
                 key={v}
                 type="button"

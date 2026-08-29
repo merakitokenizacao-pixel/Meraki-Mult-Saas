@@ -13,6 +13,7 @@ import {
   getProximasVisitas,
   getUltimaConversaPorLead,
 } from "@/lib/queries";
+import type { PainelKanban } from "@/lib/kanban";
 import type { PromocaoPreco, ServicoCatalogo } from "@/lib/servicos";
 
 // Hooks de dados com cache (React Query). Envolvem as queries do Supabase
@@ -174,5 +175,27 @@ export function useLeadsQueResponderam() {
       return new Set(j.ids);
     },
     staleTime: 5 * 60 * 1000,
+  });
+}
+
+/**
+ * O quadro do Kanban da agenda.
+ *
+ * Passa por rota, e não por `supabase.rpc()` direto, porque as três funções do
+ * Kanban são SECURITY DEFINER e NÃO validam `p_tenant` — ver o comentário no
+ * topo de `lib/kanban.ts`. A queryKey carrega o intervalo, então trocar o
+ * período busca de novo em vez de reaproveitar o quadro errado.
+ */
+export function useKanban(de: string | null, ate: string | null) {
+  return useQuery({
+    queryKey: ["kanban", de, ate],
+    queryFn: async () => {
+      const q = new URLSearchParams();
+      if (de) q.set("de", de);
+      if (ate) q.set("ate", ate);
+      const r = await fetchPainel(`/api/painel/kanban?${q}`);
+      if (!r.ok) throw new Error("Não foi possível carregar o quadro");
+      return (await r.json()) as PainelKanban;
+    },
   });
 }

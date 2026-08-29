@@ -3,6 +3,7 @@ import {
   Users,
   MessageCircle,
   CalendarDays,
+  Columns3,
   Settings,
   Tag,
   Undo2,
@@ -30,6 +31,9 @@ export const NAV_ITEMS: NavItem[] = [
   { href: "/clientes", label: "Clientes", icon: Users, title: "Clientes" },
   { href: "/conversas", label: "Conversas", icon: MessageCircle, title: "Conversas" },
   { href: "/agenda", label: "Agenda", icon: CalendarDays, title: "Agenda" },
+  // Mesma matéria da Agenda, outra pergunta: a Agenda responde "quando", o
+  // Kanban responde "em que pé está". Fica ao lado dela de propósito.
+  { href: "/kanban", label: "Kanban", icon: Columns3, title: "Kanban" },
   { href: "/promocoes", label: "Promoções", icon: Tag, title: "Promoções" },
   { href: "/follow-ups", label: "Follow-ups", icon: Undo2, title: "Follow-ups" },
 ];

@@ -805,7 +805,7 @@ body {
     transform: translateX(-100%);
     z-index: 40;
     width: 260px;
-    background: var(--mk-rebaixado);
+    background: var(--mk-fundo);
   }
   .sidebar.open {
     transform: translateX(0);
@@ -3857,9 +3857,6 @@ input:-webkit-autofill {
   justify-content: space-between;
   gap: 10px;
 }
-.neg-card-numeros {
-  min-width: 0;
-}
 /* Mesmo tamanho do título da página, de propósito: número gigante é gráfico
    de pitch deck. A autoridade vem da contenção. */
 .neg-card-valor {
@@ -3900,29 +3897,25 @@ input:-webkit-autofill {
 .neg-tom-acento {
   --neg-tom: var(--mk-acento);
 }
+.neg-tom-atendendo {
+  --neg-tom: var(--mk-st-atendendo);
+}
 
 /* ── (i) com balão ── */
+/* O glifo já É um círculo (lucide `Info`) — desenhar um segundo por baixo,
+   com borda própria, dava dois anéis concêntricos num elemento de 14px. */
 .neg-dica {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 14px;
-  height: 14px;
-  border: 1px solid var(--mk-linha);
-  border-radius: 50%;
-  font-size: 9px;
-  font-weight: 600;
-  font-style: italic;
-  line-height: 1;
   color: var(--mk-tinta-fraca);
   cursor: help;
   position: relative;
-  transition: color var(--mk-transicao), border-color var(--mk-transicao);
+  transition: color var(--mk-transicao);
 }
 .neg-dica:hover {
   color: var(--mk-tinta-media);
-  border-color: var(--mk-tinta-media);
 }
 .neg-dica::after {
   content: attr(data-dica);
@@ -5817,8 +5810,28 @@ a.sidebar-footer:hover {
 .neg-card-btn:hover {
   border-color: var(--mk-tinta-fraca);
 }
+/* A SELEÇÃO ASSUME A COR DO PRÓPRIO CARD, e é isso que a torna navegação em
+   vez de enfeite: a borda acesa, a faixa do topo e a linha protagonista do
+   gráfico saem todas do mesmo token.
+
+   ⚠️ Antes a borda era SEMPRE `--mk-acento`. Clicar em qualquer um dos cinco
+   dava a mesma borda roxa, e a cor do card só existia num ícone de 16px — que
+   some na tela. Cor que não distingue nada é decoração.
+
+   Nunca fundo colorido: a cor entra em traço, não em massa. */
 .neg-card.ativo {
-  border-color: var(--mk-acento);
+  border-color: var(--neg-tom);
+}
+.neg-card.ativo::before {
+  content: "";
+  position: absolute;
+  /* -1px nos três lados para cobrir a borda, não encostar nela. */
+  top: -1px;
+  left: -1px;
+  right: -1px;
+  height: 2px;
+  border-radius: var(--mk-raio) var(--mk-raio) 0 0;
+  background: var(--neg-tom);
 }
 
 .card-header {
@@ -5898,15 +5911,41 @@ a.sidebar-footer:hover {
   font-size: 10px;
   font-weight: 400;
 }
-/* A altura é CONSEQUÊNCIA do valor, não causa. Com o número em 20px o
-   conteúdo empilhado dá ~92px (14+14 de padding, 14,4 do rótulo, 10 do gap,
-   22 do valor, 3+15 do apoio) e o card cai sozinho para a faixa de 90.
-   O padding NÃO é comprimido para chegar lá: apertar 14/16 troca um problema
-   por outro — o card fica sem ar justamente quando o número real entrar. */
+/* Anatomia na medida da referência: 94 de altura, padding 13/16, gap 12.
+   O gap é o que dá o respiro — com 10px e `space-between` os três blocos
+   ficavam espremidos no topo e o card sobrava por baixo.
+
+   A conta fecha: 13+13 de padding, 12,65 do rótulo (11,5 × 1,1), 12 de gap,
+   21 do valor (20 × 1,05), 12 de gap, 11 do apoio (10 × 1,1) = 94,65. Por
+   isso as três alturas de linha são explícitas — a padrão do documento (1,5)
+   sozinha já jogaria o card para 101px. */
 .neg-card,
 .metric-card {
-  min-height: 90px;
-  padding: 14px 16px;
+  min-height: 94px;
+  padding: 13px 16px;
+  gap: 12px;
+  justify-content: flex-start;
+  /* Âncora da faixa de 2px do topo, abaixo. */
+  position: relative;
+}
+.neg-card-rotulo,
+.metric-label {
+  line-height: 1.1;
+}
+.neg-card-valor,
+.metric-value {
+  line-height: 1.05;
+}
+.neg-card-apoio,
+.metric-sub {
+  margin-top: 0;
+  line-height: 1.1;
+}
+/* O ícone alinha pela BASE do valor. `flex-end` alinhava pelo fim do bloco
+   inteiro (valor + subtexto), e o ícone descia um degrau abaixo do número que
+   ele representa. */
+.neg-card-linha {
+  align-items: baseline;
 }
 
 /* Tom do ícone. Viaja pelo custom property `--neg-tom`, não por `color`: é
@@ -5937,6 +5976,9 @@ a.sidebar-footer:hover {
 }
 .neg-tom-acento {
   --neg-tom: var(--mk-acento);
+}
+.neg-tom-atendendo {
+  --neg-tom: var(--mk-st-atendendo);
 }
 .neg-tom-neutro {
   --neg-tom: var(--mk-tinta-media);
@@ -6668,12 +6710,16 @@ a.sidebar-footer:hover {
 }
 
 /* ── Chrome: sidebar, topbar e nav ───────────────────────────────────────── */
-/* A sidebar RECUA: é moldura, não conteúdo. Este é o degrau que o preto puro
-   não permitia — antes moldura e conteúdo eram o mesmo #000000 e só a borda
-   separava os dois. */
+/* ⚠️ A SIDEBAR FICA NA BASE, e o erro que isto corrige era conceitual.
+   `--mk-rebaixado` significa POÇO: conteúdo que afunda, lista que rola dentro
+   de uma página. A sidebar não é isso — ela é superfície IRMÃ do conteúdo, ao
+   lado dele, não abaixo. Separada só pela hairline da direita.
+
+   O rebaixado fica reservado para poço de verdade: a coluna da lista de
+   conversas e o corpo das colunas do Kanban. */
 .sidebar,
 .sidebar-logo {
-  background: var(--mk-rebaixado);
+  background: var(--mk-fundo);
   border-color: var(--mk-linha);
 }
 .sidebar {
@@ -6723,9 +6769,9 @@ a.sidebar-footer:hover {
 .content {
   background: var(--mk-fundo);
 }
-/* Mesmo papel da sidebar no mobile: moldura, e recua junto. */
+/* Mesmo papel da sidebar no mobile, e mesmo raciocínio: irmã do conteúdo. */
 .bottom-nav {
-  background: var(--mk-rebaixado);
+  background: var(--mk-fundo);
   border-top: 1px solid var(--mk-linha);
 }
 .tenant-sel-campo {

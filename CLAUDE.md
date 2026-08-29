@@ -351,7 +351,7 @@ O sistema é **superfície como OPACIDADE, não como cor**, sobre uma base escur
 São cinco camadas, e o valor à direita é como a alpha compõe **sobre a base**:
 
 ```
---mk-rebaixado    #0a0b0d     o que RECUA: sidebar, lista, área de rolagem
+--mk-rebaixado    #0a0b0d     POÇO: lista que rola dentro da página
 --mk-fundo        #0e0f11     o fundo da página
 --mk-superficie   #ffffff07   card, painel, bolha          → #151618
 --mk-superficie-2 #ffffff0c   empilha sobre card           → #191a1c
@@ -383,12 +383,18 @@ já compostas sobre a base.
 
 Se a base mudar, **recomponha os dois** — eles não acompanham sozinhos.
 
+⚠️ **`rebaixado` é POÇO, não "moldura".** A sidebar já esteve nele e voltou
+para a base em ago/2026: ela é superfície **irmã** do conteúdo, ao lado dele e
+não abaixo, separada só pela hairline da direita. Poço é conteúdo que afunda —
+lista que rola dentro de uma página. Hoje são três: a coluna das conversas, o
+corpo das colunas do Kanban e o dia fora do mês no calendário.
+
 **Onde cada camada entra:**
 
 | camada | quem |
 |---|---|
-| `rebaixado` | sidebar, `bottom-nav`, coluna da lista de conversas, dia fora do mês |
-| `fundo` | `body`, `.content`, `.topbar`, área de mensagens do chat |
+| `rebaixado` | coluna da lista de conversas, corpo da coluna do Kanban, dia fora do mês |
+| `fundo` | `body`, `.content`, `.topbar`, **sidebar**, `bottom-nav`, área de mensagens do chat |
 | `superficie` | card de KPI, painel de gráfico, bolha de mensagem, `.card` |
 | `superficie-2` | realce sobre card (hover, trilho de barra, chip) |
 | `superficie-3` | realce **dentro** de superfície elevada (item de menu em hover) |
@@ -473,9 +479,38 @@ a 26px e **124px** em Plex Sans 600 a 20px.
 O 48px fica **guardado** para quando existir um card herói de verdade, sozinho
 na largura.
 
-**A altura do card é consequência, não causa.** Com o valor em 20px o conteúdo
-empilhado dá ~92px sozinho. Não se ajusta altura comprimindo padding — 14/16
-fica, senão o card aperta justamente quando o número real entrar.
+**A altura do card é consequência, não causa.** A anatomia é `94 × padding
+13/16 × gap 12`, e a conta fecha: 26 de padding + 12,65 do rótulo + 12 + 21 do
+valor + 12 + 11 do apoio = 94,65. As três alturas de linha são **explícitas**
+porque a padrão do documento (1,5) sozinha jogaria o card para 101px. Não se
+ajusta altura comprimindo padding — 13/16 fica, senão o card aperta justamente
+quando o número real entrar.
+
+⚠️ **A SELEÇÃO DO CARD USA A COR DO PRÓPRIO CARD**, e é isso que a torna
+navegação em vez de enfeite: borda de 1px, faixa de 2px no topo e a **linha
+protagonista do gráfico** saem todas do mesmo token.
+
+```
+Total criado        --mk-acento          roxo
+Total ganhos        --mk-st-resolvido    verde
+Total perdidos      --mk-st-erro         vermelho
+Total em aberto     --mk-st-agendado     azul
+Receita recuperada  --mk-st-atendendo    teal
+```
+
+A tabela mora em **`TOKEN_DO_TOM`** (`kpi-card.tsx`) e é o NOME do token, nunca
+o hex — o canvas do gráfico não herda CSS, então a cor é lida com
+`getComputedStyle`. Uma tabela só impede que card e gráfico divirjam.
+
+Antes a borda era sempre `--mk-acento`: clicar em qualquer um dos cinco dava a
+mesma borda roxa, e a cor do card só existia num ícone de 16px. Nunca fundo
+colorido — a cor entra em traço, não em massa.
+
+⚠️ **`ⓘ` não é para todo card.** Ajuda em tudo é ajuda em nada: com os cinco
+marcados, o ícone virava parte do desenho. Ficam **"Total em aberto"** e
+**"Receita recuperada"**, que não se explicam pelo rótulo. Consequência aceita:
+a ressalva de preço (atendimentos sem serviço no catálogo, fora da soma) viajava
+em todas as dicas e agora só aparece nessas duas.
 
 ⚠️ **Mono é para dado tabular; frase é sans.** Vale para valor de eixo, tabela
 numérica, horário e código. Subtexto de card, label e descrição vão em IBM

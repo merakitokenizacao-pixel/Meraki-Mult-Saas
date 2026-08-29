@@ -20,13 +20,14 @@ import {
 export type SerieId = "criado" | "ganho" | "perdido";
 export type Modo = "valor" | "qtd";
 
-// Verde e vermelho ficam porque aqui eles SIGNIFICAM: ganho e perda. Já
-// "criado" não tem cor natural — era --mk-pausada, um matiz que não dizia nada e
-// que vinha de uma segunda paleta. Passa a sair da rampa, a mesma da rosca.
-const SERIES: ReadonlyArray<{ id: SerieId; label: string; cor: string }> = [
-  { id: "criado", label: "Criados", cor: "--mk-serie-1" },
-  { id: "ganho", label: "Ganhos", cor: "--mk-ativa" },
-  { id: "perdido", label: "Perdidos", cor: "--mk-alerta" },
+// ⚠️ A COR NÃO MORA MAIS AQUI. A protagonista assume a cor do CARD
+// selecionado (`corDestaque`), e as outras duas recuam para cinza — então uma
+// tabela de cor por série seria uma segunda fonte de verdade para a mesma
+// coisa, livre para divergir dos cards no primeiro ajuste de paleta.
+const SERIES: ReadonlyArray<{ id: SerieId; label: string }> = [
+  { id: "criado", label: "Criados" },
+  { id: "ganho", label: "Ganhos" },
+  { id: "perdido", label: "Perdidos" },
 ];
 
 function lerVar(nome: string): string {
@@ -45,12 +46,16 @@ export function DadosDiarios({
   pontos,
   modo,
   destaque,
+  corDestaque,
 }: {
   pontos: PontoDia[];
   modo: Modo;
   /** Card selecionado lá em cima: a série correspondente ganha peso e as
    *  outras recuam. Sem isso a borda acesa do card não teria função. */
   destaque: SerieId | null;
+  /** NOME do token da cor do card selecionado (`--mk-st-erro`), nunca o hex —
+   *  o canvas não herda CSS, então a cor é lida, não escrita. */
+  corDestaque: string;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const chartRef = useRef<Chart | null>(null);
@@ -85,7 +90,7 @@ export function DadosDiarios({
       data: {
         labels: dados.rotulos,
         datasets: dados.series.flatMap((s) => {
-          const cor = lerVar(s.cor) || est.accent;
+          const cor = lerVar(corDestaque) || est.accent;
           const protagonista = destaque === s.id;
           const apagado = !protagonista;
           const base = {
@@ -211,7 +216,7 @@ export function DadosDiarios({
     };
     // `theme` entra nas dependências para o gráfico reler as CSS vars ao
     // alternar Claro/Escuro/Grafite — Chart.js pinta em canvas e não herda CSS.
-  }, [montado, dados, modo, destaque, theme]);
+  }, [montado, dados, modo, destaque, corDestaque, theme]);
 
   return (
     <div className="neg-gr-area">

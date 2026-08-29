@@ -25,7 +25,11 @@ import {
   valorDe,
 } from "@/lib/financeiro";
 import { filterByDate } from "@/lib/date";
-import { KpiCard, type TomKpi } from "@/components/negocios/kpi-card";
+import {
+  KpiCard,
+  TOKEN_DO_TOM,
+  type TomKpi,
+} from "@/components/negocios/kpi-card";
 import {
   DadosDiarios,
   type Modo,
@@ -48,19 +52,32 @@ const CARDS: ReadonlyArray<{
   tom: TomKpi;
   apoio: (qtd: number) => string;
   serie: SerieId | null;
-  dica: string;
+  /**
+   * `null` = sem `ⓘ`. Ajuda em tudo é ajuda em nada: com os cinco marcados o
+   * ícone virava parte do desenho e ninguém o lia. Ficam os dois que não se
+   * explicam pelo rótulo.
+   *
+   * ⚠️ A ressalva de preço (atendimentos sem serviço no catálogo, que ficam
+   * de fora da soma) viajava junto de TODAS as dicas. Agora ela só aparece
+   * nestes dois — e os dois somam dinheiro do catálogo, então continua no
+   * lugar certo. `criado`, `ganho` e `perdido` também somam e deixaram de
+   * mostrá-la: é o preço de não ter `ⓘ`.
+   */
+  dica: string | null;
 }> = [
   {
     chave: "criado",
     rotulo: "Total criado",
     icone: Plus,
-    tom: "neutro",
+    // Era `neutro` (tinta-média). Cinza não serve como borda de seleção: não
+    // marca nada. É a entrada do funil, e a entrada é a marca.
+    tom: "acento",
     // "agendamentos" aqui era ambíguo: lia-se como "consultas de hoje", mas o
     // recorte é `criado_em` — quando a marcação FOI FEITA, não quando ela
     // acontece. Em 10/08 foram 32 marcações feitas e só 9 atendimentos no dia.
     apoio: (q) => `${q} marcaç${q === 1 ? "ão feita" : "ões feitas"}`,
     serie: "criado",
-    dica: "Tudo que entrou no funil no período, pela data em que foi marcado.",
+    dica: null,
   },
   {
     chave: "ganho",
@@ -69,7 +86,7 @@ const CARDS: ReadonlyArray<{
     tom: "resolvido",
     apoio: (q) => `${q} realizado${q === 1 ? "" : "s"}`,
     serie: "ganho",
-    dica: "Procedimentos que aconteceram no período.",
+    dica: null,
   },
   {
     chave: "perdido",
@@ -78,7 +95,7 @@ const CARDS: ReadonlyArray<{
     tom: "erro",
     apoio: (q) => `${q} cancelado${q === 1 ? "" : "s"}`,
     serie: "perdido",
-    dica: "Cancelados que teriam acontecido no período.",
+    dica: null,
   },
   {
     chave: "aberto",
@@ -94,7 +111,9 @@ const CARDS: ReadonlyArray<{
     chave: "recuperado",
     rotulo: "Receita recuperada",
     icone: RotateCcw,
-    tom: "acento",
+    // Âmbar, não o acento: o acento agora é a cor de "Total criado", e dois
+    // cards com a mesma borda de seleção não distinguiriam um do outro.
+    tom: "atendendo",
     apoio: (q) => `${q} pelo follow-up`,
     serie: null,
     dica:
@@ -120,9 +139,15 @@ export function Negocios({ period }: { period: string }) {
   );
   const carregando = agendQuery.isPending;
 
+  // Padrão: o primeiro card. A seleção persiste enquanto a pessoa estiver na
+  // tela — é ela que diz o que o gráfico abaixo está mostrando.
   const [selecionado, setSelecionado] = useState<string | null>("criado");
   const [modo, setModo] = useState<Modo>("valor");
-  const [destaqueManual, setDestaqueManual] = useState<SerieId | null>(null);
+  // Dois dos cinco cards não têm série no gráfico ("em aberto" e "recuperada"
+  // são situação de agora, não série no tempo). Selecionar um deles NÃO pode
+  // zerar o gráfico nem jogá-lo sempre para "ganhos": ele mantém a última
+  // série escolhida de fato.
+  const [ultimaSerie, setUltimaSerie] = useState<SerieId>("criado");
   // Um seletor POR PAINEL, com estado próprio: a base do gráfico de linhas e a
   // do ranking são perguntas diferentes, e amarrá-las num controle global
   // obrigaria a trocar o recorte inteiro para ver "quantos" em vez de "quanto".
@@ -204,11 +229,15 @@ export function Negocios({ period }: { period: string }) {
       ? `${pontos[0].rotulo} a ${pontos[pontos.length - 1].rotulo}`
       : "";
 
-  // A legenda tem precedência sobre o card: quem clicou por último manda.
-  const destaque =
-    destaqueManual ??
-    CARDS.find((c) => c.chave === selecionado)?.serie ??
-    null;
+  const cardAtivo = CARDS.find((c) => c.chave === selecionado) ?? null;
+  const destaque: SerieId = cardAtivo?.serie ?? ultimaSerie;
+  // A linha protagonista assume a COR DO CARD, não uma cor própria da série.
+  // É o que amarra a seleção ao gráfico: a borda acesa e a linha em destaque
+  // são a mesma cor porque saem do mesmo token.
+  const corDestaque =
+    TOKEN_DO_TOM[
+      CARDS.find((c) => c.serie === destaque)?.tom ?? "acento"
+    ];
 
   return (
     <div className="neg-fill">
@@ -225,11 +254,11 @@ export function Negocios({ period }: { period: string }) {
               apoio={carregando ? " " : c.apoio(faixa.qtd)}
               icone={c.icone}
               tom={c.tom}
-              dica={c.dica + ressalva}
+              dica={c.dica ? c.dica + ressalva : undefined}
               ativo={selecionado === c.chave}
               onSelecionar={() => {
                 setSelecionado(selecionado === c.chave ? null : c.chave);
-                setDestaqueManual(null);
+                if (c.serie) setUltimaSerie(c.serie);
               }}
             />
           );
@@ -266,10 +295,11 @@ export function Negocios({ period }: { period: string }) {
             <div className="neg-vazio">Carregando…</div>
           ) : (
             <DadosDiarios
-            pontos={pontos}
-            modo={modo}
-            destaque={destaque ?? "ganho"}
-          />
+              pontos={pontos}
+              modo={modo}
+              destaque={destaque}
+              corDestaque={corDestaque}
+            />
           )}
         </section>
 

@@ -1,39 +1,51 @@
 "use client";
 
-import type { LucideIcon } from "lucide-react";
+import { Info, type LucideIcon } from "lucide-react";
 
-// Card financeiro na anatomia da referência: rótulo em cima, VALOR como herói,
-// quantidade embaixo e o ícone à direita, alinhado com o valor.
+// Card financeiro: rótulo em cima, valor no meio, subtexto embaixo, ícone
+// alinhado com a BASE do valor.
 //
-// Três decisões que o separam do `.metric-card` das outras telas:
-//
-// 1. DENSIDADE. O atual usa padding 36/32 e número em 46px — ocupa muito para
-//    dizer pouco. Aqui cabem cinco lado a lado sem apertar.
-// 2. NÚMERO EM SANS TABULAR, não no serif da marca. Cormorant é lindo em
-//    título e ruim em coluna de dinheiro: largura variável por dígito faz os
-//    valores dançarem entre os cards.
-// 3. CONTRASTE VEM DO FUNDO, não de sombra. O atual flutua com shadow-md; este
-//    é plano com hairline, e quem separa é o fundo da página.
-//
-// Selecionável: clicar destaca o card e o gráfico abaixo passa a enfatizar
-// aquela série — é o que a referência faz e o que dá função à borda acesa.
+// Selecionável — e a seleção é NAVEGAÇÃO, não enfeite: o card diz o que você
+// está olhando e o gráfico abaixo mostra aquela série, na mesma cor.
 
 /**
- * O tom do ícone é o ESTADO que o card conta — não a direção do número, e
- * muito menos a identidade do card.
+ * Cada KPI tem UMA cor, e ela aparece em três lugares do mesmo card: no ícone
+ * (sempre), na borda e na faixa de 2px do topo (só quando selecionado).
  *
- * ⚠️ Já foi das duas outras formas. Primeiro eram cinco matizes decorativos,
- * um por card: viraram enfeite, porque "azul" não diz nada sobre "total
- * criado". Depois virou direção (sobe/desce/neutro) e três cards ficaram
- * cinzas. O que faltava nos dois era o mesmo: a cor precisa sair de um estado
- * que existe. `ganho` é `resolvido`, `perdido` é `erro`, `aberto` é
- * `agendado` — cor que carrega informação é dado, não decoração.
+ * ⚠️ Já foi de três formas antes desta, e as três falhavam pelo mesmo motivo.
+ * Cinco matizes decorativos viraram enfeite. Direção (sobe/desce/neutro)
+ * deixou três cards cinzas. Estado por card resolveu a semântica mas manteve a
+ * borda de seleção SEMPRE no acento — então clicar em qualquer um dos cinco
+ * dava a mesma borda roxa, e a cor só existia num ícone de 16px, que some.
  *
- * `neutro` e `acento` não são estados, e é de propósito: "total criado" é a
- * entrada do funil (nenhum estado ainda) e "receita recuperada" é a única
- * coisa da tela que a IA fez sozinha.
+ * Agora a seleção assume a cor do próprio card. Cinza não serve como borda de
+ * seleção: não marca nada. Por isso "Total criado" saiu de tinta-média e
+ * ganhou o acento — ele é a entrada do funil, e o roxo é a marca.
  */
-export type TomKpi = "neutro" | "resolvido" | "erro" | "agendado" | "acento";
+export type TomKpi =
+  | "acento"
+  | "resolvido"
+  | "erro"
+  | "agendado"
+  | "atendendo"
+  | "neutro";
+
+/**
+ * O NOME do token de cada tom — nunca o valor.
+ *
+ * Existe porque o gráfico precisa da cor em JS (canvas não herda CSS, a cor é
+ * lida com `getComputedStyle`), enquanto o card precisa dela em CSS. Uma
+ * tabela só impede que as duas divirjam: mudar a cor de um KPI passa a ser
+ * mudar uma linha aqui e uma no `globals.css`, com o mesmo nome dos dois lados.
+ */
+export const TOKEN_DO_TOM: Record<TomKpi, string> = {
+  acento: "--mk-acento",
+  resolvido: "--mk-st-resolvido",
+  erro: "--mk-st-erro",
+  agendado: "--mk-st-agendado",
+  atendendo: "--mk-st-atendendo",
+  neutro: "--mk-tinta-media",
+};
 
 export function KpiCard({
   rotulo,
@@ -52,7 +64,14 @@ export function KpiCard({
   tom?: TomKpi;
   ativo?: boolean;
   onSelecionar?: () => void;
-  /** De onde sai o número. Vira o tooltip do (i) ao lado do rótulo. */
+  /**
+   * A regra da métrica, em uma frase. Vira o `ⓘ` ao lado do rótulo.
+   *
+   * ⚠️ NÃO É PARA TODO CARD. Ajuda em tudo é ajuda em nada: quando os cinco
+   * tinham `ⓘ`, o ícone virava parte do desenho e ninguém o lia. Fica só onde
+   * a métrica não se explica sozinha — "Total ganhos" se explica, "Total em
+   * aberto" não (o que conta como aberto: pendente, confirmado, os dois?).
+   */
   dica?: string;
 }) {
   const conteudo = (
@@ -60,24 +79,25 @@ export function KpiCard({
       <span className="neg-card-rotulo">
         {rotulo}
         {dica && (
-          // A ressalva mora aqui, não numa tarja na tela. `data-dica` desenha
-          // o balão no hover (o `title` nativo demora ~1s); o `title` fica
-          // junto porque o card inteiro é um <button> — pôr um segundo
-          // elemento focável dentro dele quebraria a ordem de tabulação.
+          // `data-dica` desenha o balão no hover (o `title` nativo demora
+          // ~1s); o `title` fica junto porque o card inteiro é um <button> —
+          // pôr um segundo elemento focável dentro dele quebraria a ordem de
+          // tabulação, e quem navega por teclado perderia o card.
           <span className="neg-dica" title={dica} data-dica={dica}>
-            i
+            <Info size={12} strokeWidth={1.8} aria-hidden="true" />
           </span>
         )}
       </span>
+      {/* O ícone alinha pela BASE do valor, não pelo canto do card: com o
+          subtexto abaixo, "canto inferior direito" o deixaria flutuando um
+          degrau abaixo do número que ele representa. */}
       <div className="neg-card-linha">
-        <div className="neg-card-numeros">
-          <div className="neg-card-valor">{valor}</div>
-          <div className="neg-card-apoio">{apoio}</div>
-        </div>
+        <div className="neg-card-valor">{valor}</div>
         <span className="neg-card-icone" aria-hidden="true">
           <Icone size={16} strokeWidth={2} />
         </span>
       </div>
+      <div className="neg-card-apoio">{apoio}</div>
     </>
   );
 

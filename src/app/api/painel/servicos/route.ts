@@ -11,7 +11,7 @@ import { registrarErro } from "@/lib/log-erro";
 
 export const dynamic = "force-dynamic";
 
-// Catálogo de serviços da clínica, lido de `documentos_lins` — a MESMA base que
+// Catálogo de serviços da clínica, lido de `documentos` — a MESMA base que
 // a Laura consulta no WhatsApp. Se o preço do CRM viesse de outro lugar, a
 // agente diria um valor e a tela mostraria outro.
 //

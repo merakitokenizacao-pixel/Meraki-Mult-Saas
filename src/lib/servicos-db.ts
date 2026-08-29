@@ -11,8 +11,10 @@ import {
 // tenant, JÁ VALIDADO por `resolverTenant()`. Catálogo e preço são por
 // clínica: sem o filtro, uma veria a tabela de preços da outra.
 //
-// ⚠️ A tabela de catálogo mudou de nome no banco novo (`documentos_lins` →
-// `documentos`) — ver CLAUDE.md, "O código ainda não conhece este banco".
+// ⚠️ A tabela de catálogo se chama `documentos`. No painel antigo era
+// `documentos_lins`, e a query aqui ficou apontando para o nome velho até
+// ago/2026 — devolvia PGRST205 ("Could not find the table
+// 'public.documentos_lins' in the schema cache") e a rota inteira caía em 500.
 
 /** Só o que precisa ser lido; `conteudo` é grande e `embedding` é enorme. */
 const COLUNAS = "id, nome, categoria, conteudo, tags";
@@ -24,7 +26,7 @@ export async function listarCatalogoServicos(
 ): Promise<ServicoCatalogo[]> {
   const db = getSupabaseAdmin();
   const { data, error } = await db
-    .from("documentos_lins")
+    .from("documentos")
     .select(COLUNAS)
     .eq("tenant_id", tenant)
     // "informacoes" é o documento de como chegar na clínica — não é serviço.

@@ -106,7 +106,7 @@ export function useConversasDoLead(leadId: string | null) {
 
 
 // ── Catálogo de serviços ─────────────────────────────────────────────────────
-// Vem de `documentos_lins` por rota de servidor: a tabela tem RLS ligada sem
+// Vem de `documentos` por rota de servidor: a tabela tem RLS ligada sem
 // policy, então o cliente do navegador não lê direto.
 // `staleTime` alto de propósito — é catálogo, muda quando a dona edita o
 // documento, não a cada navegação.

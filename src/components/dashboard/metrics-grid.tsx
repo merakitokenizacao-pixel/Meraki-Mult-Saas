@@ -87,7 +87,7 @@ export function MetricsGrid({
   const consultasAgendadas = naoCancelados.length;
   // `agendamentos.valor` está vazio em 386 de 386 linhas — o n8n nunca
   // preencheu. Mas 386 de 386 têm SERVIÇO, e o preço do serviço mora em
-  // `documentos_lins`, a mesma base que a Laura lê no WhatsApp.
+  // `documentos`, a mesma base que a Laura lê no WhatsApp.
   //
   // `valorDe` é exatamente essa regra e já é usada na aba Negócios: usa
   // `a.valor` quando existe e cai no catálogo quando não. Repetir a conta aqui

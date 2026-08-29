@@ -18,7 +18,7 @@ const brl = (n: number) =>
 // quem agenda usa os dois campos seguidos e não deveria trocar de lógica no
 // meio do formulário.
 //
-// A lista vem de `documentos_lins`, o catálogo que a Laura também lê. Antes era
+// A lista vem de `documentos`, o catálogo que a Laura também lê. Antes era
 // um <select> com 8 opções fixas no código, que não cobria nem metade do que a
 // clínica faz — e o que ficava de fora virava "Outro", sem preço.
 //

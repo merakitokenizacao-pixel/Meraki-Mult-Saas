@@ -152,7 +152,7 @@ export function NewAgendModal({
           <label className="form-label">Servico</label>
           {/* Era um <select> com 10 nomes fixos no código, que não cobria
               metade do que a clínica faz — o resto virava "Outro", sem preço.
-              Agora vem de `documentos_lins`, o mesmo catálogo que a Laura lê,
+              Agora vem de `documentos`, o mesmo catálogo que a Laura lê,
               com busca por nome, categoria e sinônimo. */}
           <ServicoCombobox
             servicos={catalogo.data?.servicos ?? []}

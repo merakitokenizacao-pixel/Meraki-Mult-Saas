@@ -125,7 +125,7 @@ export function Negocios({ period }: { period: string }) {
   const agendQuery = useAgendamentosComLead();
   const agendamentos = useMemo(() => agendQuery.data ?? [], [agendQuery.data]);
 
-  // Preços vêm do catálogo da clínica (documentos_lins), não de tabela no
+  // Preços vêm do catálogo da clínica (documentos), não de tabela no
   // código. Enquanto carrega, as somas ficam zeradas em vez de chutadas.
   const catalogoQ = useCatalogoServicos();
   const escalaQ = useEscala();

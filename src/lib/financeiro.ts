@@ -4,7 +4,7 @@
 //
 // REAL: quais agendamentos existem, quando, com que status e de que serviço.
 //
-// PREÇO: vem do CATÁLOGO da clínica (`documentos_lins`), a mesma base que a
+// PREÇO: vem do CATÁLOGO da clínica (`documentos`), a mesma base que a
 // Laura lê no WhatsApp — não de uma tabela chutada aqui dentro. Quando o texto
 // do agendamento é genérico ("Limpeza de pele", que tem 4 variantes), usa a
 // média da família; quando é um pacote com promoção, usa o preço do pacote.
@@ -24,7 +24,7 @@ import {
 
 // ── Preço ────────────────────────────────────────────────────────────────────
 // NÃO existe tabela de preços aqui, e não pode voltar a existir: os valores são
-// da clínica e moram em `documentos_lins`. Ver src/lib/servicos.ts.
+// da clínica e moram em `documentos`. Ver src/lib/servicos.ts.
 
 /** Contexto de preço, montado uma vez por render e passado adiante. */
 export interface Precos {

@@ -50,9 +50,17 @@ o build quebrar se alguém tentar.
 
 Projeto Supabase **`hcexbbmgfekpaakerfys`**. Timezone America/Sao_Paulo.
 
-**20 tabelas, todas com RLS ligada.** 19 têm `tenant_id uuid NOT NULL`; a
-exceção é `prompt_base`, que é global (o prompt-base do agente, igual para
-todas as clínicas, leitura liberada a `authenticated`).
+**31 tabelas** (conferido em 29/ago/2026 — eram 20 quando este arquivo nasceu;
+`kanban_colunas`, `campanhas`, `campanha_envios`, `comprovantes`, `dias_laser`,
+`envios_proativos` e o jornal de eventos entraram depois). Todas com RLS ligada
+e `tenant_id uuid NOT NULL`; a exceção é `prompt_base`, que é global (o
+prompt-base do agente, igual para todas as clínicas, leitura liberada a
+`authenticated`).
+
+⚠️ **O banco anda mais rápido que este arquivo.** A lista abaixo descreve o
+núcleo; antes de afirmar que algo não existe, confira — foi assim que
+`documentos_lins` continuou no código por semanas depois de a tabela virar
+`documentos`.
 
 Toda tabela com `tenant_id` tem **uma** policy, sempre a mesma forma:
 
@@ -93,8 +101,10 @@ semanal) · `profissional_excecoes` (exceção por data) · `profissional_bloque
 (sinônimos: "virilha" acha depilação) · `profissional_procedimentos` (linha
 ausente = a profissional **não** faz aquele procedimento).
 
-**Não existe nenhuma view.** E não existe bucket de storage ainda —
-`midia-conversas` é criado pela migration `20260825_bucket_midia_conversas.sql`.
+**Duas views** (29/ago/2026): `follow_ups_resultado` e
+`conversa_ultima_por_lead`. As duas já foram inexistentes e este arquivo dizia
+que eram — não são mais. O bucket `midia-conversas` é criado pela migration
+`20260825_bucket_midia_conversas.sql`.
 
 ### Em que estado uma conversa está
 
@@ -164,6 +174,17 @@ escolhido no seletor é seguro **por causa** do `tenant_valido()` no meio — e 
 exatamente o desenho que a regra de ouro descreve: o cliente informa, o banco
 confere.
 
+⚠️ **`tenant_valido` foi corrigida em 29/ago/2026** (migration
+`20260829_tenant_valido_sem_min_uuid.sql`). Ela resolvia o caso implícito com
+`min(tenant_id)`, e **o Postgres não tem agregado `min(uuid)`** — a linha roda
+antes da checagem de `n`, então `tenant_valido(null)` levantava
+`42883 function min(uuid) does not exist` **sempre**. Como é `null` que chega
+quando a conta tem uma clínica só (sem cabeçalho `x-meraki-tenant`), isso
+derrubava com 500 **todas as onze rotas** que passam por `resolverTenant`. As
+telas que leem pelo navegador escapavam porque vão por RLS. Hoje é
+`(array_agg(tenant_id order by tenant_id))[1]` — funciona com uuid e é
+determinístico.
+
 **`tenant_valido(p_tenant)`**:
 - `null` → devolve o tenant da conta (para quem só tem um);
 - um uuid → confere em `usuarios_tenant` contra `auth.uid()` e **levanta
@@ -177,12 +198,12 @@ O clone veio do painel single-tenant. Leia `INVENTARIO.md` antes de mexer em
 qualquer query — o levantamento completo está lá. O resumo do que **não existe**
 neste banco e o código continua chamando:
 
-| O código chama | Situação |
+| O código chama | Situação (conferido em 29/ago/2026) |
 |---|---|
-| `agenda_slots`, `agenda_checar`, `agenda_profissionais_na_escala` | **não existem** — o equivalente é `painel_agenda` |
-| `documentos_lins` | virou `documentos` |
-| `conversa_ultima_por_lead` (view do inbox) | **não existe** |
-| `follow_ups_resultado` (view) | **não existe** — existe a tabela `follow_ups` |
+| `agenda_slots`, `agenda_checar`, `agenda_profissionais_na_escala` | **continuam não existindo** — o equivalente é `painel_agenda` |
+| ~~`documentos_lins`~~ | **resolvido** — a query aponta para `documentos` |
+| `conversa_ultima_por_lead` (view do inbox) | **existe** |
+| `follow_ups_resultado` (view) | **existe**, com as 13 colunas que o código lê |
 
 E colunas que trocaram de nome — quebram com `42703` na escrita e silenciosamente
 na leitura:
@@ -195,7 +216,7 @@ na leitura:
 | `leads.anuncio_origem` | `anuncio_texto` / `_id` / `_url` / `_app` / `_em` |
 | `leads` com campos de endereço | não existem — só `email`, `instagram`, `nascimento`, `anotacoes`, `etiquetas` |
 | `fichas_avaliacao.status` / `.alertas` / `.tipo` | `tem_alerta boolean` |
-| `promocoes.valor_promocional` / `.condicao` / `.dia_semana` | `preco`, `valida_de`, `valida_ate`, `ativa` |
+| ~~`promocoes.valor_promocional` / `.condicao` / `.dia_semana`~~ | **existem** — foram acrescentadas ao banco; a query de preço está certa |
 
 **Todo `insert` precisa de `tenant_id`** — é `NOT NULL` em 19 das 20 tabelas, e
 nenhum insert do código atual preenche.

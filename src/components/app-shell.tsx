@@ -36,7 +36,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   // antes do primeiro número. Some no desktop; no mobile fica, porque carrega
   // o hambúrguer.
   const semTopbar =
-    pathname.startsWith("/visao-geral") || pathname.startsWith("/configuracoes");
+    pathname.startsWith("/visao-geral") ||
+    pathname.startsWith("/configuracoes") ||
+    // O Kanban tem H1 próprio: com a topbar, "Kanban" aparecia duas vezes na
+    // mesma tela. E os 64px dela saem do quadro, que precisa de altura.
+    pathname.startsWith("/kanban");
 
   return (
     <>

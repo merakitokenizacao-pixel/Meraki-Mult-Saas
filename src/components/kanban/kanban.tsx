@@ -1,8 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { DateRangePicker } from "@/components/date-range-picker";
+import { ChevronLeft, ChevronRight, Info } from "lucide-react";
 import { CartaoKanbanCard } from "@/components/kanban/cartao-kanban";
 import { getDateRange, rotuloIntervalo } from "@/lib/date";
 import { useKanban } from "@/lib/hooks";
@@ -18,7 +19,8 @@ import { showToast } from "@/lib/toast";
 //
 // ⚠️ Faltou e Cancelado são colunas DIFERENTES. Quem avisa dá chance de
 // revender o horário; quem não aparece leva a receita junto. Juntar as duas
-// apagaria a taxa de no-show, que é o número do cabeçalho.
+// apagaria a taxa de no-show — que mora DENTRO da coluna Faltou, e não solta
+// no topo ao lado do seletor de data, onde estava sem contexto nenhum.
 
 // Janelas para FRENTE. O quadro é fila de trabalho: o que interessa é o que
 // ainda vem, não o que já passou. (O calendário do próprio seletor continua
@@ -122,30 +124,120 @@ export function Kanban() {
     }
   }
 
+  // ── Rolagem lateral ───────────────────────────────────────────────────────
+  // 240px por coluna é escolha deliberada: cinco cabem em ~1300px, então rolar
+  // de lado vira exceção. Quando vira necessário, o que comunica é o corte na
+  // borda (a última coluna aparece pela metade), o esmaecimento e as setas —
+  // nunca um controle que só existe no hover.
+  const quadro = useRef<HTMLDivElement>(null);
+  const [podeEsq, setPodeEsq] = useState(false);
+  const [podeDir, setPodeDir] = useState(false);
+
+  const atualizarBordas = useCallback(() => {
+    const el = quadro.current;
+    if (!el) return;
+    // 1px de folga: `scrollLeft` fracionário em tela com zoom deixaria a seta
+    // acesa para sempre no fim da rolagem.
+    setPodeEsq(el.scrollLeft > 1);
+    setPodeDir(el.scrollLeft + el.clientWidth < el.scrollWidth - 1);
+  }, []);
+
+  useEffect(() => {
+    const el = quadro.current;
+    if (!el) return;
+    atualizarBordas();
+    // Redimensionar a janela muda o que cabe, e nenhum evento de scroll
+    // dispara nesse caso.
+    const ro = new ResizeObserver(atualizarBordas);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [atualizarBordas, colunas.length]);
+
+  function deslizar(dir: 1 | -1) {
+    // Uma coluna + o gap por clique — a mesma unidade do scroll-snap.
+    quadro.current?.scrollBy({ left: dir * 250, behavior: "smooth" });
+  }
+
+  // Shift + roda: no mouse comum não existe eixo X, e sem isto o quadro só
+  // rolaria com a barra ou com trackpad.
+  //
+  // ⚠️ LISTENER NATIVO, e não `onWheel`. O React registra `wheel` como PASSIVO,
+  // e num listener passivo o `preventDefault()` é ignorado (com aviso no
+  // console) — o resultado seria o quadro rolar de lado E a página tentar
+  // rolar junto. `{ passive: false }` é o que devolve o direito de cancelar.
+  useEffect(() => {
+    const el = quadro.current;
+    if (!el) return;
+    const aoRolar = (e: WheelEvent) => {
+      if (!e.shiftKey || e.deltaY === 0) return;
+      if (el.scrollWidth <= el.clientWidth) return;
+      el.scrollLeft += e.deltaY;
+      e.preventDefault();
+    };
+    el.addEventListener("wheel", aoRolar, { passive: false });
+    return () => el.removeEventListener("wheel", aoRolar);
+  }, []);
+
+  // ⚠️ AUTO-SCROLL AO ARRASTAR NÃO É CONFORTO. Se a pessoa arrasta de Pendente
+  // para Cancelado e a coluna de destino está fora da tela, sem isto ela não
+  // consegue soltar em lugar nenhum — o cartão fica preso.
+  //
+  // O laço vive num rAF enquanto o ponteiro está perto da borda; `dragover`
+  // dispara com frequência irregular e rolar dentro dele daria solavanco.
+  const bordaAtiva = useRef(0);
+  const laco = useRef<number | null>(null);
+
+  const pararLaco = useCallback(() => {
+    if (laco.current != null) cancelAnimationFrame(laco.current);
+    laco.current = null;
+    bordaAtiva.current = 0;
+  }, []);
+
+  const rodarLaco = useCallback(() => {
+    const el = quadro.current;
+    if (el && bordaAtiva.current !== 0) el.scrollLeft += bordaAtiva.current * 14;
+    laco.current = requestAnimationFrame(rodarLaco);
+  }, []);
+
+  function aoArrastarSobreOQuadro(e: React.DragEvent) {
+    const el = quadro.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    const ZONA = 72;
+    bordaAtiva.current =
+      e.clientX < r.left + ZONA ? -1 : e.clientX > r.right - ZONA ? 1 : 0;
+    if (laco.current == null) laco.current = requestAnimationFrame(rodarLaco);
+  }
+
+  // Solta o laço quando o arrasto acaba de qualquer jeito — inclusive com Esc
+  // ou soltando fora do quadro, que não disparam `drop`.
+  useEffect(() => {
+    if (!arrastando) {
+      pararLaco();
+      return;
+    }
+    window.addEventListener("dragend", pararLaco);
+    window.addEventListener("drop", pararLaco);
+    return () => {
+      window.removeEventListener("dragend", pararLaco);
+      window.removeEventListener("drop", pararLaco);
+      pararLaco();
+    };
+  }, [arrastando, pararLaco]);
+
+  // Base do no-show: quem DEVERIA ter comparecido. Cancelamento fica fora do
+  // denominador — senão avisar antes pioraria a taxa de quem avisou.
+  const baseNoShow = taxa ? taxa.realizados + taxa.faltas : 0;
+
   return (
     <div className="page-fade kb-tela">
+      {/* Um título só na tela: a barra de topo some em /kanban (ver
+          app-shell.tsx), e o período sobe para a linha do H1 em vez de ocupar
+          linha própria. */}
       <div className="kb-topo">
-        <div>
-          <h1 className="kb-titulo">Kanban</h1>
-          <p className="kb-sub">{rotuloIntervalo(period)}</p>
-        </div>
+        <h1 className="kb-titulo">Kanban</h1>
+        <span className="kb-sub">{rotuloIntervalo(period)}</span>
         <div className="kb-topo-acoes">
-          {taxa && (
-            // O número que a dona não tem de nenhuma outra fonte. Faltas sobre
-            // quem DEVERIA comparecer (realizados + faltas) — cancelamento não
-            // entra no denominador, senão avisar antes pioraria a taxa.
-            <p className="kb-taxa">
-              <span className="kb-taxa-rotulo">Faltou</span>
-              <span className="kb-taxa-valor">
-                {taxa.faltas} de {taxa.realizados + taxa.faltas}
-              </span>
-              {taxa.taxa_falta != null && (
-                <span className="kb-taxa-pct">
-                  {String(taxa.taxa_falta).replace(".", ",")}%
-                </span>
-              )}
-            </p>
-          )}
           <DateRangePicker value={period} onChange={setPeriod} atalhos={ATALHOS} />
         </div>
       </div>
@@ -159,56 +251,119 @@ export function Kanban() {
           Esta clínica ainda não tem colunas configuradas no quadro.
         </p>
       ) : (
-        <div className="kb-quadro">
-          {colunas.map((c) => (
-            <section
-              key={c.status}
-              className={`kb-coluna${alvo === c.status ? " alvo" : ""}`}
-              style={{ ["--kb-cor" as string]: `var(${c.token})` }}
-              onDragOver={(e) => {
-                // Sem o preventDefault o navegador recusa o drop — é a parte
-                // menos óbvia da API nativa.
-                e.preventDefault();
-                e.dataTransfer.dropEffect = "move";
-                if (alvo !== c.status) setAlvo(c.status);
-              }}
-              onDragLeave={() => setAlvo((a) => (a === c.status ? null : a))}
-              onDrop={(e) => {
-                e.preventDefault();
-                setAlvo(null);
-                setArrastando(null);
-                const id = e.dataTransfer.getData("text/plain");
-                if (id) mover(id, c.status);
-              }}
+        <div className={`kb-palco${arrastando ? " arrastando" : ""}`}>
+          {/* Setas SEMPRE visíveis, não no hover: seta que só aparece quando o
+              mouse chega perto é invisível para quem não passa por ali, e essa
+              pessoa nunca descobre que existe mais coluna. Cada uma some
+              quando não há mais para onde ir daquele lado. */}
+          {podeEsq && (
+            <button
+              type="button"
+              className="kb-seta esq"
+              aria-label="Ver colunas à esquerda"
+              onClick={() => deslizar(-1)}
             >
-              <header className="kb-coluna-topo">
-                <div className="kb-coluna-linha">
-                  <h2 className="kb-coluna-titulo">{c.rotulo}</h2>
-                  <span className="kb-coluna-contagem">{c.cartoes.length}</span>
-                </div>
-                {c.descricao && (
-                  <p className="kb-coluna-desc">{c.descricao}</p>
-                )}
-              </header>
-              <div className="kb-coluna-corpo">
-                {c.cartoes.length === 0 ? (
-                  <p className="kb-coluna-vazia">Nenhum</p>
-                ) : (
-                  c.cartoes.map((cartao) => (
-                    <CartaoKanbanCard
-                      key={cartao.agendamento_id}
-                      cartao={cartao}
-                      colunas={colunas}
-                      statusAtual={c.status}
-                      arrastando={arrastando === cartao.agendamento_id}
-                      onArrastar={setArrastando}
-                      onMover={(destino) => mover(cartao.agendamento_id, destino)}
-                    />
-                  ))
-                )}
-              </div>
-            </section>
-          ))}
+              <ChevronLeft size={16} strokeWidth={2} />
+            </button>
+          )}
+          {podeDir && (
+            <button
+              type="button"
+              className="kb-seta dir"
+              aria-label="Ver colunas à direita"
+              onClick={() => deslizar(1)}
+            >
+              <ChevronRight size={16} strokeWidth={2} />
+            </button>
+          )}
+          {/* Esmaecimento: diz "continua" sem ocupar espaço nem pedir hover. */}
+          {podeEsq && <span className="kb-fade esq" aria-hidden="true" />}
+          {podeDir && <span className="kb-fade dir" aria-hidden="true" />}
+
+          <div
+            className="kb-quadro"
+            ref={quadro}
+            onScroll={atualizarBordas}
+            onDragOver={aoArrastarSobreOQuadro}
+          >
+            {colunas.map((c) => {
+              // A taxa mora na coluna a que ela se refere. `faltou` é a CHAVE
+              // do status no banco, não um rótulo — o rótulo continua vindo de
+              // `kanban_colunas`.
+              const comTaxa = c.status === "faltou" && taxa != null;
+              return (
+                <section
+                  key={c.status}
+                  className={`kb-coluna${alvo === c.status ? " alvo" : ""}`}
+                  style={{ ["--kb-cor" as string]: `var(${c.token})` }}
+                  onDragOver={(e) => {
+                    // Sem o preventDefault o navegador recusa o drop — é a
+                    // parte menos óbvia da API nativa.
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = "move";
+                    if (alvo !== c.status) setAlvo(c.status);
+                  }}
+                  onDragLeave={() => setAlvo((a) => (a === c.status ? null : a))}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    setAlvo(null);
+                    setArrastando(null);
+                    const id = e.dataTransfer.getData("text/plain");
+                    if (id) mover(id, c.status);
+                  }}
+                >
+                  <header
+                    className={`kb-coluna-topo${comTaxa ? " com-taxa" : ""}`}
+                  >
+                    <div className="kb-coluna-linha">
+                      <h2 className="kb-coluna-titulo">{c.rotulo}</h2>
+                      <span className="kb-coluna-contagem">
+                        {c.cartoes.length}
+                      </span>
+                      {/* A descrição vira `title`. Ela ensina o significado
+                          UMA vez; em texto corrido custava uma linha em cada
+                          uma das cinco colunas, para sempre. */}
+                      {c.descricao && (
+                        <span
+                          className="kb-coluna-info"
+                          title={c.descricao}
+                          aria-label={c.descricao}
+                        >
+                          <Info size={12} strokeWidth={1.8} />
+                        </span>
+                      )}
+                    </div>
+                    {comTaxa && taxa && (
+                      <p className="kb-coluna-taxa">
+                        {taxa.taxa_falta != null
+                          ? `${String(taxa.taxa_falta).replace(".", ",")}% de ${baseNoShow}`
+                          : `de ${baseNoShow}`}
+                      </p>
+                    )}
+                  </header>
+                  <div className="kb-coluna-corpo">
+                    {c.cartoes.length === 0 ? (
+                      <p className="kb-coluna-vazia">Nenhum</p>
+                    ) : (
+                      c.cartoes.map((cartao) => (
+                        <CartaoKanbanCard
+                          key={cartao.agendamento_id}
+                          cartao={cartao}
+                          colunas={colunas}
+                          statusAtual={c.status}
+                          arrastando={arrastando === cartao.agendamento_id}
+                          onArrastar={setArrastando}
+                          onMover={(destino) =>
+                            mover(cartao.agendamento_id, destino)
+                          }
+                        />
+                      ))
+                    )}
+                  </div>
+                </section>
+              );
+            })}
+          </div>
         </div>
       )}
     </div>

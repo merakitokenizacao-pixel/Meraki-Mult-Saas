@@ -6065,16 +6065,35 @@ a.sidebar-footer:hover {
 /* A COLUNA RECUA e o CARTÃO AVANÇA — é o degrau que a base cinza destravou.
    Sobre preto puro os dois teriam que ser o mesmo tom, e a única separação
    possível era borda. Zero box-shadow, como no resto do painel. */
+
+/* ⚠️ ALTURA TOTAL, e a página NÃO rola. Antes a coluna tinha altura fixa e
+   terminava logo abaixo do cabeçalho: o quadro ocupava 145px e o resto da tela
+   ficava vazio, enquanto dez cartões em Pendente estouravam. Quem rola é o
+   CORPO de cada coluna, no eixo Y, e o quadro inteiro no eixo X.
+
+   Os 80px são o padding vertical de `.content` (2,5rem em cima e embaixo). A
+   topbar não entra na conta porque em /kanban ela não existe. */
 .kb-tela {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
+  height: calc(100dvh - 80px);
+  overflow: hidden;
+}
+/* Em tela estreita o painel tem topbar e bottom-nav, e travar a altura deixaria
+   o quadro espremido entre as duas. Ali ele volta a ser um bloco normal e a
+   página rola, que é o comportamento certo para uma tela pequena. */
+@media (max-width: 900px) {
+  .kb-tela {
+    height: auto;
+    overflow: visible;
+  }
 }
 .kb-topo {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 14px;
+  align-items: baseline;
+  gap: 10px;
+  flex-shrink: 0;
   flex-wrap: wrap;
 }
 .kb-titulo {
@@ -6084,8 +6103,9 @@ a.sidebar-footer:hover {
   letter-spacing: -0.01em;
   color: var(--mk-tinta);
 }
+/* O período na MESMA linha do título, não numa linha própria: são 22px de
+   altura que o quadro passa a ter. */
 .kb-sub {
-  margin-top: 2px;
   font-size: 12px;
   color: var(--mk-tinta-media);
 }
@@ -6093,66 +6113,68 @@ a.sidebar-footer:hover {
   display: flex;
   align-items: center;
   gap: 12px;
-  flex-wrap: wrap;
-}
-/* A taxa de no-show em destaque: é o número que a dona não tem de nenhuma
-   outra fonte. Fica ao lado do filtro porque depende do período. */
-.kb-taxa {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 7px;
-  height: 33px;
-  padding: 0 12px;
-  border: 1px solid var(--mk-linha);
-  border-radius: var(--mk-raio);
-  background: var(--mk-superficie);
-}
-.kb-taxa-rotulo {
-  font-size: 11.5px;
-  font-weight: 500;
-  color: var(--mk-st-erro);
-}
-.kb-taxa-valor {
-  font-size: 12px;
-  color: var(--mk-tinta-media);
-  font-variant-numeric: tabular-nums;
-}
-.kb-taxa-pct {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--mk-tinta);
-  font-variant-numeric: tabular-nums;
+  margin-left: auto;
 }
 
+/* ── O palco: o quadro mais os avisos de borda ───────────────────────────── */
+.kb-palco {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
 .kb-quadro {
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: minmax(228px, 1fr);
+  display: flex;
+  align-items: stretch;
   gap: 10px;
-  /* Cinco colunas não cabem em tela estreita, e espremer a quinta até sumir é
-     pior que rolar: o quadro inteiro é a informação. */
+  height: 100%;
+  /* O container NÃO ajusta a largura ao número de colunas: é isso que deixa a
+     última aparecer cortada, e meia coluna visível diz "tem mais" melhor que
+     qualquer ícone. */
   overflow-x: auto;
-  padding-bottom: 4px;
+  overflow-y: hidden;
+  /* `proximity` e não `mandatory`: com mandatory, arrastar um cartão perto da
+     borda faz o quadro grudar e brigar com o auto-scroll. */
+  scroll-snap-type: x proximity;
+  scroll-padding-left: 0;
 }
 .kb-coluna {
   display: flex;
   flex-direction: column;
-  min-width: 0;
+  /* 240px fixos: cinco colunas cabem em ~1300px, então rolar de lado é
+     exceção, não regra. Sem `shrink`, senão a quinta some espremendo as
+     outras em vez de sinalizar que há mais. */
+  flex: 0 0 240px;
+  width: 240px;
+  height: 100%;
+  min-height: 0;
+  scroll-snap-align: start;
   border: 1px solid var(--mk-linha);
   border-radius: var(--mk-raio);
   background: var(--mk-rebaixado);
   transition: border-color var(--mk-transicao), background var(--mk-transicao);
 }
-/* Alvo do arrasto: a borda assume a cor DA COLUNA, que a pessoa já aprendeu
-   no título. Fundo cheio de cor de estado é proibido — aqui é a mesma mistura
-   a 12% usada nos chips. */
+/* Alvo do arrasto: a borda assume a cor DA COLUNA, que a pessoa já aprendeu no
+   título. Fundo cheio de cor de estado é proibido — aqui é a mesma mistura a
+   12% dos chips. */
 .kb-coluna.alvo {
   border-color: color-mix(in srgb, var(--kb-cor) 55%, transparent);
   background: color-mix(in srgb, var(--kb-cor) 6%, var(--mk-rebaixado));
 }
+/* UMA linha, 32px. A descrição saiu do corpo e virou `title` no ⓘ: ela custava
+   uma linha em cada uma das cinco colunas, para sempre, e serve para aprender
+   o significado uma vez — não para ler todo dia. */
 .kb-coluna-topo {
-  padding: 11px 12px 9px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex-shrink: 0;
+  height: 32px;
+  padding: 0 10px;
   border-bottom: 1px solid var(--mk-linha);
+}
+/* A exceção é Faltou, que ganha a taxa de no-show numa segunda linha. */
+.kb-coluna-topo.com-taxa {
+  height: 44px;
 }
 .kb-coluna-linha {
   display: flex;
@@ -6161,44 +6183,60 @@ a.sidebar-footer:hover {
 }
 /* Cor entra AQUI e na borda do cartão atrasado. Em nenhum outro lugar. */
 .kb-coluna-titulo {
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--kb-cor);
 }
 .kb-coluna-contagem {
-  font-size: 11.5px;
-  font-weight: 600;
-  color: var(--mk-tinta-fraca);
+  font-size: 12px;
+  color: var(--mk-tinta-media);
   font-variant-numeric: tabular-nums;
 }
-.kb-coluna-desc {
-  margin-top: 2px;
-  font-size: 10.5px;
-  line-height: 1.4;
+.kb-coluna-info {
+  display: inline-flex;
+  margin-left: auto;
   color: var(--mk-tinta-fraca);
+  cursor: help;
+  transition: color var(--mk-transicao);
+}
+.kb-coluna-info:hover {
+  color: var(--mk-tinta-media);
+}
+/* O número que a dona não tem de nenhuma outra fonte, na coluna a que ele se
+   refere. No topo da tela, ao lado do seletor de data, ele estava sem
+   contexto. */
+.kb-coluna-taxa {
+  font-size: 10px;
+  line-height: 1.2;
+  color: var(--mk-tinta-fraca);
+  font-variant-numeric: tabular-nums;
 }
 .kb-coluna-corpo {
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 6px;
+  flex: 1;
+  min-height: 0;
   padding: 8px;
-  /* Rola por dentro: com 40 marcações num dia a coluna não pode empurrar a
-     página inteira para baixo. */
-  min-height: 90px;
-  max-height: calc(100vh - 250px);
   overflow-y: auto;
 }
+/* Encostado no topo, logo abaixo do cabeçalho. Centralizado no meio de uma
+   coluna alta o aviso fica solto, longe do que o explica. Sem ícone. */
 .kb-coluna-vazia {
-  padding: 6px 4px;
-  font-size: 11.5px;
+  font-size: 11px;
   color: var(--mk-tinta-fraca);
 }
 
+/* ── Cartão: TRÊS linhas ─────────────────────────────────────────────────── */
 .kb-cartao {
   position: relative;
-  padding: 9px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex-shrink: 0;
+  padding: 10px 12px;
   border: 1px solid var(--mk-linha);
-  border-radius: var(--mk-raio);
+  border-radius: 5px;
   background: var(--mk-superficie);
   cursor: grab;
   transition: border-color var(--mk-transicao), opacity var(--mk-transicao);
@@ -6223,9 +6261,9 @@ a.sidebar-footer:hover {
 }
 .kb-cartao-quem {
   min-width: 0;
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 600;
-  line-height: 1.3;
+  line-height: 1.25;
   color: var(--mk-tinta);
   overflow-wrap: anywhere;
 }
@@ -6233,9 +6271,9 @@ a.sidebar-footer:hover {
   display: grid;
   place-items: center;
   flex-shrink: 0;
-  width: 20px;
-  height: 20px;
-  margin: -2px -3px 0 0;
+  width: 18px;
+  height: 18px;
+  margin: -1px -4px 0 0;
   border: none;
   border-radius: 4px;
   background: transparent;
@@ -6250,20 +6288,16 @@ a.sidebar-footer:hover {
   outline: none;
   color: var(--mk-acento);
 }
-/* Quem marcou, quando é diferente de quem vai ser atendida. */
-.kb-cartao-via {
-  margin-top: 1px;
-  font-size: 10px;
-  color: var(--mk-tinta-fraca);
-}
-.kb-cartao-linha {
+/* Segunda linha: para quem, o quê e quando são o mesmo assunto, separados por
+   `·`. `via Fulano` tinha linha própria e custava altura em todo cartão de
+   marcação feita por terceiro. */
+.kb-cartao-meta {
   display: flex;
   align-items: center;
   gap: 5px;
-  margin-top: 5px;
-  font-size: 11.5px;
+  font-size: 11px;
   line-height: 1.35;
-  color: var(--mk-tinta-media);
+  color: var(--mk-tinta-fraca);
   overflow-wrap: anywhere;
 }
 .kb-cartao-sino {
@@ -6272,9 +6306,67 @@ a.sidebar-footer:hover {
   color: var(--mk-st-aguardando);
 }
 .kb-cartao-prof {
-  margin-top: 3px;
-  font-size: 10.5px;
+  font-size: 11px;
+  line-height: 1.3;
   color: var(--mk-tinta-fraca);
+}
+
+/* ── Bordas do quadro ────────────────────────────────────────────────────── */
+/* 40px de gradiente da base para transparente. Some junto com a seta quando
+   não há mais para onde ir daquele lado. */
+.kb-fade {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 40px;
+  pointer-events: none;
+  z-index: 2;
+}
+.kb-fade.esq {
+  left: 0;
+  background: linear-gradient(to right, var(--mk-fundo), transparent);
+}
+.kb-fade.dir {
+  right: 0;
+  background: linear-gradient(to left, var(--mk-fundo), transparent);
+}
+.kb-seta {
+  position: absolute;
+  top: 50%;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin-top: -14px;
+  border: 1px solid var(--mk-linha);
+  border-radius: 50%;
+  /* Opaco: a seta fica POR CIMA das colunas e precisa tapá-las. */
+  background: var(--mk-elevado);
+  color: var(--mk-tinta-media);
+  cursor: pointer;
+  transition: color var(--mk-transicao), border-color var(--mk-transicao);
+}
+.kb-seta:hover {
+  color: var(--mk-tinta);
+  border-color: var(--mk-tinta-fraca);
+}
+.kb-seta:focus-visible {
+  outline: none;
+  border-color: var(--mk-acento);
+}
+/* Durante o arrasto as setas saem da frente: elas ficam POR CIMA da primeira e
+   da última coluna, e um cartão solto em cima de uma delas não chegaria a
+   coluna nenhuma. O auto-scroll já cobre a navegação nesse momento. */
+.kb-palco.arrastando .kb-seta {
+  pointer-events: none;
+  opacity: 0.35;
+}
+.kb-seta.esq {
+  left: 4px;
+}
+.kb-seta.dir {
+  right: 4px;
 }
 
 /* O menu do `⋯`. `fixed` porque o corpo da coluna rola e um `absolute` seria

@@ -4,7 +4,12 @@ import { useEffect, useRef, useState } from "react";
 import { BellOff, MoreHorizontal } from "lucide-react";
 import { ehAmanha, horaCurta, type CartaoKanban, type ColunaKanban } from "@/lib/kanban";
 
-// Um cartão do quadro.
+// Um cartão do quadro, em TRÊS linhas.
+//
+// A segunda junta o que antes eram duas: `via Fulano` tinha linha própria e
+// custava altura em todo cartão de marcação feita por terceiro. Como as três
+// informações são o mesmo assunto — para quem, o quê, quando —, elas viram uma
+// frase separada por `·`.
 //
 // ACESSIBILIDADE: arrastar não é o único caminho, é o caminho rápido. Quem usa
 // teclado — ou toque, onde o drag-and-drop nativo do HTML5 simplesmente não
@@ -52,9 +57,14 @@ export function CartaoKanbanCard({
     };
     document.addEventListener("mousedown", fora);
     document.addEventListener("keydown", tecla);
+    // O menu é `fixed` e ancorado no retângulo do botão: se a coluna rolar
+    // debaixo dele, a âncora envelhece. Fechar é mais honesto que segui-lo.
+    const rolou = () => setMenuAberto(false);
+    window.addEventListener("scroll", rolou, true);
     return () => {
       document.removeEventListener("mousedown", fora);
       document.removeEventListener("keydown", tecla);
+      window.removeEventListener("scroll", rolou, true);
     };
   }, [menuAberto]);
 
@@ -66,6 +76,15 @@ export function CartaoKanbanCard({
 
   const semLembrete = !cartao.lembrete_enviado && ehAmanha(cartao.quando);
   const destinos = colunas.filter((c) => c.status !== statusAtual);
+
+  // `via Fulano` só entra quando alguém marcou para outra pessoa.
+  const meta = [
+    cartao.titular ? `via ${cartao.titular}` : null,
+    cartao.servico || "Sem procedimento",
+    horaCurta(cartao.quando),
+  ]
+    .filter(Boolean)
+    .join(" · ");
 
   return (
     <article
@@ -95,18 +114,15 @@ export function CartaoKanbanCard({
         </button>
       </div>
 
-      {/* Só quando quem marcou é diferente de quem vai ser atendida. */}
-      {cartao.titular && <p className="kb-cartao-via">via {cartao.titular}</p>}
-
-      <p className="kb-cartao-linha">
-        {cartao.servico || "Sem procedimento"} · {horaCurta(cartao.quando)}
+      <p className="kb-cartao-meta">
+        {meta}
         {semLembrete && (
           <span
             className="kb-cartao-sino"
             title="É amanhã e o lembrete ainda não saiu"
             aria-label="É amanhã e o lembrete ainda não saiu"
           >
-            <BellOff size={12} strokeWidth={1.8} />
+            <BellOff size={11} strokeWidth={1.8} />
           </span>
         )}
       </p>

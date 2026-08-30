@@ -24,6 +24,9 @@ export interface Lead {
   pausada_por: string | null;
   resumo_ia: string | null;
   aceita_campanha: boolean | null;
+  /** Tipos de envio automático dos quais esta cliente está dispensada.
+   *  Vazio/nulo = recebe tudo. Ver `envio_pode` e lib/envios.ts. */
+  dispensa_envios?: string[] | null;
   ultima_interacao: string | null;
   criado_em: string;
   pausada_em?: string | null;

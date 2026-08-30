@@ -4,6 +4,7 @@ import { useState } from "react";
 import {
   CalendarClock,
   ClipboardList,
+  Send,
   Palette,
   Bot,
   Grid3x3,
@@ -14,6 +15,7 @@ import {
 import { SecaoAparencia } from "@/components/configuracoes/secao-aparencia";
 import { SecaoMatriz } from "@/components/configuracoes/secao-matriz";
 import { SecaoRequisitos } from "@/components/configuracoes/secao-requisitos";
+import { SecaoEnvios } from "@/components/configuracoes/secao-envios";
 import { SecaoLaura } from "@/components/configuracoes/secao-laura";
 import { SecaoConexao } from "@/components/configuracoes/secao-conexao";
 import { SecaoConta } from "@/components/configuracoes/secao-conta";
@@ -24,6 +26,7 @@ type SecaoId =
   | "profissionais"
   | "matriz"
   | "requisitos"
+  | "envios"
   | "conexao"
   | "aparencia"
   | "conta";
@@ -60,6 +63,13 @@ const SECOES: ReadonlyArray<{
     descricao:
       "O que precisa estar respondido antes de um procedimento acontecer",
     icon: ClipboardList,
+  },
+  {
+    id: "envios",
+    label: "Envios automáticos",
+    descricao:
+      "Quando o sistema pode falar sozinho — e com quem ele não fala",
+    icon: Send,
   },
   {
     id: "conexao",
@@ -119,6 +129,7 @@ export function Configuracoes() {
         {secao === "profissionais" && <SecaoProfissionais />}
         {secao === "matriz" && <SecaoMatriz />}
         {secao === "requisitos" && <SecaoRequisitos />}
+        {secao === "envios" && <SecaoEnvios />}
         {secao === "conexao" && <SecaoConexao />}
         {secao === "aparencia" && <SecaoAparencia />}
         {secao === "conta" && <SecaoConta />}

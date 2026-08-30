@@ -8,6 +8,10 @@ import { LeadStatusBadge } from "@/components/lead-status-badge";
 import { fmtDate } from "@/lib/format";
 import { getAgendamentosByLead, getConversasByLead } from "@/lib/queries";
 import { FichaSection } from "@/components/painel/ficha-section";
+import { DispensaEnvios } from "@/components/configuracoes/secao-envios";
+import { salvarDispensa } from "@/lib/envios-db";
+import { showToast } from "@/lib/toast";
+import type { TipoEnvio } from "@/lib/envios";
 import type { Agendamento, Conversa, Lead } from "@/types/db";
 
 // Replica openLeadModal: detalhe do lead + agendamentos + prévia da conversa.
@@ -20,12 +24,16 @@ export function LeadModal({
 }) {
   const [convs, setConvs] = useState<Conversa[]>([]);
   const [agends, setAgends] = useState<Agendamento[]>([]);
+  // Espelho local da dispensa: o modal recebe o lead por prop e não tem como
+  // pedir ao pai que recarregue, então o estado da marcação mora aqui.
+  const [dispensa, setDispensa] = useState<string[]>([]);
 
   useEffect(() => {
     if (!lead) return;
     let ativo = true;
     setConvs([]);
     setAgends([]);
+    setDispensa(lead.dispensa_envios ?? []);
     (async () => {
       try {
         const [c, a] = await Promise.all([
@@ -162,6 +170,25 @@ export function LeadModal({
           )}
 
           <FichaSection leadId={lead.id} />
+
+          {/* O override manual. A regra automática (Configurações → Envios)
+              pega o caso comum; aqui entra a exceção que o número não pega —
+              e `envio_pode` confere esta lista ANTES de pausa, opt-out e
+              frequência. Manual sempre vence. */}
+          <div className="modal-section">Não enviar automaticamente</div>
+          <DispensaEnvios
+            valor={dispensa}
+            onMudar={async (tipos: TipoEnvio[]) => {
+              const antes = dispensa;
+              setDispensa(tipos);
+              try {
+                await salvarDispensa(lead.id, tipos);
+              } catch {
+                setDispensa(antes);
+                showToast("Não foi possível salvar a dispensa", "error");
+              }
+            }}
+          />
 
           <div className="modal-section">Conversa ({convs.length} msgs)</div>
           <div

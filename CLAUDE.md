@@ -88,6 +88,18 @@ indexados por `identificador`) · `documentos` (base de conhecimento, com
 **Operação** — `leads` · `conversas` (com `msg_id` e os campos `media_*`) ·
 `agendamentos` · `promocoes` · `follow_ups` · `fichas_avaliacao`.
 
+**Envios automáticos** — `envios_regras` (PK composta `(tenant_id, tipo)`,
+quatro linhas semeadas: lembrete, retomada, compromisso, reativacao). Toda
+mensagem que o sistema manda sozinho passa por **um porteiro só**,
+`envio_pode(tenant, lead, tipo)` — e essa função **não tem regra dentro**: lê
+tudo desta tabela. ⚠️ A tela SEMPRE faz `update`, nunca `insert`: tipo sem
+linha faz `envio_pode` recusar ("sem regra configurada"), então uma linha
+inventada só produziria envio que nunca sai. `dias_semana` é `smallint[]` com
+**domingo = 0**, a mesma origem de `extract(dow)` — trocar isso deslocaria a
+semana inteira sem erro nenhum. A dispensa individual é `leads.dispensa_envios`
+(`text[]`), e `envio_pode` a confere ANTES de pausa, opt-out e frequência:
+**manual sempre vence**.
+
 **Requisitos** — `requisitos` (nome, `descricao`, `validade_dias`, `bloqueia`,
 `url_base`) · `requisito_procedimentos` (a matriz: qual procedimento exige qual
 requisito) · `requisito_campos` (as perguntas, com `chave`, `tipo` e

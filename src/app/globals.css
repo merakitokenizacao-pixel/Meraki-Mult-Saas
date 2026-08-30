@@ -6061,6 +6061,175 @@ a.sidebar-footer:hover {
   background: var(--mk-superficie-3);
 }
 
+/* ── Envios automáticos ──────────────────────────────────────────────────── */
+/* A interface de `envios_regras` — a tabela que o porteiro `envio_pode` lê.
+   Autosave por campo: são dezesseis campos por tipo, quatro tipos, e um botão
+   "Salvar" no fim disso ninguém encontra. */
+.env-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.env-intro {
+  max-width: 66ch;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--mk-tinta-media);
+}
+.env-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+/* Desligado não some da tela: sumir esconderia que o tipo existe, e a dona
+   precisa saber que dá para religar. Recua, e só. */
+.env-card.desligado .env-nome,
+.env-card.desligado .env-quando {
+  color: var(--mk-tinta-fraca);
+}
+.env-topo {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.env-nome {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--mk-tinta);
+}
+.env-quando {
+  margin-top: 2px;
+  font-size: 11.5px;
+  color: var(--mk-tinta-fraca);
+}
+.env-chave {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  color: var(--mk-tinta-media);
+  cursor: pointer;
+}
+.env-campos {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.env-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding-top: 12px;
+  border-top: 1px solid var(--mk-linha-suave);
+}
+.env-grupo-titulo {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--mk-tinta-fraca);
+}
+.env-linha {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.env-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+  flex: 1 1 220px;
+}
+.env-rotulo {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--mk-tinta-media);
+}
+/* A linha que explica a regra em português. Sem ela, "máximo por pessoa por
+   dia" é lido como teto de HORÁRIOS, que é o erro caro. */
+.env-dica {
+  max-width: 52ch;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--mk-tinta-fraca);
+}
+.env-num {
+  width: 96px;
+}
+.env-hora {
+  width: 128px;
+}
+/* Sete botões, domingo primeiro — a mesma origem de `extract(dow)`. */
+.env-dias {
+  display: flex;
+  gap: 5px;
+}
+.env-dia {
+  width: 33px;
+  height: 33px;
+  border: 1px solid var(--mk-linha);
+  border-radius: 5px;
+  background: transparent;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--mk-tinta-fraca);
+  cursor: pointer;
+  transition: border-color var(--mk-transicao), background var(--mk-transicao),
+    color var(--mk-transicao);
+}
+.env-dia:hover {
+  border-color: var(--mk-tinta-fraca);
+  color: var(--mk-tinta);
+}
+.env-dia.marcado {
+  border-color: color-mix(in srgb, var(--mk-acento) 35%, transparent);
+  background: color-mix(in srgb, var(--mk-acento) 12%, transparent);
+  color: var(--mk-tinta);
+}
+.env-marca {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--mk-tinta-media);
+  cursor: pointer;
+}
+.env-frequente {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-left: 22px;
+  padding-left: 12px;
+  border-left: 1px solid var(--mk-linha);
+}
+/* ⚠️ A PRÉVIA É O CONTROLE DE VERDADE DESTA TELA. Regra escrita em número é
+   difícil de conferir; a mesma regra em português a dona lê e diz na hora se
+   está certa. Por isso ela é a última coisa do card, com peso de texto e não
+   de rodapé. */
+.env-previa {
+  padding-top: 12px;
+  border-top: 1px solid var(--mk-linha-suave);
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--mk-tinta);
+}
+.env-vazio {
+  font-size: 13px;
+  color: var(--mk-tinta-fraca);
+}
+/* A dispensa individual, na ficha do cliente. */
+.env-dispensa {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-bottom: 1.25rem;
+}
+
 /* ── Requisitos: o formulário público ────────────────────────────────────── */
 /* ⚠️ ESTA TELA NÃO USA O SISTEMA ESCURO DO PAINEL, e é a única exceção junto
    com o site institucional. Ela é pública, abre no navegador do celular e

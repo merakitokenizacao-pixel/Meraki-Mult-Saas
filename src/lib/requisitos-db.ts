@@ -71,6 +71,29 @@ export async function salvarRequisito(
   if (error) throw error;
 }
 
+/**
+ * Quantas respostas já foram gravadas para este requisito.
+ *
+ * ⚠️ É A TRAVA DO EXCLUIR. As FKs de `requisito_campos`, `requisito_procedimentos`
+ * e `requisito_respostas` são todas `ON DELETE CASCADE` — conferido no banco.
+ * Ou seja: apagar o requisito apaga AS RESPOSTAS JUNTO, sem erro nenhum. Para
+ * um requisito que nunca foi usado isso é o desejado; com resposta gravada é
+ * perda silenciosa de dado clínico.
+ */
+export async function contarRespostas(requisitoId: string): Promise<number> {
+  const { count, error } = await supabase
+    .from("requisito_respostas")
+    .select("id", { count: "exact", head: true })
+    .eq("requisito_id", requisitoId);
+  if (error) throw error;
+  return count ?? 0;
+}
+
+export async function excluirRequisito(id: string): Promise<void> {
+  const { error } = await supabase.from("requisitos").delete().eq("id", id);
+  if (error) throw error;
+}
+
 // ── Perguntas ───────────────────────────────────────────────────────────────
 
 export async function listarCampos(

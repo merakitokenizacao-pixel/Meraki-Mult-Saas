@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
-import { atualizarPromocao, alternarAtiva } from "@/lib/promocao-db";
+import {
+  atualizarPromocao,
+  alternarAtiva,
+  excluirPromocao,
+} from "@/lib/promocao-db";
 import { isTokenValido } from "@/lib/ficha";
 import { validarPromocao, type CamposPromocao } from "@/lib/promocao";
 import {
@@ -69,6 +73,36 @@ export async function PUT(
     return NextResponse.json({
       promocao: await atualizarPromocao(tenant, id, campos),
     });
+  } catch {
+    return NextResponse.json({ erro: "erro_interno" }, { status: 500 });
+  }
+}
+
+/**
+ * DELETE = apaga de vez.
+ *
+ * ⚠️ O PATCH continua sendo o caminho normal: "Tirar do ar" grava `ativa=false`
+ * e preserva o histórico. Este aqui existe para o erro de cadastro — promoção
+ * criada sem querer, que nunca deveria ter existido. A confirmação na tela é
+ * quem explica que a agente para de oferecer na hora.
+ */
+export async function DELETE(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+  if (!isTokenValido(id)) {
+    return NextResponse.json({ erro: "id_invalido" }, { status: 400 });
+  }
+  let tenant: string;
+  try {
+    tenant = (await resolverTenant(req)).tenant_id;
+  } catch (e) {
+    return respostaErroTenant(e);
+  }
+  try {
+    await excluirPromocao(tenant, id);
+    return NextResponse.json({ ok: true });
   } catch {
     return NextResponse.json({ erro: "erro_interno" }, { status: 500 });
   }

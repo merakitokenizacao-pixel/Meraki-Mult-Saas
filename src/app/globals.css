@@ -6061,6 +6061,224 @@ a.sidebar-footer:hover {
   background: var(--mk-superficie-3);
 }
 
+/* Linha da lista de requisitos: o item ocupa a largura e o `⋯` fecha a linha. */
+.rq-cfg-linha-item {
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
+}
+.rq-cfg-linha-item .rq-cfg-item {
+  flex: 1;
+  min-width: 0;
+}
+/* Ações do card de promoção. */
+.promo-acoes {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.promo-excluir {
+  height: 30px;
+  padding: 0 10px;
+  border: none;
+  border-radius: 5px;
+  background: transparent;
+  font-family: inherit;
+  font-size: 12px;
+  color: var(--mk-tinta-fraca);
+  cursor: pointer;
+  transition: color var(--mk-transicao), background var(--mk-transicao);
+}
+.promo-excluir:hover {
+  color: var(--mk-st-erro);
+  background: color-mix(in srgb, var(--mk-st-erro) 10%, transparent);
+}
+
+/* ── Confirmação de ação irreversível ────────────────────────────────────── */
+/* ⚠️ AÇÃO DESTRUTIVA USA `--mk-st-erro` SÓ NO TEXTO. Botão vermelho sólido puxa
+   o clique justamente no lugar onde não se quer pressa: o olho vai no bloco de
+   cor antes de ler o título, e o título é onde está o nome do item. */
+.cfm-titulo {
+  margin-bottom: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--mk-tinta);
+}
+.cfm-texto {
+  margin-bottom: 20px;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--mk-tinta-media);
+}
+.cfm-acoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.cfm-destrutivo {
+  height: 33px;
+  padding: 0 14px;
+  border: 1px solid color-mix(in srgb, var(--mk-st-erro) 35%, transparent);
+  border-radius: 5px;
+  background: transparent;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--mk-st-erro);
+  cursor: pointer;
+  transition: background var(--mk-transicao), border-color var(--mk-transicao);
+}
+.cfm-destrutivo:hover {
+  border-color: var(--mk-st-erro);
+  background: color-mix(in srgb, var(--mk-st-erro) 12%, transparent);
+}
+
+/* ── Menu `⋯` das profissionais ──────────────────────────────────────────── */
+.prof-menu-wrap {
+  position: relative;
+  display: inline-flex;
+}
+.prof-menu-btn {
+  display: grid;
+  place-items: center;
+  width: 33px;
+  height: 33px;
+  border: 1px solid var(--mk-linha);
+  border-radius: 5px;
+  background: transparent;
+  color: var(--mk-tinta-fraca);
+  cursor: pointer;
+  transition: color var(--mk-transicao), border-color var(--mk-transicao);
+}
+.prof-menu-btn:hover {
+  color: var(--mk-tinta);
+  border-color: var(--mk-tinta-fraca);
+}
+/* Captura o clique fora sem depender de listener no documento. */
+.prof-menu-fora {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+}
+.prof-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: 41;
+  width: 232px;
+  padding: 5px;
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
+  /* Opaco: o menu TAPA o card de baixo. */
+  background: var(--mk-elevado);
+}
+.prof-menu-item {
+  width: 100%;
+  padding: 8px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  font-family: inherit;
+  font-size: 12.5px;
+  text-align: left;
+  color: var(--mk-tinta-media);
+  cursor: pointer;
+  transition: background var(--mk-transicao), color var(--mk-transicao);
+}
+.prof-menu-item:hover {
+  background: var(--mk-superficie-3);
+}
+.prof-menu-item.destrutivo {
+  color: var(--mk-st-erro);
+}
+/* ⚠️ O MOTIVO NO LUGAR DO BOTÃO, e não o botão escondido em silêncio. Botão que
+   some sem explicação faz a pessoa procurar, desistir e achar que o sistema é
+   quebrado. */
+.prof-menu-motivo {
+  padding: 8px;
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--mk-tinta-fraca);
+}
+
+/* ── Bloco recolhido de itens desativados ────────────────────────────────── */
+/* ⚠️ ITEM DESATIVADO NUNCA SOME DA TELA. Sumir faz a pessoa achar que apagou —
+   e aí ela cria outro igual, ou procura o botão de desfazer que não existe.
+   Vai para um bloco recolhido no fim, com contador e opção de reativar. */
+.arq-bloco {
+  margin-top: 4px;
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
+  background: var(--mk-rebaixado);
+}
+.arq-cab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 11px 13px;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 500;
+  text-align: left;
+  color: var(--mk-tinta-media);
+  cursor: pointer;
+  transition: color var(--mk-transicao);
+}
+.arq-cab:hover {
+  color: var(--mk-tinta);
+}
+.arq-seta {
+  display: inline-flex;
+  transition: transform var(--mk-transicao);
+}
+.arq-cab[aria-expanded="true"] .arq-seta {
+  transform: rotate(90deg);
+}
+.arq-corpo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0 13px 13px;
+}
+.arq-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 11px;
+  border: 1px solid var(--mk-linha);
+  border-radius: 5px;
+  background: var(--mk-superficie);
+}
+.arq-nome {
+  flex: 1;
+  min-width: 0;
+  font-size: 12.5px;
+  color: var(--mk-tinta-media);
+}
+.arq-acao {
+  height: 28px;
+  padding: 0 10px;
+  border: 1px solid var(--mk-linha);
+  border-radius: 5px;
+  background: transparent;
+  font-family: inherit;
+  font-size: 12px;
+  color: var(--mk-tinta-media);
+  cursor: pointer;
+  transition: color var(--mk-transicao), border-color var(--mk-transicao);
+}
+.arq-acao:hover {
+  color: var(--mk-tinta);
+  border-color: var(--mk-tinta-fraca);
+}
+.arq-acao.destrutivo {
+  color: var(--mk-st-erro);
+}
+
 /* ── Envios automáticos ──────────────────────────────────────────────────── */
 /* A interface de `envios_regras` — a tabela que o porteiro `envio_pode` lê.
    Autosave por campo: são dezesseis campos por tipo, quatro tipos, e um botão
@@ -6081,11 +6299,31 @@ a.sidebar-footer:hover {
   flex-direction: column;
   gap: 14px;
 }
-/* Desligado não some da tela: sumir esconderia que o tipo existe, e a dona
-   precisa saber que dá para religar. Recua, e só. */
-.env-card.desligado .env-nome,
+/* ⚠️ O CARD DESLIGADO NÃO APAGA O PRÓPRIO NOME. Antes `.desligado` puxava
+   título e descrição para tinta-fraca, e "Lembrete de véspera" em cinza claro
+   sobre um corpo colapsado lia como card NOVO e vazio — a pessoa desligava e
+   achava que tinha criado outra coisa. O que muda ao desligar é o corpo sumir
+   e a prévia dizer que nada é mandado. O nome fica igual. */
+.env-card.desligado .env-nome {
+  color: var(--mk-tinta);
+}
 .env-card.desligado .env-quando {
   color: var(--mk-tinta-fraca);
+}
+/* Colapso com transição: sumir de uma vez é o que faz parecer troca de card em
+   vez de mudança de estado do mesmo card. */
+.env-campos {
+  animation: env-abrir 160ms ease;
+}
+@keyframes env-abrir {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 .env-topo {
   display: flex;
@@ -6104,13 +6342,59 @@ a.sidebar-footer:hover {
   font-size: 11.5px;
   color: var(--mk-tinta-fraca);
 }
-.env-chave {
+.env-toggle {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  font-family: inherit;
   font-size: 12px;
-  color: var(--mk-tinta-media);
   cursor: pointer;
+}
+.env-toggle-trilho {
+  position: relative;
+  width: 34px;
+  height: 20px;
+  flex-shrink: 0;
+  border: 1px solid var(--mk-linha);
+  border-radius: 999px;
+  background: var(--mk-superficie-2);
+  transition: background var(--mk-transicao), border-color var(--mk-transicao);
+}
+.env-toggle-bolinha {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--mk-tinta-fraca);
+  transition: transform var(--mk-transicao), background var(--mk-transicao);
+}
+.env-toggle.ligado .env-toggle-trilho {
+  border-color: color-mix(in srgb, var(--mk-st-resolvido) 45%, transparent);
+  background: color-mix(in srgb, var(--mk-st-resolvido) 20%, transparent);
+}
+.env-toggle.ligado .env-toggle-bolinha {
+  transform: translateX(14px);
+  background: var(--mk-st-resolvido);
+}
+.env-toggle:focus-visible {
+  outline: none;
+}
+.env-toggle:focus-visible .env-toggle-trilho {
+  border-color: var(--mk-acento);
+}
+/* O rótulo muda de COR junto com o estado: verde quando ativo, apagado quando
+   não. É o que deixa ler o estado sem procurar a bolinha. */
+.env-toggle-rotulo {
+  color: var(--mk-tinta-fraca);
+  transition: color var(--mk-transicao);
+}
+.env-toggle.ligado .env-toggle-rotulo {
+  color: var(--mk-st-resolvido);
 }
 .env-campos {
   display: flex;
@@ -6217,6 +6501,13 @@ a.sidebar-footer:hover {
   font-size: 12.5px;
   line-height: 1.6;
   color: var(--mk-tinta);
+  text-align: left;
+}
+/* Desligado, a prévia é um aviso de estado — não um alarme. Sem negrito, sem
+   cor de erro: nada está quebrado, só desligado. */
+.env-card.desligado .env-previa {
+  color: var(--mk-tinta-media);
+  font-weight: 400;
 }
 .env-vazio {
   font-size: 13px;

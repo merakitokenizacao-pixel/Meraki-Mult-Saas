@@ -2,7 +2,15 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, GripVertical, Plus, Trash2 } from "lucide-react";
+import {
+  ArrowLeft,
+  ChevronRight,
+  GripVertical,
+  MoreVertical,
+  Plus,
+  Trash2,
+} from "lucide-react";
+import { Confirmar } from "@/components/confirmar";
 import { useTenant } from "@/components/tenant-provider";
 import { Segmentado } from "@/components/segmentado";
 import { showToast } from "@/lib/toast";
@@ -17,8 +25,10 @@ import {
   type TipoCampo,
 } from "@/lib/requisitos";
 import {
+  contarRespostas,
   contarRespostasComChave,
   criarCampo,
+  excluirRequisito,
   criarRequisito,
   desvincularProcedimento,
   listarCampos,
@@ -46,6 +56,46 @@ export function SecaoRequisitos() {
   const qc = useQueryClient();
   const { atual: clinica } = useTenant();
   const [abertoId, setAbertoId] = useState<string | null>(null);
+  const [menuAberto, setMenuAberto] = useState<string | null>(null);
+  const [arquivadosAbertos, setArquivadosAbertos] = useState(false);
+  // `usos` guarda a contagem de respostas: `null` enquanto conta, número
+  // depois. É o que decide entre excluir e explicar por que não dá.
+  const [excluindo, setExcluindo] = useState<{
+    id: string;
+    nome: string;
+    usos: number;
+  } | null>(null);
+
+  async function alternarAtivo(id: string, ativo: boolean) {
+    try {
+      await salvarRequisito(id, { ativo });
+      qc.invalidateQueries({ queryKey: CHAVE });
+    } catch {
+      showToast("Não foi possível salvar", "error");
+    }
+  }
+
+  async function pedirExclusao(id: string, nome: string) {
+    setMenuAberto(null);
+    try {
+      setExcluindo({ id, nome, usos: await contarRespostas(id) });
+    } catch {
+      showToast("Não foi possível conferir o histórico", "error");
+    }
+  }
+
+  async function confirmarExclusao() {
+    if (!excluindo) return;
+    const alvo = excluindo;
+    setExcluindo(null);
+    try {
+      await excluirRequisito(alvo.id);
+      showToast(`"${alvo.nome}" foi excluído`, "info");
+      qc.invalidateQueries({ queryKey: CHAVE });
+    } catch {
+      showToast("Não foi possível excluir", "error");
+    }
+  }
 
   const { data, isPending, error } = useQuery({
     queryKey: CHAVE,
@@ -56,6 +106,8 @@ export function SecaoRequisitos() {
     () => (data ?? []).find((r) => r.id === abertoId) ?? null,
     [data, abertoId]
   );
+  const ativos = useMemo(() => (data ?? []).filter((r) => r.ativo), [data]);
+  const desativados = useMemo(() => (data ?? []).filter((r) => !r.ativo), [data]);
 
   async function novo() {
     if (!clinica) return;
@@ -98,12 +150,12 @@ export function SecaoRequisitos() {
         </button>
       </div>
 
-      {(data ?? []).length === 0 ? (
+      {ativos.length === 0 && desativados.length === 0 ? (
         <p className="rq-cfg-vazio">Nenhum requisito configurado ainda.</p>
       ) : (
         <ul className="rq-cfg-lista">
-          {(data ?? []).map((r) => (
-            <li key={r.id}>
+          {ativos.map((r) => (
+            <li key={r.id} className="rq-cfg-linha-item">
               <button
                 type="button"
                 className="rq-cfg-item"
@@ -119,10 +171,128 @@ export function SecaoRequisitos() {
                 </span>
                 {r.bloqueia && <span className="rq-cfg-selo">bloqueia</span>}
               </button>
+
+              <div className="prof-menu-wrap">
+                <button
+                  className="prof-menu-btn"
+                  aria-haspopup="menu"
+                  aria-expanded={menuAberto === r.id}
+                  aria-label={`Mais ações para ${r.nome}`}
+                  onClick={() => setMenuAberto(menuAberto === r.id ? null : r.id)}
+                >
+                  <MoreVertical size={14} strokeWidth={2} />
+                </button>
+                {menuAberto === r.id && (
+                  <>
+                    <div
+                      className="prof-menu-fora"
+                      onClick={() => setMenuAberto(null)}
+                    />
+                    <div className="prof-menu" role="menu">
+                      {/* Renomear abre o editor, onde o campo Nome já mora —
+                          um segundo lugar para renomear é um segundo lugar
+                          para divergir. */}
+                      <button
+                        type="button"
+                        role="menuitem"
+                        className="prof-menu-item"
+                        onClick={() => {
+                          setMenuAberto(null);
+                          setAbertoId(r.id);
+                        }}
+                      >
+                        Renomear
+                      </button>
+                      <button
+                        type="button"
+                        role="menuitem"
+                        className="prof-menu-item"
+                        onClick={() => {
+                          setMenuAberto(null);
+                          alternarAtivo(r.id, false);
+                        }}
+                      >
+                        Desativar
+                      </button>
+                      <button
+                        type="button"
+                        role="menuitem"
+                        className="prof-menu-item destrutivo"
+                        onClick={() => pedirExclusao(r.id, r.nome)}
+                      >
+                        Excluir
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
             </li>
           ))}
         </ul>
       )}
+
+      {/* ⚠️ DESATIVADO NÃO SOME DA TELA. Sumir faz a pessoa achar que apagou —
+          e aí ela cria outro igual, ou procura o desfazer que não existe. */}
+      {desativados.length > 0 && (
+        <div className="arq-bloco">
+          <button
+            type="button"
+            className="arq-cab"
+            aria-expanded={arquivadosAbertos}
+            onClick={() => setArquivadosAbertos((v) => !v)}
+          >
+            <span className="arq-seta" aria-hidden="true">
+              <ChevronRight size={14} strokeWidth={2} />
+            </span>
+            Desativados ({desativados.length})
+          </button>
+          {arquivadosAbertos && (
+            <div className="arq-corpo">
+              {desativados.map((r) => (
+                <div key={r.id} className="arq-item">
+                  <span className="arq-nome">{r.nome}</span>
+                  <button
+                    type="button"
+                    className="arq-acao"
+                    onClick={() => alternarAtivo(r.id, true)}
+                  >
+                    Reativar
+                  </button>
+                  <button
+                    type="button"
+                    className="arq-acao destrutivo"
+                    onClick={() => pedirExclusao(r.id, r.nome)}
+                  >
+                    Excluir
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      <Confirmar
+        aberto={!!excluindo && excluindo.usos === 0}
+        titulo={`Excluir o requisito ${excluindo?.nome ?? ""}?`}
+        texto="As perguntas e os procedimentos vinculados somem junto. Isso não pode ser desfeito."
+        onConfirmar={confirmarExclusao}
+        onCancelar={() => setExcluindo(null)}
+      />
+      {/* Com resposta gravada não há botão de excluir: há o motivo escrito. */}
+      <Confirmar
+        aberto={!!excluindo && excluindo.usos > 0}
+        titulo={`"${excluindo?.nome ?? ""}" não pode ser excluído`}
+        texto={`Ele tem ${excluindo?.usos ?? 0} resposta${
+          excluindo?.usos === 1 ? "" : "s"
+        } gravada${excluindo?.usos === 1 ? "" : "s"}, e excluir apagaria essas respostas junto. Desative — ele para de ser exigido e o histórico fica.`}
+        rotuloAcao="Desativar"
+        onConfirmar={() => {
+          if (excluindo) alternarAtivo(excluindo.id, false);
+          setExcluindo(null);
+        }}
+        onCancelar={() => setExcluindo(null)}
+      />
     </div>
   );
 }
@@ -467,6 +637,13 @@ function LinhaPergunta({
 }) {
   const [pergunta, setPergunta] = useState(campo.pergunta);
   const [chave, setChave] = useState(campo.chave);
+  // A troca de chave fica PENDENTE até a confirmação: `usos` é quantas
+  // respostas já gravadas usam a chave antiga.
+  const [trocaPendente, setTrocaPendente] = useState<{
+    nova: string;
+    usos: number;
+  } | null>(null);
+  const [apagando, setApagando] = useState(false);
 
   useEffect(() => {
     setPergunta(campo.pergunta);
@@ -506,15 +683,8 @@ function LinhaPergunta({
       usos = -1;
     }
     if (usos !== 0) {
-      const quantas =
-        usos > 0 ? `${usos} resposta${usos === 1 ? "" : "s"} já gravada${usos === 1 ? "" : "s"}` : "respostas já gravadas";
-      const ok = window.confirm(
-        `Trocar a chave "${campo.chave}" quebra o histórico: ${quantas} guardam a chave antiga e deixarão de ser ligadas a esta pergunta.\n\nPrefira criar uma pergunta nova. Trocar assim mesmo?`
-      );
-      if (!ok) {
-        setChave(campo.chave);
-        return;
-      }
+      setTrocaPendente({ nova, usos });
+      return;
     }
     salvar({ chave: nova });
   }
@@ -616,8 +786,18 @@ function LinhaPergunta({
         type="button"
         className="rq-cfg-apagar"
         aria-label={`Apagar a pergunta ${campo.pergunta}`}
-        onClick={async () => {
-          if (!window.confirm(`Apagar "${campo.pergunta}"?`)) return;
+        onClick={() => setApagando(true)}
+      >
+        <Trash2 size={14} strokeWidth={2} />
+      </button>
+
+      <Confirmar
+        aberto={apagando}
+        titulo={`Apagar a pergunta "${campo.pergunta}"?`}
+        texto="Ela some do formulário. As respostas já gravadas continuam no histórico, mas ninguém mais vai responder a esta pergunta."
+        rotuloAcao="Apagar"
+        onConfirmar={async () => {
+          setApagando(false);
           try {
             await removerCampo(campo.id);
             onMudou();
@@ -625,9 +805,28 @@ function LinhaPergunta({
             showToast("Não foi possível apagar", "error");
           }
         }}
-      >
-        <Trash2 size={14} strokeWidth={2} />
-      </button>
+        onCancelar={() => setApagando(false)}
+      />
+
+      <Confirmar
+        aberto={!!trocaPendente}
+        titulo={`Trocar a chave "${campo.chave}" quebra o histórico`}
+        texto={`${
+          trocaPendente && trocaPendente.usos > 0
+            ? `${trocaPendente.usos} resposta${trocaPendente.usos === 1 ? "" : "s"} já gravada${trocaPendente.usos === 1 ? "" : "s"}`
+            : "Respostas já gravadas"
+        } guardam a chave antiga dentro do JSON e deixarão de ser ligadas a esta pergunta. Prefira criar uma pergunta nova.`}
+        rotuloAcao="Trocar assim mesmo"
+        onConfirmar={() => {
+          const nova = trocaPendente?.nova;
+          setTrocaPendente(null);
+          if (nova) salvar({ chave: nova });
+        }}
+        onCancelar={() => {
+          setTrocaPendente(null);
+          setChave(campo.chave);
+        }}
+      />
     </li>
   );
 }

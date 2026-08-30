@@ -2,7 +2,15 @@
 
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { CalendarClock, Loader2, Pencil, Plus, TriangleAlert } from "lucide-react";
+import {
+  CalendarClock,
+  Loader2,
+  MoreVertical,
+  Pencil,
+  Plus,
+  TriangleAlert,
+} from "lucide-react";
+import { Confirmar } from "@/components/confirmar";
 import { supabase } from "@/lib/supabase";
 import { showToast } from "@/lib/toast";
 import { EditorEscala } from "@/components/configuracoes/editor-escala";
@@ -17,19 +25,30 @@ type Profissional = { id: string; nome: string; cor: string; ativo: boolean };
 type FaixaRow = Faixa & { id: string; profissional_id: string };
 
 async function getProfissionais() {
-  const [p, h] = await Promise.all([
+  const [p, h, a] = await Promise.all([
     supabase.from("profissionais").select("id,nome,cor,ativo").order("nome"),
     supabase
       .from("profissional_horarios")
       .select("id,profissional_id,dia_semana,hora_inicio,hora_fim")
       .order("dia_semana")
       .order("hora_inicio"),
+    // Quantos atendimentos cada uma tem no histórico. É o que decide se
+    // EXCLUIR pode aparecer — ver o comentário em `podeExcluir`.
+    supabase.from("agendamentos").select("profissional_id"),
   ]);
   if (p.error) throw p.error;
   if (h.error) throw h.error;
+  if (a.error) throw a.error;
+
+  const atendimentos = new Map<string, number>();
+  for (const linha of a.data ?? []) {
+    const id = linha.profissional_id as string | null;
+    if (id) atendimentos.set(id, (atendimentos.get(id) ?? 0) + 1);
+  }
   return {
     profissionais: (p.data ?? []) as Profissional[],
     faixas: (h.data ?? []) as FaixaRow[],
+    atendimentos,
   };
 }
 
@@ -43,6 +62,32 @@ export function SecaoProfissionais() {
   // Cadastro/edição da profissional em si (nome e cor). `null` + aberto = nova.
   const [cadastro, setCadastro] = useState<ProfissionalEdit>(null);
   const [cadastroAberto, setCadastroAberto] = useState(false);
+  const [menuAberto, setMenuAberto] = useState<string | null>(null);
+  const [excluindo, setExcluindo] = useState<Profissional | null>(null);
+
+  /**
+   * ⚠️ EXCLUIR SÓ QUANDO NÃO HÁ HISTÓRICO. A FK de `agendamentos` é
+   * `ON DELETE SET NULL` — conferido no banco —, então apagar a profissional
+   * nunca quebra agendamento nenhum. O problema é outro: o histórico perderia
+   * QUEM atendeu, em silêncio, e não há como recuperar isso.
+   *
+   * Desativar continua sendo o padrão; excluir existe só para o erro de
+   * cadastro, alguém criado sem querer que nunca atendeu ninguém.
+   */
+  async function excluir(prof: Profissional) {
+    setExcluindo(null);
+    try {
+      const { error } = await supabase
+        .from("profissionais")
+        .delete()
+        .eq("id", prof.id);
+      if (error) throw error;
+      showToast(`${prof.nome} foi excluída`, "info");
+      recarregar();
+    } catch {
+      showToast("Não foi possível excluir", "error");
+    }
+  }
 
   function recarregar() {
     qc.invalidateQueries({ queryKey: ["profissionais"] });
@@ -98,6 +143,7 @@ export function SecaoProfissionais() {
 
   const { profissionais, faixas } = data;
   const faixasDe = (id: string) => faixas.filter((f) => f.profissional_id === id);
+  const atendimentos = data?.atendimentos ?? new Map<string, number>();
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
@@ -162,6 +208,56 @@ export function SecaoProfissionais() {
                 >
                   <CalendarClock size={14} strokeWidth={1.8} /> Escala
                 </button>
+
+                {/* Excluir mora DENTRO do `⋯`, não ao lado de Desativar: uma
+                    ação irreversível encostada numa reversível é clicada por
+                    engano mais cedo ou mais tarde. */}
+                <div className="prof-menu-wrap">
+                  <button
+                    className="prof-menu-btn"
+                    aria-haspopup="menu"
+                    aria-expanded={menuAberto === p.id}
+                    aria-label={`Mais ações para ${p.nome}`}
+                    onClick={() =>
+                      setMenuAberto(menuAberto === p.id ? null : p.id)
+                    }
+                  >
+                    <MoreVertical size={14} strokeWidth={2} />
+                  </button>
+                  {menuAberto === p.id && (
+                    <>
+                      <div
+                        className="prof-menu-fora"
+                        onClick={() => setMenuAberto(null)}
+                      />
+                      <div className="prof-menu" role="menu">
+                        {atendimentos.get(p.id) ? (
+                          // ⚠️ NÃO ESCONDE EM SILÊNCIO. Botão que some sem
+                          // explicação faz a pessoa procurar, desistir e achar
+                          // que o sistema é quebrado.
+                          <p className="prof-menu-motivo">
+                            Não pode ser excluída porque tem{" "}
+                            {atendimentos.get(p.id)} atendimento
+                            {atendimentos.get(p.id) === 1 ? "" : "s"} no
+                            histórico. Use Desativar.
+                          </p>
+                        ) : (
+                          <button
+                            type="button"
+                            role="menuitem"
+                            className="prof-menu-item destrutivo"
+                            onClick={() => {
+                              setMenuAberto(null);
+                              setExcluindo(p);
+                            }}
+                          >
+                            Excluir
+                          </button>
+                        )}
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -226,6 +322,14 @@ export function SecaoProfissionais() {
         profissional={cadastro}
         onClose={() => setCadastroAberto(false)}
         onSalvo={recarregar}
+      />
+
+      <Confirmar
+        aberto={!!excluindo}
+        titulo={`Excluir a profissional ${excluindo?.nome ?? ""}?`}
+        texto="A escala, os bloqueios e os procedimentos que ela faz somem junto. Isso não pode ser desfeito — se ela já atendeu alguém, use Desativar."
+        onConfirmar={() => excluindo && excluir(excluindo)}
+        onCancelar={() => setExcluindo(null)}
       />
     </div>
   );

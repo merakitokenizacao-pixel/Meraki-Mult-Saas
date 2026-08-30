@@ -714,6 +714,42 @@ fica de pé para o dia em que houver um segundo sistema.
 (`.neg-card`, `.nav-item`, `.mtz-*`). Tailwind só em layout pontual.
 **Se nomear uma classe, escreva o CSS dela na mesma alteração.**
 
+## Desativar e excluir
+
+O padrão vale para as telas que criam alguma coisa — profissionais, requisitos,
+promoções:
+
+```
+DESATIVAR   sempre disponível · reversível · preserva histórico
+EXCLUIR     só quando não há filho · confirmação NOMEANDO o item · irreversível
+```
+
+⚠️ **O BANCO NÃO PROTEGE NADA DISSO — medido em transação com ROLLBACK.**
+Apagar uma profissional COM agendamento **passa sem erro**: a FK é
+`ON DELETE SET NULL`, o agendamento fica com `profissional_id` nulo e o
+histórico perde quem atendeu, em silêncio. Apagar um requisito COM resposta
+também **passa sem erro**: as FKs de `requisito_campos`,
+`requisito_procedimentos` e `requisito_respostas` são `ON DELETE CASCADE`, e as
+respostas somem junto. A trava é a interface, e só ela.
+
+⚠️ **Quando excluir não for possível, o botão NÃO some em silêncio** — o motivo
+aparece escrito no lugar dele. Botão que desaparece sem explicação faz a pessoa
+procurar, desistir e achar que o sistema é quebrado.
+
+⚠️ **Item desativado nunca some da tela**: vai para um bloco recolhido no fim
+(`.arq-*`), com contador e opção de reativar. Sumir faz a pessoa achar que
+apagou — e aí ela cria outro igual.
+
+⚠️ **Confirmação é `<Confirmar>` (`src/components/confirmar.tsx`), nunca
+`window.confirm`.** O diálogo nativo é desenhado pelo sistema operacional, que
+é **claro** — no painel escuro ele vira uma caixa branca sem relação com o
+resto. Mesmo motivo pelo qual o `<select>` saiu da Visão geral. E ele **nomeia
+o item**: "Excluir a profissional Rozaria?", nunca "Tem certeza?" — diálogo
+genérico é clicado no automático.
+
+**Ação destrutiva usa `--mk-st-erro` só no TEXTO**, nunca como fundo cheio de
+botão: bloco de cor puxa o clique justamente onde não se quer pressa.
+
 ## Defeitos conhecidos (herdados, não são regressão)
 
 - **Teto de 1.000 linhas do PostgREST.** Ele devolve no máximo 1.000 linhas e

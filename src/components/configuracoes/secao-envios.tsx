@@ -99,16 +99,29 @@ function CardEnvio({
           <h2 className="env-nome">{rotulo.nome}</h2>
           <p className="env-quando">{rotulo.quando}</p>
         </div>
-        <label className="env-chave">
-          <input
-            type="checkbox"
-            checked={r.ativo}
-            onChange={(e) => salvar({ ativo: e.target.checked })}
-          />
-          <span>{r.ativo ? "Ativo" : "Desligado"}</span>
-        </label>
+        {/* TOGGLE, não checkbox. Checkbox sugere formulário com botão
+            "Salvar" no fim; toggle sugere efeito imediato, que é o que
+            acontece aqui — a gravação sai no clique. */}
+        <button
+          type="button"
+          role="switch"
+          aria-checked={r.ativo}
+          aria-label={`${rotulo.nome}: ${r.ativo ? "ativo" : "desligado"}`}
+          className={`env-toggle${r.ativo ? " ligado" : ""}`}
+          onClick={() => salvar({ ativo: !r.ativo })}
+        >
+          <span className="env-toggle-trilho" aria-hidden="true">
+            <span className="env-toggle-bolinha" />
+          </span>
+          <span className="env-toggle-rotulo">
+            {r.ativo ? "Ativo" : "Desligado"}
+          </span>
+        </button>
       </header>
 
+      {/* O corpo colapsa, mas o card NÃO vira outra coisa: título e descrição
+          ficam na cor normal. Antes eles apagavam junto e "Lembrete de véspera"
+          lia como placeholder de um card novo e vazio. */}
       {r.ativo && (
         <div className="env-campos">
           {/* ── Quando manda ── */}

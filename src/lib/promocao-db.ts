@@ -109,6 +109,29 @@ export async function atualizarPromocao(
   return p;
 }
 
+/**
+ * Exclui de vez.
+ *
+ * Promoção não tem tabela filha — nenhuma FK aponta para `promocoes` —, então
+ * excluir é seguro do ponto de vista do banco. O que NÃO é reversível é o
+ * efeito: ela sai do catálogo que a agente consulta, e o texto da oferta some
+ * junto. Por isso a confirmação diz isso com todas as letras.
+ *
+ * O par id+tenant no WHERE é obrigatório: o id vem da URL, ou seja, do cliente.
+ */
+export async function excluirPromocao(
+  tenant: string,
+  id: string
+): Promise<void> {
+  const db = getSupabaseAdmin();
+  const { error } = await db
+    .from("promocoes")
+    .delete()
+    .eq("id", id)
+    .eq("tenant_id", tenant);
+  if (error) throw error;
+}
+
 /** Liga/desliga sem abrir o formulário (atalho da lista). */
 export async function alternarAtiva(
   tenant: string,

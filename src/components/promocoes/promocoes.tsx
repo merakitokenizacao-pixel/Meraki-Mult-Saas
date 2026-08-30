@@ -2,7 +2,15 @@
 
 import { useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Loader2, Megaphone, Plus, Tag, TriangleAlert } from "lucide-react";
+import {
+  ChevronRight,
+  Loader2,
+  Megaphone,
+  Plus,
+  Tag,
+  TriangleAlert,
+} from "lucide-react";
+import { Confirmar } from "@/components/confirmar";
 import { showToast } from "@/lib/toast";
 import {
   estaNoAr,
@@ -42,11 +50,19 @@ export function Promocoes() {
   });
   const [editando, setEditando] = useState<Promocao | null>(null);
   const [aberto, setAberto] = useState(false);
+  const [excluindo, setExcluindo] = useState<Promocao | null>(null);
+  const [foraAberto, setForaAberto] = useState(false);
 
   // Hoje em Brasília, calculado uma vez por render: a virada do dia que vale
   // é a da clínica, não a do servidor.
   const hoje = useMemo(() => hojeBrasilia(), []);
   const lista = useMemo(() => ordenar(data ?? [], hoje), [data, hoje]);
+  // ⚠️ FORA DO AR NÃO SOME DA TELA — vai para um bloco recolhido no fim, com
+  // contador e opção de reativar. Sumir faz a pessoa achar que apagou, e aí
+  // ela cria outra igual. "Vencida" fica na lista principal de propósito: ela
+  // ainda pede ação (renovar o prazo), não é arquivo.
+  const noAr2 = useMemo(() => lista.filter((p) => p.ativa), [lista]);
+  const foraDoAr = useMemo(() => lista.filter((p) => !p.ativa), [lista]);
   const noAr = useMemo(
     () => (data ?? []).filter((p) => estaNoAr(p, hoje)).length,
     [data, hoje]
@@ -78,6 +94,19 @@ export function Promocoes() {
         : `"${p.titulo}" voltou ao ar`,
       "info"
     );
+    recarregar();
+  }
+
+  async function excluir(p: Promocao) {
+    setExcluindo(null);
+    const res = await fetchPainel(`/api/painel/promocoes/${p.id}`, {
+      method: "DELETE",
+    });
+    if (!res.ok) {
+      showToast("Não foi possível excluir.", "error");
+      return;
+    }
+    showToast(`"${p.titulo}" foi excluída`, "info");
     recarregar();
   }
 
@@ -165,7 +194,7 @@ export function Promocoes() {
         </div>
       ) : (
         <div className="promo-grid">
-          {lista.map((p) => {
+          {noAr2.map((p) => {
             const sit = situacaoDe(p, hoje);
             const tom = TOM[sit];
             const fora = sit !== "vigente";
@@ -232,19 +261,72 @@ export function Promocoes() {
                     </button>
                   </>
                 ) : (
-                  <button
-                    className="promo-toggle"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      alternar(p);
-                    }}
-                  >
-                    {p.ativa ? "Tirar do ar" : "Reativar"}
-                  </button>
+                  <div className="promo-acoes">
+                    <button
+                      className="promo-toggle"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        alternar(p);
+                      }}
+                    >
+                      {p.ativa ? "Tirar do ar" : "Reativar"}
+                    </button>
+                    {/* Excluir em texto, nunca em botão sólido vermelho:
+                        bloco de cor puxa o clique no lugar onde não se quer
+                        pressa. */}
+                    <button
+                      className="promo-excluir"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setExcluindo(p);
+                      }}
+                    >
+                      Excluir
+                    </button>
+                  </div>
                 )}
               </div>
             );
           })}
+        </div>
+      )}
+
+      {foraDoAr.length > 0 && (
+        <div className="arq-bloco">
+          <button
+            type="button"
+            className="arq-cab"
+            aria-expanded={foraAberto}
+            onClick={() => setForaAberto((v) => !v)}
+          >
+            <span className="arq-seta" aria-hidden="true">
+              <ChevronRight size={14} strokeWidth={2} />
+            </span>
+            Fora do ar ({foraDoAr.length})
+          </button>
+          {foraAberto && (
+            <div className="arq-corpo">
+              {foraDoAr.map((p) => (
+                <div key={p.id} className="arq-item">
+                  <span className="arq-nome">{p.titulo}</span>
+                  <button
+                    type="button"
+                    className="arq-acao"
+                    onClick={() => alternar(p)}
+                  >
+                    Reativar
+                  </button>
+                  <button
+                    type="button"
+                    className="arq-acao destrutivo"
+                    onClick={() => setExcluindo(p)}
+                  >
+                    Excluir
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
@@ -254,6 +336,14 @@ export function Promocoes() {
         promocoes={data ?? []}
         onClose={() => setAberto(false)}
         onSalvo={recarregar}
+      />
+
+      <Confirmar
+        aberto={!!excluindo}
+        titulo={`Excluir a promoção ${excluindo?.titulo ?? ""}?`}
+        texto="A Sofia para de oferecer esta promoção imediatamente. Isso não pode ser desfeito."
+        onConfirmar={() => excluindo && excluir(excluindo)}
+        onCancelar={() => setExcluindo(null)}
       />
     </div>
   );

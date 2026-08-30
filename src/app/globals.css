@@ -6061,6 +6061,430 @@ a.sidebar-footer:hover {
   background: var(--mk-superficie-3);
 }
 
+/* ── Requisitos: o formulário público ────────────────────────────────────── */
+/* ⚠️ ESTA TELA NÃO USA O SISTEMA ESCURO DO PAINEL, e é a única exceção junto
+   com o site institucional. Ela é pública, abre no navegador do celular e
+   muitas vezes no sol — fundo escuro ali é ilegível. A paleta é declarada aqui,
+   com hex literal, porque é justamente por não ser a do painel que ela não pode
+   sair dos tokens dele. */
+.rq-root {
+  --rq-fundo: #ffffff;
+  --rq-tinta: #18181b;
+  --rq-tinta-fraca: #6b7280;
+  --rq-linha: #e4e4e7;
+  /* O acento é o MESMO do painel: é a única coisa que amarra as duas telas. */
+  --rq-acento: var(--mk-acento);
+  --rq-raio: 8px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  /* 480px: o formulário é de celular, e uma linha de texto larga demais numa
+     tela pequena não acontece — mas no desktop aconteceria. */
+  max-width: 480px;
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: 28px 20px 40px;
+  background: var(--rq-fundo);
+  color: var(--rq-tinta);
+  font-family: var(--font-plex), system-ui, sans-serif;
+}
+/* Só o nome do requisito no topo. Sem logo do Meraki, sem menu, sem rodapé:
+   quem mandou o link foi a clínica, e é ela que a cliente reconhece. */
+.rq-topo {
+  text-align: center;
+}
+.rq-clinica {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--rq-tinta);
+}
+.rq-descricao {
+  margin-top: 6px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--rq-tinta-fraca);
+}
+.rq-caixa {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+/* Barra fina, sem "3 de 5": o número transforma o formulário numa tarefa com
+   tamanho, e tamanho é o que faz desistir no meio. */
+.rq-progresso {
+  height: 3px;
+  border-radius: 999px;
+  background: var(--rq-linha);
+  overflow: hidden;
+}
+.rq-progresso-fill {
+  height: 100%;
+  background: var(--rq-acento);
+  transition: width 220ms ease;
+}
+.rq-corpo {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.rq-voltar {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 5px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--rq-tinta-fraca);
+  cursor: pointer;
+}
+.rq-pergunta {
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--rq-tinta);
+}
+/* Dois botões grandes, lado a lado. Dropdown ou checkbox aqui é teclado
+   abrindo, alvo pequeno e uma decisão a mais para quem está na rua. */
+.rq-simnao {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.rq-opcao,
+.rq-continuar {
+  /* 48px é dedo, não mouse. */
+  height: 48px;
+  border-radius: var(--rq-raio);
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 120ms ease, background 120ms ease, color 120ms ease;
+}
+.rq-opcao {
+  border: 1px solid var(--rq-linha);
+  background: var(--rq-fundo);
+  color: var(--rq-tinta);
+}
+.rq-opcao:hover {
+  border-color: var(--rq-acento);
+}
+.rq-opcao.marcada {
+  border-color: var(--rq-acento);
+  background: color-mix(in srgb, var(--rq-acento) 10%, transparent);
+}
+.rq-continuar {
+  border: none;
+  background: var(--rq-acento);
+  color: #ffffff;
+}
+.rq-continuar:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.rq-campo {
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 14px;
+  border: 1px solid var(--rq-linha);
+  border-radius: var(--rq-raio);
+  background: var(--rq-fundo);
+  font-family: inherit;
+  font-size: 15px;
+  color: var(--rq-tinta);
+  resize: vertical;
+}
+.rq-campo:focus {
+  outline: none;
+  border-color: var(--rq-acento);
+}
+.rq-pular {
+  align-self: center;
+  padding: 8px;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--rq-tinta-fraca);
+  text-decoration: underline;
+  cursor: pointer;
+}
+.rq-erro {
+  font-size: 13px;
+  color: #b91c1c;
+}
+.rq-aviso {
+  font-size: 14px;
+  color: var(--rq-tinta-fraca);
+}
+/* A tela final é CONFIRMAÇÃO e só. `requisito_responder` devolve `alertas`,
+   e eles não aparecem aqui: são informação clínica para a equipe, e dizer
+   "você tem 2 alertas" assusta alguém que não tem contexto para interpretar. */
+.rq-fim {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 48px 0;
+  text-align: center;
+}
+.rq-fim-marca {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--rq-acento) 14%, transparent);
+  color: var(--rq-acento);
+}
+.rq-fim-marca.recusa {
+  background: #f4f4f5;
+  color: #6b7280;
+}
+.rq-fim-titulo {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--rq-tinta);
+}
+.rq-fim-texto {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--rq-tinta-fraca);
+}
+
+/* ── Requisitos: a tela que configura ────────────────────────────────────── */
+.rq-cfg-topo {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+.rq-cfg-explica {
+  max-width: 60ch;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--mk-tinta-media);
+}
+.rq-cfg-vazio {
+  padding: 8px 0;
+  font-size: 13px;
+  color: var(--mk-tinta-fraca);
+}
+.rq-cfg-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.rq-cfg-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
+  background: transparent;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--mk-transicao);
+}
+.rq-cfg-item:hover {
+  border-color: var(--mk-tinta-fraca);
+}
+.rq-cfg-nome {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--mk-tinta);
+}
+.rq-cfg-meta {
+  font-size: 11.5px;
+  color: var(--mk-tinta-fraca);
+}
+.rq-cfg-selo {
+  margin-left: auto;
+  padding: 2px 8px;
+  border-radius: var(--mk-raio);
+  background: color-mix(in srgb, var(--mk-st-erro) 12%, transparent);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--mk-st-erro);
+}
+.rq-cfg-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.rq-cfg-voltar {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 6px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 12.5px;
+  color: var(--mk-tinta-media);
+  cursor: pointer;
+}
+.rq-cfg-voltar:hover {
+  color: var(--mk-tinta);
+}
+.rq-cfg-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+.rq-cfg-rotulo {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--mk-tinta-media);
+}
+/* A linha que explica a regra. Sem ela, "Alertar se" e "Bloquear" são termos
+   que só quem escreveu entende. */
+.rq-cfg-dica {
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--mk-tinta-fraca);
+}
+.rq-cfg-atalhos {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.rq-cfg-atalho {
+  height: 33px;
+  padding: 0 12px;
+  border: 1px solid var(--mk-linha);
+  border-radius: 5px;
+  background: transparent;
+  font-family: inherit;
+  font-size: 12.5px;
+  color: var(--mk-tinta-media);
+  cursor: pointer;
+  transition: border-color var(--mk-transicao), color var(--mk-transicao);
+}
+.rq-cfg-atalho:hover {
+  color: var(--mk-tinta);
+  border-color: var(--mk-tinta-fraca);
+}
+.rq-cfg-atalho.marcado {
+  border-color: var(--mk-acento);
+  color: var(--mk-acento);
+}
+/* Mesma linguagem da grade de "Quem faz o quê", em UMA coluna: aqui a pergunta
+   é "este procedimento exige?", não uma matriz de dois eixos. */
+.rq-cfg-grade {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.rq-cfg-proc {
+  height: 33px;
+  padding: 0 12px;
+  border: 1px solid var(--mk-linha);
+  border-radius: 5px;
+  background: transparent;
+  font-family: inherit;
+  font-size: 12.5px;
+  color: var(--mk-tinta-media);
+  cursor: pointer;
+  transition: border-color var(--mk-transicao), background var(--mk-transicao),
+    color var(--mk-transicao);
+}
+.rq-cfg-proc:hover {
+  border-color: var(--mk-tinta-fraca);
+  color: var(--mk-tinta);
+}
+.rq-cfg-proc.marcado {
+  border-color: color-mix(in srgb, var(--mk-acento) 35%, transparent);
+  background: color-mix(in srgb, var(--mk-acento) 12%, transparent);
+  color: var(--mk-tinta);
+}
+.rq-cfg-proc.inativo {
+  opacity: 0.5;
+}
+.rq-cfg-perguntas {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.rq-cfg-pergunta {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
+  background: var(--mk-superficie);
+  transition: border-color var(--mk-transicao), opacity var(--mk-transicao);
+}
+.rq-cfg-pergunta.arrastando {
+  opacity: 0.4;
+}
+.rq-cfg-pega {
+  display: inline-flex;
+  margin-top: 9px;
+  color: var(--mk-tinta-fraca);
+  cursor: grab;
+}
+.rq-cfg-pergunta-corpo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+.rq-cfg-texto {
+  font-size: 13px;
+}
+.rq-cfg-linha {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.rq-cfg-mini {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--mk-tinta-fraca);
+}
+.rq-cfg-alerta {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding-top: 4px;
+  border-top: 1px solid var(--mk-linha-suave);
+}
+.rq-cfg-apagar {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  margin-top: 3px;
+  border: none;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--mk-tinta-fraca);
+  cursor: pointer;
+  transition: color var(--mk-transicao);
+}
+.rq-cfg-apagar:hover {
+  color: var(--mk-st-erro);
+}
+
 /* ── Kanban da agenda ────────────────────────────────────────────────────── */
 /* A COLUNA RECUA e o CARTÃO AVANÇA — é o degrau que a base cinza destravou.
    Sobre preto puro os dois teriam que ser o mesmo tom, e a única separação

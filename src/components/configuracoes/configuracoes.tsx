@@ -3,6 +3,7 @@
 import { useState } from "react";
 import {
   CalendarClock,
+  ClipboardList,
   Palette,
   Bot,
   Grid3x3,
@@ -12,6 +13,7 @@ import {
 } from "lucide-react";
 import { SecaoAparencia } from "@/components/configuracoes/secao-aparencia";
 import { SecaoMatriz } from "@/components/configuracoes/secao-matriz";
+import { SecaoRequisitos } from "@/components/configuracoes/secao-requisitos";
 import { SecaoLaura } from "@/components/configuracoes/secao-laura";
 import { SecaoConexao } from "@/components/configuracoes/secao-conexao";
 import { SecaoConta } from "@/components/configuracoes/secao-conta";
@@ -21,6 +23,7 @@ type SecaoId =
   | "laura"
   | "profissionais"
   | "matriz"
+  | "requisitos"
   | "conexao"
   | "aparencia"
   | "conta";
@@ -50,6 +53,13 @@ const SECOES: ReadonlyArray<{
     descricao:
       "Quais procedimentos cada profissional atende — nem todas fazem tudo",
     icon: Grid3x3,
+  },
+  {
+    id: "requisitos",
+    label: "Requisitos",
+    descricao:
+      "O que precisa estar respondido antes de um procedimento acontecer",
+    icon: ClipboardList,
   },
   {
     id: "conexao",
@@ -108,6 +118,7 @@ export function Configuracoes() {
         {secao === "laura" && <SecaoLaura />}
         {secao === "profissionais" && <SecaoProfissionais />}
         {secao === "matriz" && <SecaoMatriz />}
+        {secao === "requisitos" && <SecaoRequisitos />}
         {secao === "conexao" && <SecaoConexao />}
         {secao === "aparencia" && <SecaoAparencia />}
         {secao === "conta" && <SecaoConta />}

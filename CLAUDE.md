@@ -88,6 +88,15 @@ indexados por `identificador`) · `documentos` (base de conhecimento, com
 **Operação** — `leads` · `conversas` (com `msg_id` e os campos `media_*`) ·
 `agendamentos` · `promocoes` · `follow_ups` · `fichas_avaliacao`.
 
+**Requisitos** — `requisitos` (nome, `descricao`, `validade_dias`, `bloqueia`,
+`url_base`) · `requisito_procedimentos` (a matriz: qual procedimento exige qual
+requisito) · `requisito_campos` (as perguntas, com `chave`, `tipo` e
+`alerta_se`) · `requisito_respostas` (respostas em `jsonb`, `alertas`, `token`,
+`valido_ate`). O modelo em uma frase: **antes de X acontecer, Y precisa estar
+respondido e válido.** Nada no código sabe o que é uma ficha de
+contraindicação — as perguntas e a regra de alerta vêm todas do banco, e é isso
+que deixa uma odonto configurar "usa anticoagulante" sem tocar em código.
+
 **Kanban** — `kanban_colunas` (uma linha por status × clínica: `rotulo`,
 `descricao`, `ordem`, `visivel` e `cor`). ⚠️ `cor` guarda **nome de token**, e
 no vocabulário do desenho (`--st-erro`), não no da casa (`--mk-st-erro`).
@@ -135,6 +144,10 @@ badges e os KPIs usam os dois nos ícones. O que não existe é o chip.
 ### Quem pode chamar o quê
 
 ```
+anon (formulário público, SEM sessão — o token na URL é a credencial)
+  requisito_formulario(p_token uuid)   uma linha por pergunta
+  requisito_responder(p_token, jsonb)  grava e devolve ok, alertas, valido_ate
+
 authenticated (painel, via anon key + RLS)
   minhas_clinicas()          clínicas desta conta (tenant_id, slug, nome, papel)
   tenant_valido(uuid)        valida um tenant contra a sessão → devolve o uuid
@@ -150,6 +163,18 @@ service_role (só n8n e route handler)
   kanban_mover(p_tenant, agend, status, por)  move e devolve codigo + motivo
   taxa_no_show(p_tenant, de, ate)         realizados, faltas, cancelamentos
 ```
+
+⚠️ **O token de requisito é UUID.** `requisito_formulario(p_token uuid)` não
+devolve zero linhas para um link malformado: levanta `22P02 invalid input
+syntax for type uuid`. Sem a guarda `ehToken()` antes da chamada, "link errado"
+chega na tela como erro de sistema. Token inexistente, esse sim, devolve zero
+linhas — e a tela recusa **sem dizer por quê**: distinguir "expirado" de
+"inexistente" conta a quem estiver adivinhando qual das duas ele acertou.
+
+⚠️ **`requisito_responder` devolve `alertas`, e eles NUNCA vão para a tela da
+cliente.** São informação clínica para a equipe (o alerta é o texto da própria
+pergunta). Dizer "você tem 2 alertas" assusta alguém que não tem contexto para
+interpretar. A tela final é confirmação e só.
 
 ⚠️ **As três do Kanban são a mesma armadilha do `agenda_consultar`, e uma delas
 ESCREVE.** São `SECURITY DEFINER` (ignoram RLS), recebem `p_tenant uuid` cru,
@@ -703,6 +728,18 @@ fica de pé para o dia em que houver um segundo sistema.
   na seção de cor. Há uma exceção tolerada e documentada no próprio script:
   `.ag-lista-dia`, que é o containing block de um cabeçalho `sticky` e precisa
   continuar sendo bloco simples.
+- ⚠️ **A ficha de avaliação antiga é código morto.** `fichas_avaliacao` **não
+  existe neste banco**, e tudo que fala com ela continua no repositório:
+  `src/lib/ficha-db.ts`, `src/lib/ficha.ts`, `src/components/ficha/*`,
+  `/api/ficha/[token]` e `/api/painel/ficha*`. A rota `/ficha/[token]` era dela
+  e passou a servir o formulário de REQUISITOS em ago/2026 — não havia link em
+  circulação apontando para cá (a LINS segue no painel antigo, em outro
+  domínio). Os arquivos ficam esperando a limpeza do A3.
+- ⚠️ **`requisito_campos` não tem coluna `ativo`.** Então "desativar o campo e
+  criar um novo" — o caminho seguro quando a `chave` precisa mudar — ainda não
+  existe pelo painel: só dá para apagar. Trocar a chave QUEBRA O HISTÓRICO (as
+  respostas antigas guardam a chave velha no `jsonb`), e por isso a tela conta
+  quantas respostas já a usam e pede confirmação antes.
 - ⚠️ **`ConversaOrigem` não bate com o banco.** `src/types/db.ts` declara
   `"cliente" | "agente" | "humano"`; o CHECK de `conversas.origem` é
   `cliente | ia | humano | sistema`. `getLastMsgPreview` compara com

@@ -43,7 +43,7 @@ function larguraLadoALado(idx: number, total: number) {
 //
 // A capacidade de cada célula NÃO é calculada aqui: vem pronta do banco
 // (`agenda_slots`), derivada da escala das profissionais. Mesma fonte que o
-// trigger e as tools da Laura usam — ver lib/agenda-regras.ts.
+// trigger e as tools da agente usam — ver lib/agenda-regras.ts.
 export function TimeGrid({
   days,
   agendamentos,

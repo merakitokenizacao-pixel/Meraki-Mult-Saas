@@ -34,7 +34,7 @@ function dataBR(iso: string): string {
 
 // Folgas, férias, médico: tira a profissional da escala em UMA data (ou num
 // pedaço dela). A capacidade da agenda cai sozinha — é a função `agenda_checar`
-// que desconta os bloqueios, então isso vale para o CRM E para a Laura.
+// que desconta os bloqueios, então isso vale para o CRM E para a agente.
 export function Bloqueios({ profissionais }: { profissionais: Profissional[] }) {
   const qc = useQueryClient();
   const { data: bloqueios, isPending } = useQuery({
@@ -259,7 +259,7 @@ export function Bloqueios({ profissionais }: { profissionais: Profissional[] }) 
 
       <p className="config-nota">
         A folga tira a profissional da escala <strong>naquela data</strong>. A
-        capacidade da agenda cai sozinha — e a Laura também para de oferecer o
+        capacidade da agenda cai sozinha — e a agente também para de oferecer o
         horário, porque ela consulta a mesma fonte.
       </p>
     </div>

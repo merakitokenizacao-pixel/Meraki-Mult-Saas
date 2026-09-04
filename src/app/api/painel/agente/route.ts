@@ -7,7 +7,7 @@ import {
 
 export const dynamic = "force-dynamic";
 
-// Saúde da Laura, derivada do que ela DEIXA no banco.
+// Saúde da agente, derivada do que ela DEIXA no banco.
 //
 // Não existe tabela de configuração do agente: horário de atendimento, tom e
 // prompt vivem no n8n, fora deste repositório. O que dá para responder aqui é
@@ -20,7 +20,7 @@ export const dynamic = "force-dynamic";
 export async function GET(req: Request) {
   try {
     // Todas as contagens abaixo saem por service_role, que ignora RLS. Sem o
-    // tenant no WHERE, "última resposta da Laura" viria da clínica mais
+    // tenant no WHERE, "última resposta da agente" viria da clínica mais
     // movimentada, não desta.
     const { tenant_id } = await resolverTenant(req);
     const db = getSupabaseAdmin();

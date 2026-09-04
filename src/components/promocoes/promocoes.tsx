@@ -23,6 +23,7 @@ import {
 } from "@/lib/promocao";
 import { PromocaoModal } from "@/components/promocoes/promocao-modal";
 import { fetchPainel } from "@/lib/api-painel";
+import { useTenant } from "@/components/tenant-provider";
 
 async function getPromocoes(): Promise<Promocao[]> {
   const res = await fetchPainel("/api/painel/promocoes");
@@ -44,6 +45,8 @@ const ROTULO: Record<string, string> = {
 
 export function Promocoes() {
   const qc = useQueryClient();
+  // O nome vem de `tenant_config.agente_nome` — ver tenant-provider.
+  const { agente } = useTenant();
   const { data, isPending, error } = useQuery({
     queryKey: ["promocoes"],
     queryFn: getPromocoes,
@@ -69,7 +72,7 @@ export function Promocoes() {
   );
 
   // O anúncio está apontando para uma promoção que não está mais no ar?
-  // Quem clica no anúncio pergunta por uma oferta que a Laura não pode dar.
+  // Quem clica no anúncio pergunta por uma oferta que a agente não pode dar.
   const anuncioMorto = useMemo(
     () =>
       (data ?? []).find((p) => p.anuncio_ativo && !estaNoAr(p, hoje)) ?? null,
@@ -90,7 +93,7 @@ export function Promocoes() {
     }
     showToast(
       p.ativa
-        ? `"${p.titulo}" saiu do ar — a Laura para de oferecer`
+        ? `"${p.titulo}" saiu do ar — ${agente} para de oferecer`
         : `"${p.titulo}" voltou ao ar`,
       "info"
     );
@@ -117,7 +120,7 @@ export function Promocoes() {
 
   return (
     <div className="page-fade">
-      {/* Cabeçalho: o contador é o número que a Laura está oferecendo AGORA */}
+      {/* Cabeçalho: o contador é o número que a agente está oferecendo AGORA */}
       <div className="promo-header">
         <div>
           <div className="promo-contador">
@@ -127,7 +130,7 @@ export function Promocoes() {
             </span>
           </div>
           <p className="promo-sub">
-            É o que a Laura está oferecendo nas conversas neste momento.
+            É o que {agente} está oferecendo nas conversas neste momento.
             Alterações valem na mensagem seguinte.
           </p>
         </div>
@@ -151,7 +154,7 @@ export function Promocoes() {
               mas {situacaoDe(anuncioMorto, hoje) === "vencida"
                 ? "o prazo dela já passou"
                 : "ela está desativada"}
-              . Quem clicar no anúncio vai perguntar por uma oferta que a Laura
+              . Quem clicar no anúncio vai perguntar por uma oferta que a agente
               não pode dar.
             </p>
             <button
@@ -185,7 +188,7 @@ export function Promocoes() {
             Nenhuma promoção cadastrada
           </div>
           <p style={{ fontSize: 13, color: "var(--mk-tinta-fraca)", maxWidth: 380, margin: "0 auto 16px", lineHeight: 1.6 }}>
-            Enquanto não houver promoção ativa, a Laura fala só o preço normal
+            Enquanto não houver promoção ativa, a agente fala só o preço normal
             dos procedimentos.
           </p>
           <button className="btn-primary" onClick={abrirNova}>
@@ -245,7 +248,7 @@ export function Promocoes() {
                 {sit === "vencida" ? (
                   <>
                     <p className="promo-explica">
-                      O prazo passou — a Laura já parou de oferecer.
+                      O prazo passou — a agente já parou de oferecer.
                     </p>
                     {/* Reativar não adiantaria: continuaria vencida. O que
                         resolve é mudar a data, então o botão abre o formulário. */}
@@ -341,7 +344,7 @@ export function Promocoes() {
       <Confirmar
         aberto={!!excluindo}
         titulo={`Excluir a promoção ${excluindo?.titulo ?? ""}?`}
-        texto="A Sofia para de oferecer esta promoção imediatamente. Isso não pode ser desfeito."
+        texto={`${agente} para de oferecer esta promoção imediatamente. Isso não pode ser desfeito.`}
         onConfirmar={() => excluindo && excluir(excluindo)}
         onCancelar={() => setExcluindo(null)}
       />

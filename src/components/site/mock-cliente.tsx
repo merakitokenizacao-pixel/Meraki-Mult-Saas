@@ -1,6 +1,6 @@
 import { Clock, Sparkles } from "lucide-react";
 
-// Cartão de memória do cliente — o que a equipe (e a Laura) enxergam.
+// Cartão de memória do cliente — o que a equipe (e a Sofia) enxergam.
 // Dados fictícios.
 export function MockCliente() {
   return (

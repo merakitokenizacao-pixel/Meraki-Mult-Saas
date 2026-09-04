@@ -2,7 +2,7 @@
 //
 // `leads.nome` é o dono do WhatsApp, não necessariamente quem vai ser
 // atendido: mãe marcando para filha, marido para esposa, uma amiga para outra.
-// A tool `Criar_Agendamento` da Laura já grava `agendamentos.nome_cliente`
+// A tool `Criar_Agendamento` da agente já grava `agendamentos.nome_cliente`
 // quando os dois diferem; o painel é a metade que faltava.
 //
 // Já aconteceu de verdade: a Mônica atendeu a Maria Dagmar, marcada pelo

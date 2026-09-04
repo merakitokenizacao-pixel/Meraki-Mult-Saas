@@ -6,7 +6,7 @@
 //
 // `profissional_bloqueios` já é respeitada por `agenda_profissionais_na_escala`,
 // que exclui da escala quem tem bloqueio sobrepondo a janela. Gravar aqui já
-// derruba a capacidade e já faz o horário sumir para a Laura — nada de backend
+// derruba a capacidade e já faz o horário sumir para a agente — nada de backend
 // muda. E como bloqueio não encosta em `agendamentos`, nenhuma métrica precisa
 // de filtro novo. É por isso que o caminho é este, e não um
 // `status = 'bloqueio'`.

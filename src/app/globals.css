@@ -2676,7 +2676,7 @@ input:-webkit-autofill {
 
 /* ========================================================================
    PROMOÇÕES
-   A tabela `promocoes` é lida AO VIVO pela Laura: o que se salva aqui é
+   A tabela `promocoes` é lida AO VIVO pela agente: o que se salva aqui é
    falado ao cliente na conversa seguinte. A tela precisa deixar isso claro.
    ======================================================================== */
 .promo-header {
@@ -2954,7 +2954,7 @@ input:-webkit-autofill {
 }
 
 /* ========================================================================
-   FOLLOW-UPS (acompanhamento das retomadas da Laura) — somente leitura.
+   FOLLOW-UPS (acompanhamento das retomadas da agente) — somente leitura.
    VETADO nunca é tratado como falha: é decisão correta do agente.
    ======================================================================== */
 .fu-header {
@@ -4728,30 +4728,30 @@ input:-webkit-autofill {
   color: var(--mk-tinta-media);
 }
 
-/* ── Configurações → Laura ── */
-.laura-dot {
+/* ── Configurações → a agente ── */
+.agente-dot {
   width: 8px;
   height: 8px;
   flex-shrink: 0;
   border-radius: 50%;
   background: var(--mk-ativa);
 }
-.laura-dot.alerta {
+.agente-dot.alerta {
   background: var(--mk-aviso);
 }
-.laura-numero {
+.agente-numero {
   font-size: 20px;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
   color: var(--mk-tinta);
 }
-.laura-quem {
+.agente-quem {
   margin: 0 0 12px;
   padding: 0;
   list-style: none;
   border-top: 1px solid var(--mk-linha);
 }
-.laura-quem li {
+.agente-quem li {
   display: flex;
   justify-content: space-between;
   gap: 12px;
@@ -4760,7 +4760,7 @@ input:-webkit-autofill {
   font-size: 12px;
   color: var(--mk-tinta-media);
 }
-.laura-quem-qtd {
+.agente-quem-qtd {
   font-variant-numeric: tabular-nums;
   color: var(--mk-tinta);
 }
@@ -5485,7 +5485,7 @@ a.sidebar-footer:hover {
    POPOVER DE AÇÃO DO HORÁRIO (Agenda)
    Diz o que o horário JÁ É antes de oferecer o que fazer com ele.
    Capacidade e vagas vêm de `agenda_checar` — a MESMA função que as
-   tools da Laura usam. Ver src/lib/slot-agenda.ts.
+   tools da agente usam. Ver src/lib/slot-agenda.ts.
    ══════════════════════════════════════════════════════════════ */
 
 /* Camada que fecha ao clicar fora. Sem listener global no document: ela some
@@ -5796,6 +5796,7 @@ a.sidebar-footer:hover {
 .card,
 .metric-card,
 .neg-card,
+.fu-card,
 .neg-painel {
   background: var(--mk-superficie);
   border: 1px solid var(--mk-linha);
@@ -5873,7 +5874,8 @@ a.sidebar-footer:hover {
    e com dado real ele ainda quebrava em duas linhas. Fica guardado para
    quando existir um card herói de verdade, sozinho na largura. */
 .neg-card-valor,
-.metric-value {
+.metric-value,
+.fu-card-valor {
   font-size: 20px;
   font-weight: 600;
   line-height: 1.1;
@@ -5891,7 +5893,8 @@ a.sidebar-footer:hover {
   color: var(--mk-tinta-media);
 }
 .neg-card-rotulo,
-.metric-label {
+.metric-label,
+.fu-card-label {
   font-size: 11.5px;
   font-weight: 500;
   letter-spacing: 0.01em;
@@ -5901,9 +5904,11 @@ a.sidebar-footer:hover {
    card — 20 / 11,5 / 10 — e um `font-weight` herdado de outro lugar
    desalinharia a proporção que esta alteração existe para consertar. */
 .neg-card-apoio,
-.metric-sub {
+.metric-sub,
+.fu-card-apoio {
   font-size: 10px;
   font-weight: 400;
+  color: var(--mk-tinta-fraca);
 }
 /* Anatomia na medida da referência: 94 de altura, padding 13/16, gap 12.
    O gap é o que dá o respiro — com 10px e `space-between` os três blocos
@@ -5914,22 +5919,28 @@ a.sidebar-footer:hover {
    isso as três alturas de linha são explícitas — a padrão do documento (1,5)
    sozinha já jogaria o card para 101px. */
 .neg-card,
-.metric-card {
+.metric-card,
+.fu-card {
   min-height: 94px;
   padding: 13px 16px;
   gap: 12px;
   justify-content: flex-start;
+  display: flex;
+  flex-direction: column;
 }
 .neg-card-rotulo,
-.metric-label {
+.metric-label,
+.fu-card-label {
   line-height: 1.1;
 }
 .neg-card-valor,
-.metric-value {
+.metric-value,
+.fu-card-valor {
   line-height: 1.05;
 }
 .neg-card-apoio,
-.metric-sub {
+.metric-sub,
+.fu-card-apoio {
   margin-top: 0;
   line-height: 1.1;
 }
@@ -6277,6 +6288,100 @@ a.sidebar-footer:hover {
 }
 .arq-acao.destrutivo {
   color: var(--mk-st-erro);
+}
+
+/* ── Follow-ups ──────────────────────────────────────────────────────────── */
+/* ⚠️ Os cards usam a MESMA anatomia da Visão geral — 94px, 20/11,5/10 — e as
+   regras são as mesmas seleções lá em cima, não uma cópia. Antes eles eram
+   muito mais altos e o número muito maior, e duas telas do mesmo painel
+   mostravam KPI em dois tamanhos. */
+.fu-titulo {
+  font-family: var(--font-space), system-ui, sans-serif;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--mk-tinta);
+}
+/* ⚠️ O VAZIO ENCOSTA NO TOPO. Antes era um bloco alto e centralizado com ícone
+   grande, e dentro dele a lista de tipos — misturava "não aconteceu nada
+   ainda" com "estes são os tipos que existem". A segunda virou seção própria. */
+.fu-vazio {
+  padding: 18px 2px 6px;
+  text-align: left;
+}
+.fu-vazio-titulo {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--mk-tinta-media);
+}
+.fu-vazio-texto {
+  margin-top: 4px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--mk-tinta-fraca);
+}
+
+/* As receitas: seção própria, com o estado REAL de cada uma. */
+.fu-receitas {
+  margin-top: 22px;
+  padding-top: 16px;
+  border-top: 1px solid var(--mk-linha);
+}
+.fu-receitas-titulo {
+  margin-bottom: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--mk-tinta-fraca);
+}
+.fu-receita-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.fu-receita {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--mk-linha);
+  border-radius: 5px;
+  background: var(--mk-superficie);
+  flex-wrap: wrap;
+}
+.fu-receita-nome {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--mk-tinta);
+}
+.fu-receita-gatilho {
+  flex: 1;
+  min-width: 0;
+  font-size: 11.5px;
+  color: var(--mk-tinta-fraca);
+}
+/* Desligado é cinza, ativo é verde: o mesmo par do toggle em Envios. */
+.fu-receita-estado {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--mk-tinta-fraca);
+}
+.fu-receita-estado.ativo {
+  color: var(--mk-st-resolvido);
+}
+.fu-receita-vazia {
+  font-size: 12.5px;
+  color: var(--mk-tinta-fraca);
+}
+.fu-receita-link {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--mk-acento);
+}
+.fu-receita-link:hover {
+  text-decoration: underline;
 }
 
 /* ── Envios automáticos ──────────────────────────────────────────────────── */

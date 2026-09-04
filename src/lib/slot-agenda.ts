@@ -1,6 +1,6 @@
 // Situação de um horário da agenda — lida do BANCO, não recalculada aqui.
 //
-// `agenda_checar` é a mesma função que as tools da Laura usam. Se o front
+// `agenda_checar` é a mesma função que as tools da agente usam. Se o front
 // fizesse a própria conta de capacidade, as duas divergiriam no primeiro
 // bloqueio ou mudança de escala, e ninguém saberia qual está certa.
 

@@ -45,7 +45,7 @@ function bubbleClasses(kind: "cliente" | "agente" | "humano") {
   if (kind === "humano")
     return `${base} rounded-[16px] rounded-tr-[4px] border-mk-linha bg-mk-superficie-2 text-mk-tinta`;
   // IA na cor da marca, mas em TINT — não no accent chapado. Chapado, cada
-  // resposta da Laura virava um bloco dourado, e numa conversa longa isso é a
+  // resposta da agente virava um bloco dourado, e numa conversa longa isso é a
   // maior massa de cor da tela.
   return `${base} rounded-[16px] rounded-tr-[4px] border-mk-linha bg-mk-acento-fraco text-mk-acento-forte`;
 }

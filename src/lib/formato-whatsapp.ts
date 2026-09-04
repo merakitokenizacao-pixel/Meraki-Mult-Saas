@@ -1,6 +1,6 @@
 // Formatação de texto do WhatsApp → árvore de nós. Lógica pura, sem React.
 //
-// A Laura manda `*negrito*` porque é o que o WhatsApp entende, e a cliente vê
+// A agente manda `*negrito*` porque é o que o WhatsApp entende, e a cliente vê
 // em negrito no celular. No CRM os asteriscos apareciam crus, então a mesma
 // mensagem ficava suja de um lado e formatada do outro.
 //

@@ -1,3 +1,4 @@
+import { AGENTE_VITRINE } from "@/lib/site";
 import type { Metadata } from "next";
 import "./site.css";
 import { Abertura } from "@/components/site/abertura";
@@ -6,7 +7,7 @@ import { SiteHeader } from "@/components/site/site-header";
 export const metadata: Metadata = {
   title: "Meraki — sua clínica atendendo 24h no WhatsApp",
   description:
-    "A Laura é a atendente de IA que responde no WhatsApp da sua clínica, controla a agenda de verdade e passa pra sua equipe na hora certa.",
+    `A ${AGENTE_VITRINE} é a atendente de IA que responde no WhatsApp da sua clínica, controla a agenda de verdade e passa pra sua equipe na hora certa.`,
   robots: { index: true, follow: true },
 };
 

@@ -12,7 +12,7 @@ import { registrarErro } from "@/lib/log-erro";
 export const dynamic = "force-dynamic";
 
 // Catálogo de serviços da clínica, lido de `documentos` — a MESMA base que
-// a Laura consulta no WhatsApp. Se o preço do CRM viesse de outro lugar, a
+// a agente consulta no WhatsApp. Se o preço do CRM viesse de outro lugar, a
 // agente diria um valor e a tela mostraria outro.
 //
 // Server-side com service_role, que ignora a RLS — daí o tenant vir de

@@ -77,7 +77,7 @@ export function getLastMsgPreview(
     };
   }
   // Tira a marcação do WhatsApp: no card não há como estilizar, então o
-  // `*negrito*` da Laura apareceria com os asteriscos crus no preview.
+  // `*negrito*` da agente apareceria com os asteriscos crus no preview.
   // Limpa ANTES de cortar em 60 — cortar primeiro poderia deixar um `*` órfão.
   return {
     text: prefix + textoLimpo(last.mensagem || "").substring(0, 60),

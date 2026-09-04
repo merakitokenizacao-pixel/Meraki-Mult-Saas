@@ -1,8 +1,10 @@
 "use client";
 
+import { AGENTE_VITRINE } from "@/lib/site";
+
 import { useEffect, useRef, useState } from "react";
 
-// A conversa que a Laura teve, entrando em sequência.
+// A conversa que a Sofia teve, entrando em sequência.
 //
 // SEM MOLDURA DE CELULAR: nada de notch, ícone de chamada ou "online". A
 // conversa é o produto; o aparelho é embalagem, e embalagem desenhada rouba a
@@ -17,7 +19,7 @@ import { useEffect, useRef, useState } from "react";
 // 10px no canto de uma bolha.
 
 interface Fala {
-  de: "cliente" | "laura";
+  de: "cliente" | "sofia";
   texto: string;
   /** Só na primeira e na última: são as duas pontas do minuto. */
   hora?: string;
@@ -26,18 +28,18 @@ interface Fala {
 const FALAS: Fala[] = [
   { de: "cliente", texto: "oi, quanto tá a drenagem?", hora: "14:32" },
   {
-    de: "laura",
+    de: "sofia",
     texto:
       "Oi! A drenagem linfática sai por R$ 100 a sessão. Este mês tem promoção: 10 sessões por R$ 499,90.",
   },
   { de: "cliente", texto: "e tem horário essa semana?" },
   {
-    de: "laura",
+    de: "sofia",
     texto: "Tenho quinta às 15h e sexta às 9h. Alguma serve?",
   },
   { de: "cliente", texto: "quinta às 15" },
   {
-    de: "laura",
+    de: "sofia",
     texto: "Prontinho, quinta 15h reservado no seu nome. Te espero!",
     hora: "14:33",
   },
@@ -74,8 +76,8 @@ export function ConversaViva() {
         obs.disconnect();
         let atraso = 0;
         FALAS.forEach((f, i) => {
-          // A Laura "digita" antes de responder; a cliente não.
-          if (f.de === "laura") {
+          // A Sofia "digita" antes de responder; a cliente não.
+          if (f.de === "sofia") {
             timers.push(setTimeout(() => setDigitando(true), atraso));
             atraso += DIGITANDO;
           }
@@ -111,9 +113,9 @@ export function ConversaViva() {
         );
       })}
       {digitando && (
-        <div className="cv-linha cv-laura">
+        <div className="cv-linha cv-agente">
           <span className="cv-hora" />
-          <div className="cv-balao cv-digitando" aria-label="Laura digitando">
+          <div className="cv-balao cv-digitando" aria-label={`${AGENTE_VITRINE} digitando`}>
             <i />
             <i />
             <i />

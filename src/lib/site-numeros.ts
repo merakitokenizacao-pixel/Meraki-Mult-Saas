@@ -22,7 +22,7 @@ export const APURACAO = "";
 
 export const NUMEROS: NumeroLins[] = [
   { valor: "", rotulo: "mensagens respondidas" },
-  { valor: "", rotulo: "agendamentos pela Laura" },
+  { valor: "", rotulo: "agendamentos pela agente" },
   { valor: "", rotulo: "clientes na base" },
   { valor: "", rotulo: "no ar desde" },
 ];

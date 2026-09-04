@@ -77,7 +77,7 @@ export function MetricsGrid({
   // porque a leitura operacional é a que a dona espera: num domingo — primeiro
   // dia da semana — nada tinha sido marcado ainda, e o card mostrava "Semana: 0"
   // enquanto havia 29 atendimentos acontecendo naquela semana. Contar por
-  // criado_em respondia "quanto a Laura captou"; o card responde agora "quanto
+  // criado_em respondia "quanto a agente captou"; o card responde agora "quanto
   // trabalho eu tenho no período", que é o que se olha num painel de operação.
   const agendsPeriodo =
     period === "tudo"
@@ -87,7 +87,7 @@ export function MetricsGrid({
   const consultasAgendadas = naoCancelados.length;
   // `agendamentos.valor` está vazio em 386 de 386 linhas — o n8n nunca
   // preencheu. Mas 386 de 386 têm SERVIÇO, e o preço do serviço mora em
-  // `documentos`, a mesma base que a Laura lê no WhatsApp.
+  // `documentos`, a mesma base que a agente lê no WhatsApp.
   //
   // `valorDe` é exatamente essa regra e já é usada na aba Negócios: usa
   // `a.valor` quando existe e cai no catálogo quando não. Repetir a conta aqui

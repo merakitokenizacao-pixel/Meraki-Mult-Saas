@@ -5,12 +5,17 @@ import {
   CalendarDays,
   Columns3,
   Settings,
-  Tag,
   Undo2,
   type LucideIcon,
 } from "lucide-react";
 
-// Itens de navegação das 5 telas (paridade com a sidebar do legacy).
+// A navegação principal é o que se olha TODO DIA: Visão geral, Clientes,
+// Conversas, Agenda, Kanban.
+//
+// ⚠️ Promoções SAIU daqui em ago/2026 e virou sub-item de Configurações.
+// Promoção se configura de vez em quando e depois se esquece — ocupar espaço
+// permanente numa lista curta é o que empurra as telas de operação para baixo.
+// Mesmo critério de Requisitos e Envios automáticos.
 // Ícones de linha do lucide-react (line icons), traço fino.
 export type NavItem = {
   href: string;
@@ -34,7 +39,6 @@ export const NAV_ITEMS: NavItem[] = [
   // Mesma matéria da Agenda, outra pergunta: a Agenda responde "quando", o
   // Kanban responde "em que pé está". Fica ao lado dela de propósito.
   { href: "/kanban", label: "Kanban", icon: Columns3, title: "Kanban" },
-  { href: "/promocoes", label: "Promoções", icon: Tag, title: "Promoções" },
   { href: "/follow-ups", label: "Follow-ups", icon: Undo2, title: "Follow-ups" },
 ];
 

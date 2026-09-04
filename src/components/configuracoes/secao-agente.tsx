@@ -6,7 +6,7 @@ import { PauseCircle, Smartphone } from "lucide-react";
 import { getRelativeTime } from "@/lib/format";
 import { fetchPainel } from "@/lib/api-painel";
 
-// Saúde da Laura.
+// Saúde da agente.
 //
 // O que esta tela mostra é DERIVADO do que a agente deixa no banco — não é
 // configuração dela. Horário de atendimento, tom e prompt vivem no n8n, fora
@@ -26,7 +26,7 @@ interface Dados {
 
 const MIN = 60_000;
 
-export function SecaoLaura() {
+export function SecaoAgente() {
   const [d, setD] = useState<Dados | null>(null);
   const [erro, setErro] = useState(false);
 
@@ -34,7 +34,7 @@ export function SecaoLaura() {
     let vivo = true;
     const puxar = async () => {
       try {
-        const r = await fetchPainel("/api/painel/laura", { cache: "no-store" });
+        const r = await fetchPainel("/api/painel/agente", { cache: "no-store" });
         if (!r.ok) throw new Error();
         const j = await r.json();
         if (vivo) {
@@ -74,7 +74,7 @@ export function SecaoLaura() {
     <>
       <div className="config-card">
         <div className="conexao-topo">
-          <span className={`laura-dot${atrasada ? " alerta" : ""}`} />
+          <span className={`agente-dot${atrasada ? " alerta" : ""}`} />
           <div>
             <div className="conexao-titulo">
               {erro
@@ -100,7 +100,7 @@ export function SecaoLaura() {
                 A última mensagem de cliente chegou{" "}
                 {getRelativeTime(d.ultimaMensagemCliente!)} e ainda não foi
                 respondida. Vale conferir a <strong>Conexão</strong> — quando o
-                WhatsApp cai, a Laura fica muda sem nenhum erro aparecer.
+                WhatsApp cai, a agente fica muda sem nenhum erro aparecer.
               </>
             ) : (
               <>
@@ -120,12 +120,12 @@ export function SecaoLaura() {
           <div>
             <div className="conexao-titulo">IA pausada</div>
             <div className="conexao-sub">
-              Conversas em que a Laura está calada e alguém precisa responder à
+              Conversas em que a agente está calada e alguém precisa responder à
               mão
             </div>
           </div>
           <div className="conexao-acoes">
-            <span className="laura-numero">{d ? d.pausados : "—"}</span>
+            <span className="agente-numero">{d ? d.pausados : "—"}</span>
           </div>
         </div>
 
@@ -138,11 +138,11 @@ export function SecaoLaura() {
               conversas ({pct}%). A pausa é por conversa e não expira sozinha —
               quem foi pausado há meses continua pausado.
             </p>
-            <ul className="laura-quem">
+            <ul className="agente-quem">
               {d.porQuem.map((p) => (
                 <li key={p.quem}>
                   <span>{p.quem}</span>
-                  <span className="laura-quem-qtd">{p.qtd}</span>
+                  <span className="agente-quem-qtd">{p.qtd}</span>
                 </li>
               ))}
             </ul>
@@ -153,7 +153,7 @@ export function SecaoLaura() {
         )}
         {d && d.pausados === 0 && (
           <p className="conexao-nota">
-            Nenhuma conversa pausada — a Laura responde todas.
+            Nenhuma conversa pausada — a agente responde todas.
           </p>
         )}
       </div>
@@ -164,7 +164,7 @@ export function SecaoLaura() {
           <div>
             <div className="conexao-titulo">O WhatsApp por baixo</div>
             <div className="conexao-sub">
-              A Laura depende dele: se o número cai, ela para sem avisar
+              A agente depende dele: se o número cai, ela para sem avisar
             </div>
           </div>
         </div>

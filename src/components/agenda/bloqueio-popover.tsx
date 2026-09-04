@@ -67,7 +67,7 @@ export function BloqueioPopover({
         )}
       </dl>
       <p className="blq-nota">
-        Enquanto existir, este horário não aparece para a Laura nem conta na
+        Enquanto existir, este horário não aparece para a agente nem conta na
         capacidade da agenda.
       </p>
       <div className="blq-acoes">

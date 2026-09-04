@@ -4,7 +4,7 @@ import type { CamposPromocao, Promocao } from "@/lib/promocao";
 
 // Acesso à tabela `promocoes` com service_role.
 //
-// ⚠️ Esta tabela é lida AO VIVO pela Laura a cada mensagem: toda escrita aqui
+// ⚠️ Esta tabela é lida AO VIVO pela agente a cada mensagem: toda escrita aqui
 // muda o que ela oferece aos clientes na conversa seguinte. Sem deploy, sem
 // cache.
 //

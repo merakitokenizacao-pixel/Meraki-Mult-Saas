@@ -28,6 +28,38 @@ export const ROTULO_ENVIO: Record<TipoEnvio, { nome: string; quando: string }> =
   reativacao: { nome: "Reativação", quando: "sumiu faz tempo" },
 };
 
+/**
+ * As receitas de FOLLOW-UP, isto é: quais tipos de `envios_regras` são retomada
+ * de conversa. A tela de Follow-ups mostra estas, com o `ativo` real do banco.
+ *
+ * ⚠️ `lembrete` NÃO é follow-up: ele avisa ANTES do atendimento, não retoma
+ * conversa nenhuma. Por isso é `null` aqui.
+ *
+ * ⚠️ E SÓ EXISTEM TRÊS. O desenho pedia cinco receitas — faltam "Faltou" e
+ * "Depois do atendimento", que não têm linha em `envios_regras`. Escrevê-las
+ * aqui à mão daria uma lista que a tela mostra e o porteiro `envio_pode` não
+ * conhece: ele recusa tipo sem regra ("sem regra configurada"), então seriam
+ * duas receitas que nunca disparam. Quando as linhas existirem, entram aqui.
+ */
+export const RECEITA_FOLLOWUP: Record<
+  TipoEnvio,
+  { nome: string; gatilho: string } | null
+> = {
+  lembrete: null,
+  compromisso: {
+    nome: "Prometeu voltar",
+    gatilho: "ela mesma disse que voltaria, e a data chegou",
+  },
+  retomada: {
+    nome: "Recebeu preço e sumiu",
+    gatilho: "perguntou o valor e não marcou",
+  },
+  reativacao: {
+    nome: "Sumiu faz tempo",
+    gatilho: "muito tempo sem contato",
+  },
+};
+
 export interface RegraEnvio {
   tipo: TipoEnvio;
   ativo: boolean;

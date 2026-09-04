@@ -1,6 +1,6 @@
 // Catálogo de serviços da clínica — lógica pura, sem I/O.
 //
-// A FONTE é `documentos`, a mesma base que a Laura lê no WhatsApp. Isso é
+// A FONTE é `documentos`, a mesma base que a agente lê no WhatsApp. Isso é
 // deliberado: se o preço do CRM viesse de uma tabela paralela, a agente diria
 // um valor e a tela mostraria outro. Um lugar só, os dois leem.
 //

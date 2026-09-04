@@ -5,6 +5,7 @@ import {
   CalendarClock,
   ClipboardList,
   Send,
+  Tag,
   Palette,
   Bot,
   Grid3x3,
@@ -16,16 +17,19 @@ import { SecaoAparencia } from "@/components/configuracoes/secao-aparencia";
 import { SecaoMatriz } from "@/components/configuracoes/secao-matriz";
 import { SecaoRequisitos } from "@/components/configuracoes/secao-requisitos";
 import { SecaoEnvios } from "@/components/configuracoes/secao-envios";
-import { SecaoLaura } from "@/components/configuracoes/secao-laura";
+import { Promocoes } from "@/components/promocoes/promocoes";
+import { SecaoAgente } from "@/components/configuracoes/secao-agente";
+import { useTenant } from "@/components/tenant-provider";
 import { SecaoConexao } from "@/components/configuracoes/secao-conexao";
 import { SecaoConta } from "@/components/configuracoes/secao-conta";
 import { SecaoProfissionais } from "@/components/configuracoes/secao-profissionais";
 
 type SecaoId =
-  | "laura"
+  | "agente"
   | "profissionais"
   | "matriz"
   | "requisitos"
+  | "promocoes"
   | "envios"
   | "conexao"
   | "aparencia"
@@ -38,8 +42,10 @@ const SECOES: ReadonlyArray<{
   icon: LucideIcon;
 }> = [
   {
-    id: "laura",
-    label: "Laura",
+    id: "agente",
+    // O rótulo é substituído pelo nome real da clínica no render — a
+    // constante não tem como saber qual é.
+    label: "Agente",
     descricao: "Se a agente está atendendo, e onde ela está calada",
     icon: Bot,
   },
@@ -65,6 +71,13 @@ const SECOES: ReadonlyArray<{
     icon: ClipboardList,
   },
   {
+    id: "promocoes",
+    label: "Promoções",
+    descricao:
+      "As ofertas que a agente conhece — ela só oferece o que estiver no ar aqui",
+    icon: Tag,
+  },
+  {
     id: "envios",
     label: "Envios automáticos",
     descricao:
@@ -75,7 +88,7 @@ const SECOES: ReadonlyArray<{
     id: "conexao",
     label: "Conexão",
     descricao:
-      "O WhatsApp pelo qual a Laura atende — e o que fazer quando ele cai",
+      "O WhatsApp pelo qual a agente atende — e o que fazer quando ele cai",
     icon: Smartphone,
   },
   {
@@ -93,7 +106,8 @@ const SECOES: ReadonlyArray<{
 ];
 
 export function Configuracoes() {
-  const [secao, setSecao] = useState<SecaoId>("laura");
+  const { agente } = useTenant();
+  const [secao, setSecao] = useState<SecaoId>("agente");
   const atual = SECOES.find((s) => s.id === secao)!;
 
   return (
@@ -112,7 +126,7 @@ export function Configuracoes() {
               aria-current={ativo ? "page" : undefined}
             >
               <Icon size={15} strokeWidth={1.5} />
-              <span>{s.label}</span>
+              <span>{s.id === "agente" ? agente : s.label}</span>
             </button>
           );
         })}
@@ -121,14 +135,17 @@ export function Configuracoes() {
       {/* Conteúdo */}
       <div className="config-content">
         <header className="config-header">
-          <h1 className="config-title">{atual.label}</h1>
+          <h1 className="config-title">
+            {atual.id === "agente" ? agente : atual.label}
+          </h1>
           <p className="config-subtitle">{atual.descricao}</p>
         </header>
 
-        {secao === "laura" && <SecaoLaura />}
+        {secao === "agente" && <SecaoAgente />}
         {secao === "profissionais" && <SecaoProfissionais />}
         {secao === "matriz" && <SecaoMatriz />}
         {secao === "requisitos" && <SecaoRequisitos />}
+        {secao === "promocoes" && <Promocoes />}
         {secao === "envios" && <SecaoEnvios />}
         {secao === "conexao" && <SecaoConexao />}
         {secao === "aparencia" && <SecaoAparencia />}

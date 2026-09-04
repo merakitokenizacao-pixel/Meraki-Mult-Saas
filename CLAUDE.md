@@ -762,7 +762,7 @@ botão: bloco de cor puxa o clique justamente onde não se quer pressa.
   pode devolver ordem diferente a cada página, duplicando umas linhas e perdendo
   outras.
   Ainda sem teto: `getAgendamentosByLead` e `getAgendaSlots` em `queries.ts`,
-  mais `laura/route.ts` (a contagem de leads pausados), `ficha-db.ts`,
+  mais `agente/route.ts` (a contagem de leads pausados), `ficha-db.ts`,
   `promocao-db.ts`, `bloqueios.tsx`, `secao-profissionais.tsx`. Lista com
   linha em `INVENTARIO.md` §5.
 - ~~Classe CSS nomeada sem regra~~ — **resolvido em ago/2026.** Eram três, não
@@ -822,6 +822,15 @@ escreve no Supabase. Mudança de prompt ou de fluxo do agente se faz lá.
 ## Princípios
 
 - Português do Brasil em toda a UI.
+- ⚠️ **O nome da agente vem do BANCO, nunca do código.** Ele mora em
+  `tenant_config.agente_nome` (`Sofia` para a LINS) e chega às telas pelo
+  `useTenant()`, junto com `minhas_clinicas()`. O painel inteiro já disse
+  "Laura" — a agente da clínica antiga — em 112 lugares, e trocar a string por
+  outra teria só adiado o problema: uma odonto vai querer um terceiro nome.
+  O fallback é **"a agente"**, genérico de propósito, porque nome errado é pior
+  que nome nenhum. A única exceção é o site institucional, que é público e não
+  tem tenant para consultar: lá o nome está em `AGENTE_VITRINE`
+  (`src/lib/site.ts`), num lugar só.
 - Componentes pequenos. Nada de arquivos gigantes.
 - Não alterar schema sem necessidade; se precisar, gerar migration em
   `supabase/migrations/` e registrar aqui.

@@ -93,7 +93,7 @@ export function Agenda() {
 
   // Disponibilidade do período visível, DERIVADA DA ESCALA das profissionais
   // (função `agenda_slots` no banco). Antes isso era calculado no cliente por
-  // uma grade hardcoded em TypeScript — que divergia do que a Laura usava.
+  // uma grade hardcoded em TypeScript — que divergia do que a agente usava.
   const de = dateKey(days[0]);
   const ate = dateKey(days[days.length - 1]);
   const slotsQuery = useAgendaSlots(de, ate);

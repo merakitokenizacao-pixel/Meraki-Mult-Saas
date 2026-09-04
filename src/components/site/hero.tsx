@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { WHATSAPP_URL } from "@/lib/site";
+import { WHATSAPP_URL, AGENTE_VITRINE } from "@/lib/site";
 import { ArrowDown } from "lucide-react";
 import { LuzFundo } from "@/components/site/luz-fundo";
 import { HERO_IMAGEM } from "@/lib/site";
@@ -60,7 +60,7 @@ export function Hero() {
           variants={sobe}
           className="mt-8 max-w-[44ch] text-[16.5px] leading-relaxed text-s-ink2 sm:text-[18px]"
         >
-          A Laura atende no WhatsApp, conhece a escala inteira e marca
+          A {AGENTE_VITRINE} atende no WhatsApp, conhece a escala inteira e marca
           sozinha. Você volta pra cadeira.
         </motion.p>
 
@@ -74,7 +74,7 @@ export function Hero() {
             rel="noopener noreferrer"
             className="s-btn s-btn-primary"
           >
-            Fale com a Laura
+            Fale com a {AGENTE_VITRINE}
           </a>
           <a href="#conversa" className="s-hero-secundario">
             Ver por dentro

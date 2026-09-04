@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { WHATSAPP_URL } from "@/lib/site";
+import { WHATSAPP_URL, AGENTE_VITRINE } from "@/lib/site";
 
 const entra = { hidden: { opacity: 0, y: 22 }, show: { opacity: 1, y: 0 } };
 const grupo = { hidden: {}, show: { transition: { staggerChildren: 0.1 } } };
@@ -30,7 +30,7 @@ export function SecaoCta() {
           className="mx-auto mt-7 max-w-[44ch] text-[16.5px] leading-relaxed text-s-ink2"
         >
           Manda mensagem como se fosse sua cliente. Pergunta preço, tenta
-          marcar, tenta confundir. É a mesma Laura que atende a LINS.
+          marcar, tenta confundir. É a mesma {AGENTE_VITRINE} que atende a LINS.
         </motion.p>
         <motion.a
           variants={entra}
@@ -39,7 +39,7 @@ export function SecaoCta() {
           rel="noopener noreferrer"
           className="s-btn s-btn-primary mt-10"
         >
-          Fale com a Laura
+          Fale com a {AGENTE_VITRINE}
         </motion.a>
       </motion.div>
     </section>

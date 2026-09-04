@@ -34,7 +34,7 @@ export function Dashboard({ period }: { period: string }) {
   const responderamQuery = useLeadsQueResponderam();
   const responderam = responderamQuery.data ?? null;
 
-  // Preço vem do catálogo da clínica — a MESMA base que a Laura lê. Mesmo
+  // Preço vem do catálogo da clínica — a MESMA base que a agente lê. Mesmo
   // hook da aba Negócios, então nenhuma requisição a mais: mesma queryKey.
   const catalogoQ = useCatalogoServicos();
   const precos = useMemo(

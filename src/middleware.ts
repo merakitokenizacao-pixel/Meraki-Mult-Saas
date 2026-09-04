@@ -10,7 +10,7 @@ import { createServerClient } from "@supabase/ssr";
 // dado de saúde — é o buraco que este middleware fecha.
 //
 // ⚠️ /api/site/* é público de propósito, e por isso a rota lá monta a resposta
-// CAMPO A CAMPO: a disponibilidade já é pública (qualquer um pergunta à Laura
+// CAMPO A CAMPO: a disponibilidade já é pública (qualquer um pergunta à agente
 // no WhatsApp), mas quem está marcado não pode sair. Abrir prefixo aqui é
 // barato; o cuidado tem que estar do outro lado.
 const PUBLICAS = ["/login", "/ficha", "/api/ficha", "/api/site"];
@@ -25,7 +25,7 @@ const SITE = new Set(["/", "/privacidade"]);
 const HOME_PAINEL = "/visao-geral";
 
 // Rotas que só fazem sentido para quem NÃO está logado. A landing vende a
-// Laura para donas de clínica; para quem já é cliente e tem sessão, ela é só
+// a agente para donas de clínica; para quem já é cliente e tem sessão, ela é só
 // um obstáculo entre o atalho do navegador e o painel.
 // `/privacidade` fica de fora de propósito: vale para todo mundo, logado ou não.
 const SO_DESLOGADO = new Set(["/", "/login"]);

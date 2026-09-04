@@ -51,7 +51,7 @@ export interface ConflitoAgendamento {
  * Agendamentos NÃO-CANCELADOS que caem dentro da janela do bloqueio.
  *
  * Bloquear não cancela nada. Sem este aviso, a agenda ficaria mentindo para os
- * dois lados: o horário sumiria para a Laura enquanto a cliente segue marcada.
+ * dois lados: o horário sumiria para a agente enquanto a cliente segue marcada.
  *
  * `profissionalIds` filtra por quem foi escolhido — mas `agendamentos` não tem
  * `profissional_id` preenchido hoje (é nulo em 100% das linhas), então o filtro

@@ -1,5 +1,7 @@
 "use client";
 
+import { AGENTE_VITRINE } from "@/lib/site";
+
 import { motion } from "framer-motion";
 import { APURACAO, NUMEROS_PREENCHIDOS } from "@/lib/site-numeros";
 
@@ -38,7 +40,7 @@ export function SecaoNumeros() {
           variants={entra}
           className="mt-7 max-w-[46ch] text-[16.5px] leading-relaxed text-s-ink2"
         >
-          A primeira. Não é piloto nem demonstração: é a clínica onde a Laura
+          A primeira. Não é piloto nem demonstração: é a clínica onde a {AGENTE_VITRINE}
           atende todo dia, com a agenda de verdade e as clientes de verdade.
         </motion.p>
 

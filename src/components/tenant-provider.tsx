@@ -25,6 +25,17 @@ import type { Clinica } from "@/lib/tenant";
 interface EstadoTenant {
   clinicas: Clinica[];
   atual: Clinica | null;
+  /**
+   * Como a clínica chama a própria agente — vem de `tenant_config.agente_nome`.
+   *
+   * ⚠️ NENHUM NOME DE AGENTE ESCRITO EM COMPONENTE. O painel inteiro dizia
+   * "a agente", que é a agente da clínica antiga; a da LINS é a Sofia e uma odonto
+   * vai querer outro. Nome de agente é dado da clínica, como o endereço.
+   *
+   * "a agente" é o fallback enquanto carrega ou quando o campo está vazio —
+   * genérico de propósito, porque um nome errado é pior que nenhum.
+   */
+  agente: string;
   carregando: boolean;
   /** Mais de uma clínica: é o que faz o seletor aparecer. */
   varias: boolean;
@@ -37,6 +48,9 @@ export function TenantProvider({ children }: { children: React.ReactNode }) {
   const [clinicas, setClinicas] = useState<Clinica[]>([]);
   const [escolhido, setEscolhido] = useState<string | null>(null);
   const [carregando, setCarregando] = useState(true);
+  // tenant_id → nome da agente. Um mapa, e não um valor só, porque a conta
+  // pode atender duas clínicas e cada uma batiza a sua.
+  const [agentes, setAgentes] = useState<Record<string, string>>({});
 
   useEffect(() => {
     let vivo = true;
@@ -54,6 +68,19 @@ export function TenantProvider({ children }: { children: React.ReactNode }) {
       if (!valido && guardado) guardarTenantEscolhido(null);
       setEscolhido(valido ? guardado : null);
       setCarregando(false);
+
+      // `tenant_config` tem a RLS padrão, então a consulta já vem recortada
+      // nas clínicas desta conta — nada de `where tenant_id` aqui.
+      const cfg = await supabase
+        .from("tenant_config")
+        .select("tenant_id, agente_nome");
+      if (!vivo) return;
+      const mapa: Record<string, string> = {};
+      for (const linha of cfg.data ?? []) {
+        const nome = (linha.agente_nome as string | null)?.trim();
+        if (nome) mapa[linha.tenant_id as string] = nome;
+      }
+      setAgentes(mapa);
     })();
     return () => {
       vivo = false;
@@ -74,11 +101,12 @@ export function TenantProvider({ children }: { children: React.ReactNode }) {
     return {
       clinicas,
       atual,
+      agente: (atual && agentes[atual.tenant_id]) || "a agente",
       carregando,
       varias: clinicas.length > 1,
       escolher,
     };
-  }, [clinicas, escolhido, carregando, escolher]);
+  }, [clinicas, escolhido, carregando, escolher, agentes]);
 
   return <Ctx.Provider value={valor}>{children}</Ctx.Provider>;
 }

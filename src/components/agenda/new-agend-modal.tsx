@@ -52,7 +52,7 @@ export function NewAgendModal({
   }, [open, prefill.data, prefill.hora]);
 
   // Checagem de capacidade ao vivo, feita PELO BANCO (`agenda_checar`) — a
-  // mesma função que a Laura vai consultar e que o trigger usa. Não existe
+  // mesma função que a agente vai consultar e que o trigger usa. Não existe
   // mais uma cópia das regras no cliente: capacidade vem da escala das
   // profissionais (Configurações → Profissionais).
   const [checagem, setChecagem] = useState<{ ok: boolean; motivo: string } | null>(
@@ -90,7 +90,7 @@ export function NewAgendModal({
       return;
     }
     // Revalida no submit: o horário pode ter lotado com o modal aberto (outra
-    // pessoa marcando, ou a Laura pelo WhatsApp).
+    // pessoa marcando, ou a agente pelo WhatsApp).
     setMsg({ text: "Conferindo o horário...", color: "var(--mk-tinta-fraca)" });
     const check = await checarHorario(`${data}T${hora}:00`);
     if (!check.ok) {
@@ -152,7 +152,7 @@ export function NewAgendModal({
           <label className="form-label">Servico</label>
           {/* Era um <select> com 10 nomes fixos no código, que não cobria
               metade do que a clínica faz — o resto virava "Outro", sem preço.
-              Agora vem de `documentos`, o mesmo catálogo que a Laura lê,
+              Agora vem de `documentos`, o mesmo catálogo que a agente lê,
               com busca por nome, categoria e sinônimo. */}
           <ServicoCombobox
             servicos={catalogo.data?.servicos ?? []}

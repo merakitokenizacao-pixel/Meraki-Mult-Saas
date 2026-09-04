@@ -2,7 +2,7 @@
 // Sem I/O — roda no cliente (formulário) e no servidor (route handler), então
 // a validação nunca diverge entre os dois.
 //
-// CONTEXTO CRÍTICO: a tabela `promocoes` é lida AO VIVO pela Laura a cada
+// CONTEXTO CRÍTICO: a tabela `promocoes` é lida AO VIVO pela agente a cada
 // mensagem. O que for salvo aqui é falado para clientes reais na conversa
 // seguinte — não há deploy, cache nem revisão no meio.
 
@@ -64,7 +64,7 @@ export type Situacao = "vigente" | "vencida" | "desativada";
  * porque o motivo mais informativo de "não está no ar" é o prazo.
  *
  * Detalhe que já mordeu em produção: uma promoção pode estar `ativa = true` e
- * mesmo assim vencida — a Laura para de oferecer sozinha, mas a dona continua
+ * mesmo assim vencida — a agente para de oferecer sozinha, mas a dona continua
  * achando que está no ar. Por isso a lista mostra as vencidas em cinza.
  */
 export function situacaoDe(p: Promocao, hoje = hojeBrasilia()): Situacao {
@@ -73,7 +73,7 @@ export function situacaoDe(p: Promocao, hoje = hojeBrasilia()): Situacao {
   return "vigente";
 }
 
-/** É uma das que a Laura está oferecendo AGORA? */
+/** É uma das que a agente está oferecendo AGORA? */
 export function estaNoAr(p: Promocao, hoje = hojeBrasilia()): boolean {
   return situacaoDe(p, hoje) === "vigente";
 }
@@ -155,7 +155,7 @@ export function descreverProblemas(p: ProblemaTexto[]): string {
   return partes.join(" e ");
 }
 
-// ── Pré-visualização: como a Laura recebe ───────────────────────────────────
+// ── Pré-visualização: como a agente recebe ───────────────────────────────────
 
 /**
  * Monta a linha no MESMO formato que o agente lê no bloco de promoções
@@ -208,7 +208,7 @@ export type CamposPromocao = {
 
 export type ErrosPromocao = Partial<Record<keyof CamposPromocao, string>>;
 
-/** Campos que a Laura lê e fala — precisam passar pelas travas de texto. */
+/** Campos que a agente lê e fala — precisam passar pelas travas de texto. */
 export const CAMPOS_FALADOS = [
   "titulo",
   "descricao",
@@ -232,7 +232,7 @@ export function validarPromocao(c: CamposPromocao): ErrosPromocao {
     if (!v) continue;
     const p = problemasDoTexto(v);
     if (p.length > 0) {
-      erros[campo] = `Tire ${descreverProblemas(p)} — a Laura não usa isso.`;
+      erros[campo] = `Tire ${descreverProblemas(p)} — a agente não usa isso.`;
     }
   }
 

@@ -102,7 +102,7 @@ export function PromocaoModal({
     const limpo = limparTexto(valor);
     setF((p) => ({ ...p, [campo]: limpo }));
     setErros((e) => ({ ...e, [campo]: undefined }));
-    showToast(`Tirei ${descreverProblemas(problemas)} — a Laura não usa.`, "info");
+    showToast(`Tirei ${descreverProblemas(problemas)} — a agente não usa.`, "info");
   }
 
   async function salvar() {
@@ -136,7 +136,7 @@ export function PromocaoModal({
 
     showToast(
       f.ativa
-        ? "Salvo — a Laura já vai oferecer na próxima conversa"
+        ? "Salvo — a agente já vai oferecer na próxima conversa"
         : "Salvo (fora do ar)",
       "success"
     );
@@ -156,7 +156,7 @@ export function PromocaoModal({
         <div>
           <label className="form-label">
             Nome da promoção
-            <span className="form-dica">é assim que a Laura vai chamar ela</span>
+            <span className="form-dica">é assim que a agente vai chamar ela</span>
           </label>
           <input
             className="form-input"
@@ -289,7 +289,7 @@ export function PromocaoModal({
             <strong>Ativa</strong>
             <span className="promo-switch-dica">
               {f.ativa
-                ? "a Laura vai oferecer nas conversas"
+                ? "a agente vai oferecer nas conversas"
                 : "fica guardada, sem ser oferecida"}
             </span>
           </span>

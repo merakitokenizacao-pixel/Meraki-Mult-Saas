@@ -1,3 +1,12 @@
+/**
+ * O nome da agente na VITRINE.
+ *
+ * ⚠️ Aqui é a única exceção ao "nome de agente vem do banco": o site é
+ * público e não tem tenant nenhum para consultar. Fica numa constante só,
+ * para trocar num lugar quando a demonstração mudar de nome.
+ */
+export const AGENTE_VITRINE = "Sofia";
+
 // Constantes do site institucional (rota `/`). Nada aqui toca o CRM.
 
 /**
@@ -11,7 +20,7 @@
 const WHATSAPP_NUMERO = "5561998791499";
 
 export const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMERO}?text=${encodeURIComponent(
-  "Olá! Quero a Laura na minha clínica."
+  "Olá! Quero a agente na minha clínica."
 )}`;
 
 /**
@@ -21,10 +30,10 @@ export const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMERO}?text=${encodeURICo
  */
 export const EMAIL_CONTATO = "";
 
-export const CTA_LABEL = "Quero a Laura na minha clínica";
+export const CTA_LABEL = "Quero a agente na minha clínica";
 
 /** Versão curta para a pílula do header (o rótulo longo não cabe). */
-export const CTA_CURTO = "Quero a Laura";
+export const CTA_CURTO = "Quero a agente";
 
 /**
  * Imagem de atmosfera do hero. `null` = usa o tratamento em CSS (gradiente

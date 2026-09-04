@@ -206,7 +206,7 @@ export function EditorEscala({
       <p className="config-nota" style={{ marginTop: 14 }}>
         A agenda calcula a capacidade de cada horário somando quantas
         profissionais estão na escala. Tirar uma hora daqui{" "}
-        <strong>fecha essa vaga</strong> na agenda e para a Laura.
+        <strong>fecha essa vaga</strong> na agenda e para a agente.
       </p>
     </Modal>
   );

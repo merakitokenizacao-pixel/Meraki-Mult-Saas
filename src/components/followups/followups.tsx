@@ -3,7 +3,11 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { Info, TriangleAlert, Undo2 } from "lucide-react";
+import Link from "next/link";
+import { Info, TriangleAlert } from "lucide-react";
+import { useTenant } from "@/components/tenant-provider";
+import { RECEITA_FOLLOWUP, type TipoEnvio } from "@/lib/envios";
+import { listarRegras } from "@/lib/envios-db";
 import { getRelativeTime } from "@/lib/format";
 import {
   calcularMetricas,
@@ -49,10 +53,27 @@ const DICA_VETO =
 
 export function FollowUps() {
   const router = useRouter();
+  const { atual: clinica, agente } = useTenant();
   const { data, isPending, error } = useQuery({
     queryKey: ["follow-ups"],
     queryFn: getFollowUps,
   });
+
+  // As receitas vêm do BANCO, com o ativo/desligado real. Escrever a lista no
+  // componente daria uma tela que mostra o que o porteiro `envio_pode` não
+  // conhece.
+  const regras = useQuery({
+    queryKey: ["envios-regras", clinica?.tenant_id ?? null],
+    queryFn: () => listarRegras(clinica!.tenant_id),
+    enabled: !!clinica,
+  });
+  const receitas = useMemo(
+    () =>
+      (regras.data ?? [])
+        .map((r) => ({ regra: r, receita: RECEITA_FOLLOWUP[r.tipo as TipoEnvio] }))
+        .filter((x) => x.receita !== null),
+    [regras.data]
+  );
 
   const [periodo, setPeriodo] = useState<Periodo>(30);
   const [filtroResultado, setFiltroResultado] = useState<
@@ -80,11 +101,36 @@ export function FollowUps() {
     router.push(`/conversas?lead=${f.lead_id}`);
   }
 
+  // Mesma anatomia dos cards da Visão geral (ver `.neg-card` no globals.css):
+  // rótulo, valor e SUBTEXTO. O subtexto é o que faltava — "0%" sozinho não
+  // diz de quantos, e uma taxa sem denominador não é informação.
+  const respondentes = metricas.respondidos + metricas.convertidos;
   const CARDS = [
-    { label: "Enviados", valor: metricas.enviados, sufixo: "", dica: "" },
-    { label: "Taxa de resposta", valor: metricas.taxaResposta, sufixo: "%", dica: "" },
-    { label: "Viraram agendamento", valor: metricas.taxaConversao, sufixo: "%", dica: "" },
-    { label: "Não enviados", valor: metricas.vetados, sufixo: "", dica: DICA_VETO },
+    {
+      label: "Enviados",
+      valor: String(metricas.enviados),
+      apoio: `nos últimos ${periodo} dias`,
+      dica: "",
+    },
+    {
+      label: "Taxa de resposta",
+      valor: `${metricas.taxaResposta}%`,
+      apoio: `${respondentes} de ${metricas.enviados} enviados`,
+      dica: "",
+    },
+    {
+      label: "Viraram agendamento",
+      valor: `${metricas.taxaConversao}%`,
+      apoio: `${metricas.convertidos} de ${metricas.enviados}`,
+      dica: "",
+    },
+    {
+      // O único não óbvio, e o único com ⓘ.
+      label: "Não enviados",
+      valor: String(metricas.vetados),
+      apoio: "barrados pelas regras",
+      dica: DICA_VETO,
+    },
   ];
 
   const semNenhum = !isPending && !error && todos.length === 0;
@@ -92,10 +138,15 @@ export function FollowUps() {
   return (
     <div className="page-fade">
       <div className="fu-header">
-        <p className="fu-sub">
-          A Laura retoma conversas sozinha em quatro situações. Aqui está o
-          resultado de cada uma.
-        </p>
+        <div>
+          {/* Um título só: a barra de topo some em /follow-ups (ver
+              app-shell.tsx), porque ela repetia "Follow-ups" logo acima. */}
+          <h1 className="fu-titulo">Follow-ups</h1>
+          <p className="fu-sub">
+            {agente} retoma conversas sozinha. Aqui está o resultado de cada
+            receita.
+          </p>
+        </div>
         <div className="fu-periodo">
           {PERIODOS.map((d) => (
             <button
@@ -122,10 +173,8 @@ export function FollowUps() {
                 </span>
               )}
             </div>
-            <div className="fu-card-valor">
-              {isPending ? "—" : c.valor}
-              {!isPending && c.sufixo}
-            </div>
+            <div className="fu-card-valor">{isPending ? "—" : c.valor}</div>
+            <div className="fu-card-apoio">{isPending ? " " : c.apoio}</div>
           </div>
         ))}
       </div>
@@ -260,28 +309,14 @@ export function FollowUps() {
           </div>
         </div>
       ) : semNenhum ? (
-        // Estado vazio EDUCATIVO: a tabela vai demorar a encher (dois dos tipos
-        // disparam raramente), então o vazio aproveita para explicar o que a
-        // Laura faz sozinha — é o que faz a dona confiar antes de ver número.
-        <div className="card fu-vazio">
-          <Undo2
-            size={28}
-            strokeWidth={1.3}
-            style={{ color: "var(--mk-acento)", margin: "0 auto 14px" }}
-          />
-          <div className="fu-vazio-titulo">Nenhum follow-up ainda</div>
+        // ⚠️ Encostado no topo e em duas linhas. O bloco alto e centralizado de
+        // antes misturava duas coisas: "não aconteceu nada ainda" e "estes são
+        // os tipos que existem". A segunda virou seção própria, abaixo.
+        <div className="fu-vazio">
+          <p className="fu-vazio-titulo">Nenhum follow-up enviado ainda.</p>
           <p className="fu-vazio-texto">
-            A Laura retoma a conversa sozinha nestas quatro situações. Assim que
-            a primeira acontecer, o resultado aparece aqui.
+            Assim que a primeira receita disparar, o resultado aparece aqui.
           </p>
-          <ul className="fu-vazio-tipos">
-            {TIPOS.map((t) => (
-              <li key={t.valor}>
-                <strong>{t.label}</strong>
-                <span>{t.gatilho}</span>
-              </li>
-            ))}
-          </ul>
         </div>
       ) : lista.length === 0 ? (
         <div className="card fu-vazio">
@@ -333,6 +368,39 @@ export function FollowUps() {
           })}
         </div>
       )}
+
+      {/* ── As receitas ────────────────────────────────────────────────────
+          Seção própria, alinhada à esquerda, com o estado REAL de cada uma.
+          A lista vem de `envios_regras`: escrevê-la aqui daria uma tela que
+          mostra receita que o porteiro `envio_pode` não conhece. */}
+      <section className="fu-receitas">
+        <h2 className="fu-receitas-titulo">Como {agente} retoma</h2>
+        {regras.isPending ? (
+          <p className="fu-receita-vazia">Carregando…</p>
+        ) : receitas.length === 0 ? (
+          <p className="fu-receita-vazia">
+            Nenhuma receita configurada — veja Configurações → Envios
+            automáticos.
+          </p>
+        ) : (
+          <ul className="fu-receita-lista">
+            {receitas.map(({ regra, receita }) => (
+              <li key={regra.tipo} className="fu-receita">
+                <span className="fu-receita-nome">{receita!.nome}</span>
+                <span className="fu-receita-gatilho">{receita!.gatilho}</span>
+                <span
+                  className={`fu-receita-estado${regra.ativo ? " ativo" : ""}`}
+                >
+                  {regra.ativo ? "Ativo" : "Desligado"}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+        <Link href="/configuracoes" className="fu-receita-link">
+          Configurar envios automáticos
+        </Link>
+      </section>
     </div>
   );
 }

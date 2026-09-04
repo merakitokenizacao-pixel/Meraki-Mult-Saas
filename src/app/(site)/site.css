@@ -726,7 +726,7 @@ html[data-abertura="vista"] .s-abertura {
 /* O VERDE DO WHATSAPP FICA. Trocar por dourado deixaria a página mais coerente
    e a prova mais fraca: é o verde que faz o cérebro reconhecer a plataforma em
    200ms. Sem ele, isto vira mockup de agência. */
-.cv-laura .cv-balao {
+.cv-agente .cv-balao {
   justify-self: end;
   background: #d9fdd3;
   border-top-right-radius: 4px;

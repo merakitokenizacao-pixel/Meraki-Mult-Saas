@@ -5,11 +5,15 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronsLeft, ChevronsRight } from "lucide-react";
 import { NAV_ITEMS, SETTINGS_ITEM, titleForPath } from "@/lib/nav";
+import { useTenant } from "@/components/tenant-provider";
 import { LogoutButton } from "@/components/auth/logout-button";
 import { TenantSelector } from "@/components/tenant-selector";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  // ⚠️ O nome da agente vem de `tenant_config.agente_nome`, nunca do código:
+  // é dado da clínica, como o endereço. Uma odonto vai querer outro nome.
+  const { agente } = useTenant();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   // Inicia colapsada já no primeiro paint quando a rota for /conversas (sem flash)
   const [collapsed, setCollapsed] = useState(() =>
@@ -40,7 +44,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     pathname.startsWith("/configuracoes") ||
     // O Kanban tem H1 próprio: com a topbar, "Kanban" aparecia duas vezes na
     // mesma tela. E os 64px dela saem do quadro, que precisa de altura.
-    pathname.startsWith("/kanban");
+    pathname.startsWith("/kanban") ||
+    // Mesmo caso: "Follow-ups" na barra e de novo no conteúdo.
+    pathname.startsWith("/follow-ups");
 
   return (
     <>
@@ -99,17 +105,17 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </nav>
 
           <div className="sidebar-rodape">
-            {/* O status da Laura era um enfeite: dizia "ativa" sempre,
-                inclusive com o WhatsApp caído. Agora leva para a tela que
-                responde de verdade se ela está atendendo. */}
+            {/* O status era um enfeite: dizia "ativa" sempre, inclusive com o
+                WhatsApp caído. Agora leva para a tela que responde de verdade
+                se ela está atendendo. */}
             <Link
               href="/configuracoes"
               className="sidebar-footer"
-              aria-label="Status da Laura"
-              data-label="Laura"
+              aria-label={`Status de ${agente}`}
+              data-label={agente}
             >
               <span className="sidebar-status-dot" />
-              <span className="sidebar-status-text">Laura ativa</span>
+              <span className="sidebar-status-text">{agente} ativa</span>
             </Link>
             <Link
               href={SETTINGS_ITEM.href}

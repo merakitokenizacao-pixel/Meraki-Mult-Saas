@@ -16,7 +16,7 @@ export const dynamic = "force-dynamic";
 // qualquer cliente do Meraki trocando uma palavra na URL. Sem a variável, a
 // rota responde "indisponível" em vez de escolher uma clínica sozinha.
 //
-// A DISPONIBILIDADE JÁ É PÚBLICA — qualquer um descobre perguntando à Laura no
+// A DISPONIBILIDADE JÁ É PÚBLICA — qualquer um descobre perguntando à agente no
 // WhatsApp. O que não pode vazar é QUEM está marcado, e é por isso que a
 // resposta é montada campo a campo em vez de repassada:
 // `agenda_slots` devolve capacidade, ocupadas, código e motivo, e nada disso

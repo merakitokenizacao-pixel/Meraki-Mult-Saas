@@ -7,7 +7,7 @@ import { fetchPainel } from "@/lib/api-painel";
 // Conexão do WhatsApp.
 //
 // Hoje a dona só descobre que o número caiu quando uma cliente reclama que
-// ninguém respondeu — a Laura fica muda e nada na tela avisa. Esta seção
+// ninguém respondeu — a agente fica muda e nada na tela avisa. Esta seção
 // pergunta o estado direto à Evolution e, se caiu, entrega o QR para reparear.
 
 type Estado = "conectado" | "conectando" | "desconectado";
@@ -99,7 +99,7 @@ export function SecaoConexao() {
                 Instância <code>{status.instancia}</code>
               </>
             ) : (
-              "Número pelo qual a Laura atende"
+              "Número pelo qual a agente atende"
             )}
           </div>
         </div>
@@ -122,7 +122,7 @@ export function SecaoConexao() {
 
       {status?.estado === "conectado" && (
         <p className="conexao-nota">
-          A Laura está recebendo e respondendo por este número.
+          A agente está recebendo e respondendo por este número.
         </p>
       )}
 
@@ -130,7 +130,7 @@ export function SecaoConexao() {
         <>
           <p className="conexao-nota">
             Enquanto estiver assim, <strong>ninguém é atendido</strong>: as
-            mensagens não chegam e a Laura não responde.
+            mensagens não chegam e a agente não responde.
           </p>
           {!qr ? (
             <button

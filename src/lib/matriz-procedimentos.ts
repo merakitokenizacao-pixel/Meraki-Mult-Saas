@@ -133,7 +133,7 @@ export async function renomearProcedimento(id: string, nome: string): Promise<vo
  * Desativar NUNCA é delete.
  *
  * Apagar o procedimento levaria junto, por cascade, as linhas da matriz e os
- * 27 apelidos que a Laura usa para reconhecer o serviço no WhatsApp — e nada
+ * 27 apelidos que a agente usa para reconhecer o serviço no WhatsApp — e nada
  * disso volta. `ativo = false` some da tela e preserva tudo.
  */
 export async function definirAtivoProcedimento(

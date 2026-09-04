@@ -54,7 +54,7 @@ export async function getLeadById(id: string): Promise<Lead | null> {
 // A capacidade de cada horário é DERIVADA das profissionais e da escala delas
 // (`profissionais` + `profissional_horarios` + `profissional_bloqueios`), via a
 // função `agenda_slots`. É a MESMA função que o trigger usa e que as tools da
-// Laura vão usar — então CRM e agente nunca divergem. Ver AGENTE.md.
+// a agente vão usar — então CRM e agente nunca divergem. Ver AGENTE.md.
 //
 // Isto SUBSTITUI o `lib/agenda-regras.ts` (grade hardcoded em TS), que virou
 // só o fallback dentro do SQL, para o caso de a escala estar vazia.

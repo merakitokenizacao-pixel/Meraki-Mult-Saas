@@ -825,7 +825,7 @@ escreve no Supabase. Mudança de prompt ou de fluxo do agente se faz lá.
 - ⚠️ **O nome da agente vem do BANCO, nunca do código.** Ele mora em
   `tenant_config.agente_nome` (`Sofia` para a LINS) e chega às telas pelo
   `useTenant()`, junto com `minhas_clinicas()`. O painel inteiro já disse
-  "Laura" — a agente da clínica antiga — em 112 lugares, e trocar a string por
+  o nome da agente da clínica ANTIGA em 112 lugares, e trocar a string por
   outra teria só adiado o problema: uma odonto vai querer um terceiro nome.
   O fallback é **"a agente"**, genérico de propósito, porque nome errado é pior
   que nome nenhum. A única exceção é o site institucional, que é público e não

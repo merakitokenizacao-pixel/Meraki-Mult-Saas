@@ -133,31 +133,38 @@
         modal sobre card sobre lista não há como recuar uma camada, e a
         hierarquia colapsa numa coisa só.
 
-     ⚠️ A ESCALA SUBIU EM AGO/2026, e não é redesenho: é a MESMA escada, mais
-     acima. Sobre a base antiga (#0e0f11, Y 0,0058) o card compunha Y 0,008 e
-     a hairline Y 0,020 — contraste borda/superfície de 1,21:1, ou seja, a
-     estrutura não separava nada. A referência medida na tela trabalha em
-     1,72:1. A base sobe para #1e1f21 e a hairline de 10% para 19% de branco,
-     e o par vai a 1,70:1. Matiz e viés neutro-frio ficam iguais.
+     ⚠️ A DIREÇÃO DA ESCADA INVERTEU EM AGO/2026, e é a mudança mais profunda
+     que este bloco já teve. Antes o card era mais CLARO que a página (1,07:1);
+     agora ele é mais ESCURO (1,13:1). A referência, medida com o filtro
+     `invert(0.83)` que ela aplica no <html>, trabalha em 1,19:1 nessa direção.
 
-     Cinco camadas, do fundo para a frente (o valor à direita é como a alpha
-     compõe SOBRE A BASE):
+     A subida de escala anterior tinha posto a PÁGINA no valor que lá é do
+     CARD. Consertar isso não era clarear mais: era virar a escada.
 
-        rebaixado    #131416    lista, sidebar, área de rolagem   Y 0,0070
-        base         #1e1f21    fundo da página                   Y 0,0137
-        superfície   #ffffff07  card, painel, bolha  → #242527    Y 0,0184
-        superfície-2 #ffffff0c  empilha sobre card   → #292a2b    Y 0,0230
-        superfície-3 #ffffff14  empilha sobre aquilo → #303132    Y 0,0306
+     Consequência que muda o raciocínio inteiro: as superfícies passam a ser
+     ALPHA PRETO. Antes, empilhar clareava; agora, empilhar ESCURECE — e
+     "um degrau acima" deixou de sair de graça. Ver o aviso no fim deste bloco.
 
-     As superfícies são ALPHA de propósito: é o que faz card sobre card e menu
-     sobre popover clarearem sozinhos, sem calcular tom novo para cada
-     combinação. A base e o rebaixado são explícitos porque alpha branco não
-     sabe escurecer. */
-  --mk-rebaixado: #131416;
-  --mk-fundo: #1e1f21;
-  --mk-superficie: #ffffff07;
-  --mk-superficie-2: #ffffff0c;
-  --mk-superficie-3: #ffffff14;
+     Cinco camadas (o valor à direita é como a alpha compõe SOBRE A BASE):
+
+        rebaixado    #181a1c    poço: lista que rola             Y 0,0102
+        superfície   #00000040  card, painel, bolha  → #1d1f21   Y 0,0135
+        superfície-2 #00000026  popover, modal       → #212325   Y 0,0166
+        superfície-3 #00000014  menu sobre modal     → #242629   Y 0,0192
+        base         #27292c    fundo da página                  Y 0,0220
+
+     Note a ordem: a base é o TETO, não o piso. Quanto mais alpha preto, mais
+     fundo o elemento está. A monotonia foi medida — card < popover < menu <
+     página, cada degrau entre 1,04 e 1,05:1.
+
+     ⚠️ ALPHA PRETO NÃO CLAREIA. Um elemento que precise parecer um degrau
+     ACIMA de um card não consegue com estes tokens: composto sobre o card,
+     qualquer um dos três escurece. Quem precisa disso usa tom opaco. */
+  --mk-rebaixado: #181a1c;
+  --mk-fundo: #27292c;
+  --mk-superficie: #00000040;
+  --mk-superficie-2: #00000026;
+  --mk-superficie-3: #00000014;
 
   /* ── Os dois opacos ───────────────────────────────────────────────────────
      ⚠️ NÃO SÃO COR NOVA: são `--mk-superficie-2` e `--mk-superficie-3`
@@ -170,8 +177,8 @@
      exatamente o que aconteceu na subida de escala de ago/2026, e é por isso
      que estes valores não são os do desenho original: eles saem da conta, não
      do olho. */
-  --mk-elevado: #292a2b; /* popover, modal, dropdown, tooltip, cabeçalho fixo */
-  --mk-elevado-2: #303132; /* menu que abre por cima de modal */
+  --mk-elevado: #212325; /* popover, modal, dropdown, tooltip, cabeçalho fixo */
+  --mk-elevado-2: #242629; /* menu que abre por cima de modal */
 
   /* A hairline subiu de 10% para 19% de branco: é ela que carrega TODA a
      separação do sistema, porque não há box-shadow em lugar nenhum. */
@@ -7004,6 +7011,10 @@ a.sidebar-footer:hover {
   flex-direction: column;
   gap: 8px;
 }
+/* ⚠️ TRANSPARENTE, não superfície: esta linha vive DENTRO de `.config-card`,
+   que já é superfície. Com alpha preto o token comporia duas vezes e a
+   pergunta viraria um bloco mais escuro que o card que a contém. Quem separa
+   aqui é a borda. */
 .rq-cfg-pergunta {
   display: flex;
   align-items: flex-start;
@@ -7011,7 +7022,7 @@ a.sidebar-footer:hover {
   padding: 10px;
   border: 1px solid var(--mk-linha);
   border-radius: var(--mk-raio);
-  background: var(--mk-superficie);
+  background: transparent;
   transition: border-color var(--mk-transicao), opacity var(--mk-transicao);
 }
 .rq-cfg-pergunta.arrastando {
@@ -7661,13 +7672,15 @@ a.sidebar-footer:hover {
    branco a ~5%). Na aba a marca é só cor porque a aba troca o painel inteiro e
    o conteúdo abaixo já confirma a escolha; aqui as duas opções ficam lado a
    lado sem nada mudando de forma, e cor sozinha em 13px não segura o estado. */
+/* Transparente pelo mesmo motivo de `.rq-cfg-pergunta`: o segmentado mora
+   dentro do cabeçalho de um painel, que já é superfície. */
 .seg {
   display: inline-flex;
   align-items: center;
   padding: 2px;
   border: 1px solid var(--mk-linha);
   border-radius: var(--mk-raio);
-  background: var(--mk-superficie);
+  background: transparent;
   transition: border-color var(--mk-transicao);
 }
 /* Foco muda a COR DA BORDA do trilho — a mesma regra do campo de texto. Sem
@@ -7804,16 +7817,22 @@ a.sidebar-footer:hover {
 }
 
 /* ── Chrome: sidebar, topbar e nav ───────────────────────────────────────── */
-/* ⚠️ A SIDEBAR FICA NA BASE, e o erro que isto corrige era conceitual.
-   `--mk-rebaixado` significa POÇO: conteúdo que afunda, lista que rola dentro
-   de uma página. A sidebar não é isso — ela é superfície IRMÃ do conteúdo, ao
-   lado dele, não abaixo. Separada só pela hairline da direita.
+/* ⚠️ A SIDEBAR TEM PLANO PRÓPRIO, e não é o poço. `--mk-rebaixado` significa
+   conteúdo que AFUNDA — lista que rola dentro de uma página. A sidebar não é
+   isso: é superfície irmã do conteúdo, ao lado e não abaixo. Ela já esteve no
+   poço e já esteve na base; na base dependia só da hairline para existir, e
+   com a escada invertida ela ganha a superfície do card.
 
-   O rebaixado fica reservado para poço de verdade: a coluna da lista de
-   conversas e o corpo das colunas do Kanban. */
-.sidebar,
+   ⚠️ `.sidebar-logo` FICA TRANSPARENTE, e isto não é detalhe: ela é FILHA da
+   sidebar, e `--mk-superficie` agora é alpha PRETO. Repetir o token nas duas
+   comporia duas vezes — #1d1f21 viraria #161719, um retângulo mais escuro no
+   topo da barra, sem ninguém ter pedido. */
+.sidebar {
+  background: var(--mk-superficie);
+  border-color: var(--mk-linha);
+}
 .sidebar-logo {
-  background: var(--mk-fundo);
+  background: transparent;
   border-color: var(--mk-linha);
 }
 .sidebar {

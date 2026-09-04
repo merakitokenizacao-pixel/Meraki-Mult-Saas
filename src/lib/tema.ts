@@ -54,11 +54,12 @@ export const TEMAS: DefTema[] = [
       // que a base muda — ver "A escada" no globals.css. Já ficaram para trás
       // uma vez: a miniatura continuou mostrando #0e0f11 depois de a base
       // subir, ou seja, ilustrando um sistema que não existia mais.
-      bg: "#1e1f21",
-      // Translúcidos no CSS, COMPOSTOS aqui: --mk-superficie (#ffffff07) e
-      // --mk-linha (#ffffff30), os dois sobre a base acima.
-      surface: "#242527",
-      border: "#48494b",
+      bg: "#27292c",
+      // Translúcidos no CSS, COMPOSTOS aqui: --mk-superficie (#00000040) e
+      // --mk-linha (#ffffff30), os dois sobre a base acima. Note que a
+      // superfície é mais ESCURA que o fundo — a escada inverteu.
+      surface: "#1d1f21",
+      border: "#505154",
       text: "#ecedee",
       accent: "#a78bfa",
       cores: ["#3fb950", "#d9a441", "#f85149", "#7dd3fc"],

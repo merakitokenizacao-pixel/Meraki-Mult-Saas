@@ -409,11 +409,11 @@ O sistema é **superfície como OPACIDADE, não como cor**, sobre uma base escur
 São cinco camadas, e o valor à direita é como a alpha compõe **sobre a base**:
 
 ```
---mk-rebaixado    #131416     POÇO: lista que rola dentro da página
---mk-fundo        #1e1f21     o fundo da página
---mk-superficie   #ffffff07   card, painel, bolha          → #242527
---mk-superficie-2 #ffffff0c   empilha sobre card           → #292a2b
---mk-superficie-3 #ffffff14   empilha sobre aquilo         → #303132
+--mk-rebaixado    #181a1c     POÇO: lista que rola dentro da página
+--mk-superficie   #00000040   card, painel, bolha          → #1d1f21
+--mk-superficie-2 #00000026   popover, modal               → #212325
+--mk-superficie-3 #00000014   menu sobre modal             → #242629
+--mk-fundo        #27292c     o fundo da página  ← o TETO, não o piso
 --mk-linha        #ffffff30   branco a 19%
 ```
 
@@ -435,8 +435,8 @@ tokens **opacos**, que não são cor nova: são a superfície-2 e a superfície-
 já compostas sobre a base.
 
 ```
---mk-elevado    #292a2b   popover, modal, dropdown, tooltip, cabeçalho fixo
---mk-elevado-2  #303132   menu que abre POR CIMA de modal
+--mk-elevado    #212325   popover, modal, dropdown, tooltip, cabeçalho fixo
+--mk-elevado-2  #242629   menu que abre POR CIMA de modal
 ```
 
 Se a base mudar, **recomponha os dois** — eles não acompanham sozinhos.
@@ -459,7 +459,28 @@ corpo das colunas do Kanban e o dia fora do mês no calendário.
 | `elevado` | modal, `drp-pop`, menu de filtro, combo, tooltip, cabeçalho `sticky` |
 | `elevado-2` | menu aberto **dentro** de modal |
 
-⚠️ **A ESCALA SUBIU EM AGO/2026, e não foi redesenho.** Sobre a base antiga
+⚠️ **A DIREÇÃO DA ESCADA INVERTEU EM AGO/2026, e é a mudança mais profunda
+que o sistema já teve.** O card era mais CLARO que a página (1,07:1); agora é
+mais **escuro** (1,13:1), como a referência, que trabalha em 1,19:1 nessa
+direção. A subida de escala anterior tinha posto a página no valor que lá é do
+CARD — consertar não era clarear mais, era virar a escada.
+
+**As superfícies passaram a ser alpha PRETO**, e isso muda o raciocínio
+inteiro: antes empilhar clareava, agora empilhar **escurece**.
+
+⚠️ **ALPHA PRETO NÃO CLAREIA.** Um elemento que precise parecer um degrau
+ACIMA de um card não consegue com estes tokens — composto sobre o card,
+qualquer um dos três escurece. Já mordeu três lugares: `.sidebar-logo` (filha
+da sidebar), `.rq-cfg-pergunta` (dentro de `.config-card`) e `.seg` (dentro do
+cabeçalho de painel). Os três viraram `transparent`; quem separa ali é a borda.
+Quem precisar mesmo de um degrau acima usa tom opaco.
+
+⚠️ **E os 22 `:hover` que usam `--mk-superficie-2` sobre um card agora
+ESCURECEM em vez de clarear.** Não são bug — um hover que afunda é leitura
+legítima nesta direção —, mas o comentário original dizia "um degrau acima", e
+não é mais isso que acontece.
+
+⚠️ **A ESCALA JÁ TINHA SUBIDO ANTES, na mesma semana.** Sobre a base antiga
 (`#0e0f11`, Y 0,0058) o card compunha Y 0,008 e a hairline Y 0,020 — contraste
 borda/superfície de **1,21:1**, ou seja, a estrutura não separava nada. A
 referência medida na tela trabalha em 1,72:1. A base subiu para `#1e1f21` e a
@@ -471,11 +492,12 @@ base? recomponha os dois" existe exatamente para isso, e os valores saem da
 conta, não do olho.
 
 ⚠️ **`--mk-tinta-fraca` ACOMPANHA A BASE, e já mudou três vezes por isso**
-(`#62676d` → `#7d8288` → `#878c93`): subir o fundo derruba o contraste do texto
-pequeno, e a subida de escala empurrou o `#7d8288` para 3,96 sobre a
-superfície, de volta abaixo do AA. Hoje dá **4,53 sobre a superfície** e 4,87
-sobre a base. Cada valor novo é o MESMO matiz com mais brilho, não uma cor
-diferente. `--mk-tinta` e `--mk-tinta-media` não acompanham: sobram contraste.
+(`#62676d` → `#7d8288` → `#878c93`). Com a escada invertida ele dá **4,88 sobre
+o card** — mas só **4,31 sobre a PÁGINA**, e ali reprova no AA. O card ficou
+mais escuro e a página mais clara, então o mesmo token passa num lugar e falha
+no outro. Onde ele dói é o texto solto sobre a página (`.env-intro`,
+`.rq-cfg-explica`, `.kb-sub`, subtexto de vazio). `--mk-tinta` (12,44) e
+`--mk-tinta-media` (5,59) sobram contraste nos dois planos.
 
 A nota histórica original: **`#62676d` reprovava desde sempre.** O valor antigo
 **reprovava no AA** e já reprovava antes desta troca — 3.68 sobre preto, 3.36

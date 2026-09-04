@@ -636,6 +636,12 @@ body {
   color: var(--mk-tinta-fraca);
   letter-spacing: 0;
 }
+/* Desligada não é erro — é escolha. Some o ponto verde e o texto apaga; nada
+   de vermelho, que faria a dona procurar um problema que ela mesma criou. */
+.sidebar-status-text.desligada {
+  color: var(--mk-tinta-fraca);
+  font-style: italic;
+}
 
 /* ── MAIN / TOPBAR ── */
 .main {
@@ -6409,6 +6415,160 @@ a.sidebar-footer:hover {
 }
 .fu-receita-link:hover {
   text-decoration: underline;
+}
+
+/* ── Conexão do WhatsApp ─────────────────────────────────────────────────── */
+/* Cor de estado só em ÍCONE e TEXTO — nunca fundo cheio. Um bloco verde
+   ocupando o card diria "conectado" mais alto que o número, que é a
+   informação que a dona confere. */
+.cx-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.cx-vazio {
+  font-size: 13px;
+  color: var(--mk-tinta-fraca);
+}
+.cx-linha {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  margin-bottom: 14px;
+}
+.cx-marca {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--mk-linha);
+  border-radius: var(--mk-raio);
+  color: var(--mk-tinta-fraca);
+}
+.cx-marca.ok {
+  border-color: color-mix(in srgb, var(--mk-st-resolvido) 35%, transparent);
+  color: var(--mk-st-resolvido);
+}
+.cx-titulo {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--mk-tinta);
+}
+.cx-titulo.ok {
+  color: var(--mk-st-resolvido);
+}
+.cx-numero {
+  margin-top: 2px;
+  font-size: 13px;
+  color: var(--mk-tinta);
+  font-variant-numeric: tabular-nums;
+}
+.cx-desde {
+  margin-top: 1px;
+  font-size: 11px;
+  color: var(--mk-tinta-fraca);
+}
+.cx-explica {
+  margin-top: 3px;
+  max-width: 54ch;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--mk-tinta-media);
+}
+.cx-acao {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+/* O erro fica no texto, em --st-erro, e só. */
+.cx-erro {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--mk-linha-suave);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--mk-st-erro);
+}
+
+/* ── O pareamento ────────────────────────────────────────────────────────── */
+.cx-parear {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 6px 0;
+  text-align: center;
+}
+/* 280px: menor que isso a câmera do celular erra a leitura com frequência, e a
+   pessoa conclui que o código está quebrado em vez de pequeno. Fundo branco
+   porque leitor de QR precisa de contraste máximo — é o mesmo motivo do
+   `--mk-papel`. */
+.cx-qr {
+  width: 280px;
+  height: 280px;
+  padding: 10px;
+  border-radius: var(--mk-raio);
+  background: var(--mk-papel);
+}
+.cx-passos {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: passo;
+  font-size: 12.5px;
+  color: var(--mk-tinta-media);
+}
+.cx-passos li {
+  counter-increment: passo;
+}
+.cx-passos li::before {
+  content: counter(passo) ". ";
+  color: var(--mk-tinta-fraca);
+}
+.cx-passo {
+  max-width: 44ch;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--mk-tinta-media);
+}
+.cx-esperando {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  color: var(--mk-tinta-fraca);
+}
+.cx-girando {
+  animation: spin 1s linear infinite;
+}
+
+/* ── O interruptor da agente ─────────────────────────────────────────────── */
+.cx-agente-nome {
+  margin-bottom: 10px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--mk-tinta);
+}
+.cx-agente-toggle {
+  margin-bottom: 12px;
+}
+/* ⚠️ Este texto é o ponto da tela, não legenda. Sem ele, a clínica que não
+   quer IA acha que o produto NÃO TEM o que ela desligou — e o que ela precisa
+   entender é que está escolhendo, não abrindo mão. */
+.cx-agente-texto {
+  max-width: 62ch;
+  margin-top: 6px;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--mk-tinta-media);
+}
+.cx-agente-texto strong {
+  color: var(--mk-tinta);
+  font-weight: 600;
 }
 
 /* ── Envios automáticos ──────────────────────────────────────────────────── */

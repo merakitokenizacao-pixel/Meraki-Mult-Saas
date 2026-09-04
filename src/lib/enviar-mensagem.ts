@@ -9,16 +9,18 @@
 
 import { fetchPainel } from "@/lib/api-painel";
 
-export class EnvioErro extends Error {}
+export class EnvioErro extends Error {
+  /** A mensagem chegou a ser gravada na conversa antes de o envio falhar. */
+  gravada = false;
+}
 
 export async function enviarMensagem(payload: {
   lead_id: string;
-  telefone: string;
   mensagem: string;
-}): Promise<{ aviso?: string }> {
+}): Promise<{ aviso?: string; gravada?: boolean }> {
   let r: Response;
   try {
-    r = await fetchPainel("/api/painel/enviar-mensagem", {
+    r = await fetchPainel("/api/painel/responder", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
@@ -36,15 +38,20 @@ export async function enviarMensagem(payload: {
     erro?: string;
     detalhe?: string;
     aviso?: string;
+    gravada?: boolean;
   };
 
   if (!r.ok) {
-    // `detalhe` vem da Evolution e diz o que houve de fato (número inválido,
-    // instância desconectada, WhatsApp fora do ar) — é o que faltava antes.
-    throw new EnvioErro(
+    // ⚠️ `gravada` viaja junto do erro DE PROPÓSITO: a rota escreve a mensagem
+    // antes de tentar enviar, então "falhou" quase sempre significa "está na
+    // conversa, mas não saiu". Sem este sinal a tela apagaria a bolha otimista
+    // e a pessoa reescreveria um texto que já existe.
+    const err = new EnvioErro(
       corpo.detalhe || corpo.erro || `Não foi possível enviar (HTTP ${r.status})`
     );
+    err.gravada = corpo.gravada === true;
+    throw err;
   }
 
-  return { aviso: corpo.aviso };
+  return { aviso: corpo.aviso, gravada: corpo.gravada };
 }

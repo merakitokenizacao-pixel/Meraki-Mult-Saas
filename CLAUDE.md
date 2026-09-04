@@ -862,6 +862,23 @@ escreve no Supabase. Mudança de prompt ou de fluxo do agente se faz lá.
 ## Princípios
 
 - Português do Brasil em toda a UI.
+- ⚠️ **A INSTÂNCIA DA EVOLUTION VEM DO SLUG**, nunca de `EVOLUTION_INSTANCE`
+  nem de escolha da clínica: `instanciaDoSlug()` em `src/lib/evolution.ts`. Com
+  a variável de ambiente o painel inteiro falava por UMA instância, e a segunda
+  clínica mandaria mensagem pelo WhatsApp da primeira. Se a clínica escolhesse
+  o nome, duas escolheriam o mesmo e uma sobrescreveria a outra.
+- ⚠️ **Instância já existente NÃO é erro.** A Evolution devolve 403/409 quando
+  o nome está em uso, e aqui isso significa "esta clínica já conectou antes" —
+  o caminho normal de reconexão.
+- ⚠️ **Responder pelo painel GRAVA ANTES DE ENVIAR.** `painel_responder` acha
+  telefone e instância, pausa a agente e registra a conversa numa transação; só
+  então a rota chama a Evolution. Se o envio falhar, a mensagem está no
+  histórico e a tela diz que não saiu — antes era o contrário, e a mensagem
+  sumia sem rastro.
+- ⚠️ **Realtime NÃO está habilitado**: a publicação `supabase_realtime` não tem
+  nenhuma tabela (conferido em set/2026). A assinatura em `conversas.tsx` fica
+  inerte, e quem atualiza é um poll de 5s — só com conversa aberta. Ligar
+  `conversas` e `leads` na publicação aposenta o poll.
 - ⚠️ **O nome da agente vem do BANCO, nunca do código.** Ele mora em
   `tenant_config.agente_nome` (`Sofia` para a LINS) e chega às telas pelo
   `useTenant()`, junto com `minhas_clinicas()`. O painel inteiro já disse

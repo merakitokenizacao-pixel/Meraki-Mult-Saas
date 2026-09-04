@@ -89,7 +89,7 @@ const SEP_WIN = "\\";
 // Só as classes da CASA entram: utilitário do Tailwind não mora no CSS.
 const PREFIXOS = [
   "neg-", "nav-", "vg-", "mk-", "seg", "metric", "drp-", "mtz-", "funnel-",
-  "conv-", "badge", "kb-", "rq-", "env-", "cfm-", "arq-",
+  "conv-", "badge", "kb-", "rq-", "env-", "cfm-", "arq-", "cx-",
   "ag-", "escala-", "prof-", "fu-", "lead-", "midia-", "agenda-", "msg-",
   "modal-", "conexao-", "table-", "date-filter", "sidebar", "topbar", "card",
   "empty", "spinner", "page-",

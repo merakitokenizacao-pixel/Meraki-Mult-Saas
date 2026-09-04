@@ -36,6 +36,12 @@ interface EstadoTenant {
    * genérico de propósito, porque um nome errado é pior que nenhum.
    */
   agente: string;
+  /** `tenant_config.agente_ativo`: false = a agente não responde nada. */
+  agenteAtivo: boolean;
+  /** Atalho para o id da clínica atual — a escrita de config precisa dele. */
+  tenantId: string | null;
+  /** Relê `tenant_config` depois de o interruptor mudar. */
+  recarregarAgente: () => Promise<void>;
   carregando: boolean;
   /** Mais de uma clínica: é o que faz o seletor aparecer. */
   varias: boolean;
@@ -48,9 +54,27 @@ export function TenantProvider({ children }: { children: React.ReactNode }) {
   const [clinicas, setClinicas] = useState<Clinica[]>([]);
   const [escolhido, setEscolhido] = useState<string | null>(null);
   const [carregando, setCarregando] = useState(true);
-  // tenant_id → nome da agente. Um mapa, e não um valor só, porque a conta
-  // pode atender duas clínicas e cada uma batiza a sua.
-  const [agentes, setAgentes] = useState<Record<string, string>>({});
+  // tenant_id → { nome, ativo }. Um mapa, e não um valor só, porque a conta
+  // pode atender duas clínicas e cada uma batiza — e liga ou desliga — a sua.
+  const [agentes, setAgentes] = useState<
+    Record<string, { nome: string; ativo: boolean }>
+  >({});
+
+  const carregarAgentes = useCallback(async () => {
+    // `tenant_config` tem a RLS padrão: a consulta já vem recortada nas
+    // clínicas desta conta.
+    const cfg = await supabase
+      .from("tenant_config")
+      .select("tenant_id, agente_nome, agente_ativo");
+    const mapa: Record<string, { nome: string; ativo: boolean }> = {};
+    for (const linha of cfg.data ?? []) {
+      mapa[linha.tenant_id as string] = {
+        nome: ((linha.agente_nome as string | null) ?? "").trim(),
+        ativo: linha.agente_ativo !== false,
+      };
+    }
+    setAgentes(mapa);
+  }, []);
 
   useEffect(() => {
     let vivo = true;
@@ -69,23 +93,12 @@ export function TenantProvider({ children }: { children: React.ReactNode }) {
       setEscolhido(valido ? guardado : null);
       setCarregando(false);
 
-      // `tenant_config` tem a RLS padrão, então a consulta já vem recortada
-      // nas clínicas desta conta — nada de `where tenant_id` aqui.
-      const cfg = await supabase
-        .from("tenant_config")
-        .select("tenant_id, agente_nome");
-      if (!vivo) return;
-      const mapa: Record<string, string> = {};
-      for (const linha of cfg.data ?? []) {
-        const nome = (linha.agente_nome as string | null)?.trim();
-        if (nome) mapa[linha.tenant_id as string] = nome;
-      }
-      setAgentes(mapa);
+      await carregarAgentes();
     })();
     return () => {
       vivo = false;
     };
-  }, []);
+  }, [carregarAgentes]);
 
   const escolher = useCallback((tenantId: string) => {
     guardarTenantEscolhido(tenantId);
@@ -98,15 +111,21 @@ export function TenantProvider({ children }: { children: React.ReactNode }) {
     const atual =
       clinicas.find((c) => c.tenant_id === escolhido) ??
       (clinicas.length === 1 ? clinicas[0] : null);
+    const cfg = atual ? agentes[atual.tenant_id] : undefined;
     return {
       clinicas,
       atual,
-      agente: (atual && agentes[atual.tenant_id]) || "a agente",
+      agente: cfg?.nome || "a agente",
+      // `true` enquanto carrega: o padrão do banco é ativo, e mostrar
+      // "desligada" por um instante em quem NÃO desligou é pior que o inverso.
+      agenteAtivo: cfg?.ativo ?? true,
+      tenantId: atual?.tenant_id ?? null,
+      recarregarAgente: carregarAgentes,
       carregando,
       varias: clinicas.length > 1,
       escolher,
     };
-  }, [clinicas, escolhido, carregando, escolher, agentes]);
+  }, [clinicas, escolhido, carregando, escolher, agentes, carregarAgentes]);
 
   return <Ctx.Provider value={valor}>{children}</Ctx.Provider>;
 }

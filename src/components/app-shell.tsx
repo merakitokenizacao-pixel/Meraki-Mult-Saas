@@ -13,7 +13,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   // ⚠️ O nome da agente vem de `tenant_config.agente_nome`, nunca do código:
   // é dado da clínica, como o endereço. Uma odonto vai querer outro nome.
-  const { agente } = useTenant();
+  const { agente, agenteAtivo } = useTenant();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   // Inicia colapsada já no primeiro paint quando a rota for /conversas (sem flash)
   const [collapsed, setCollapsed] = useState(() =>
@@ -114,8 +114,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               aria-label={`Status de ${agente}`}
               data-label={agente}
             >
-              <span className="sidebar-status-dot" />
-              <span className="sidebar-status-text">{agente} ativa</span>
+              {/* Desligada NÃO é erro: é escolha. Por isso o ponto some em
+                  vez de ficar vermelho, e o texto fica apagado. */}
+              {agenteAtivo && <span className="sidebar-status-dot" />}
+              <span
+                className={`sidebar-status-text${agenteAtivo ? "" : " desligada"}`}
+              >
+                {agenteAtivo ? `${agente} ativa` : `${agente} · desligada`}
+              </span>
             </Link>
             <Link
               href={SETTINGS_ITEM.href}

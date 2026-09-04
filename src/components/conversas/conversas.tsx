@@ -163,9 +163,16 @@ export function Conversas() {
     setPanelOpen(window.innerWidth >= 1440);
   }, []);
 
+  // ⚠️ REALTIME NÃO ESTÁ HABILITADO NESTE PROJETO — conferido: a publicação
+  // `supabase_realtime` não tem nenhuma tabela. A assinatura abaixo fica
+  // inerte, e por isso existe o polling logo depois dela.
+  //
+  // Sem agente, o painel É o atendimento: se a cliente responde e a tela só vê
+  // ao recarregar, o produto não serve. Enquanto o Realtime não é ligado, uma
+  // consulta a cada 5s com a conversa aberta cobre o caso.
+  //
   // Gancho de realtime: quando o n8n/cliente grava em `conversas` ou `leads`,
-  // invalida o cache e a lista atualiza sozinha. Fica inerte até habilitar
-  // Realtime nessas tabelas no Supabase (publicação supabase_realtime).
+  // invalida o cache e a lista atualiza sozinha.
   useEffect(() => {
     const channel = supabase
       .channel("conversas-crm")
@@ -206,6 +213,18 @@ export function Conversas() {
       supabase.removeChannel(channel);
     };
   }, [qc]);
+
+  // Enquanto o Realtime não é habilitado: 5s, e SÓ com conversa aberta. Um
+  // poll global rodaria o dia inteiro em quem está olhando outra tela.
+  useEffect(() => {
+    if (!currentLeadId) return;
+    const t = setInterval(() => {
+      qc.invalidateQueries({ queryKey: ["conversas", "lead", currentLeadId] });
+      qc.invalidateQueries({ queryKey: ["conversas"], exact: true });
+      qc.invalidateQueries({ queryKey: ["leads"] });
+    }, 5000);
+    return () => clearInterval(t);
+  }, [currentLeadId, qc]);
 
   const currentLead = useMemo(
     () => leads.find((l) => l.id === currentLeadId) ?? null,
@@ -344,34 +363,12 @@ export function Conversas() {
     setSending(true);
 
     try {
-      // Auto-pausa a IA antes de enviar (evita IA + humano respondendo juntos).
-      if (!isLeadPaused(currentLead)) {
-        const pauseFields = {
-          ia_pausada: true,
-          pausada_em: new Date().toISOString(),
-          pausada_por: "humano",
-          motivo_pausa: "pausada automaticamente ao enviar mensagem pelo CRM",
-        };
-        await updateLead(currentLead.id, pauseFields);
-        setLeads((prev) =>
-          prev.map((l) =>
-            l.id === currentLead.id ? ({ ...l, ...pauseFields } as Lead) : l
-          )
-        );
-      }
-
-      // A rota grava em `conversas` como origem "humano" (medido: o n8n
-      // captura o que a dona digita no celular, mas NÃO o que sai pela API).
-      const r = await postarMensagem({
-        lead_id: currentLead.id,
-        telefone: currentLead.telefone,
-        mensagem,
-      });
-      if (r.aviso === "enviada_mas_nao_registrada") {
-        // Chegou na cliente, mas não entrou no histórico. Avisar é melhor que
-        // deixar a operadora achar que a mensagem se perdeu e reenviar.
-        showToast("Enviada — mas não entrou no histórico", "error");
-      }
+      // ⚠️ A PAUSA DA AGENTE MORA NO BANCO AGORA. `painel_responder` faz isso
+      // dentro da mesma transação que registra a mensagem — o update daqui
+      // era uma segunda escrita que podia dar certo com o envio dando errado,
+      // deixando a agente pausada por uma mensagem que nunca saiu.
+      const r = await postarMensagem({ lead_id: currentLead.id, mensagem });
+      if (r.aviso) showToast(r.aviso, "error");
 
       setPendingMsgs((prev) =>
         prev.map((p) => (p.id === tempId ? { ...p, status: "enviado" } : p))
@@ -386,12 +383,39 @@ export function Conversas() {
           enviado_em: new Date().toISOString(),
         },
       ]);
+      // A agente foi pausada pelo banco: reflete na tela sem outra ida.
+      if (!isLeadPaused(currentLead)) {
+        setLeads((prev) =>
+          prev.map((l) =>
+            l.id === currentLead.id
+              ? ({ ...l, ia_pausada: true, pausada_por: "painel" } as Lead)
+              : l
+          )
+        );
+      }
       return true;
     } catch (err) {
+      const e = err as { message?: string; gravada?: boolean };
+      // ⚠️ GRAVADA MAS NÃO ENVIADA é um terceiro estado, não um erro qualquer.
+      // A rota escreve antes de tentar enviar, então a bolha CONTINUA na tela
+      // marcada como falha — apagá-la faria a pessoa reescrever um texto que
+      // já está no histórico da conversa.
       setPendingMsgs((prev) =>
         prev.map((p) => (p.id === tempId ? { ...p, status: "falhou" } : p))
       );
-      showToast("Erro ao enviar: " + (err as Error).message, "error");
+      if (e.gravada) {
+        setConversas((prev) => [
+          ...prev,
+          {
+            id: tempId,
+            lead_id: currentLead.id,
+            mensagem,
+            origem: "humano",
+            enviado_em: new Date().toISOString(),
+          },
+        ]);
+      }
+      showToast(e.message ?? "Não foi possível enviar", "error");
       return false;
     } finally {
       setSending(false);

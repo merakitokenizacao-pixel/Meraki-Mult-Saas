@@ -133,21 +133,28 @@
         modal sobre card sobre lista não há como recuar uma camada, e a
         hierarquia colapsa numa coisa só.
 
+     ⚠️ A ESCALA SUBIU EM AGO/2026, e não é redesenho: é a MESMA escada, mais
+     acima. Sobre a base antiga (#0e0f11, Y 0,0058) o card compunha Y 0,008 e
+     a hairline Y 0,020 — contraste borda/superfície de 1,21:1, ou seja, a
+     estrutura não separava nada. A referência medida na tela trabalha em
+     1,72:1. A base sobe para #1e1f21 e a hairline de 10% para 19% de branco,
+     e o par vai a 1,70:1. Matiz e viés neutro-frio ficam iguais.
+
      Cinco camadas, do fundo para a frente (o valor à direita é como a alpha
      compõe SOBRE A BASE):
 
-        rebaixado    #0a0b0d    lista, sidebar, área de rolagem
-        base         #0e0f11    fundo da página
-        superfície   #ffffff07  card, painel, bolha         → #151618
-        superfície-2 #ffffff0c  o que empilha sobre card    → #191a1c
-        superfície-3 #ffffff14  o que empilha sobre aquilo  → #212224
+        rebaixado    #131416    lista, sidebar, área de rolagem   Y 0,0070
+        base         #1e1f21    fundo da página                   Y 0,0137
+        superfície   #ffffff07  card, painel, bolha  → #242527    Y 0,0184
+        superfície-2 #ffffff0c  empilha sobre card   → #292a2b    Y 0,0230
+        superfície-3 #ffffff14  empilha sobre aquilo → #303132    Y 0,0306
 
      As superfícies são ALPHA de propósito: é o que faz card sobre card e menu
      sobre popover clarearem sozinhos, sem calcular tom novo para cada
      combinação. A base e o rebaixado são explícitos porque alpha branco não
      sabe escurecer. */
-  --mk-rebaixado: #0a0b0d;
-  --mk-fundo: #0e0f11;
+  --mk-rebaixado: #131416;
+  --mk-fundo: #1e1f21;
   --mk-superficie: #ffffff07;
   --mk-superficie-2: #ffffff0c;
   --mk-superficie-3: #ffffff14;
@@ -159,21 +166,34 @@
      deixando o conteúdo de baixo atravessar.
 
      Quem precisa OCULTAR o que está atrás usa estes; quem só precisa parecer
-     uma camada acima usa a alpha. Mudou a base? recomponha os dois. */
-  --mk-elevado: #191a1c; /* popover, modal, dropdown, tooltip, cabeçalho fixo */
-  --mk-elevado-2: #212224; /* menu que abre por cima de modal */
+     uma camada acima usa a alpha. Mudou a base? recomponha os dois — foi
+     exatamente o que aconteceu na subida de escala de ago/2026, e é por isso
+     que estes valores não são os do desenho original: eles saem da conta, não
+     do olho. */
+  --mk-elevado: #292a2b; /* popover, modal, dropdown, tooltip, cabeçalho fixo */
+  --mk-elevado-2: #303132; /* menu que abre por cima de modal */
 
-  --mk-linha: #ffffff1a;
-  --mk-linha-suave: #ffffff0e;
+  /* A hairline subiu de 10% para 19% de branco: é ela que carrega TODA a
+     separação do sistema, porque não há box-shadow em lugar nenhum. */
+  --mk-linha: #ffffff30;
+  --mk-linha-suave: #ffffff1a;
 
   /* ── Tinta ── */
   --mk-tinta: #ecedee;
   --mk-tinta-media: #9ba1a6;
-  /* ⚠️ ERA #62676d, e REPROVAVA no AA: 3.68 sobre preto, 3.36 sobre a base
-     nova, 3.17 sobre card. É o token do subtexto dos cards e dos rótulos
-     apagados — texto pequeno, que é onde contraste baixo dói mais. #7d8288 dá
-     4.95 sobre a base e 4.67 sobre a superfície, e passa nos dois. */
-  --mk-tinta-fraca: #7d8288;
+  /* ⚠️ ESTE TOKEN ACOMPANHA A BASE, e já mudou duas vezes pelo mesmo motivo:
+     ele é o subtexto dos cards e os rótulos apagados, texto pequeno, que é
+     onde contraste baixo dói mais.
+
+        #62676d  reprovava desde sempre        3,17 sobre card
+        #7d8288  passou enquanto a base era escura   4,67 sobre card
+        #878c93  com a base em #1e1f21               4,53 sobre card
+
+     A subida de escala de ago/2026 empurrou o #7d8288 para 3,96 sobre a
+     superfície — de volta abaixo do AA. O valor novo é o MESMO matiz com 8%
+     a mais de brilho, não uma cor diferente. Se a base subir de novo, ele
+     sobe junto. */
+  --mk-tinta-fraca: #878c93;
 
   /* ── Acento ──
      UM só, para ação e estado ativo. Violeta escolhido pelo dono entre três

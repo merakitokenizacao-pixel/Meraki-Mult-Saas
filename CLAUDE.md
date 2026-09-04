@@ -409,12 +409,12 @@ O sistema é **superfície como OPACIDADE, não como cor**, sobre uma base escur
 São cinco camadas, e o valor à direita é como a alpha compõe **sobre a base**:
 
 ```
---mk-rebaixado    #0a0b0d     POÇO: lista que rola dentro da página
---mk-fundo        #0e0f11     o fundo da página
---mk-superficie   #ffffff07   card, painel, bolha          → #151618
---mk-superficie-2 #ffffff0c   empilha sobre card           → #191a1c
---mk-superficie-3 #ffffff14   empilha sobre aquilo         → #212224
---mk-linha        #ffffff1a   branco a 10%
+--mk-rebaixado    #131416     POÇO: lista que rola dentro da página
+--mk-fundo        #1e1f21     o fundo da página
+--mk-superficie   #ffffff07   card, painel, bolha          → #242527
+--mk-superficie-2 #ffffff0c   empilha sobre card           → #292a2b
+--mk-superficie-3 #ffffff14   empilha sobre aquilo         → #303132
+--mk-linha        #ffffff30   branco a 19%
 ```
 
 As superfícies são **alpha** de propósito: é o que faz card sobre card e menu
@@ -435,8 +435,8 @@ tokens **opacos**, que não são cor nova: são a superfície-2 e a superfície-
 já compostas sobre a base.
 
 ```
---mk-elevado    #191a1c   popover, modal, dropdown, tooltip, cabeçalho fixo
---mk-elevado-2  #212224   menu que abre POR CIMA de modal
+--mk-elevado    #292a2b   popover, modal, dropdown, tooltip, cabeçalho fixo
+--mk-elevado-2  #303132   menu que abre POR CIMA de modal
 ```
 
 Se a base mudar, **recomponha os dois** — eles não acompanham sozinhos.
@@ -459,7 +459,25 @@ corpo das colunas do Kanban e o dia fora do mês no calendário.
 | `elevado` | modal, `drp-pop`, menu de filtro, combo, tooltip, cabeçalho `sticky` |
 | `elevado-2` | menu aberto **dentro** de modal |
 
-⚠️ **`--mk-tinta-fraca` mudou junto: `#62676d` → `#7d8288`.** O valor antigo
+⚠️ **A ESCALA SUBIU EM AGO/2026, e não foi redesenho.** Sobre a base antiga
+(`#0e0f11`, Y 0,0058) o card compunha Y 0,008 e a hairline Y 0,020 — contraste
+borda/superfície de **1,21:1**, ou seja, a estrutura não separava nada. A
+referência medida na tela trabalha em 1,72:1. A base subiu para `#1e1f21` e a
+hairline de 10% para 19% de branco: o par foi para **1,70:1**. Matiz,
+geometria e tipografia não mudaram.
+
+Os dois opacos foram **recompostos** na mesma alteração — a regra "mudou a
+base? recomponha os dois" existe exatamente para isso, e os valores saem da
+conta, não do olho.
+
+⚠️ **`--mk-tinta-fraca` ACOMPANHA A BASE, e já mudou três vezes por isso**
+(`#62676d` → `#7d8288` → `#878c93`): subir o fundo derruba o contraste do texto
+pequeno, e a subida de escala empurrou o `#7d8288` para 3,96 sobre a
+superfície, de volta abaixo do AA. Hoje dá **4,53 sobre a superfície** e 4,87
+sobre a base. Cada valor novo é o MESMO matiz com mais brilho, não uma cor
+diferente. `--mk-tinta` e `--mk-tinta-media` não acompanham: sobram contraste.
+
+A nota histórica original: **`#62676d` reprovava desde sempre.** O valor antigo
 **reprovava no AA** e já reprovava antes desta troca — 3.68 sobre preto, 3.36
 sobre a base nova, 3.17 sobre card. É o token do subtexto dos cards e dos
 rótulos apagados, ou seja, texto pequeno, que é onde contraste baixo dói mais.

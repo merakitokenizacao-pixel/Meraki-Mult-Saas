@@ -20,6 +20,30 @@ export type Promocao = {
   criado_em: string;
 };
 
+/**
+ * A linha crua do banco no formato que a tela usa.
+ *
+ * ⚠️ `valor_promocional` é `numeric` NO BANCO e o PostgREST entrega NÚMERO —
+ * mas o tipo acima diz `string`, e a tela toda trata como texto: `previewAgente`
+ * e `validarPromocao` chamam `.trim()` nele. Sem esta conversão, abrir uma
+ * promoção existente para editar estoura
+ * `TypeError: p.valor_promocional.trim is not a function`.
+ *
+ * `toFixed(2)` e não `String()`: a coluna guarda `499.90` e o JSON entrega
+ * `499.9` — o zero se perde no caminho. E "499.90" é exatamente o formato que
+ * a coluna aceita de volta, então o que a tela mostra é o que ela consegue
+ * salvar. ⚠️ Medido: `numeric` recusa "R$ 499,90", "499,90" e "25% no Pix`"
+ * com `22P02` — ver a nota no CLAUDE.md.
+ */
+export function lerPromocao(linha: Record<string, unknown>): Promocao {
+  const v = linha.valor_promocional;
+  return {
+    ...(linha as unknown as Promocao),
+    valor_promocional:
+      typeof v === "number" ? v.toFixed(2) : ((v as string | null) ?? ""),
+  };
+}
+
 export const DIAS_SEMANA = [
   "domingo",
   "segunda-feira",

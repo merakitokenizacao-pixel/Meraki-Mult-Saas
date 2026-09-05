@@ -209,14 +209,36 @@ export interface PromocaoPreco {
   preco: number | null;
 }
 
+/**
+ * O preço de uma promoção.
+ *
+ * ⚠️ `promocoes.valor_promocional` é `numeric` NO BANCO, e o PostgREST entrega
+ * numeric como NÚMERO. O tipo aqui dizia `string | null`, o `?? ""` não pega
+ * número nenhum, e `valoresDoTexto` acabava chamando `.matchAll` num number:
+ * `TypeError: texto.matchAll is not a function`, e a rota inteira caía em 500
+ * assim que existiu UMA promoção ativa.
+ *
+ * O parser de "R$ …" existe para o CONTEÚDO dos documentos, onde o preço mora
+ * dentro de uma frase. Aqui ele nunca deveria ter entrado: o valor já é o
+ * número. A string continua atendida porque a coluna aceita `"499.90"` e
+ * porque texto livre pode ter sobrado de importação.
+ */
+function precoDaPromocao(v: number | string | null | undefined): number | null {
+  if (v === null || v === undefined) return null;
+  if (typeof v === "number") return Number.isFinite(v) && v > 0 ? v : null;
+  const direto = Number(v);
+  if (Number.isFinite(direto) && direto > 0) return direto;
+  // "25% de desconto no Pix" não tem valor absoluto — fica nulo.
+  return valoresDoTexto(v)[0] ?? null;
+}
+
 export function montarPromocoes(
-  linhas: Array<{ titulo: string; valor_promocional: string | null }>
+  linhas: Array<{ titulo: string; valor_promocional: number | string | null }>
 ): PromocaoPreco[] {
-  return linhas.map((p) => {
-    const vs = valoresDoTexto(p.valor_promocional ?? "");
-    // "25% de desconto no Pix" não tem valor absoluto — fica nulo.
-    return { titulo: p.titulo, preco: vs[0] ?? null };
-  });
+  return linhas.map((p) => ({
+    titulo: p.titulo,
+    preco: precoDaPromocao(p.valor_promocional),
+  }));
 }
 
 /** Pacote/combo NÃO pode cair na média de sessão avulsa: um pacote de 10

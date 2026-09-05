@@ -1,6 +1,6 @@
 import "server-only";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
-import type { CamposPromocao, Promocao } from "@/lib/promocao";
+import { lerPromocao, type CamposPromocao, type Promocao } from "@/lib/promocao";
 
 // Acesso à tabela `promocoes` com service_role.
 //
@@ -32,7 +32,7 @@ export async function listarPromocoes(tenant: string): Promise<Promocao[]> {
     .order("criado_em", { ascending: false })
     .limit(TETO);
   if (error) throw error;
-  return (data ?? []) as Promocao[];
+  return (data ?? []).map((l) => lerPromocao(l as Record<string, unknown>));
 }
 
 /** Quem já está marcada como "a do anúncio" (para avisar antes de duplicar). */
@@ -47,7 +47,8 @@ export async function promocaoNoAnuncio(
     .eq("anuncio_ativo", true)
     .limit(1);
   if (error) throw error;
-  return ((data ?? [])[0] as Promocao) ?? null;
+  const linha = (data ?? [])[0];
+  return linha ? lerPromocao(linha as Record<string, unknown>) : null;
 }
 
 /**
@@ -80,7 +81,7 @@ export async function criarPromocao(
     .single();
   if (error) throw error;
 
-  const nova = data as Promocao;
+  const nova = lerPromocao(data as Record<string, unknown>);
   if (nova.anuncio_ativo) await desligarOutrosAnuncios(tenant, nova.id);
   return nova;
 }
@@ -104,7 +105,7 @@ export async function atualizarPromocao(
   if (error) throw error;
   if (!data) throw new Error("promocao_nao_encontrada");
 
-  const p = data as Promocao;
+  const p = lerPromocao(data as Record<string, unknown>);
   if (p.anuncio_ativo) await desligarOutrosAnuncios(tenant, p.id);
   return p;
 }

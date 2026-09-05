@@ -253,7 +253,7 @@ na leitura:
 | `leads.anuncio_origem` | `anuncio_texto` / `_id` / `_url` / `_app` / `_em` |
 | `leads` com campos de endereço | não existem — só `email`, `instagram`, `nascimento`, `anotacoes`, `etiquetas` |
 | `fichas_avaliacao.status` / `.alertas` / `.tipo` | `tem_alerta boolean` |
-| ~~`promocoes.valor_promocional` / `.condicao` / `.dia_semana`~~ | **existem** — foram acrescentadas ao banco; a query de preço está certa |
+| ~~`promocoes.valor_promocional` / `.condicao` / `.dia_semana`~~ | **existem**, mas `valor_promocional` é **`numeric`**, e o código a tratava como texto — ver os defeitos conhecidos |
 
 **Todo `insert` precisa de `tenant_id`** — é `NOT NULL` em 19 das 20 tabelas, e
 nenhum insert do código atual preenche.
@@ -845,6 +845,31 @@ botão: bloco de cor puxa o clique justamente onde não se quer pressa.
   do cabeçalho. E `kanban_mover` **não bloqueia transição nenhuma** de
   propósito: ela avisa (`REALIZADO_ANTES_DA_HORA`) e move. Kanban rígido é como
   se volta a anotar no caderno.
+- ⚠️ **`promocoes.valor_promocional` é `numeric`, e a tela assume texto livre.**
+  O PostgREST entrega numeric como **número**, não string. `montarPromocoes`
+  declarava `string | null` e fazia `?? ""` — que não pega número — e caía em
+  `valoresDoTexto`, ou seja, `.matchAll` num number:
+  `TypeError: texto.matchAll is not a function`, **500 em `/api/painel/servicos`**
+  assim que existiu UMA promoção ativa. Corrigido em set/2026 (`precoDaPromocao`
+  em `servicos.ts`, `lerPromocao` em `promocao.ts` para os quatro pontos de
+  leitura de `promocao-db.ts`, que faziam `as Promocao` sobre um cast que
+  mentia). ⚠️ **O que NÃO foi corrigido é a incompatibilidade de fundo**: o
+  formulário pede "Informe o valor como o cliente ouve" e valida como texto
+  falado, mas a coluna é numérica. Medido com `pg_input_is_valid`: ela aceita
+  `"499.90"` e **recusa com `22P02`** `"R$ 499,90"`, `"25% de desconto no Pix"`
+  e até `"499,90"` — a vírgula que qualquer brasileira digitaria. Resolver isso
+  é decidir de que lado fica a verdade (coluna vira `text`, ou o campo vira
+  numérico com máscara) e leva migration.
+- ⚠️ **Conta sem vínculo vê o painel INTEIRO zerado, e isso mente.** Sem linha
+  em `usuarios_tenant`, `minhas_clinicas()` devolve zero, as leituras por RLS
+  devolvem **zero linhas sem erro** e a Visão geral renderiza `R$ 0,00` nos
+  cinco KPIs com "Nenhum atendimento realizado no período" — indistinguível de
+  uma clínica parada. Só as rotas que passam por `resolverTenant` acusam, com
+  403 `sem_clinica`; e `hooks.ts` descarta a frase do servidor ("Esta conta
+  ainda não está vinculada a nenhuma clínica") em favor do toast genérico
+  "Erro ao carregar os dados." O aviso na sidebar existe, mas compete com o
+  corpo da tela dizendo o contrário. É o primeiro lugar a olhar quando "a tela
+  não carrega" e todos os números estão em zero.
 - **`/privacidade`**: a constante `CONTATO` está vazia. Não divulgar o link
   antes de preencher.
 - **Migrations do painel antigo em `supabase/migrations/_legado/`**: cinco
